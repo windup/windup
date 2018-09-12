@@ -68,6 +68,36 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
             + "    </rules>\n"
             + "</ruleset>";
 
+    // has a different target, which is needed for some tests
+    private static final String CLOUD_READINESS_MIGRATION_RULES = "<?xml version=\"1.0\"?>\n"
+            + "<ruleset xmlns=\"http://windup.jboss.org/schema/jboss-ruleset\" id=\"BootstrapTests_Cloud_Readiness\" "
+            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+            + "xsi:schemaLocation=\"http://windup.jboss.org/schema/jboss-ruleset "
+            + "http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd \">\n"
+            + "    <metadata>\n"
+            + "        <description>Only for bootstrap tests.</description>\n"
+            + "        <dependencies>\n"
+            + "            <addon id=\"org.jboss.windup.rules,windup-rules-xml," + Bootstrap.getRuntimeAPIVersion() + "\" />\n"
+            + "        </dependencies>\n"
+            + "        <targetTechnology id=\"cloud-readiness\" />\n"
+            + "        <tag>another-target-cloud-readiness</tag>\n"
+            + "    </metadata>\n"
+            + System.lineSeparator()
+            + "    <rules>\n"
+            + "        <rule id=\"cloud-readiness-rule\">\n"
+            + "            <when>\n"
+            + "               <or>\n"
+            + "                <javaclass references=\"javax.servlet.http.HttpSession.setAttribute({*})\"/>\n"
+            + "                <javaclass references=\"javax.servlet.http.HttpSession.putValue({*})\"/>\n"
+            + "               </or>\n"
+            + "            </when>\n"
+            + "            <perform>\n"
+            + "                <classification title=\"HTTP Session data storage\" effort=\"3\" severity=\"cloud-optional\"/>\n"
+            + "            </perform>\n"
+            + "        </rule>\n"
+            + "    </rules>\n"
+            + "</ruleset>";
+
     @Rule
     public final TemporaryFolder rulesDir = new TemporaryFolder();
 
@@ -78,6 +108,9 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
 
         File moreRules = rulesDir.newFile("test-eap6to7-more-rules.windup.xml");
         Files.write(MORE_TESTING_MIGRATION_RULES, moreRules, Charsets.UTF_8);
+
+        File anotherTargetRules = rulesDir.newFile("cloud-readiness-rules.windup.xml");
+        Files.write(CLOUD_READINESS_MIGRATION_RULES, anotherTargetRules, Charsets.UTF_8);
 
         System.setProperty(PathUtil.WINDUP_RULESETS_DIR_SYSPROP, rulesDir.getRoot().getAbsolutePath());
     }

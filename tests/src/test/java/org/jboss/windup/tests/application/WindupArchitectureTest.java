@@ -36,7 +36,7 @@ import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
-import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
+import org.jboss.windup.rules.apps.tattletale.DisableTattletaleReportOption;
 import org.junit.Assert;
 
 import com.google.common.base.Predicate;
@@ -174,7 +174,7 @@ public abstract class WindupArchitectureTest
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
-        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, false);
+        windupConfiguration.setOptionValue(DisableTattletaleReportOption.NAME, true);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, true);
         windupConfiguration.setOptionValue(ExportCSVOption.NAME, true);
 

@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -58,8 +61,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            Boolean generateReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
-            if (generateReport == null || !generateReport)
+            if (!isTattleTaleReportGenerationEnabled(event))
                 return;
 
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
@@ -144,6 +146,19 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
             ReportService reportService = new ReportService(context);
             reportService.setUniqueFilename(applicationReportModel, "tattletale" + "_" + inputProjectModel.getName(), "html");
+        }
+
+        private boolean isTattleTaleReportGenerationEnabled(GraphRewrite event)
+        {
+            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(EnableTattletaleReportOption.NAME, Boolean.FALSE);
+            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(DisableTattletaleReportOption.NAME, Boolean.FALSE);
+            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().getOrDefault(TargetOption.NAME, Collections.EMPTY_SET);
+            boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
+            if (eapTarget && disableReport && !enableReport)
+                return false;
+            else if (!eapTarget && !enableReport)
+                return false;
+            return true;
         }
     }
 }

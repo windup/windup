@@ -25,7 +25,24 @@
     </div>
     <!-- / Navbar -->
 
-    <iframe style="width:100%; height: 100%; position:absolute;" src="${reportModel.reportProperties.embeddedUrl}"></iframe>
+    <div class="container-fluid" role="main">
+        <div class="row">
+            <div class="page-header page-header-no-border">
+                <h1>
+                    <div class="main">${reportModel.reportName}
+                        <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
+                        <#if reportModel.projectModel??>
+                            <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
+                        </#if>
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+                <iframe style="width:100%; height: 100%; position:absolute;border-width: 0px;padding-left: 15px;padding-right: 15px;" src="${reportModel.reportProperties.embeddedUrl}"></iframe>
+        </div>
+    </div>
+
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 </body>
