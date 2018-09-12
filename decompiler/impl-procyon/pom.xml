@@ -15,22 +15,23 @@
     <name>Windup Engine - Decompiler Procyon</name>
 
     <properties>
-        <version.procyon>1.0.0.20160510</version.procyon>
+        <version.procyon>0.5.33</version.procyon>
     </properties>
 
     <dependencies>
 
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>org.jboss.windup.decompiler.procyon</groupId>
-            <artifactId>windup-procyon-core</artifactId>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-core</artifactId>
             <version>${version.procyon}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.decompiler.procyon</groupId>
-            <artifactId>windup-procyon-compilertools</artifactId>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-compilertools</artifactId>
             <version>${version.procyon}</version>
         </dependency>
+
 
         <!-- Addon Dependencies -->
         <dependency>

@@ -100,8 +100,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             if (!settingsByOutputDirectory.containsKey(mainRequest.getOutputDirectory()))
             {
                 final DecompilerSettings settings = getDefaultSettings(mainRequest.getOutputDirectory().toFile());
-                final ITypeLoader typeLoader = new CompositeTypeLoader(new ClasspathTypeLoader(mainRequest.getRootDirectory().toString()),
-                            new ClasspathTypeLoader());
+                final ITypeLoader typeLoader = new ClasspathTypeLoader();
                 settings.setTypeLoader(typeLoader);
                 settingsByOutputDirectory.put(mainRequest.getOutputDirectory(), settings);
 
@@ -241,7 +240,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             DecompilerSettings settings = getDefaultSettings(outputDir.toFile());
             this.procyonConf.setDecompilerSettings(settings); // TODO: This is horrible mess.
 
-            ITypeLoader typeLoader = new CompositeTypeLoader(new ClasspathTypeLoader(rootDir.toString()), new ClasspathTypeLoader());
+            ITypeLoader typeLoader = new ClasspathTypeLoader();
             MetadataSystem metadataSystem = new MetadataSystem(typeLoader);
             File outputFile = this.decompileType(settings, metadataSystem, typeName);
             result.addDecompiled(Collections.singletonList(classFilePath.toString()), outputFile.getAbsolutePath());
@@ -627,7 +626,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
         if (!this.procyonConf.isIncludeNested() && nested)
             return null;
 
-        settings.setFormattingOptions(new JavaFormattingOptions());
+        settings.setJavaFormattingOptions(new JavaFormattingOptions());
 
         final FileOutputWriter writer = createFileWriter(resolvedType, settings);
         final PlainTextOutput output;

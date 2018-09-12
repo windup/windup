@@ -502,7 +502,7 @@ public class Compiler implements ITypeRequestor, ProblemSeverities {
                             }));
                 }
             } else {
-                processingTask = new ProcessTaskManager(this);
+                processingTask = new ProcessTaskManager(this, 0);
                 int acceptedCount = 0;
                 // process all units (some more could be injected in the loop by the lookup environment)
                 // the processTask can continue to process units until its fixed sized cache is full then it must wait
