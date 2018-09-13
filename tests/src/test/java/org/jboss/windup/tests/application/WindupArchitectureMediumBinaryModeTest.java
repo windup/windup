@@ -189,7 +189,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         Assert.assertTrue(util.checkIncidentByCategoryRow("mandatory", 0, 0));
         Assert.assertTrue(util.checkIncidentByCategoryRow("information", 10, 0));
         Assert.assertTrue(util.checkIncidentByCategoryRow("cloud-mandatory", 3, 3));
-        Assert.assertTrue(util.checkIncidentByCategoryRow("mandatory", 0, 0));
+        Assert.assertTrue(util.checkIncidentByCategoryRow("potential", 0, 0));
     }
 
     private void validateTagsInSourceReport(GraphContext context) throws IOException
