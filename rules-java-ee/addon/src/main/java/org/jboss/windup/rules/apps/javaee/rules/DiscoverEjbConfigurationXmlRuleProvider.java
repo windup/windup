@@ -27,6 +27,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -310,7 +311,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
-        classificationService.attachClassification(event, context, xmlModel, "EJB XML", "Enterprise Java Bean XML Descriptor.");
+        classificationService.attachClassification(event, context, xmlModel, IssueCategoryRegistry.INFORMATION, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)

@@ -26,6 +26,7 @@ public class IssueCategoryRegistry
     public static final String OPTIONAL = "optional";
     public static final String POTENTIAL = "potential";
     public static final String CLOUD_MANDATORY = "cloud-mandatory";
+    public static final String INFORMATION = "information";
     public static final String DEFAULT = OPTIONAL;
 
     private Map<String, IssueCategory> issueCategories = new ConcurrentHashMap<>();
@@ -167,5 +168,6 @@ public class IssueCategoryRegistry
         this.issueCategories.putIfAbsent(OPTIONAL, new IssueCategory(OPTIONAL, IssueCategoryRegistry.class.getCanonicalName(), "Optional", OPTIONAL, 1000, true));
         this.issueCategories.putIfAbsent(POTENTIAL, new IssueCategory(POTENTIAL, IssueCategoryRegistry.class.getCanonicalName(), "Potential Issues", POTENTIAL, 1000, true));
         this.issueCategories.putIfAbsent(CLOUD_MANDATORY, new IssueCategory(CLOUD_MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), "Cloud Mandatory", CLOUD_MANDATORY, 1000, true));
+        this.issueCategories.putIfAbsent(INFORMATION, new IssueCategory(INFORMATION, IssueCategoryRegistry.class.getCanonicalName(), "Information", INFORMATION, 1000, true));
     }
 }

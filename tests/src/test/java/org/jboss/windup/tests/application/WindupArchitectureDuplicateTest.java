@@ -163,21 +163,24 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 80, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 11, 0));
 
         reportIndex.loadPage(secondAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 80, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 11, 0));
 
         reportIndex.loadPage(sharedLibsPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 87, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 77, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 10, 0));
     }
 
     private void validateJarDependencyReport(GraphContext graphContext)

@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -84,7 +85,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 if (mavenProjectModel != null)
                 {
                     // add classification information to file.
-                    classificationService.attachClassification(event, context, payload, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
+                    classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
                     technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
 
                     ArchiveModel archiveModel = payload.getArchive();
@@ -361,7 +362,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 fileLocation.setColumnNumber(columnNumber);
                 fileLocation.setLength(node.toString().length());
                 fileLocation.setFile(xmlFileModel);
-                List<FileLocationModel> fileLocationList = new ArrayList<FileLocationModel>(1);
+                List<FileLocationModel> fileLocationList = new ArrayList<>(1);
                 fileLocationList.add(fileLocation);
                 projectDep.setFileLocationReference(fileLocationList);
                 mavenProjectModel.addDependency(projectDep);
