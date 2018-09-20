@@ -22,7 +22,7 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
                 "--target", "eap7",
                 "--exportCSV");
 
-        File csv = new File(tmp.getRoot(), "Windup_Source_based_example.csv");
+        File csv = new File(tmp.getRoot(), "Windup1x_javaee_example_tiny_war.csv");
 
         assertTrue(csv.exists());
 

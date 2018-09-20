@@ -60,6 +60,9 @@ public class CSVExportingTest
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
+    private static final String FILE1_NAME = "f1";
+    private static final String FILE2_NAME = "f2";
+
     @Inject
     private GraphContextFactory factory;
 
@@ -99,16 +102,16 @@ public class CSVExportingTest
                 configuration.setExportingCSV(true);
             }
             processor.execute(configuration);
-            Assert.assertEquals(exportCSV, new File(outputPath + "/f1.csv").exists());
-            Assert.assertEquals(exportCSV, new File(outputPath + "/f2.csv").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/" + FILE1_NAME + ".csv").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/" + FILE2_NAME + ".csv").exists());
             if (exportCSV)
             {
-                Path resource = Paths.get("src/test/resources/test-exports/f1.csv");
-                Path resource2 = Paths.get("src/test/resources/test-exports/f2.csv");
+                Path resource = Paths.get("src/test/resources/test-exports/" + FILE1_NAME + ".csv");
+                Path resource2 = Paths.get("src/test/resources/test-exports/" + FILE2_NAME + ".csv");
                 try
                 {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/f1.csv"));
-                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/f2.csv"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/" + FILE1_NAME + ".csv"));
+                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/" + FILE2_NAME + ".csv"));
                 }
                 catch (IOException ex)
                 {
@@ -129,12 +132,12 @@ public class CSVExportingTest
         LinkService linkService = new LinkService(context);
 
         FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
-        f1.setFilePath("/f1");
+        f1.setFilePath("/" + FILE1_NAME);
         projectModel.addFileModel(f1);
         projectModel.setRootFileModel(f1);
 
         FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
-        f2.setFilePath("/f2");
+        f2.setFilePath("/" + FILE2_NAME);
         projectModel2.addFileModel(f2);
         projectModel2.setRootFileModel(f2);
 
