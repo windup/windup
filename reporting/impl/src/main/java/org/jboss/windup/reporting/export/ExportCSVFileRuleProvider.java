@@ -107,14 +107,12 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         String classificationText = classification.getClassification() != null ? classification.getClassification() : "";
                         String description = classification.getDescription() != null ? classification.getDescription() : "";
                         String projectNameString = "";
-                        String fileName = "";
-                        String filePath = "";
                         if (fileModel.getProjectModel() != null)
                         {
                             projectNameString = fileModel.getProjectModel().getName();
                         }
-                        fileName = fileModel.getFileName();
-                        filePath = fileModel.getFilePath();
+                        String fileName = fileModel.getFileName();
+                        String filePath = fileModel.getFilePath();
                         String[] strings = new String[] {
                                     ruleId, classification.getIssueCategory().getCategoryID(), classificationText,
                                     description, links,
@@ -154,7 +152,6 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                 linksString.append(linkModel.getDescription());
                 linksString.append("]");
             }
-            linksString.toString();
             return linksString.toString();
         }
 
@@ -162,7 +159,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
         {
             if (!projectToFile.containsKey(projectModel.getName()))
             {
-                String filename = PathUtil.cleanFileName(projectModel.getName()) + ".csv";
+                String filename = PathUtil.cleanFileName(projectModel.getRootFileModel().getFileName()) + ".csv";
                 CSVWriter writer = initCSVWriter(outputFolderPath + filename);
                 projectToFile.put(projectModel.getName(), writer);
                 LOG.info("Setting csv filename to: " + filename + " for id: " + projectModel.getId());

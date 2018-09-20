@@ -99,16 +99,16 @@ public class CSVExportingTest
                 configuration.setExportingCSV(true);
             }
             processor.execute(configuration);
-            Assert.assertEquals(exportCSV, new File(outputPath + "/app1.csv").exists());
-            Assert.assertEquals(exportCSV, new File(outputPath + "/app2.csv").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/f1.csv").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/f2.csv").exists());
             if (exportCSV)
             {
-                Path resource = Paths.get("src/test/resources/test-exports/app1.csv");
-                Path resource2 = Paths.get("src/test/resources/test-exports/app2.csv");
+                Path resource = Paths.get("src/test/resources/test-exports/f1.csv");
+                Path resource2 = Paths.get("src/test/resources/test-exports/f2.csv");
                 try
                 {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/app1.csv"));
-                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/app2.csv"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/f1.csv"));
+                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/f2.csv"));
                 }
                 catch (IOException ex)
                 {
@@ -131,9 +131,12 @@ public class CSVExportingTest
         FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
         projectModel.addFileModel(f1);
+        projectModel.setRootFileModel(f1);
+
         FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
         f2.setFilePath("/f2");
         projectModel2.addFileModel(f2);
+        projectModel2.setRootFileModel(f2);
 
         InlineHintModel b1 = inlineHintService.create();
         ClassificationModel c1 = classificationService.create();
