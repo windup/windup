@@ -1,13 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -15,133 +12,147 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.reporting.model.DependencyGraphDTO;
-import org.jboss.windup.reporting.service.ApplicationDependencyService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
+import org.jboss.windup.rules.apps.java.dependencyreport.DependenciesReportModel;
+import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
+import org.jboss.windup.rules.apps.java.reporting.freemarker.dto.DependencyGraphItem;
+import org.jboss.windup.rules.apps.java.reporting.freemarker.dto.DependencyGraphItemsAndRelations;
+import org.jboss.windup.rules.apps.java.reporting.freemarker.dto.DependencyGraphRelation;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Generates a .js (javascript) file in the reports directory containing the
- * apps and their dependencies.
+ * Generates a .js (javascript) file in the reports directory containing the apps and their dependencies.
  */
 @RuleMetadata(phase = ReportRenderingPhase.class)
-public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider {
+public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
+{
 
-	private static final String APP_DEPENDENCY_GRAPH_JS = "app_dependencies_graph.js";
+   private static final String APP_DEPENDENCY_GRAPH_JS_FILENAME = "app_dependencies_graph.js";
+   private static final String JS_DATA_FUNCTION_NAME = "app_dependencies";
 
-	private static final String JS_DATA_FUNCTION_NAME = "app_dependencies";
-	private static final String NEWLINE = System.lineSeparator();
+   @Override
+   public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
+   {
+      return ConfigurationBuilder.begin()
+               .addRule()
+               .when(SourceMode.isDisabled())
+               .perform(new GraphOperation()
+               {
+                  @Override
+                  public void perform(GraphRewrite event, EvaluationContext context)
+                  {
+                     generateData(event);
+                  }
+               });
+   }
 
-	private static final ObjectMapper ITEMS_OBJECTMAPPER = getObjectMapperForItems(
-			ApplicationDependencyGraphDTOItemSerializer.class);
-	private static final ObjectMapper RELATIONS_OBJECTMAPPER = getObjectMapperForItems(
-			ApplicationDependencyGraphDTORelationSerializer.class);
+   private void generateData(GraphRewrite event)
+   {
+      final GraphContext graphContext = event.getGraphContext();
+      final ReportService reportService = new ReportService(graphContext);
+      final List<DependenciesReportModel> dependenciesReportModels = graphContext.service(DependenciesReportModel.class)
+               .findAll();
 
-	@Override
-	public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
-		return ConfigurationBuilder.begin().addRule().perform(new GraphOperation() {
-			@Override
-			public void perform(GraphRewrite event, EvaluationContext context) {
-				generateData(event);
-			}
-		});
-	}
+      dependenciesReportModels.stream().forEach(dependenciesReportModel -> {
+         ProjectModel application = dependenciesReportModel.getProjectModel();
 
-	// TODO: this could be faster
-	private void generateData(GraphRewrite event) {
-		//TODO: immediately return if sourceMode
-		
-		final GraphContext graphContext = event.getGraphContext();
-		final ApplicationDependencyService appDependencyService = new ApplicationDependencyService(graphContext);
-		final ReportService reportService = new ReportService(graphContext);
+         // in case of shared libraries ("virtual" project) we don not
+         // generate the dependency graph
+         if (application != null && ProjectModel.TYPE_VIRTUAL.equals(application.getProjectType()))
+            return;
 
-		final Map<String, DependencyGraphDTO> appDeps = appDependencyService.getAllDependenciesGraphData();
+         Path dataDirectory = reportService.getReportDataDirectory();
+         List<DependencyReportDependencyGroupModel> dependencyReportDependencyGroupModels = dependenciesReportModel
+                  .getArchiveGroups();
+         Map<String, DependencyGraphItem> items = new HashMap<>(dependencyReportDependencyGroupModels.size() + 1);
+         List<DependencyGraphRelation> relations = new ArrayList<>(dependencyReportDependencyGroupModels.size());
 
-		try {
-			List<FileModel> inputPaths = WindupConfigurationService.getConfigurationModel(graphContext).getInputPaths();
-			
-			// all apps
-			if (inputPaths.size() > 1) {
-				writeJsonData(APP_DEPENDENCY_GRAPH_JS, reportService, appDeps);
-			}
+         Path appDependencyGraphPath;
+         // application will be null in case of the global dependencies report
+         // since it refers to multiple applications and not just one
+         if (application != null)
+         {
+            DependencyGraphItem analyzedApplicationDependencyGraphItem = new DependencyGraphItem(
+                     dependenciesReportModel.getProjectModel());
+            String applicationHash = getSha1Hash(application.getRootFileModel());
+            items.put(applicationHash, analyzedApplicationDependencyGraphItem);
+            appDependencyGraphPath = dataDirectory.resolve(applicationHash + "_" + APP_DEPENDENCY_GRAPH_JS_FILENAME);
+         }
+         else
+         {
+            WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths().stream()
+                     .filter(fileModel -> !ProjectModel.TYPE_VIRTUAL
+                              .equals(fileModel.getProjectModel().getProjectType()))
+                     .forEach(fileModel -> {
+                        DependencyGraphItem analyzedApplicationDependencyGraphItem = new DependencyGraphItem(
+                                 fileModel.getProjectModel());
+                        String applicationHash = getSha1Hash(fileModel);
+                        items.put(applicationHash, analyzedApplicationDependencyGraphItem);
+                     });
+            appDependencyGraphPath = dataDirectory.resolve(APP_DEPENDENCY_GRAPH_JS_FILENAME);
+         }
 
-			// per single app
-			inputPaths.forEach( inputPath -> {
-				final ProjectModel rootProjectModel = inputPath.getProjectModel();
-				Map<String, DependencyGraphDTO> singleAppDependencies = null;
-				if (inputPaths.size() > 1) {
-					singleAppDependencies = appDependencyService.getDependenciesGraphDataByInputApp(rootProjectModel);
-				} else {
-					singleAppDependencies = appDeps;
-				}
-				try {
-					writeJsonData(rootProjectModel.getRootFileModel().getSHA1Hash() + "_" + APP_DEPENDENCY_GRAPH_JS, reportService, singleAppDependencies);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
-			
-		} catch (Exception e) {
-			throw new WindupException("Error serializing app dependency graph json due to: " + e.getMessage(), e);
-		}
-	}
+         dependencyReportDependencyGroupModels.stream().forEach(dependencyReportDependencyGroupModel -> {
+            DependencyGraphItem dependencyGraphItem = new DependencyGraphItem(dependencyReportDependencyGroupModel);
+            items.put(dependencyReportDependencyGroupModel.getSHA1(), dependencyGraphItem);
+            dependencyReportDependencyGroupModel.getArchives().stream().forEach(dependencyReportToArchiveEdgeModel -> {
+               ArchiveModel targetArchiveModel;
+               // sometimes (especially in test cases) it could happen that there's no
+               // parent archive and just the root one
+               if (dependencyReportToArchiveEdgeModel.getArchive().getParentArchive() != null)
+               {
+                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getParentArchive();
+               }
+               else
+               {
+                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
+               }
+               DependencyGraphRelation dependencyGraphRelation = new DependencyGraphRelation(
+                        dependencyReportDependencyGroupModel.getSHA1(),
+                        targetArchiveModel.getSHA1Hash());
+               relations.add(dependencyGraphRelation);
+            });
+         });
 
-	private void writeJsonData(final String jsFileName,final ReportService reportService, final Map<String, DependencyGraphDTO> appDeps) throws IOException {
-		Path dataDirectory = reportService.getReportDataDirectory();
+         DependencyGraphItemsAndRelations dependencyGraphItemsAndRelations = new DependencyGraphItemsAndRelations(items,
+                  relations);
+         try (FileWriter dependencyGraphAppDependenciesWriter = new FileWriter(appDependencyGraphPath.toFile()))
+         {
+            MappingJsonFactory jsonFactory = new MappingJsonFactory();
+            jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+            ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-		final Path appDependencyGraphPath = dataDirectory.resolve(jsFileName);
-		final List<String> synchronizedJson = Collections.synchronizedList(new ArrayList<>());
-		
-		synchronizedJson.add(JS_DATA_FUNCTION_NAME + "({" + NEWLINE + "\"items\": {");
-		
-		// items section
-		appDeps.values().parallelStream().filter(value -> value != null && value.getSha1() != null).forEach(value -> {
-			try {
-				synchronizedJson.add(ITEMS_OBJECTMAPPER.writeValueAsString(value) + ",");
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
-		
-		// relations section
-		synchronizedJson.add("}, \"relations\":[");
-		appDeps.values().parallelStream().forEach(value -> {
-			try {
-				synchronizedJson.add(RELATIONS_OBJECTMAPPER.writeValueAsString(value));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
-		synchronizedJson.add("]});");
-		Files.write(appDependencyGraphPath, synchronizedJson);
-	}
+            dependencyGraphAppDependenciesWriter.write(JS_DATA_FUNCTION_NAME + "(");
+            objectMapper.writer().writeValue(dependencyGraphAppDependenciesWriter, dependencyGraphItemsAndRelations);
+            dependencyGraphAppDependenciesWriter.write(");");
+            dependencyGraphAppDependenciesWriter.flush();
+         }
+         catch (IOException ioe)
+         {
+            throw new WindupException("Error serializing dependencies graph due to: " + ioe.getMessage(), ioe);
+         }
+      });
+   }
 
-	private static ObjectMapper getObjectMapperForItems(Class<? extends StdSerializer<DependencyGraphDTO>> clazz) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			SimpleModule module = new SimpleModule();
-			module.addSerializer(DependencyGraphDTO.class, clazz.getDeclaredConstructor().newInstance());
-			mapper.registerModule(module);
-			return mapper;
-		} catch (Exception e) {
-			// instead of failing we just return a regular mapper.
-			// this might corrupt the app graph report,
-			//but the analysis shouldn't fail in  that case
-			return new ObjectMapper();
-		}
-	}	
+   private String getSha1Hash(FileModel fileModel)
+   {
+       return !fileModel.isDirectory() ? fileModel.getSHA1Hash() : DigestUtils.sha1Hex(fileModel.getFileName());
+   }
 }
