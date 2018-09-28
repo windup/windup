@@ -22,7 +22,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class TestReportUtil
 {
     private final static Logger LOG = Logger.getLogger(TestReportUtil.class.getName());
-    private final WebDriver driver;
+    protected WebDriver driver;
 
     public TestReportUtil()
     {

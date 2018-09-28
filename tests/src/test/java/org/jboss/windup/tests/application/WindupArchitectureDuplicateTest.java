@@ -21,9 +21,11 @@ import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateDependencyGraphReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
 import org.jboss.windup.testutil.html.CheckFailedException;
 import org.jboss.windup.testutil.html.TestApplicationListUtil;
+import org.jboss.windup.testutil.html.TestDependencyGraphReportUtil;
 import org.jboss.windup.testutil.html.TestDependencyReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
@@ -88,6 +90,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             validateReportIndex(context);
             validateMigrationIssues(context);
             validateJarDependencyReport(context);
+            validateJarDependencyGraphReport(context);
             validateOverviewReport(context);
         } finally
         {
@@ -208,6 +211,19 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
                     Arrays.asList(FOUND_PATHS_HIBERNATE_EHCACHE)));
     }
 
+    private void validateJarDependencyGraphReport(GraphContext graphContext)
+    {
+        Path dependencyReport = getDependencyGraphReportPath(graphContext);
+        Assert.assertNotNull(dependencyReport);
+        TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
+        dependencyGraphReportUtil.loadPage(dependencyReport);
+        Assert.assertEquals(18, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
+        Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("duplicate-ear-test-3.ear"));
+        Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("log4j-1.2.6.jar"));
+        Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("jee-example-services2.jar"));
+        Assert.assertEquals(34, dependencyGraphReportUtil.getNumberOfRelationsInTheGraph());
+    }
+
     private void validateMigrationIssues(GraphContext graphContext)
     {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
@@ -282,6 +298,19 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         {
             // test checks only Global Jar Dependencies report 
             if ("dependency_report_global.html".equals(report.getReportFilename()))
+                return getPathForReport(graphContext, report);
+        }
+        return null;
+    }
+
+    private Path getDependencyGraphReportPath(GraphContext graphContext)
+    {
+        Service<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
+                CreateDependencyGraphReportRuleProvider.TEMPLATE);
+        for (ApplicationReportModel report : reports)
+        {
+            if ("dependency_graph_report_global.html".equals(report.getReportFilename()))
                 return getPathForReport(graphContext, report);
         }
         return null;
