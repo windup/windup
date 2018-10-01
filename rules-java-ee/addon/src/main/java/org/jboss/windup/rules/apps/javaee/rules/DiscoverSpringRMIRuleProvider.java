@@ -17,6 +17,7 @@ import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -24,8 +25,18 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.util.logging.Logger;
+
+import static org.joox.JOOX.$;
 
 @RuleMetadata(phase = MigrationRulesPhase.class)
 public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
@@ -47,29 +58,46 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
                 .withId(getClass().getSimpleName() + "_SpringRMIRule");
     }
 
-    private AbstractIterationOperation<XmlFileModel> addSpringRMIBeanToGraph() {
-        return new AbstractIterationOperation<XmlFileModel>() {
+    private AbstractIterationOperation<XmlTypeReferenceModel> addSpringRMIBeanToGraph() {
+        return new AbstractIterationOperation<XmlTypeReferenceModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel typeReference)
+            public void perform(GraphRewrite event, EvaluationContext context, XmlTypeReferenceModel typeReference)
             {
-                extractMetadata(event, typeReference);
+                extractMetadata(event,  typeReference);
             }
         };
     }
 
-    private void extractMetadata(GraphRewrite event, XmlFileModel typeReference) {
+    private void extractMetadata(GraphRewrite event, XmlTypeReferenceModel typeReference) {
 
         LOG.info("Processing: " + typeReference);
-        // Make sure we create a source report for the interface source
-        typeReference.setGenerateSourceReport(true);
 
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
-        String className = typeReference.asDocument().getElementsByTagName("bean").item(0).getAttributes().getNamedItem("class").getNodeValue();
+        // Open the file
+        Document doc = ((XmlFileModel) typeReference.getFile()).asDocument();
+        //for (Element elm : $(doc).find("bean"))
 
-        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String expression = "//bean [@id=//bean[@class=\"org.springframework.remoting.rmi.RmiServiceExporter\"]/property[@name=\"service\"]/@ref]";
+        try {
+            NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+            for (int i=0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                String className = node.getAttributes().getNamedItem("class").getNodeValue();
+                LOG.info("ClassName = " + className);
 
-        RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getApplication(), javaClassService.getByName(className));
+                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+
+                JavaClassModel javaClassModel = javaClassService.getByName(className);
+                RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
+            }
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+
+
+
 
     }
 }
