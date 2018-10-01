@@ -28,7 +28,8 @@ import java.util.List;
 public class CreateDependencyGraphReportRuleProvider extends AbstractRuleProvider
 {
    public static final String REPORT_NAME = "Dependencies Graph";
-   public static final String REPORT_DESCRIPTION = "This graph shows the dependencies embedded within the analyzed application.";
+   public static final String SINGLE_APPLICATION_REPORT_DESCRIPTION = "This graph shows the dependencies embedded within the analyzed application";
+   public static final String GLOBAL_REPORT_DESCRIPTION = SINGLE_APPLICATION_REPORT_DESCRIPTION + "s";
    public static final String TEMPLATE = "/reports/templates/dependency_graph.ftl";
    private static final String REPORT_BASEFILENAME = "dependency_graph_report";
 
@@ -68,7 +69,6 @@ public class CreateDependencyGraphReportRuleProvider extends AbstractRuleProvide
          report.setTemplatePath(TEMPLATE);
          report.setTemplateType(TemplateType.FREEMARKER);
          report.setDisplayInApplicationReportIndex(Boolean.TRUE);
-         report.setDescription(REPORT_DESCRIPTION);
          return report;
       }
 
@@ -79,6 +79,7 @@ public class CreateDependencyGraphReportRuleProvider extends AbstractRuleProvide
          report.setReportName(REPORT_NAME);
          report.setProjectModel(projectModel);
          report.setMainApplicationReport(Boolean.FALSE);
+         report.setDescription(SINGLE_APPLICATION_REPORT_DESCRIPTION + ".");
          reportService.setUniqueFilename(report, REPORT_BASEFILENAME, "html");
       }
 
@@ -88,6 +89,7 @@ public class CreateDependencyGraphReportRuleProvider extends AbstractRuleProvide
          ApplicationReportModel report = createAppDependencyGraphReport(context);
          report.setReportName(REPORT_NAME);
          report.setDisplayInGlobalApplicationIndex(Boolean.TRUE);
+         report.setDescription(GLOBAL_REPORT_DESCRIPTION + ".");
          reportService.setUniqueFilename(report, REPORT_BASEFILENAME + "_global", "html");
       }
    }
