@@ -79,15 +79,25 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
         try {
+
             Document xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
             String className = xmlDoc.getFirstChild().getAttributes().getNamedItem("class").getNodeValue();
 
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
-            JavaClassModel javaClassModel = javaClassService.getByName(className);
-            rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
+            // TODO : get the interface from the BEAN[RMIExporter].serviceInterface
+            JavaClassModel interfaceJavaClassModel = javaClassService.getByName(className).getInterfaces().get(0);
+            interfaceJavaClassModel.getDecompiledSource().setGenerateSourceReport(true);
 
+            RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
+
+            // Create the "source code" report for the RMI Implementation.
+            if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
+                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName())) {
+                    source.setGenerateSourceReport(true);
+                }
+            }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
         }
