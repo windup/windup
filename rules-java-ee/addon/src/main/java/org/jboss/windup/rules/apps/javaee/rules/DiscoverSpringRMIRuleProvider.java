@@ -29,11 +29,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.logging.Logger;
 
 import static org.joox.JOOX.$;
@@ -70,34 +76,20 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
 
     private void extractMetadata(GraphRewrite event, XmlTypeReferenceModel typeReference) {
 
-        LOG.info("Processing: " + typeReference);
-
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
-        // Open the file
-        Document doc = ((XmlFileModel) typeReference.getFile()).asDocument();
-        //for (Element elm : $(doc).find("bean"))
-
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        String expression = "//bean [@id=//bean[@class=\"org.springframework.remoting.rmi.RmiServiceExporter\"]/property[@name=\"service\"]/@ref]";
         try {
-            NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
-            for (int i=0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                String className = node.getAttributes().getNamedItem("class").getNodeValue();
-                LOG.info("ClassName = " + className);
+            Document xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
-                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+            String className = xmlDoc.getFirstChild().getAttributes().getNamedItem("class").getNodeValue();
 
-                JavaClassModel javaClassModel = javaClassService.getByName(className);
-                RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
-            }
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+
+            JavaClassModel javaClassModel = javaClassService.getByName(className);
+            rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
+
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            LOG.severe(e.getMessage());
         }
-
-
-
-
     }
 }
