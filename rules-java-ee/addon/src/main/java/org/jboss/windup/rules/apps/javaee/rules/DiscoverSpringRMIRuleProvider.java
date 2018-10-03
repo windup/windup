@@ -34,7 +34,7 @@ import static org.joox.JOOX.$;
 
 @RuleMetadata(phase = MigrationRulesPhase.class)
 public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
-    private static final Logger LOG = Logging.get(DiscoverRmiRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverSpringRMIRuleProvider.class);
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext context) {
