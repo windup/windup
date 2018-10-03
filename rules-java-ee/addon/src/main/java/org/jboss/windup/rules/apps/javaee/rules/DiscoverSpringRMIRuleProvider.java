@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -8,17 +7,13 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
-import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
-import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -26,18 +21,11 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Logger;
@@ -57,7 +45,7 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
 
     private Rule getXMLBeanRule() {
         return RuleBuilder.define()
-                .when(XmlFile.matchesXpath("//bean [@id=//bean[@class=\"org.springframework.remoting.rmi.RmiServiceExporter\"]/property[@name=\"service\"]/@ref]"))
+                .when(XmlFile.matchesXpath("//bean[@class=\"org.springframework.remoting.rmi.RmiServiceExporter\"]"))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
@@ -79,22 +67,26 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
         try {
+            // we obtain the XML fragment with the RMI Exporter Bean
+            Document xmlDocSnippet = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
-            Document xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
+            String interfaceName = $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
+            String implementationBean = $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
 
-            String className = xmlDoc.getFirstChild().getAttributes().getNamedItem("class").getNodeValue();
+            // we obtain the Whole XML Document to find the implementation Bean
+            Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
+            String implementationClass = $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class") ;
 
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-
-            // TODO : get the interface from the BEAN[RMIExporter].serviceInterface
-            JavaClassModel interfaceJavaClassModel = javaClassService.getByName(className).getInterfaces().get(0);
+            JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
+            // Create the "source code" report for the Service Interface
             interfaceJavaClassModel.getDecompiledSource().setGenerateSourceReport(true);
 
             RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
 
             // Create the "source code" report for the RMI Implementation.
             if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
-                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName())) {
+                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(implementationClass)) {
                     source.setGenerateSourceReport(true);
                 }
             }
