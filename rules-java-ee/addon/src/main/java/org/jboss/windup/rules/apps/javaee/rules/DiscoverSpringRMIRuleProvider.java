@@ -80,7 +80,7 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
             JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
             // Create the "source code" report for the Service Interface
-            interfaceJavaClassModel.getDecompiledSource().setGenerateSourceReport(true);
+            interfaceJavaClassModel.getOriginalSource().setGenerateSourceReport(true);
 
             RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
 
@@ -95,15 +95,15 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
         }
     }
 
-    protected String getImplementationClass(String implementationBean, Document wholeDocument) {
+    private String getImplementationClass(String implementationBean, Document wholeDocument) {
         return $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class");
     }
 
-    protected String getImplementationBean(Document xmlDocSnippet) {
+    private String getImplementationBean(Document xmlDocSnippet) {
         return $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
     }
 
-    protected String getInterfaceName(Document xmlDocSnippet) {
+    private String getInterfaceName(Document xmlDocSnippet) {
         return $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
     }
 }

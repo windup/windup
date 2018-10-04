@@ -1,11 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import org.apache.commons.io.FileUtils;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -16,21 +12,17 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
-import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class DiscoverSpringRMIRuleProviderTest extends AbstractTest {
@@ -66,21 +58,14 @@ public class DiscoverSpringRMIRuleProviderTest extends AbstractTest {
 
 
             GraphService<RMIServiceModel> service = new GraphService<>(context, RMIServiceModel.class);
-
-//            boolean resultFound = false;
-//            for (RMIServiceModel model : service.findAllByProperty(DataSourceModel.NAME, "java:comp/env/HelloStatefulEJB_DataSource"))
-//            {
-//                if (model.getXa() != null && model.getXa())
-//                {
-//                    resultFound = true;
-//                }
-//            }
-
             Assert.assertTrue(service.findAll().size() > 0);
+            Assert.assertTrue("POJOImpl".equalsIgnoreCase(service.findAll().get(0).getImplementationClass().getClassName()));
+            Assert.assertTrue("POJOInterface".equalsIgnoreCase(service.findAll().get(0).getInterface().getClassName()));
         } finally
         {
             FileUtils.deleteDirectory(outputPath.toFile());
         }
 
     }
+
 }
