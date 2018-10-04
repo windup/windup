@@ -70,12 +70,12 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
             // we obtain the XML fragment with the RMI Exporter Bean
             Document xmlDocSnippet = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
-            String interfaceName = $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
-            String implementationBean = $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
+            String interfaceName = getInterfaceName(xmlDocSnippet);
+            String implementationBean = getImplementationBean(xmlDocSnippet);
 
             // we obtain the Whole XML Document to find the implementation Bean
             Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
-            String implementationClass = $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class") ;
+            String implementationClass = getImplementationClass(implementationBean, wholeDocument);
 
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
             JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
@@ -93,5 +93,17 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
         }
+    }
+
+    protected String getImplementationClass(String implementationBean, Document wholeDocument) {
+        return $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class");
+    }
+
+    protected String getImplementationBean(Document xmlDocSnippet) {
+        return $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
+    }
+
+    protected String getInterfaceName(Document xmlDocSnippet) {
+        return $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
     }
 }
