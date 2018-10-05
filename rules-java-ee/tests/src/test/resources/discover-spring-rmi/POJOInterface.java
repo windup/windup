@@ -1,4 +1,4 @@
-package com.mkyong.rmiserver;
+package com.redhat.rmiserver;
 
 public interface POJOInterface {
 	
