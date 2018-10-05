@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -10,7 +11,10 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
@@ -33,8 +37,8 @@ import java.util.logging.Logger;
 import static org.joox.JOOX.$;
 
 @RuleMetadata(phase = MigrationRulesPhase.class)
-public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
-    private static final Logger LOG = Logging.get(DiscoverSpringRMIRuleProvider.class);
+public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvider {
+    private static final Logger LOG = Logging.get(DiscoverSpringRMIHttpHessianRuleProvider.class);
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext context) {
@@ -45,11 +49,11 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
 
     private Rule getXMLBeanRule() {
         return RuleBuilder.define()
-                .when(XmlFile.matchesXpath("//bean[@class=\"org.springframework.remoting.rmi.RmiServiceExporter\"]"))
+                .when(XmlFile.matchesXpath("//bean[starts-with(@class,'org.springframework') and contains(@class,'.remoting')]"))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
-                .withId(getClass().getSimpleName() + "_SpringRMIRule");
+                .withId(getClass().getSimpleName() + "_SpringRMIHttpHessianRule");
     }
 
     private AbstractIterationOperation<XmlTypeReferenceModel> addSpringRMIBeanToGraph() {
@@ -64,34 +68,53 @@ public class DiscoverSpringRMIRuleProvider extends AbstractRuleProvider {
 
     private void extractMetadata(GraphRewrite event, XmlTypeReferenceModel typeReference) {
 
-        RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
         try {
-            // we obtain the XML fragment with the RMI Exporter Bean
+            // we obtain the XML fragment with the Spring Exporter Bean
             Document xmlDocSnippet = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
             String interfaceName = getInterfaceName(xmlDocSnippet);
             String implementationBean = getImplementationBean(xmlDocSnippet);
 
-            // we obtain the Whole XML Document to find the implementation Bean
-            Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
-            String implementationClass = getImplementationClass(implementationBean, wholeDocument);
+            if (!StringUtils.isEmpty(interfaceName) && (!StringUtils.isEmpty(implementationBean))) {
+                // we obtain the Whole XML Document to find the implementation Bean
+                Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
+                String implementationClass = getImplementationClass(implementationBean, wholeDocument);
 
-            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-            JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
-            // Create the "source code" report for the Service Interface
-            interfaceJavaClassModel.getOriginalSource().setGenerateSourceReport(true);
+                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
+                JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
 
-            RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
+                // Create the "source code" report for the Service Interface
+                AbstractJavaSourceModel sourceCode = (interfaceJavaClassModel.getOriginalSource() != null) ? interfaceJavaClassModel.getOriginalSource() : interfaceJavaClassModel.getDecompiledSource();
+                sourceCode.setGenerateSourceReport(true);
 
-            // Create the "source code" report for the RMI Implementation.
-            if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
-                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(implementationClass)) {
-                    source.setGenerateSourceReport(true);
-                }
+                addClassToRMISection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+                addClassToJaxWSSection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
+        }
+    }
+
+    private void addClassToRMISection(GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationClass, JavaClassModel interfaceJavaClassModel) {
+        RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
+        RMIServiceModel serviceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
+
+        // Create the "source code" report for the Implementation.
+        if (serviceModel != null && serviceModel.getImplementationClass() != null) {
+            implementationClass.getDecompiledSource().setGenerateSourceReport(true);
+        }
+    }
+
+    private void addClassToJaxWSSection(GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationClass, JavaClassModel interfaceJavaClassModel) {
+        JaxWSWebServiceModelService jaxwsService = new JaxWSWebServiceModelService(event.getGraphContext());
+        JaxWSWebServiceModel serviceModel = jaxwsService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, implementationClass);
+
+
+        // Create the "source code" report for the Implementation.
+        if (serviceModel != null && serviceModel.getImplementationClass() != null) {
+            implementationClass.getDecompiledSource().setGenerateSourceReport(true);
         }
     }
 

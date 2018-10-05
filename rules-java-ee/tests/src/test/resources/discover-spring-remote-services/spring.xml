@@ -1,0 +1,24 @@
+<root>
+
+    <bean id="accountService" class="com.redhat.rmiserver.POJOImpl">
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="AccountServiceRMI"/>
+        <property name="service" ref="accountService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="AccountServiceHTTPInvoker"/>
+        <property name="service" ref="accountService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="serviceName" value="AccountServiceHessian"/>
+        <property name="service" ref="accountService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+    </bean>
+
+</root>

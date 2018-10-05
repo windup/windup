@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @RunWith(Arquillian.class)
-public class DiscoverSpringRMIRuleProviderTest extends AbstractTest {
+public class DiscoverSpringRMIHttpHessianRuleProviderTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 
@@ -33,8 +33,8 @@ public class DiscoverSpringRMIRuleProviderTest extends AbstractTest {
     private GraphContextFactory factory;
 
     @Test
-    public void testSpringRMIServiceDiscovery() throws IOException {
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "DiscoverSpringRMITest_"
+    public void testSpringRMIHttpHessianServiceDiscovery() throws IOException {
+        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "DiscoverSpringRMIHttpHessianTest_"
                 + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
@@ -44,7 +44,7 @@ public class DiscoverSpringRMIRuleProviderTest extends AbstractTest {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
-            inputPath.setFilePath("src/test/resources/discover-spring-rmi");
+            inputPath.setFilePath("src/test/resources/discover-spring-remote-services");
 
             pm.addFileModel(inputPath);
             pm.setRootFileModel(inputPath);
