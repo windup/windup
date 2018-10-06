@@ -73,6 +73,7 @@ public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvid
             // we obtain the XML fragment with the Spring Exporter Bean
             Document xmlDocSnippet = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(typeReference.getSourceSnippit())));
 
+            String exporterClass = getExporterClass(xmlDocSnippet);
             String interfaceName = getInterfaceName(xmlDocSnippet);
             String implementationBean = getImplementationBean(xmlDocSnippet);
 
@@ -89,13 +90,21 @@ public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvid
                 AbstractJavaSourceModel sourceCode = (interfaceJavaClassModel.getOriginalSource() != null) ? interfaceJavaClassModel.getOriginalSource() : interfaceJavaClassModel.getDecompiledSource();
                 sourceCode.setGenerateSourceReport(true);
 
-                addClassToRMISection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
-                addClassToJaxWSSection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+                addClassToSection(exporterClass, event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
         }
     }
+
+    private void addClassToSection(String exporterClass, GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationJavaClassModel, JavaClassModel interfaceJavaClassModel) {
+        if (exporterClass.contains("RmiServiceExporter")) {
+            addClassToRMISection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
+            addClassToJaxWSSection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+        }
+    }
+
 
     private void addClassToRMISection(GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationClass, JavaClassModel interfaceJavaClassModel) {
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
@@ -129,4 +138,9 @@ public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvid
     private String getInterfaceName(Document xmlDocSnippet) {
         return $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
     }
+
+    private String getExporterClass(Document xmlDocSnippet) {
+        return $(xmlDocSnippet).first().attr("class");
+    }
+
 }
