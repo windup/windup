@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @RunWith(Arquillian.class)
-public class DiscoverSpringRMIHttpHessianRuleProviderTest extends AbstractTest {
+public class DiscoverSpringXMLRemoteServicesRuleProviderTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 

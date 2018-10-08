@@ -13,7 +13,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
@@ -36,9 +35,13 @@ import java.util.logging.Logger;
 
 import static org.joox.JOOX.$;
 
+/*
+Rule to discover all Spring Remote services : RMI, Hessian, HTTP Invoker , JMS, AMQP, JaxWS that can be discovered
+using the ".remoting" package pattern in the class for the exporter, in XML files
+ */
 @RuleMetadata(phase = MigrationRulesPhase.class)
-public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvider {
-    private static final Logger LOG = Logging.get(DiscoverSpringRMIHttpHessianRuleProvider.class);
+public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRuleProvider {
+    private static final Logger LOG = Logging.get(DiscoverSpringXMLRemoteServicesRuleProvider.class);
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext context) {
@@ -53,7 +56,7 @@ public class DiscoverSpringRMIHttpHessianRuleProvider extends AbstractRuleProvid
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
-                .withId(getClass().getSimpleName() + "_SpringRMIHttpHessianRule");
+                .withId(getClass().getSimpleName() + "_SpringXMLRemoteServicesRule");
     }
 
     private AbstractIterationOperation<XmlTypeReferenceModel> addSpringRMIBeanToGraph() {
