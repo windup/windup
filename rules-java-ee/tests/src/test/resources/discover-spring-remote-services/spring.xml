@@ -1,24 +1,56 @@
 <root>
 
-    <bean id="accountService" class="com.redhat.rmiserver.POJOImpl">
+    <bean id="rmiService" class="com.redhat.rmiserver.RMIPOJOImpl">
+    </bean>
+
+    <bean id="httpService" class="com.redhat.rmiserver.HTTPPOJOImpl">
+    </bean>
+
+    <bean id="hessianService" class="com.redhat.rmiserver.HessianPOJOImpl">
+    </bean>
+
+    <bean id="jaxwsService" class="com.redhat.rmiserver.JaxWSPOJOImpl">
+    </bean>
+
+    <bean id="jmsService" class="com.redhat.rmiserver.JMSPOJOImpl">
+    </bean>
+
+    <bean id="amqpService" class="com.redhat.rmiserver.AMQPPOJOImpl">
     </bean>
 
     <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-        <property name="serviceName" value="AccountServiceRMI"/>
-        <property name="service" ref="accountService"/>
-        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+        <property name="serviceName" value="rmiService"/>
+        <property name="service" ref="rmiService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.RMIPOJOInterface"/>
     </bean>
 
-    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-        <property name="serviceName" value="AccountServiceHTTPInvoker"/>
-        <property name="service" ref="accountService"/>
-        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+    <bean class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="serviceName" value="httpService"/>
+        <property name="service" ref="httpService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.HTTPPOJOInterface"/>
     </bean>
 
     <bean class="org.springframework.remoting.caucho.HessianServiceExporter">
-        <property name="serviceName" value="AccountServiceHessian"/>
-        <property name="service" ref="accountService"/>
-        <property name="serviceInterface" value="com.redhat.rmiserver.POJOInterface"/>
+        <property name="serviceName" value="hessianService"/>
+        <property name="service" ref="hessianService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.HessianPOJOInterface"/>
     </bean>
 
+    <bean class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceName" value="jaxwsService"/>
+        <property name="service" ref="jaxwsService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.JaxWSPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.jms.remoting.JmsInvokerServiceExporter">
+        <property name="serviceName" value="jmsService"/>
+        <property name="service" ref="jmsService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.JMSPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter">
+        <property name="serviceName" value="amqpService"/>
+        <property name="service" ref="amqpService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.AMQPPOJOInterface"/>
+    </bean>
 </root>

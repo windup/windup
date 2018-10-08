@@ -90,8 +90,11 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
 
                 // Create the "source code" report for the Service Interface
-                AbstractJavaSourceModel sourceCode = (interfaceJavaClassModel.getOriginalSource() != null) ? interfaceJavaClassModel.getOriginalSource() : interfaceJavaClassModel.getDecompiledSource();
-                sourceCode.setGenerateSourceReport(true);
+                if (interfaceJavaClassModel.getOriginalSource() != null) {
+                    interfaceJavaClassModel.getOriginalSource().setGenerateSourceReport(true);
+                } else {
+                    interfaceJavaClassModel.getDecompiledSource().setGenerateSourceReport(true);
+                }
 
                 addClassToSection(exporterClass, event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
             }

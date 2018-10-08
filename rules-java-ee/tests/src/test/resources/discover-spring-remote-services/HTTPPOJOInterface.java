@@ -1,6 +1,6 @@
 package com.redhat.rmiserver;
 
-public interface POJOInterface {
+public interface HTTPPOJOInterface {
 	
 	
 	 void implementedMethod() ;
