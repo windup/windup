@@ -1,9 +1,8 @@
-package com.redhat.rmiserver;
+package com.redhat.rmiserver.impl;
 
-import com.redhat.rmiserver.*;
-import java.lang.Runnable;
+import com.redhat.rmiserver.intf.JaxWSPOJOInterface;
 
-public class JaxWSPOJOImpl implements Runnable , JaxWSPOJOInterface {
+public class JaxWSPOJOImpl implements JaxWSPOJOInterface {
 	
 
 	public void implementedMethod() {

@@ -1,10 +1,9 @@
-package com.redhat.rmiserver;
+package com.redhat.rmiserver.impl;
 
-import com.redhat.rmiserver.*;
-import java.lang.Runnable;
+import com.redhat.rmiserver.intf.AMQPPOJOInterface;
 
-public class AMQPPOJOImpl implements Runnable , AMQPPOJOInterface {
-	
+public class AMQPPOJOImpl implements AMQPPOJOInterface {
+
 
 	public void implementedMethod() {
         }

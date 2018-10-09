@@ -59,14 +59,14 @@ public class DiscoverSpringXMLRemoteServicesRuleProviderTest extends AbstractTes
 
 
             GraphService<RMIServiceModel> rmiService = new GraphService<>(context, RMIServiceModel.class);
-            Assert.assertTrue(rmiService.findAll().size() > 0);
+            Assert.assertTrue(rmiService.findAll().size() == 1);
             Assert.assertTrue("RMIPOJOImpl".equalsIgnoreCase(rmiService.findAll().get(0).getImplementationClass().getClassName()));
             Assert.assertTrue("RMIPOJOInterface".equalsIgnoreCase(rmiService.findAll().get(0).getInterface().getClassName()));
 
             GraphService<JaxWSWebServiceModel> jaxwsService = new GraphService<>(context, JaxWSWebServiceModel.class);
-            Assert.assertTrue(jaxwsService.findAll().size() > 0);
-            Assert.assertTrue("JaxWSPOJOImpl".equalsIgnoreCase(jaxwsService.findAll().get(0).getImplementationClass().getClassName()));
-            Assert.assertTrue("JaxWSPOJOInterface".equalsIgnoreCase(jaxwsService.findAll().get(0).getInterface().getClassName()));
+            Assert.assertTrue(jaxwsService.findAll().size() == 5);
+            Assert.assertTrue(jaxwsService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOImpl".equalsIgnoreCase(jaxWSWebServiceModel.getImplementationClass().getClassName())));
+            Assert.assertTrue(jaxwsService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOInterface".equalsIgnoreCase(jaxWSWebServiceModel.getInterface().getClassName())));
 
         } finally
         {

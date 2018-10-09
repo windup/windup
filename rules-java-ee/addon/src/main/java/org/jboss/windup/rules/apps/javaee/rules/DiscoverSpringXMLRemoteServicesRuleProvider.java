@@ -52,7 +52,7 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
 
     private Rule getXMLBeanRule() {
         return RuleBuilder.define()
-                .when(XmlFile.matchesXpath("//bean[starts-with(@class,'org.springframework') and contains(@class,'.remoting')]"))
+                .when(XmlFile.matchesXpath("//s:bean[starts-with(@class,'org.springframework') and contains(@class,'.remoting')]").namespace("s", "http://www.springframework.org/schema/beans"))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
@@ -106,7 +106,7 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
     private void addClassToSection(String exporterClass, GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationJavaClassModel, JavaClassModel interfaceJavaClassModel) {
         if (exporterClass.contains("RmiServiceExporter")) {
             addClassToRMISection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
-        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
+        } else { //if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
             addClassToJaxWSSection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
         }
     }

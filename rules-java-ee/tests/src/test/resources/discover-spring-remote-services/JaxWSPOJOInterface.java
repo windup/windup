@@ -1,4 +1,4 @@
-package com.redhat.rmiserver;
+package com.redhat.rmiserver.intf;
 
 public interface JaxWSPOJOInterface {
 	

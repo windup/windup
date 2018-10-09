@@ -1,9 +1,8 @@
-package com.redhat.rmiserver;
+package com.redhat.rmiserver.impl;
 
-import com.redhat.rmiserver.*;
-import java.lang.Runnable;
+import com.redhat.rmiserver.intf.JMSPOJOInterface;
 
-public class JMSPOJOImpl implements Runnable , JMSPOJOInterface {
+public class JMSPOJOImpl implements JMSPOJOInterface {
 	
 
 	public void implementedMethod() {

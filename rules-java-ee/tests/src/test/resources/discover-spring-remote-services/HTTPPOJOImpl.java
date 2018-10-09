@@ -1,9 +1,8 @@
-package com.redhat.rmiserver;
+package com.redhat.rmiserver.impl;
 
-import com.redhat.rmiserver.*;
-import java.lang.Runnable;
+import com.redhat.rmiserver.intf.HTTPPOJOInterface;
 
-public class HTTPPOJOImpl implements Runnable , HTTPPOJOInterface {
+public class HTTPPOJOImpl implements  HTTPPOJOInterface {
 	
 
 	public void implementedMethod() {
