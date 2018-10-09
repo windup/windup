@@ -8,7 +8,6 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
@@ -90,11 +89,7 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
 
                 // Create the "source code" report for the Service Interface
-                if (interfaceJavaClassModel.getOriginalSource() != null) {
-                    interfaceJavaClassModel.getOriginalSource().setGenerateSourceReport(true);
-                } else {
-                    interfaceJavaClassModel.getDecompiledSource().setGenerateSourceReport(true);
-                }
+                enableSourceReport(interfaceJavaClassModel);
 
                 addClassToSection(exporterClass, event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
             }
@@ -118,11 +113,15 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
 
         // Create the "source code" report for the Implementation.
         if (serviceModel != null ) {
-            if (implementationClass.getOriginalSource() != null) {
-                implementationClass.getOriginalSource().setGenerateSourceReport(true);
-            } else {
-                implementationClass.getDecompiledSource().setGenerateSourceReport(true);
-            }
+            enableSourceReport(implementationClass);
+        }
+    }
+
+    private void enableSourceReport(JavaClassModel implementationClass) {
+        if (implementationClass.getOriginalSource() != null) {
+            implementationClass.getOriginalSource().setGenerateSourceReport(true);
+        } else {
+            implementationClass.getDecompiledSource().setGenerateSourceReport(true);
         }
     }
 
@@ -133,11 +132,7 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
 
         // Create the "source code" report for the Implementation.
         if (serviceModel != null) {
-            if (implementationClass.getOriginalSource() != null) {
-                implementationClass.getOriginalSource().setGenerateSourceReport(true);
-            } else {
-                implementationClass.getDecompiledSource().setGenerateSourceReport(true);
-            }
+            enableSourceReport(implementationClass);
         }
     }
 
