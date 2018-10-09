@@ -117,8 +117,12 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
         RMIServiceModel serviceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
 
         // Create the "source code" report for the Implementation.
-        if (serviceModel != null && serviceModel.getImplementationClass() != null) {
-            implementationClass.getDecompiledSource().setGenerateSourceReport(true);
+        if (serviceModel != null ) {
+            if (implementationClass.getOriginalSource() != null) {
+                implementationClass.getOriginalSource().setGenerateSourceReport(true);
+            } else {
+                implementationClass.getDecompiledSource().setGenerateSourceReport(true);
+            }
         }
     }
 
