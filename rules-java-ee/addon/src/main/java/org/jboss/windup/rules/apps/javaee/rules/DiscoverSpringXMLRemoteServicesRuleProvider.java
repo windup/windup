@@ -9,21 +9,9 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.model.TechnologyTagModel;
-import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
-import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
-import org.jboss.windup.rules.apps.javaee.TechnologyIdentifiedHandler;
-import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsService;
-import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
-import org.jboss.windup.rules.apps.javaee.service.EjbRemoteServiceModelService;
-import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
-import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
@@ -37,7 +25,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -73,8 +60,7 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
     private AbstractIterationOperation<XmlTypeReferenceModel> addSpringRMIBeanToGraph() {
         return new AbstractIterationOperation<XmlTypeReferenceModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, XmlTypeReferenceModel typeReference)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context, XmlTypeReferenceModel typeReference) {
                 extractMetadata(event,  typeReference);
             }
         };
