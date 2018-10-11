@@ -26,11 +26,8 @@ import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.rules.apps.javaee.model.EjbRemoteServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
-import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.*;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -51,7 +48,7 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.fromType(RemoteServiceModel.class).or(Query.fromType(TechnologyTagModel.class)))
+        .when(Query.fromType(RemoteServiceModel.class))
         .perform(new GraphOperation()
         {
             @Override
@@ -80,12 +77,15 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     private void createReport(GraphContext context, ProjectModel projectModel)
     {
         GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
-        GraphService<TechnologyTagModel> technologyTags = new GraphService<>(context, TechnologyTagModel.class);
 
-        List<JaxRSWebServiceModel> jaxRsList = new ArrayList<>();
-        List<JaxWSWebServiceModel> jaxWsList = new ArrayList<>();
-        List<EjbRemoteServiceModel> ejbRemoteList = new ArrayList<>();
-        List<RMIServiceModel> rmiList = new ArrayList<>();
+        List<WebServiceModel> jaxRsList = new ArrayList<>();
+        List<WebServiceModel> jaxWsList = new ArrayList<>();
+        List<RemoteServiceModel> ejbRemoteList = new ArrayList<>();
+        List<RemoteServiceModel> rmiList = new ArrayList<>();
+        List<RemoteServiceModel> amqpList = new ArrayList<>();
+        List<RemoteServiceModel> jmsList = new ArrayList<>();
+        List<RemoteServiceModel> hessianList = new ArrayList<>();
+        List<RemoteServiceModel> httpinvokerList = new ArrayList<>();
 
         for (RemoteServiceModel remoteServiceModel : remoteServices.findAll())
         {
@@ -102,18 +102,31 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
             }
             else if (remoteServiceModel instanceof EjbRemoteServiceModel)
             {
-                ejbRemoteList.add((EjbRemoteServiceModel) remoteServiceModel);
+                ejbRemoteList.add( remoteServiceModel);
             }
             else if (remoteServiceModel instanceof RMIServiceModel)
             {
-                rmiList.add((RMIServiceModel) remoteServiceModel);
-            }
-        }
+                rmiList.add(remoteServiceModel);
 
-        for (TechnologyTagModel technologyTagModel : technologyTags.findAll()) {
-            String tagName = technologyTagModel.getName();
-            if (tagName.contains("remoteservice-")) {
-                System.out.println("hola :" + tagName);
+            } else if (remoteServiceModel instanceof SpringRemoteServiceModel) {
+                String packageName = ((SpringRemoteServiceModel) remoteServiceModel).getSpringExporterInterface().getPackageName();
+                if (packageName.toLowerCase().contains(".rmi")) {
+                    rmiList.add(remoteServiceModel);
+                } else if (packageName.toLowerCase().contains(".amqp")) {
+                    amqpList.add(remoteServiceModel);
+
+                } else if (packageName.toLowerCase().contains(".jms")) {
+                    jmsList.add(remoteServiceModel);
+
+                } else if (packageName.toLowerCase().contains(".caucho")) {
+                    hessianList.add(remoteServiceModel);
+
+                } else if (packageName.toLowerCase().contains(".httpinvoker")) {
+                    httpinvokerList.add(remoteServiceModel);
+
+                } else if (packageName.toLowerCase().contains(".jaxws")) {
+                    rmiList.add(remoteServiceModel);
+                }
             }
         }
 
@@ -123,11 +136,15 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = createReportHeader(context, projectModel);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
-        Map<String, WindupVertexFrame> data = new HashMap<>(4);
+        Map<String, WindupVertexFrame> data = new HashMap<>(8);
         data.put("jaxRsServices", listService.create().addAll(jaxRsList));
         data.put("jaxWsServices", listService.create().addAll(jaxWsList));
         data.put("ejbRemoteServices", listService.create().addAll(ejbRemoteList));
         data.put("rmiServices", listService.create().addAll(rmiList));
+        data.put("amqpServices", listService.create().addAll(amqpList));
+        data.put("jmsServices", listService.create().addAll(jmsList));
+        data.put("hessianServices", listService.create().addAll(hessianList));
+        data.put("httpinvokerServices", listService.create().addAll(httpinvokerList));
         applicationReportModel.setRelatedResource(data);
 
         ReportService reportService = new ReportService(context);

@@ -10,16 +10,21 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
 import org.jboss.windup.rules.apps.javaee.TechnologyIdentifiedHandler;
 import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsService;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.service.EjbRemoteServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
+import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.util.Logging;
@@ -32,6 +37,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -93,16 +99,18 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
                 JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
+                JavaClassModel exporterInterfaceClassModel = javaClassService.getByName(exporterClass);
 
                 // Create the "source code" report for the Service Interface
                 enableSourceReport(interfaceJavaClassModel);
 
-                // Add the name to the Technological Tag Model, this will be used for Remote Services Report
+                // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                 technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), getTagName(exporterClass), TechnologyTagLevel.INFORMATIONAL);
 
-                // Add the Tags for the Technology Report
-                TechnologyIdentified.named("Spring RMI").withTag("Embedded").withTag("Connect").withTag("Other");
+                // Feed the Remote Services Report
+                SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
+                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, exporterInterfaceClassModel);
 
                 // Create the "source code" report for the Implementation.
                 enableSourceReport(implementationJavaClassModel);
@@ -114,10 +122,18 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
 
     private String getTagName(String exporterClass) {
         if (exporterClass.contains("RmiServiceExporter")) {
-            return "remoteservice-rmi";
-        } else {
-            return "remoteservice-pinchiflai";
-        }
+            return "spring-rmi";
+        } else if (exporterClass.contains("HttpInvokerServiceExporter")) {
+            return "spring-httpinvoker";
+        } else if (exporterClass.contains("HessianServiceExporter")) {
+            return "spring-hessian";
+        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
+            return "spring-jaxws";
+        } else if (exporterClass.contains("JmsInvokerServiceExporter")) {
+            return "spring-jms";
+        } else if (exporterClass.contains("AmqpInvokerServiceExporter")) {
+            return "spring-amqp";
+        } else return "spring-undefined";
     }
 
 
