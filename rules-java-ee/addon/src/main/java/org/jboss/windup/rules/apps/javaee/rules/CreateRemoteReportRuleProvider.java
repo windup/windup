@@ -9,6 +9,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -20,6 +21,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -42,12 +44,14 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/remote.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all remote services references that were found within the application.";
 
+    private ApplicationReportModel applicationReportModel;
+
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.fromType(RemoteServiceModel.class))
+        .when(Query.fromType(RemoteServiceModel.class).or(Query.fromType(TechnologyTagModel.class)))
         .perform(new GraphOperation()
         {
             @Override
@@ -76,6 +80,7 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     private void createReport(GraphContext context, ProjectModel projectModel)
     {
         GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
+        GraphService<TechnologyTagModel> technologyTags = new GraphService<>(context, TechnologyTagModel.class);
 
         List<JaxRSWebServiceModel> jaxRsList = new ArrayList<>();
         List<JaxWSWebServiceModel> jaxWsList = new ArrayList<>();
@@ -105,19 +110,17 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
             }
         }
 
+        for (TechnologyTagModel technologyTagModel : technologyTags.findAll()) {
+            String tagName = technologyTagModel.getName();
+            if (tagName.contains("remoteservice-")) {
+                System.out.println("hola :" + tagName);
+            }
+        }
+
         if (jaxRsList.isEmpty() && jaxWsList.isEmpty() && ejbRemoteList.isEmpty() && rmiList.isEmpty())
             return;
 
-        ApplicationReportService applicationReportService = new ApplicationReportService(context);
-        ApplicationReportModel applicationReportModel = applicationReportService.create();
-        applicationReportModel.setReportPriority(300);
-        applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Remote Services");
-        applicationReportModel.setDescription(REPORT_DESCRIPTION);
-        applicationReportModel.setReportIconClass("glyphicon service-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
-        applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
+        ApplicationReportModel applicationReportModel = createReportHeader(context, projectModel);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> data = new HashMap<>(4);
@@ -129,5 +132,21 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
 
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, "remotereport_" + projectModel.getName(), "html");
+    }
+
+    private ApplicationReportModel createReportHeader(GraphContext context, ProjectModel projectModel) {
+        if (applicationReportModel == null) {
+            ApplicationReportService applicationReportService = new ApplicationReportService(context);
+            applicationReportModel = applicationReportService.create();
+            applicationReportModel.setReportPriority(300);
+            applicationReportModel.setDisplayInApplicationReportIndex(true);
+            applicationReportModel.setReportName("Remote Services");
+            applicationReportModel.setDescription(REPORT_DESCRIPTION);
+            applicationReportModel.setReportIconClass("glyphicon service-nav-logo");
+            applicationReportModel.setProjectModel(projectModel);
+            applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
+            applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
+        }
+        return applicationReportModel;
     }
 }

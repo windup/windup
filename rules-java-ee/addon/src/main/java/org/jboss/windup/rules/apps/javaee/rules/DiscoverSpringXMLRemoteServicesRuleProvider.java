@@ -8,8 +8,14 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
+import org.jboss.windup.rules.apps.javaee.TechnologyIdentifiedHandler;
+import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsService;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
@@ -91,48 +97,35 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 // Create the "source code" report for the Service Interface
                 enableSourceReport(interfaceJavaClassModel);
 
-                addClassToSection(exporterClass, event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+                // Add the name to the Technological Tag Model, this will be used for Remote Services Report
+                TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+                technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), getTagName(exporterClass), TechnologyTagLevel.INFORMATIONAL);
+
+                // Add the Tags for the Technology Report
+                TechnologyIdentified.named("Spring RMI").withTag("Embedded").withTag("Connect").withTag("Other");
+
+                // Create the "source code" report for the Implementation.
+                enableSourceReport(implementationJavaClassModel);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
         }
     }
 
-    private void addClassToSection(String exporterClass, GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationJavaClassModel, JavaClassModel interfaceJavaClassModel) {
+    private String getTagName(String exporterClass) {
         if (exporterClass.contains("RmiServiceExporter")) {
-            addClassToRMISection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
-        } else { //if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
-            addClassToJaxWSSection(event, typeReference, implementationJavaClassModel, interfaceJavaClassModel);
+            return "remoteservice-rmi";
+        } else {
+            return "remoteservice-pinchiflai";
         }
     }
 
-
-    private void addClassToRMISection(GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationClass, JavaClassModel interfaceJavaClassModel) {
-        RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
-        RMIServiceModel serviceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel);
-
-        // Create the "source code" report for the Implementation.
-        if (serviceModel != null ) {
-            enableSourceReport(implementationClass);
-        }
-    }
 
     private void enableSourceReport(JavaClassModel implementationClass) {
         if (implementationClass.getOriginalSource() != null) {
             implementationClass.getOriginalSource().setGenerateSourceReport(true);
         } else {
             implementationClass.getDecompiledSource().setGenerateSourceReport(true);
-        }
-    }
-
-    private void addClassToJaxWSSection(GraphRewrite event, XmlTypeReferenceModel typeReference, JavaClassModel implementationClass, JavaClassModel interfaceJavaClassModel) {
-        JaxWSWebServiceModelService jaxwsService = new JaxWSWebServiceModelService(event.getGraphContext());
-        JaxWSWebServiceModel serviceModel = jaxwsService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, implementationClass);
-
-
-        // Create the "source code" report for the Implementation.
-        if (serviceModel != null) {
-            enableSourceReport(implementationClass);
         }
     }
 
