@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.reporting</groupId>
         <artifactId>windup-reporting-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.2.0.Alpha1</version>
     </parent>
 
     <artifactId>windup-reporting-tests</artifactId>
