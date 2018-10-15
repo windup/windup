@@ -12,6 +12,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
+import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.junit.Assert;
@@ -58,15 +59,13 @@ public class DiscoverSpringXMLRemoteServicesRuleProviderTest extends AbstractTes
             processor.execute(windupConfiguration);
 
 
-            GraphService<RMIServiceModel> rmiService = new GraphService<>(context, RMIServiceModel.class);
-            Assert.assertTrue(rmiService.findAll().size() == 1);
-            Assert.assertTrue("RMIPOJOImpl".equalsIgnoreCase(rmiService.findAll().get(0).getImplementationClass().getClassName()));
-            Assert.assertTrue("RMIPOJOInterface".equalsIgnoreCase(rmiService.findAll().get(0).getInterface().getClassName()));
+            GraphService<SpringRemoteServiceModel> rmiService = new GraphService<>(context, SpringRemoteServiceModel.class);
+            Assert.assertTrue(rmiService.findAll().size() == 6);
+            Assert.assertTrue(rmiService.findAll().stream().anyMatch(springRemoteServiceModel -> "RMIPOJOImpl".equalsIgnoreCase(springRemoteServiceModel.getImplementationClass().getClassName())));
+            Assert.assertTrue(rmiService.findAll().stream().anyMatch(springRemoteServiceModel -> "RMIPOJOInterface".equalsIgnoreCase(springRemoteServiceModel.getInterface().getClassName())));
 
-            GraphService<JaxWSWebServiceModel> jaxwsService = new GraphService<>(context, JaxWSWebServiceModel.class);
-            Assert.assertTrue(jaxwsService.findAll().size() == 5);
-            Assert.assertTrue(jaxwsService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOImpl".equalsIgnoreCase(jaxWSWebServiceModel.getImplementationClass().getClassName())));
-            Assert.assertTrue(jaxwsService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOInterface".equalsIgnoreCase(jaxWSWebServiceModel.getInterface().getClassName())));
+            Assert.assertTrue(rmiService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOImpl".equalsIgnoreCase(jaxWSWebServiceModel.getImplementationClass().getClassName())));
+            Assert.assertTrue(rmiService.findAll().stream().anyMatch(jaxWSWebServiceModel -> "JaxWSPOJOInterface".equalsIgnoreCase(jaxWSWebServiceModel.getInterface().getClassName())));
 
         } finally
         {

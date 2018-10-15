@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
@@ -90,11 +91,12 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 // Create the "source code" report for the Service Interface
                 enableSourceReport(interfaceJavaClassModel);
 
+                String tagName = getTagName(exporterClass);
+
                 // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), getTagName(exporterClass), TechnologyTagLevel.INFORMATIONAL);
+                technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
 
-                // Feed the Remote Services Report
                 SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
                 springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, exporterInterfaceClassModel);
 
