@@ -28,6 +28,7 @@ import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.*;
+import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -125,7 +126,8 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
                     httpinvokerList.add(remoteServiceModel);
 
                 } else if (packageName.toLowerCase().contains(".jaxws")) {
-                    rmiList.add(remoteServiceModel);
+                    WebServiceModel webServiceModel = new JaxWSWebServiceModelService(context).getOrCreate(projectModel, ((SpringRemoteServiceModel) remoteServiceModel).getInterface(), ((SpringRemoteServiceModel) remoteServiceModel).getImplementationClass());
+                    jaxWsList.add(webServiceModel);
                 }
             }
         }
