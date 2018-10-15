@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.syncleus.ferma.DefaultClassInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -150,7 +149,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
             addAll(context, reportModel, traversal, sha1ToGroup);
         }
 
-        reportModel.setDisplayInGlobalApplicationIndex(true);
+        reportModel.setDisplayInGlobalApplicationIndex(Boolean.TRUE);
         reportService.setUniqueFilename(reportModel, "dependency_report_global", "html");
     }
 
@@ -172,7 +171,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
                     .service(DependenciesReportModel.class)
                     .addTypeToModel(service.create());
 
-        applicationReportModel.setDisplayInApplicationReportIndex(true);
+        applicationReportModel.setDisplayInApplicationReportIndex(Boolean.TRUE);
         applicationReportModel.setReportPriority(120);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);

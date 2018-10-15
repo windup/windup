@@ -1,0 +1,112 @@
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('../fonts/fontawesome-webfont.woff') format('woff');
+}
+@font-face {
+    font-family: 'PatternFlyIcons-webfont';
+    src: url('../fonts/PatternFlyIcons-webfont.woff') format('woff');
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px;
+    font-family: sans-serif;
+}
+
+.controls {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    background-color: lightgray;
+    padding: 0 10px;
+}
+
+.display {
+    position: absolute;
+    left: 60px;
+    right: 60px;
+    padding: 20px 0px 10px;
+}
+
+#selected {
+    float: left;
+    display: block;
+}
+
+.legend {
+    font-weight: bold;
+}
+
+kubernetes-topology-graph {
+    display: block;
+    user-select: none;
+    border: 0px solid lightgray;
+    position: fixed;
+    height: 80%;
+    width: 90%;
+}
+
+.app-topology g {
+    font-family: PatternFlyIcons-webfont;
+    font-size: 18px;
+    text-anchor: middle;
+    cursor: pointer;
+}
+
+.app-topology g text {
+    stroke: none;
+    stroke-width: 0px;
+}
+
+.app-topology g.weak use {
+    opacity: .6;
+}
+
+.app-topology g.fixed use {
+    stroke-width: 2px;
+}
+
+.app-topology g.selected use,
+.app-topology g.selected circle {
+    stroke-width: 4px;
+}
+
+.app-topology line {
+    stroke: #aaa;
+    stroke-width: 1;
+}
+
+.app-topology line.ExternalJarEar,
+.app-topology line.ExternalJarWar,
+.app-topology line.ExternalJarWarApp {
+    stroke-linecap: round;
+}
+
+kubernetes-topology-icon {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+}
+
+kubernetes-topology-icon svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+kubernetes-topology-icon use {
+    opacity: 0.4;
+}
+
+kubernetes-topology-icon.active use {
+    opacity: 1;
+}
+
+kubernetes-topology-icon:hover use {
+    opacity: 0.7;
+}
