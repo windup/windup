@@ -14,7 +14,7 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
-import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.RestWebServiceModel;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,12 +24,12 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests the {@link JaxRSWebServiceModelService}.
+ * Tests the {@link RestWebServiceModelService}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class JaxRSWebServiceModelServiceTest extends AbstractTest
+public class RestWebServiceModelServiceTest extends AbstractTest
 {
 
     @Inject
@@ -38,7 +38,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     private Path graphPath;
     private GraphContext context;
     private JavaClassService javaClassService;
-    private JaxRSWebServiceModelService serviceModelService;
+    private RestWebServiceModelService serviceModelService;
 
     @Before
     public void setUp() throws Exception
@@ -46,7 +46,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         this.graphPath = getDefaultPath();
         this.context = this.factory.create(graphPath, true);
         this.javaClassService = new JavaClassService(this.context);
-        this.serviceModelService = new JaxRSWebServiceModelService(this.context);
+        this.serviceModelService = new RestWebServiceModelService(this.context);
     }
 
     @After
@@ -65,7 +65,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         Assert.assertFalse(serviceModelService.findAll().iterator().hasNext());
 
         ProjectModel application = new ProjectService(context).create();
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, implementationClass);
+        RestWebServiceModel model = serviceModelService.getOrCreate(application, path, implementationClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -80,14 +80,14 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
-        JaxRSWebServiceModel testModel = serviceModelService.create();
+        RestWebServiceModel testModel = serviceModelService.create();
         testModel.setPath(path);
         testModel.setImplementationClass(implementationClass);
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
+        RestWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -102,14 +102,14 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
-        JaxRSWebServiceModel testModel = serviceModelService.create();
+        RestWebServiceModel testModel = serviceModelService.create();
         testModel.setPath(path);
         testModel.setImplementationClass(implementationClass);
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
+        RestWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -124,14 +124,14 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
-        JaxRSWebServiceModel testModel = serviceModelService.create();
+        RestWebServiceModel testModel = serviceModelService.create();
         testModel.setPath(path);
         testModel.setImplementationClass(implementationClass);
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
+        RestWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());

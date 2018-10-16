@@ -9,7 +9,6 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -21,12 +20,11 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
-import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.*;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -93,9 +91,9 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
             if (!remoteServiceModel.isAssociatedWithApplication(projectModel))
                 continue;
 
-            if (remoteServiceModel instanceof JaxRSWebServiceModel)
+            if (remoteServiceModel instanceof RestWebServiceModel)
             {
-                jaxRsList.add((JaxRSWebServiceModel) remoteServiceModel);
+                jaxRsList.add((RestWebServiceModel) remoteServiceModel);
             }
             else if (remoteServiceModel instanceof JaxWSWebServiceModel)
             {

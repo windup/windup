@@ -7,49 +7,49 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.RestWebServiceModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
- * Provides methods for creating, updating, and deleting {@link JaxRSWebServiceModelService} vertices.
+ * Provides methods for creating, updating, and deleting {@link RestWebServiceModelService} vertices.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceModel>
+public class RestWebServiceModelService extends GraphService<RestWebServiceModel>
 {
-    public JaxRSWebServiceModelService(GraphContext context)
+    public RestWebServiceModelService(GraphContext context)
     {
-        super(context, JaxRSWebServiceModel.class);
+        super(context, RestWebServiceModel.class);
     }
 
-    public JaxRSWebServiceModel getOrCreate(ProjectModel application, String path, JavaClassModel implementationClass)
+    public RestWebServiceModel getOrCreate(ProjectModel application, String path, JavaClassModel implementationClass)
     {
         GraphTraversal<Vertex, Vertex> pipeline;
         if (implementationClass == null)
         {
             pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V();
-            pipeline.has(WindupVertexFrame.TYPE_PROP, JaxRSWebServiceModel.TYPE);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, RestWebServiceModel.TYPE);
         }
         else
         {
             pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(implementationClass.getElement());
-            pipeline.out(JaxRSWebServiceModel.JAXRS_IMPLEMENTATION_CLASS);
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(JaxRSWebServiceModel.TYPE));
+            pipeline.out(RestWebServiceModel.JAXRS_IMPLEMENTATION_CLASS);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(RestWebServiceModel.TYPE));
         }
-        pipeline.has(JaxRSWebServiceModel.PATH, path);
+        pipeline.has(RestWebServiceModel.PATH, path);
 
         if (pipeline.hasNext())
         {
-            JaxRSWebServiceModel result = frame(pipeline.next());
+            RestWebServiceModel result = frame(pipeline.next());
             if (!result.isAssociatedWithApplication(application))
                 result.addApplication(application);
             return result;
         }
         else
         {
-            JaxRSWebServiceModel jaxWebService = create();
+            RestWebServiceModel jaxWebService = create();
             jaxWebService.addApplication(application);
             jaxWebService.setPath(path);
 

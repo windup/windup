@@ -13,14 +13,15 @@ import org.jboss.windup.graph.Property;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(JaxRSWebServiceModel.TYPE)
-public interface JaxRSWebServiceModel extends WebServiceModel
+@TypeValue(RestWebServiceModel.TYPE)
+public interface RestWebServiceModel extends WebServiceModel
 {
-    String TYPE = "JaxRSWebServiceModel";
+    String TYPE = "RestWebServiceModel";
     String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
     String JAXRS_INTERFACE = "jaxrsInterface";
     
     String PATH = "jaxrsPath";
+    String SOURCE = "source";
     
 
     /**
@@ -59,4 +60,11 @@ public interface JaxRSWebServiceModel extends WebServiceModel
      */
     @Adjacency(label = JAXRS_INTERFACE, direction = Direction.OUT)
     JavaClassModel getInterface();
+
+    @Property(SOURCE)
+    @Indexed
+    String getSource();
+
+    @Property(SOURCE)
+    void setSource(String source);
 }

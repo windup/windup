@@ -20,6 +20,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -78,7 +79,8 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
-        JavaClassModel datasourceClass = getJavaClass(javaTypeReference);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        JavaClassModel datasourceClass = javaClassService.getJavaClass(javaTypeReference);
 
         String dataSourceName = getAnnotationLiteralValue(annotationTypeReference, "name");
         if (Strings.isNullOrEmpty(dataSourceName))
@@ -98,28 +100,6 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
         dataSourceModel.setName(dataSourceName);
         dataSourceModel.setXa(isXa);
         dataSourceModel.setJndiLocation(dataSourceName);
-    }
-
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
-        JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
-                result = javaClassModel;
-                break;
-            }
-        }
-
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
-        return result;
     }
 
     @Override

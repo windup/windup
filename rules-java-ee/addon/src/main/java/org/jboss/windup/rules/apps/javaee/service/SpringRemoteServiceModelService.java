@@ -9,7 +9,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.javaee.SpringRemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
 import org.jboss.windup.util.Logging;
 
 import java.util.Iterator;
@@ -49,7 +49,6 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
         }
 
         return remoteServiceModel;
-
     }
 
     private SpringRemoteServiceModel findByInterface(JavaClassModel rmiInterface) {

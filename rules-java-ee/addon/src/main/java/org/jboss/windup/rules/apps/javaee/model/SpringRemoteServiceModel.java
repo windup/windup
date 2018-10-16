@@ -1,10 +1,9 @@
-package org.jboss.windup.rules.apps.javaee;
+package org.jboss.windup.rules.apps.javaee.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.javaee.model.RemoteServiceModel;
 
 @TypeValue(SpringRemoteServiceModel.TYPE)
 public interface SpringRemoteServiceModel extends RemoteServiceModel
@@ -31,4 +30,6 @@ public interface SpringRemoteServiceModel extends RemoteServiceModel
 
     @Adjacency(label = SPRINGEXPORTER_INTERFACE, direction = Direction.OUT)
     JavaClassModel getSpringExporterInterface();
+
+
 }

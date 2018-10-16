@@ -59,7 +59,8 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
     {
         // get the rmi interface class from the graph
-        JavaClassModel javaClassModel = getJavaClass(typeReference);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        JavaClassModel javaClassModel = javaClassService.getJavaClass(typeReference);
 
         if (!isRemoteInterface(javaClassModel))
         {
@@ -78,8 +79,6 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
             RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
 
             // Create the source report for the RMI Implementation.
-            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-
             if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
                 for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
                 {
@@ -109,29 +108,6 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
             return (StringUtils.equals("java.rmi.Remote", jcm.getExtends().getQualifiedName()));
         }
         return false;
-    }
-
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
-        JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
-                result = javaClassModel;
-                break;
-            }
-        }
-
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
-        return result;
     }
 
     @Override
