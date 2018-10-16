@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.decompiler</groupId>
         <artifactId>decompiler-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.2.0.Alpha2</version>
     </parent>
 
     <!-- TODO Donate this addon to Forge. -->
