@@ -33,7 +33,7 @@ public class DiscoverSpringRestServicesRuleProvider extends DiscoverAnnotatedCla
                 .begin()
                 .addRule()
                 .when(JavaClass
-                        .references("org.springframework.web.bind.annotation.GetMapping")
+                        .references("org.springframework.web.bind.annotation.{*}Mapping")
                         .at(TypeReferenceLocation.ANNOTATION)
                         .as(ANNOTATIONS_ALIAS))
                 .perform(Iteration.over(ANNOTATIONS_ALIAS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
