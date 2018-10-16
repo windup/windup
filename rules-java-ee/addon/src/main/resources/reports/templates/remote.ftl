@@ -42,7 +42,7 @@
             <#list reportModel.relatedResources.jaxRsServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title">JAX-RS Services (REST)</h3>
+                        <h3 class="panel-title">REST Services</h3>
                     </div>
                     <table class="table table-striped table-bordered" id="jpaEntityTable">
                         <tr>
