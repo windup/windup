@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
+import com.strobel.assembler.metadata.WindupClasspathTypeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationException;
@@ -100,7 +101,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             if (!settingsByOutputDirectory.containsKey(mainRequest.getOutputDirectory()))
             {
                 final DecompilerSettings settings = getDefaultSettings(mainRequest.getOutputDirectory().toFile());
-                final ITypeLoader typeLoader = new ClasspathTypeLoader();
+                final ITypeLoader typeLoader = new CompositeTypeLoader(new WindupClasspathTypeLoader(mainRequest.getRootDirectory().toString()), new ClasspathTypeLoader());
                 settings.setTypeLoader(typeLoader);
                 settingsByOutputDirectory.put(mainRequest.getOutputDirectory(), settings);
 
@@ -240,7 +241,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             DecompilerSettings settings = getDefaultSettings(outputDir.toFile());
             this.procyonConf.setDecompilerSettings(settings); // TODO: This is horrible mess.
 
-            ITypeLoader typeLoader = new ClasspathTypeLoader();
+            final ITypeLoader typeLoader = new CompositeTypeLoader(new WindupClasspathTypeLoader(rootDir.toString()), new ClasspathTypeLoader());
             MetadataSystem metadataSystem = new MetadataSystem(typeLoader);
             File outputFile = this.decompileType(settings, metadataSystem, typeName);
             result.addDecompiled(Collections.singletonList(classFilePath.toString()), outputFile.getAbsolutePath());
