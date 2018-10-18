@@ -8,11 +8,14 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
+import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
@@ -31,14 +34,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 import static org.joox.JOOX.$;
+import static org.joox.JOOX.none;
 
 /*
 Rule to discover all Spring Remote services : RMI, Hessian, HTTP Invoker , JMS, AMQP, JaxWS that can be discovered
 using the ".remoting" package pattern in the class for the exporter, in XML files
  */
-@RuleMetadata(phase = MigrationRulesPhase.class)
+@RuleMetadata(phase = MigrationRulesPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class)
 public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(DiscoverSpringXMLRemoteServicesRuleProvider.class);
 
@@ -80,12 +85,10 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
 
             if (!StringUtils.isEmpty(interfaceName) && (!StringUtils.isEmpty(implementationBean))) {
                 // we obtain the Whole XML Document to find the implementation Bean
-                Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
-                String implementationClass = getImplementationClass(implementationBean, wholeDocument);
-
                 JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                JavaClassModel implementationJavaClassModel = getImplementationClass(implementationBean, event.getGraphContext());
+
                 JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
-                JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
                 JavaClassModel exporterInterfaceClassModel = javaClassService.getByName(exporterClass);
 
                 // Create the "source code" report for the Service Interface
@@ -106,6 +109,13 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
         } catch (ParserConfigurationException | SAXException | IOException e) {
             LOG.severe(e.getMessage());
         }
+    }
+
+    private JavaClassModel getImplementationClass(String implementationBean, GraphContext context) {
+        return StreamSupport.stream(new SpringBeanService(context).findAllBySpringBeanName(implementationBean).spliterator(), false)
+                .findFirst()
+                .map(SpringBeanModel::getJavaClass)
+                .orElse(null);
     }
 
     private String getTagName(String exporterClass) {
