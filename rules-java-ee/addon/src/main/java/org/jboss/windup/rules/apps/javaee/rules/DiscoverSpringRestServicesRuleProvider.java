@@ -57,7 +57,7 @@ public class DiscoverSpringRestServicesRuleProvider extends DiscoverAnnotatedCla
         JavaClassModel implementationClass = new JavaClassService(event.getGraphContext()).getJavaClass(typeReference);
 
         RestWebServiceModelService service = new RestWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setSource("spring");
+        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setOrigin("spring");
     }
 
     @Override

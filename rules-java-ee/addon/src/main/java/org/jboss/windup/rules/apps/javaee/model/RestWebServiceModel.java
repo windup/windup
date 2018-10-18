@@ -21,7 +21,7 @@ public interface RestWebServiceModel extends WebServiceModel
     String JAXRS_INTERFACE = "jaxrsInterface";
     
     String PATH = "jaxrsPath";
-    String SOURCE = "source";
+    String ORIGIN = "origin";
     
 
     /**
@@ -61,10 +61,10 @@ public interface RestWebServiceModel extends WebServiceModel
     @Adjacency(label = JAXRS_INTERFACE, direction = Direction.OUT)
     JavaClassModel getInterface();
 
-    @Property(SOURCE)
+    @Property(ORIGIN)
     @Indexed
-    String getSource();
+    String getOrigin();
 
-    @Property(SOURCE)
-    void setSource(String source);
+    @Property(ORIGIN)
+    void setOrigin(String source);
 }

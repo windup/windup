@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -10,12 +9,9 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.service.RestWebServiceModelService;
@@ -65,7 +61,7 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends DiscoverAnnotatedClass
         JavaClassModel implementationClass = javaClassService.getJavaClass(typeReference);
 
         RestWebServiceModelService service = new RestWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setSource("javaee");
+        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setOrigin("javaee");
     }
 
      @Override
