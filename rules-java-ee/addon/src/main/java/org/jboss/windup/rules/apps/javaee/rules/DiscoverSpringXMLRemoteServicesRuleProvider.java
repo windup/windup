@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
 
 import static org.joox.JOOX.$;
-import static org.joox.JOOX.none;
 
 /*
 Rule to discover all Spring Remote services : RMI, Hessian, HTTP Invoker , JMS, AMQP, JaxWS that can be discovered
