@@ -8,6 +8,8 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -56,6 +58,11 @@ public class DiscoverSpringRestServicesRuleProvider extends DiscoverAnnotatedCla
 
         JavaClassModel implementationClass = new JavaClassService(event.getGraphContext()).getJavaClass(typeReference);
 
+        // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
+        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+        technologyTagService.addTagToFileModel(implementationClass.getClassFile(), "spring-rest", TechnologyTagLevel.INFORMATIONAL);
+
+        // Add to the Remote Services usage report
         RestWebServiceModelService service = new RestWebServiceModelService(event.getGraphContext());
         service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setOrigin("spring");
     }

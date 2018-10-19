@@ -10,6 +10,7 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.RestWebServiceModel;
@@ -64,6 +65,9 @@ public class DiscoverSpringRestServicesRuleProviderTest extends AbstractTest {
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employees/{id}/PUT".equalsIgnoreCase(restModel.getPath())));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employees/{id}/DELETE".equalsIgnoreCase(restModel.getPath())));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employees/{id}/GET".equalsIgnoreCase(restModel.getPath())));
+
+            TechnologyTagService service = new TechnologyTagService(context);
+            Assert.assertTrue(service.findAll().stream().anyMatch(technologyTagModel -> "spring-rest".equalsIgnoreCase(technologyTagModel.getName())));
         } finally
         {
             FileUtils.deleteDirectory(outputPath.toFile());
