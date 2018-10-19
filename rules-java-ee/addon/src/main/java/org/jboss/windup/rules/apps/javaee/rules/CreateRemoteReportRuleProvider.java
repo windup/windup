@@ -24,6 +24,7 @@ import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.javaee.model.SpringRestWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.*;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
@@ -91,9 +92,12 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
             if (!remoteServiceModel.isAssociatedWithApplication(projectModel))
                 continue;
 
-            if (remoteServiceModel instanceof RestWebServiceModel)
+            if (remoteServiceModel instanceof JaxRSWebServiceModel)
             {
-                jaxRsList.add((RestWebServiceModel) remoteServiceModel);
+                jaxRsList.add((JaxRSWebServiceModel) remoteServiceModel);
+            } else if (remoteServiceModel instanceof SpringRestWebServiceModel)
+            {
+                jaxRsList.add((SpringRestWebServiceModel) remoteServiceModel);
             }
             else if (remoteServiceModel instanceof JaxWSWebServiceModel)
             {

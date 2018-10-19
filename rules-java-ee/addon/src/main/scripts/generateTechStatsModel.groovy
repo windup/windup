@@ -29,7 +29,7 @@ def items2 = [
     [key: "stats.services.ejb.messageDriven", label: "message driven beans", clazz: "EjbMessageDrivenModel", props: [:]],
     [key: "stats.services.ejb.deploymentDescriptors", label: "EJB deployment descriptors", clazz: "EjbDeploymentDescriptorModel", props: [:]],
 
-    [key: "stats.services.http.jax-rs", label: "JAX-RS services", clazz: "RestWebServiceModel", props: [:]],
+    [key: "stats.services.http.jax-rs", label: "JAX-RS services", clazz: "JaxRSWebServiceModel", props: [:]],
     [key: "stats.services.http.jax-ws", label: "JAX-WS services", clazz: "JaxWSWebServiceModel", props: [:]],
 
     [key: "stats.services.jpa.entitites",    label: "JPA entities", clazz: "EjbEntityBeanModel", props: [:]],

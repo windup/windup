@@ -14,7 +14,8 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.javaee.service.RestWebServiceModelService;
+import org.jboss.windup.rules.apps.javaee.service.JaxRSWebServiceModelService;
+import org.jboss.windup.rules.apps.javaee.service.SpringRestWebServiceModelService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -60,13 +61,13 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends DiscoverAnnotatedClass
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel implementationClass = javaClassService.getJavaClass(typeReference);
 
-        RestWebServiceModelService service = new RestWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass).setOrigin("javaee");
+        JaxRSWebServiceModelService service = new JaxRSWebServiceModelService(event.getGraphContext());
+        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass);
     }
 
      @Override
     public String toString()
     {
-        return "DiscoverEJBAnnotatedClasses";
+        return "DiscoverJaxRSAnnotatedClasses";
     }
 }

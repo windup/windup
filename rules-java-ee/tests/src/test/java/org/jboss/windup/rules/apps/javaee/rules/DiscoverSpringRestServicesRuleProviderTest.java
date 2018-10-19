@@ -13,7 +13,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
-import org.jboss.windup.rules.apps.javaee.model.RestWebServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.SpringRestWebServiceModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +58,7 @@ public class DiscoverSpringRestServicesRuleProviderTest extends AbstractTest {
             processor.execute(windupConfiguration);
 
 
-            GraphService<RestWebServiceModel> restService = new GraphService<>(context, RestWebServiceModel.class);
+            GraphService<SpringRestWebServiceModel> restService = new GraphService<>(context, SpringRestWebServiceModel.class);
             Assert.assertEquals(5, restService.findAll().size());
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employeesGET,/othersGET".equalsIgnoreCase(restModel.getPath())));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employeesPOST".equalsIgnoreCase(restModel.getPath())));

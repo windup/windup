@@ -20,8 +20,7 @@ public interface JaxRSWebServiceModel extends WebServiceModel
     String JAXRS_INTERFACE = "jaxrsInterface";
     
     String PATH = "jaxrsPath";
-    String SOURCE = "source";
-    
+
 
     /**
      * Contains the URL path to the JaxRS service.
