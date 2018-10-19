@@ -1,0 +1,10 @@
+<beans xmlns="http://www.springframework.org/schema/beans">
+    <bean id="rmiService" class="com.redhat.rmiserver.impl.RMIPOJOImpl">
+    </bean>
+
+    <bean id="httpService" class="com.redhat.rmiserver.impl.HTTPPOJOImpl">
+    </bean>
+
+    <bean id="hessianService" class="com.redhat.rmiserver.impl.HessianPOJOImpl">
+    </bean>
+</beans>
