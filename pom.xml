@@ -506,6 +506,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>${testExcludeString}</exclude>
+                                <exclude>org.jboss.windup.tests.application.WindupArchitectureMediumBinaryModeTest#testRunWindupMediumWithProcyon</exclude>
                             </excludes>
                             <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
                             <argLine>${surefire-argLine} --add-modules java.se</argLine>
