@@ -156,7 +156,7 @@ table.technologiesPunchCard tbody tr {
 
     /*left tooltip*/
     top: 10px;
-    right: 85%;
+    right: 100%;
 
     opacity: 0;
     transition: opacity 1s;
@@ -166,6 +166,7 @@ table.technologiesPunchCard tbody tr {
 .table-tooltip:hover .table-tooltiptext {
     visibility: visible;
     opacity: 0.9;
+    white-space: nowrap;
 }
 
 .table-tooltip .table-tooltiptext::after {

@@ -60,13 +60,16 @@
                 <#assign sectorTags = iterableToList(reportModel.sectorsHolderTag.designatedTags) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
                 <#assign placeTagsParent = getTagModelByName("techReport:mappingOfPlacementTagNames") />
+                <#assign sortedRowTags = iterableToList(reportModel.rowsHolderTag.designatedTags) />
+                <#assign sortedRowTags = sortedRowTags?sort_by("title") />
 
-                <#-- MatrixAndAggregated {
-                       countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
-                       maximumsPerTag       // Map<String, Integer>
-                    }
-                <#assign stats = getTechReportPunchCardStats() />
-                -->
+
+            <#-- MatrixAndAggregated {
+                   countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
+                   maximumsPerTag       // Map<String, Integer>
+                }
+            <#assign stats = getTechReportPunchCardStats() />
+            -->
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
@@ -149,7 +152,23 @@
                                         <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title} table-tooltip" data-count="${countInteger?c}">
                                             <#-- The circle is put here by CSS :after -->
                                             <#if countInteger gt 0>
-                                            <span class="table-tooltiptext">${countInteger?c}</span>
+                                                <#assign sortedRowTags = reportModel.rowsHolderTag.designatedTags?sort_by("title") />
+                                                <#assign rowTags = sortedRowTags?reverse />
+                                                <#list rowTags as rowTag>
+                                                    <#if isTagUnderTag(boxTag, rowTag)>
+                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
+                                                        <#list itemisedStatsForThisBox>
+                                                        <div class="table-tooltiptext">
+                                                                    <#items as name, stat>
+                                                                            <#if (stat.occurrenceCount > 0) >
+                                                                                <div class="row"><div>${stat.name}</div><div>${stat.occurrenceCount}</div></div>
+                                                                            </#if>
+                                                                    </#items>
+                                                        </div>
+                                                        </#list>
+                                                    </#if>
+                                                </#list>
+
                                             </#if>
                                         </td>
                                     </#if>

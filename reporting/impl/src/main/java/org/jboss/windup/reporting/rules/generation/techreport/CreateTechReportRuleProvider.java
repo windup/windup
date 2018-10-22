@@ -106,6 +106,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             // Create the global report models.
             TechReportModel reportPunch = createTechReportPunchCard(event.getGraphContext());
             reportPunch.setSectorsHolderTag(sectorsTag);
+            reportPunch.setRowsHolderTag(rowsTag);
             reportPunch.setAppProjectIdToReportMap(appProjectToReportMap);
         }
 
