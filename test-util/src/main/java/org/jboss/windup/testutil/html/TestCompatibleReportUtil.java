@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Tests the contents of the compatible files report
  */
-public class TestCompatibleReportUtil extends TestReportUtil
+public class TestCompatibleReportUtil extends TestChromeDriverReportUtil
 {
 
     /**
@@ -27,6 +27,7 @@ public class TestCompatibleReportUtil extends TestReportUtil
         for (WebElement el : elements)
         {
             result |= checkValueInTable(el, name, technology);
+            if (result) break;
         }
         return result;
     }

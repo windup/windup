@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Tests the contents of the hardcoded ip report
  */
-public class TestHardcodedPReportUtil extends TestReportUtil
+public class TestHardcodedPReportUtil extends TestChromeDriverReportUtil
 {
 
     /**

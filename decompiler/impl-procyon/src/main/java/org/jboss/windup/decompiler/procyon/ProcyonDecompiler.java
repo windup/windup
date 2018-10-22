@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 import com.strobel.assembler.metadata.WindupClasspathTypeLoader;
+import com.strobel.assembler.metadata.WindupMetadataSystem;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationException;
@@ -40,7 +41,7 @@ import com.strobel.assembler.metadata.CompositeTypeLoader;
 import com.strobel.assembler.metadata.IMetadataResolver;
 import com.strobel.assembler.metadata.ITypeLoader;
 import com.strobel.assembler.metadata.MetadataParser;
-import com.strobel.assembler.metadata.MetadataSystem;
+import com.strobel.assembler.metadata.WindupMetadataSystem;
 import com.strobel.assembler.metadata.NoRetryMetadataSystem;
 import com.strobel.assembler.metadata.TypeDefinition;
 import com.strobel.assembler.metadata.TypeReference;
@@ -92,7 +93,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
         Collection<Callable<File>> tasks = new ArrayList<>();
 
         final Map<Path, DecompilerSettings> settingsByOutputDirectory = new TreeMap<>();
-        final Map<Path, Queue<MetadataSystem>> metadataSystemCaches = new TreeMap<>();
+        final Map<Path, Queue<WindupMetadataSystem>> metadataSystemCaches = new TreeMap<>();
         final Map<Path, AtomicInteger> countByOutputDirectory = new TreeMap<>();
 
         for (Map.Entry<String, List<ClassDecompileRequest>> entry : requestMap.entrySet())
@@ -105,7 +106,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
                 settings.setTypeLoader(typeLoader);
                 settingsByOutputDirectory.put(mainRequest.getOutputDirectory(), settings);
 
-                final Queue<MetadataSystem> metadataSystemCache = new LinkedList<>();
+                final Queue<WindupMetadataSystem> metadataSystemCache = new LinkedList<>();
                 refreshMetadataCache(metadataSystemCache, settings);
                 metadataSystemCaches.put(mainRequest.getOutputDirectory(), metadataSystemCache);
 
@@ -132,9 +133,9 @@ public class ProcyonDecompiler extends AbstractDecompiler
 
                     List<String> classFilePaths = pathsFromDecompilationRequests(entry.getValue());
                     final DecompilerSettings settings = settingsByOutputDirectory.get(mainRequest.getOutputDirectory());
-                    Queue<MetadataSystem> metadataSystemCache = metadataSystemCaches.get(mainRequest.getOutputDirectory());
+                    Queue<WindupMetadataSystem> metadataSystemCache = metadataSystemCaches.get(mainRequest.getOutputDirectory());
 
-                    MetadataSystem metadataSystem = null;
+                    WindupMetadataSystem metadataSystem = null;
                     try
                     {
                         synchronized (metadataSystemCache)
@@ -242,7 +243,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             this.procyonConf.setDecompilerSettings(settings); // TODO: This is horrible mess.
 
             final ITypeLoader typeLoader = new CompositeTypeLoader(new WindupClasspathTypeLoader(rootDir.toString()), new ClasspathTypeLoader());
-            MetadataSystem metadataSystem = new MetadataSystem(typeLoader);
+            WindupMetadataSystem metadataSystem = new WindupMetadataSystem(typeLoader);
             File outputFile = this.decompileType(settings, metadataSystem, typeName);
             result.addDecompiled(Collections.singletonList(classFilePath.toString()), outputFile.getAbsolutePath());
         }
@@ -278,7 +279,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
         Collection<Callable<File>> tasks = new ArrayList<>();
         for (File file : files)
         {
-            final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
+            final WindupMetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());
             if (file.isDirectory())
             {
                 Path subPathNew = subPath.resolve(file.getName());
@@ -378,7 +379,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             final Enumeration<JarEntry> entries = jar.entries();
             Collection<Callable<File>> tasks = new ArrayList<>();
 
-            final Queue<MetadataSystem> metadataSystemCache = new LinkedList<>();
+            final Queue<WindupMetadataSystem> metadataSystemCache = new LinkedList<>();
             refreshMetadataCache(metadataSystemCache, settings);
 
             while (entries.hasMoreElements())
@@ -416,7 +417,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
                     @Override
                     public File call() throws Exception
                     {
-                        MetadataSystem metadataSystem = null;
+                        WindupMetadataSystem metadataSystem = null;
                         try
                         {
                             synchronized (metadataSystemCache)
@@ -518,7 +519,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
     /**
      * The metadata cache can become huge over time. This simply flushes it periodically.
      */
-    private void refreshMetadataCache(final Queue<MetadataSystem> metadataSystemCache, final DecompilerSettings settings)
+    private void refreshMetadataCache(final Queue<WindupMetadataSystem> metadataSystemCache, final DecompilerSettings settings)
     {
         metadataSystemCache.clear();
         for (int i = 0; i < this.getNumberOfThreads(); i++)
@@ -530,13 +531,13 @@ public class ProcyonDecompiler extends AbstractDecompiler
     private class DecompileExecutor extends Thread
     {
         private DecompilerSettings settings;
-        private MetadataSystem metadataSystem;
+        private WindupMetadataSystem metadataSystem;
         private String typeName;
         private Exception e;
         private File outputFile;
         private boolean success;
 
-        public DecompileExecutor(DecompilerSettings settings, MetadataSystem metadataSystem, String typeName)
+        public DecompileExecutor(DecompilerSettings settings, WindupMetadataSystem metadataSystem, String typeName)
         {
             this.settings = settings;
             this.metadataSystem = metadataSystem;
@@ -594,7 +595,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
      * @return
      * @throws IOException
      */
-    private File decompileType(final DecompilerSettings settings, final MetadataSystem metadataSystem, final String typeName) throws IOException
+    private File decompileType(final DecompilerSettings settings, final WindupMetadataSystem metadataSystem, final String typeName) throws IOException
     {
         log.fine("Decompiling " + typeName);
 
