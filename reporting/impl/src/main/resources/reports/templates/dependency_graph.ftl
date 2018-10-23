@@ -132,7 +132,7 @@
             </svg>
         <script src="resources/js/app-dependency-graph.js"></script>
         <#if reportModel.projectModel??>
-        <script src="data/${reportModel.projectModel.rootFileModel.SHA1Hash}_app_dependencies_graph.js"></script>
+        <script src="data/${sha1Hex(reportModel.projectModel.rootFileModel)}_app_dependencies_graph.js"></script>
         <#else>
         <script src="data/app_dependencies_graph.js"></script>
         </#if>

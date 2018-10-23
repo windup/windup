@@ -72,7 +72,7 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
       dependenciesReportModels.stream().forEach(dependenciesReportModel -> {
          ProjectModel application = dependenciesReportModel.getProjectModel();
 
-         // in case of shared libraries ("virtual" project) we don not
+         // in case of shared libraries ("virtual" project) we do not
          // generate the dependency graph
          if (application != null && ProjectModel.TYPE_VIRTUAL.equals(application.getProjectType()))
             return;

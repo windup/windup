@@ -24,6 +24,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
@@ -34,6 +35,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateDependencyGraphReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
 import org.jboss.windup.rules.apps.tattletale.DisableTattletaleReportOption;
@@ -299,7 +301,33 @@ public abstract class WindupArchitectureTest
 
     }
 
+    Path getPathForReport(GraphContext graphContext, ReportModel report)
+    {
+        return new ReportService(graphContext).getReportDirectory().resolve(report.getReportFilename());
+    }
 
+    Path getGlobalDependencyGraphReportPath(GraphContext graphContext)
+    {
+        return getDependencyGraphReportPath (graphContext,"dependency_graph_report_global.html");
+    }
+
+    Path getApplicationDependencyGraphReportPath(GraphContext graphContext)
+    {
+        return getDependencyGraphReportPath (graphContext,"dependency_graph_report.html");
+    }
+
+    private Path getDependencyGraphReportPath(GraphContext graphContext, String reportFilename)
+    {
+        Service<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
+                CreateDependencyGraphReportRuleProvider.TEMPLATE);
+        for (ApplicationReportModel report : reports)
+        {
+            if (reportFilename.equals(report.getReportFilename()))
+                return getPathForReport(graphContext, report);
+        }
+        return null;
+    }
 
     /**
      * Stores the info about incoming calls which the tests can review.
