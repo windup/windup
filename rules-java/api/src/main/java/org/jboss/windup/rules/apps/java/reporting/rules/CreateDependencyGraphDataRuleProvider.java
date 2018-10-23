@@ -12,7 +12,6 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -112,20 +111,27 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
             DependencyGraphItem dependencyGraphItem = new DependencyGraphItem(dependencyReportDependencyGroupModel);
             items.put(dependencyReportDependencyGroupModel.getSHA1(), dependencyGraphItem);
             dependencyReportDependencyGroupModel.getArchives().stream().forEach(dependencyReportToArchiveEdgeModel -> {
-               ArchiveModel targetArchiveModel;
+               FileModel targetFileModel;
                // sometimes (especially in test cases) it could happen that there's no
                // parent archive and just the root one
                if (dependencyReportToArchiveEdgeModel.getArchive().getParentArchive() != null)
                {
-                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getParentArchive();
+                  targetFileModel = dependencyReportToArchiveEdgeModel.getArchive().getParentArchive();
                }
                else
                {
-                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
+                  targetFileModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
+                  if (dependencyReportToArchiveEdgeModel.getArchive().equals(targetFileModel) &&
+                           (Boolean) event.getGraphContext().getOptionMap().getOrDefault("explodedApp", Boolean.FALSE)
+                           && application != null)
+                  {
+                     targetFileModel = application.getRootFileModel();
+                  }
                }
+
                DependencyGraphRelation dependencyGraphRelation = new DependencyGraphRelation(
                         dependencyReportDependencyGroupModel.getSHA1(),
-                        targetArchiveModel.getSHA1Hash());
+                        getSha1Hash(targetFileModel));
                relations.add(dependencyGraphRelation);
             });
          });

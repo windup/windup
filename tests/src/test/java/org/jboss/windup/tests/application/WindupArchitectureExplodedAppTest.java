@@ -57,7 +57,7 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest
     {
         tmp.create();
         final File explodedAppDir = tmp.newFolder(EXPLODED_APP_DIR);
-        ZipUtil.unzipToFolder(new File("../test-files/Windup1x-javaee-example-tiny.war"), explodedAppDir);
+        ZipUtil.unzipToFolder(new File("../test-files/spring-small-example.war"), explodedAppDir);
 
         final Path outputPath = getDefaultPath();
         try (GraphContext context = createGraphContext(outputPath))
@@ -80,6 +80,11 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
         dependencyGraphReportUtil.loadPage(dependencyReport);
+        Assert.assertEquals(21, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName(EXPLODED_APP_DIR));
+        Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("commons-logging-1.1.1.jar"));
+        Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("standard-1.1.2.jar"));
+        Assert.assertEquals(15, dependencyGraphReportUtil.getNumberOfRelationsInTheGraph());
+
     }
 }
