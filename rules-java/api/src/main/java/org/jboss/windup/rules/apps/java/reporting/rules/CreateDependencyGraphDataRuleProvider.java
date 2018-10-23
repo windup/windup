@@ -16,6 +16,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
 import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependenciesReportModel;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
@@ -122,7 +123,7 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
                {
                   targetFileModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
                   if (dependencyReportToArchiveEdgeModel.getArchive().equals(targetFileModel) &&
-                           (Boolean) event.getGraphContext().getOptionMap().getOrDefault("explodedApp", Boolean.FALSE)
+                           (Boolean) event.getGraphContext().getOptionMap().getOrDefault(ExplodedAppInputOption.NAME, Boolean.FALSE)
                            && application != null)
                   {
                      targetFileModel = application.getRootFileModel();
