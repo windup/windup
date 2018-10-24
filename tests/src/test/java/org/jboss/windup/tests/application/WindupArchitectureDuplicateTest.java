@@ -21,7 +21,6 @@ import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
-import org.jboss.windup.rules.apps.java.reporting.rules.CreateDependencyGraphReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
 import org.jboss.windup.testutil.html.CheckFailedException;
 import org.jboss.windup.testutil.html.TestApplicationListUtil;
@@ -213,7 +212,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
     private void validateJarDependencyGraphReport(GraphContext graphContext)
     {
-        Path dependencyReport = getDependencyGraphReportPath(graphContext);
+        Path dependencyReport = getGlobalDependencyGraphReportPath(graphContext);
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
         dependencyGraphReportUtil.loadPage(dependencyReport);
@@ -303,21 +302,4 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         return null;
     }
 
-    private Path getDependencyGraphReportPath(GraphContext graphContext)
-    {
-        Service<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
-        Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
-                CreateDependencyGraphReportRuleProvider.TEMPLATE);
-        for (ApplicationReportModel report : reports)
-        {
-            if ("dependency_graph_report_global.html".equals(report.getReportFilename()))
-                return getPathForReport(graphContext, report);
-        }
-        return null;
-    }
-
-    private Path getPathForReport(GraphContext graphContext, ReportModel report)
-    {
-        return new ReportService(graphContext).getReportDirectory().resolve(report.getReportFilename());
-    }
 }

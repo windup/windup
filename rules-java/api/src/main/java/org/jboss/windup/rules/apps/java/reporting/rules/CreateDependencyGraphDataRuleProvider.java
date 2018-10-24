@@ -12,11 +12,11 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
 import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependenciesReportModel;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
@@ -72,7 +72,7 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
       dependenciesReportModels.stream().forEach(dependenciesReportModel -> {
          ProjectModel application = dependenciesReportModel.getProjectModel();
 
-         // in case of shared libraries ("virtual" project) we don not
+         // in case of shared libraries ("virtual" project) we do not
          // generate the dependency graph
          if (application != null && ProjectModel.TYPE_VIRTUAL.equals(application.getProjectType()))
             return;
@@ -112,20 +112,27 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
             DependencyGraphItem dependencyGraphItem = new DependencyGraphItem(dependencyReportDependencyGroupModel);
             items.put(dependencyReportDependencyGroupModel.getSHA1(), dependencyGraphItem);
             dependencyReportDependencyGroupModel.getArchives().stream().forEach(dependencyReportToArchiveEdgeModel -> {
-               ArchiveModel targetArchiveModel;
+               FileModel targetFileModel;
                // sometimes (especially in test cases) it could happen that there's no
                // parent archive and just the root one
                if (dependencyReportToArchiveEdgeModel.getArchive().getParentArchive() != null)
                {
-                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getParentArchive();
+                  targetFileModel = dependencyReportToArchiveEdgeModel.getArchive().getParentArchive();
                }
                else
                {
-                  targetArchiveModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
+                  targetFileModel = dependencyReportToArchiveEdgeModel.getArchive().getRootArchiveModel();
+                  if (dependencyReportToArchiveEdgeModel.getArchive().equals(targetFileModel) &&
+                           (Boolean) event.getGraphContext().getOptionMap().getOrDefault(ExplodedAppInputOption.NAME, Boolean.FALSE)
+                           && application != null)
+                  {
+                     targetFileModel = application.getRootFileModel();
+                  }
                }
+
                DependencyGraphRelation dependencyGraphRelation = new DependencyGraphRelation(
                         dependencyReportDependencyGroupModel.getSHA1(),
-                        targetArchiveModel.getSHA1Hash());
+                        getSha1Hash(targetFileModel));
                relations.add(dependencyGraphRelation);
             });
          });
