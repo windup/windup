@@ -145,7 +145,7 @@ table.technologiesPunchCard tbody tr {
 .table-tooltip .table-tooltiptext {
     visibility: hidden;
     color: #fff;
-    text-align: center;
+    text-align: left;
     border-radius: 6px;
 
     position: absolute;
@@ -166,7 +166,19 @@ table.technologiesPunchCard tbody tr {
 .table-tooltip:hover .table-tooltiptext {
     visibility: visible;
     opacity: 0.9;
-    white-space: nowrap;
+    display: block;
+    max-width:none;
+    min-width:200px;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-name {
+    text-align: left;
+    padding-right: 0 !important;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-count {
+    text-align: left;
+    padding-left: 0px !important;
 }
 
 .table-tooltip .table-tooltiptext::after {

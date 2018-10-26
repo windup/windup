@@ -156,12 +156,14 @@
                                                 <#assign rowTags = sortedRowTags?reverse />
                                                 <#list rowTags as rowTag>
                                                     <#if isTagUnderTag(boxTag, rowTag)>
-                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
+                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, appProject.getElement().id()?long))! />
                                                         <#list itemisedStatsForThisBox>
                                                         <div class="table-tooltiptext">
                                                                     <#items as name, stat>
-                                                                            <#if (stat.occurrenceCount > 0) >
-                                                                                <div class="row"><div>${stat.name}</div><div>${stat.occurrenceCount}</div></div>
+                                                                        <#if (stat.occurrenceCount > 0) >
+                                                                                <div class="row">
+                                                                                    <div class="tooltiptext-tech-name col-md-10">${stat.name}</div><div class="tooltiptext-tech-count col-md-2">${stat.occurrenceCount}</div>
+                                                                                </div>
                                                                             </#if>
                                                                     </#items>
                                                         </div>
