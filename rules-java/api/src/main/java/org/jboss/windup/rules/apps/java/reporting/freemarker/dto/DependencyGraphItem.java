@@ -61,7 +61,15 @@ public class DependencyGraphItem
          String projectType;
          if (projectModel.getProjectType() == null)
          {
-            projectType = FilenameUtils.getExtension(projectModel.getRootFileModel().getFileName());
+            if (!projectModel.getRootFileModel().isDirectory())
+            {
+               projectType = FilenameUtils.getExtension(projectModel.getRootFileModel().getFileName());
+            }
+            // if we're analyzing an exploded app we have a directory
+            else
+            {
+               projectType = "war";
+            }
          }
          else
          {
