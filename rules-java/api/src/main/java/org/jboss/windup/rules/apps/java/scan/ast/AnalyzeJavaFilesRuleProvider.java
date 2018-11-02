@@ -390,6 +390,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 if (!shouldKeep && reference instanceof AnnotationClassReference)
                     shouldKeep = processAnnotation(((AnnotationClassReference) reference).getAnnotationValues().values(), classNotFoundAnalysisEnabled);
 
+                shouldKeep = reference instanceof AnnotationClassReference;
 
                 // we are always interested in types + anything that the TypeInterestFactory has registered
                 if (shouldKeep)
