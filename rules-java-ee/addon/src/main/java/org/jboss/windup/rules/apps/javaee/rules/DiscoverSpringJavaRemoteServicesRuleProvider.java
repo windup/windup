@@ -1,8 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import com.sun.jmx.remote.internal.RMIExporter;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -10,31 +8,27 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
-import org.jboss.windup.rules.apps.xml.condition.XmlFile;
-import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
+import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
+import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.RegexParameterizedPatternBuilder;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.StringReader;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.joox.JOOX.$;
 
@@ -42,7 +36,7 @@ import static org.joox.JOOX.$;
 Rule to discover all Spring Remote services : RMI, Hessian, HTTP Invoker , JMS, AMQP, JaxWS that can be discovered
 inside Java Classes
  */
-@RuleMetadata(phase = MigrationRulesPhase.class)
+@RuleMetadata(phase = MigrationRulesPhase.class, after = {DiscoverSpringBeanClassAnnotationsRuleProvider.class, DiscoverSpringConfigurationFilesRuleProvider.class, DiscoverSpringBeanMethodAnnotationsRuleProvider.class})
 public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(DiscoverSpringJavaRemoteServicesRuleProvider.class);
 
@@ -50,50 +44,64 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
     public Configuration getConfiguration(RuleLoaderContext context) {
         return ConfigurationBuilder
                 .begin()
-                .addRule().when(JavaClass.references("org.springframework.remoting.{*}.setService({argument})").at(TypeReferenceLocation.METHOD_CALL))
+                .addRule().when(JavaClass.references("org.springframework.remoting.{exporter}.setService({argument})")
+                        .at(TypeReferenceLocation.METHOD_CALL))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
+                .where("exporter").matches("rmi.RmiServiceExporter|http.HttpInvokerExporter")
                 .where("argument").matches(".*")
                 .withId(getClass().getSimpleName() + "_SpringJavaRemoteServicesRule");
     }
 
     private AbstractIterationOperation<JavaTypeReferenceModel> addSpringRMIBeanToGraph() {
-        return new AbstractIterationOperation<JavaTypeReferenceModel>() {
+        return new ParameterizedIterationOperation<JavaTypeReferenceModel>() {
+            RegexParameterizedPatternBuilder exporterBuilder = new RegexParameterizedPatternBuilder("{exporter}");
+            RegexParameterizedPatternBuilder argumentBuilder = new RegexParameterizedPatternBuilder("{argument}");
+
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel typeReference) {
-                extractMetadata(event,  typeReference);
+            public Set<String> getRequiredParameterNames()
+            {
+                return Stream.concat(exporterBuilder.getRequiredParameterNames().stream(), argumentBuilder.getRequiredParameterNames().stream()).collect(Collectors.toSet());
             }
+
+            @Override
+            public void setParameterStore(ParameterStore store)
+            {
+                exporterBuilder.setParameterStore(store);
+                argumentBuilder.setParameterStore(store);
+            }
+
+            @Override
+            public void performParameterized(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                String exporterValue = exporterBuilder.build(event, context);
+                String argumentValue = argumentBuilder.build(event, context);
+                extractMetadata(event,  payload);
+            }
+
         };
     }
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference) {
         try {
-            LOG.info("testing");
+            String source = typeReference.getResolvedSourceSnippit();
             String javaSource = IOUtils.toString(typeReference.getFile().asInputStream(), "UTF-8");
             int methodBodyStart = javaSource.indexOf(typeReference.getSourceSnippit()) + typeReference.getSourceSnippit().length();
             int startSetServiceInterface = javaSource.indexOf("setServiceInterface(", methodBodyStart);
             int endSetServiceInterface = javaSource.indexOf(")", startSetServiceInterface);
-            int startSetService = javaSource.indexOf("setService(", methodBodyStart);
-            int endSetService = javaSource.indexOf(")", startSetService);
             String serviceInterface = javaSource.substring(startSetServiceInterface + "setServiceInterface(".length(), endSetServiceInterface);
-            String service = javaSource.substring(startSetService + "setService(".length(), endSetService);
-            LOG.info("testing end");
 
+            SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
+            Optional<SpringBeanModel> springBeanClass = springBeanService.findAll().stream()
+                    .filter(e -> e.getJavaClass().getInterfaces().stream()
+                            .anyMatch(o -> o.getQualifiedName().equalsIgnoreCase(serviceInterface)))
+                    .findAny();
 
-
-
-//            String interfaceName = getInterfaceName(xmlDocSnippet);
-//            String implementationBean = getImplementationBean(xmlDocSnippet);
+            if (springBeanClass.isPresent()) {
+                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                JavaClassModel implementationClass = springBeanClass.get().getJavaClass();
+                JavaClassModel interfaceClass = javaClassService.findAll().stream().filter(e->e.getQualifiedName().equalsIgnoreCase(serviceInterface)).findAny().orElse(null);
 //
-//            if (!StringUtils.isEmpty(interfaceName) && (!StringUtils.isEmpty(implementationBean))) {
-//                // we obtain the Whole XML Document to find the implementation Bean
-//                Document wholeDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(typeReference.getFile().asInputStream());
-//                String implementationClass = getImplementationClass(implementationBean, wholeDocument);
-//
-//                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-//                JavaClassModel interfaceJavaClassModel = javaClassService.getByName(interfaceName);
-//                JavaClassModel implementationJavaClassModel = javaClassService.getByName(implementationClass);
 //                JavaClassModel exporterInterfaceClassModel = javaClassService.getByName(exporterClass);
 //
 //                // Create the "source code" report for the Service Interface
@@ -110,7 +118,7 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
 //
 //                // Create the "source code" report for the Implementation.
 //                enableSourceReport(implementationJavaClassModel);
-//            }
+            }
         } catch (Exception e) {
             LOG.severe(e.getMessage());
         }

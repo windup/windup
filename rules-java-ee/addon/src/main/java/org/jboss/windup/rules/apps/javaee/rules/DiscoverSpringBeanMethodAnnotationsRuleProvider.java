@@ -12,6 +12,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationTypeCondition;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -31,7 +32,7 @@ import java.util.Set;
  * Scans for classes with Spring bean related annotations, and adds Bean related metadata for these.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverSpringBeanAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRuleProvider
 {
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -40,7 +41,9 @@ public class DiscoverSpringBeanAnnotationsRuleProvider extends AbstractRuleProvi
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(JavaClass.references("org.springframework.stereotype.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
+                    .when(JavaClass.references("{*}({*})").at(TypeReferenceLocation.METHOD)
+                            .annotationMatches(new AnnotationTypeCondition("org.springframework.context.annotation.Bean"))
+                    )
                     .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                     {
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
@@ -48,8 +51,7 @@ public class DiscoverSpringBeanAnnotationsRuleProvider extends AbstractRuleProvi
                             extractAnnotationMetadata(event, payload);
                         }
                     })
-                    .where("annotationType").matches("Component|Controller|Service|Repository")
-                    .withId(ruleIDPrefix + "_SpringBeanRule");
+                    .withId(ruleIDPrefix + "_SpringBeanMethodRule");
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name) {
@@ -66,7 +68,9 @@ public class DiscoverSpringBeanAnnotationsRuleProvider extends AbstractRuleProvi
 
     private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
+
+        //TODO : get the type returned by the method---> Bean Interface
+        //TODO : with that interface we will seach in the next lines the first class implementing that interface
 
         JavaClassModel javaClass = new JavaClassService(event.getGraphContext())
                 .getByName(javaTypeReference.getFile()
@@ -78,9 +82,9 @@ public class DiscoverSpringBeanAnnotationsRuleProvider extends AbstractRuleProvi
                     .orElse("") //TODO : check this
                 );
 
-        String beanName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(beanName)) {
-            beanName = javaClass.getClassName();
+        String beanName = javaClass.getClassName();
+        if (javaTypeReference.getAnnotations() != null && javaTypeReference.getAnnotations().size() > 0) {
+            beanName = getAnnotationLiteralValue(javaTypeReference.getAnnotations().get(0), "name");
         }
 
         SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
