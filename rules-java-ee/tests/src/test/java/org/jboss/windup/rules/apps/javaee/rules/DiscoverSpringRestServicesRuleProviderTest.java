@@ -60,7 +60,7 @@ public class DiscoverSpringRestServicesRuleProviderTest extends AbstractTest {
 
             GraphService<SpringRestWebServiceModel> restService = new GraphService<>(context, SpringRestWebServiceModel.class);
             Assert.assertEquals(5, restService.findAll().size());
-            Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employeesGET,/othersGET".equalsIgnoreCase(restModel.getPath())));
+            Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> restModel.getPath().contains("/employeesGET") && restModel.getPath().contains("/othersGET")));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employeesPOST".equalsIgnoreCase(restModel.getPath())));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employees/{id}/PUT".equalsIgnoreCase(restModel.getPath())));
             Assert.assertTrue(restService.findAll().stream().anyMatch(restModel -> "/employees/{id}/DELETE".equalsIgnoreCase(restModel.getPath())));
