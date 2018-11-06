@@ -37,13 +37,10 @@ public class DiscoverSpringJavaRemoteServicesRuleProviderTest extends AbstractTe
     @Inject
     private DiscoverSpringJavaRemoteServicesRuleProvider discoverSpringJavaRemoteServicesRuleProvider;
 
-    @Inject
-    private DiscoverSpringBeanMethodAnnotationsRuleProvider discoverSpringBeanMethodAnnotationsRuleProvider;
-
     @Test
     public void testFindRemoteServiceOnAnnotatedClass() {
         try (GraphContext context = factory.create(true)) {
-            String inputPath = "src/test/resources/spring";
+            String inputPath = "src/test/resources/spring/remote-services";
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                     + UUID.randomUUID().toString());

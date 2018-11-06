@@ -4,14 +4,9 @@ import com.baeldung.api.CabBookingService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.remoting.rmi.RmiServiceExporter;
 import java.util.Calendar;
+import com.baeldung.api.Booking;
 
 public class RmiServer {
-    @Bean public Calendar myAnnotatedField;
-
-    @Bean
-    CabBookingService bookingService() {
-        return new CabBookingServiceImpl();
-    }
 
     @Bean
     RmiServiceExporter exporter(CabBookingService implementation) {
