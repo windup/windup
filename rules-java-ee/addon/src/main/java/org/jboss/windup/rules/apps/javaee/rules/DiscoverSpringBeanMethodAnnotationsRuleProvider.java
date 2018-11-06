@@ -26,12 +26,15 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Scans for classes with Spring bean related annotations, and adds Bean related metadata for these.
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = {AnalyzeJavaFilesRuleProvider.class, DiscoverSpringBeanClassAnnotationsRuleProvider.class})
 public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRuleProvider
 {
     @Override
@@ -54,46 +57,55 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
                     .withId(ruleIDPrefix + "_SpringBeanMethodRule");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name) {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
+    private boolean couldBeMethodReturnType(String element) {
 
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel) {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else {
-            return null;
-        }
+      if ("public static final private protected".contains(element.trim().toLowerCase())) {
+          return false;
+      } else {
+          // we want elements without any non word character
+          return containsNonWordCharacters(element);
+      }
+    }
+
+    private boolean containsNonWordCharacters(String element) {
+        Pattern p = Pattern.compile("[^\\w\\s]");
+        Matcher m = p.matcher(element);
+        return !m.find();
     }
 
     private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
 
-        //TODO : get the type returned by the method---> Bean Interface
-        //TODO : with that interface we will seach in the next lines the first class implementing that interface
+        String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
+        JavaClassModel javaImplementationClass = getImplementationJavaClassModelFromInterface(event, methodReturnType);
 
-        JavaClassModel javaClass = new JavaClassService(event.getGraphContext())
-                .getByName(javaTypeReference.getFile()
-                    .getJavaClasses()
-                    .stream()
-                    .filter(JavaClassModel::isPublic)
-                    .findAny()
-                    .map(JavaClassModel::getQualifiedName)
-                    .orElse("") //TODO : check this
-                );
-
-        String beanName = javaClass.getClassName();
-        if (javaTypeReference.getAnnotations() != null && javaTypeReference.getAnnotations().size() > 0) {
-            beanName = getAnnotationLiteralValue(javaTypeReference.getAnnotations().get(0), "name");
-        }
-
+        // We add the info to the SpringBeanService
         SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
         SpringBeanModel springBeanModel = sessionBeanService.create();
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
         springBeanModel.setApplications(applications);
-        springBeanModel.setSpringBeanName(beanName);
-        springBeanModel.setJavaClass(javaClass);
+        springBeanModel.setSpringBeanName(javaImplementationClass.getClassName());
+        springBeanModel.setJavaClass(javaImplementationClass);
+    }
+
+    private JavaClassModel getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
+        //with that interface we will seach in the next lines the first class implementing that interface
+        return new JavaClassService(event.getGraphContext()).findAll().stream()
+                .filter(e -> e.getInterfaces()
+                        .stream()
+                        .anyMatch(intf -> intf.getQualifiedName().contains(returnType)))
+                .findAny()
+                .get();
+    }
+
+    private String getReturnTypeFromMethodSnippit(JavaTypeReferenceModel javaTypeReference) {
+        //get the type returned by the method---> Bean Interface
+        return Arrays.stream(javaTypeReference.getSourceSnippit()
+                .split(" "))
+                .filter(this::couldBeMethodReturnType)
+                .findFirst()
+                .get();
     }
 
     @Override

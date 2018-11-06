@@ -73,7 +73,7 @@ public class DiscoverSpringBeanClassAnnotationsRuleProvider extends AbstractRule
                     .stream()
                     .filter(JavaClassModel::isPublic)
                     .findAny()
-                    .orElse(null); //TODO : check thi;
+                    .orElse(null); //TODO : check this;
 
         String beanName = getAnnotationLiteralValue(annotationTypeReference, "name");
         if (Strings.isNullOrEmpty(beanName)) {
