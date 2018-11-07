@@ -6,7 +6,7 @@ import com.whatever.windup.MyInterface;
 import com.whatever.windup.MyImplementation;
 
 
-public class SpringAnnotatedMethod {
+public class MethodAnnotatedBean {
     public Calendar mycalendar;
 
     @Bean
