@@ -62,7 +62,6 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProviderTest extends Abstrac
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert(true);
     }
 
 
