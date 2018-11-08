@@ -1,0 +1,48 @@
+<beans xmlns="http://www.springframework.org/schema/beans">
+
+
+    <bean id="jaxwsService" class="com.redhat.rmiserver.impl.JaxWSPOJOImpl">
+    </bean>
+
+    <bean id="jmsService" class="com.redhat.rmiserver.impl.JMSPOJOImpl">
+    </bean>
+
+    <bean id="amqpService" class="com.redhat.rmiserver.impl.AMQPPOJOImpl">
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="rmiService"/>
+        <property name="service" ref="rmiService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.RMIPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="serviceName" value="httpService"/>
+        <property name="service" ref="httpService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.HTTPPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="serviceName" value="hessianService"/>
+        <property name="service" ref="hessianService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.HessianPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceName" value="jaxwsService"/>
+        <property name="service" ref="jaxwsService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.JaxWSPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.jms.remoting.JmsInvokerServiceExporter">
+        <property name="serviceName" value="jmsService"/>
+        <property name="service" ref="jmsService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.JMSPOJOInterface"/>
+    </bean>
+
+    <bean class="org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter">
+        <property name="serviceName" value="amqpService"/>
+        <property name="service" ref="amqpService"/>
+        <property name="serviceInterface" value="com.redhat.rmiserver.intf.AMQPPOJOInterface"/>
+    </bean>
+</beans>

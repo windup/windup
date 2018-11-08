@@ -64,7 +64,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
     {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
-        JavaClassModel implementationClass = getJavaClass(typeReference);
+        JavaClassModel implementationClass = javaClassService.getJavaClass(typeReference);
 
         // first, find out if it implements an interface.
         // TODO: handle the interface only case, where clients exist but no implementation
@@ -89,29 +89,6 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
 
         JaxWSWebServiceModelService service = new JaxWSWebServiceModelService(event.getGraphContext());
         service.getOrCreate(typeReference.getFile().getApplication(), endpointInterface, implementationClass);
-    }
-
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
-        JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
-                result = javaClassModel;
-                break;
-            }
-        }
-
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
-
-        return result;
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
