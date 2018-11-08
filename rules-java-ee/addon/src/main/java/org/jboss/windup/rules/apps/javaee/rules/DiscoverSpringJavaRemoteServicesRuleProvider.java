@@ -10,6 +10,8 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -44,7 +46,7 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
     public Configuration getConfiguration(RuleLoaderContext context) {
         return ConfigurationBuilder
                 .begin()
-                .addRule().when(JavaClass.references("org.springframework.remoting.{exporter}.setService({argument})")
+                .addRule().when(JavaClass.references("org.springframework.remoting.{exporterClass}.setService({serviceInterface})")
                         .at(TypeReferenceLocation.METHOD_CALL))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
@@ -56,8 +58,8 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
 
     private AbstractIterationOperation<JavaTypeReferenceModel> addSpringRMIBeanToGraph() {
         return new ParameterizedIterationOperation<JavaTypeReferenceModel>() {
-            RegexParameterizedPatternBuilder exporterBuilder = new RegexParameterizedPatternBuilder("{exporter}");
-            RegexParameterizedPatternBuilder argumentBuilder = new RegexParameterizedPatternBuilder("{argument}");
+            RegexParameterizedPatternBuilder exporterBuilder = new RegexParameterizedPatternBuilder("{exporterClass}");
+            RegexParameterizedPatternBuilder argumentBuilder = new RegexParameterizedPatternBuilder("{serviceInterface}");
 
             @Override
             public Set<String> getRequiredParameterNames()
@@ -74,51 +76,46 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
 
             @Override
             public void performParameterized(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
-                String exporterValue = exporterBuilder.build(event, context);
-                String argumentValue = argumentBuilder.build(event, context);
-                extractMetadata(event,  payload);
+                String exporterClass = exporterBuilder.build(event, context);
+                String serviceInterface = argumentBuilder.build(event, context);
+                extractMetadata(event,  payload, exporterClass, serviceInterface);
             }
 
         };
     }
 
-    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference) {
+    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference, String exporterClass, String serviceInterface) {
         try {
-            String source = typeReference.getResolvedSourceSnippit();
-            String javaSource = IOUtils.toString(typeReference.getFile().asInputStream(), "UTF-8");
-            int methodBodyStart = javaSource.indexOf(typeReference.getSourceSnippit()) + typeReference.getSourceSnippit().length();
-            int startSetServiceInterface = javaSource.indexOf("setServiceInterface(", methodBodyStart);
-            int endSetServiceInterface = javaSource.indexOf(")", startSetServiceInterface);
-            String serviceInterface = javaSource.substring(startSetServiceInterface + "setServiceInterface(".length(), endSetServiceInterface);
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+
+            JavaClassModel exporterJavaClass = javaClassService.findAll().stream()
+                    .filter(e->e.getQualifiedName().equalsIgnoreCase(exporterClass))
+                    .findAny().get();
+
 
             SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
-            Optional<SpringBeanModel> springBeanClass = springBeanService.findAll().stream()
-                    .filter(e -> e.getJavaClass().getInterfaces().stream()
-                            .anyMatch(o -> o.getQualifiedName().equalsIgnoreCase(serviceInterface)))
-                    .findAny();
+                JavaClassModel implementationClass = springBeanService
+                        .findAll().stream()
+                        .filter(e -> e.getJavaClass().getInterfaces().stream()
+                                .anyMatch(o -> o.getQualifiedName().equalsIgnoreCase(serviceInterface)))
+                        .findFirst().get().getJavaClass();
 
-            if (springBeanClass.isPresent()) {
-                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-                JavaClassModel implementationClass = springBeanClass.get().getJavaClass();
-                JavaClassModel interfaceClass = javaClassService.findAll().stream().filter(e->e.getQualifiedName().equalsIgnoreCase(serviceInterface)).findAny().orElse(null);
-//
-//                JavaClassModel exporterInterfaceClassModel = javaClassService.getByName(exporterClass);
-//
-//                // Create the "source code" report for the Service Interface
-//                enableSourceReport(interfaceJavaClassModel);
-//
-//                String tagName = getTagName(exporterClass);
-//
-//                // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
-//                TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-//                technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
-//
-//                SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
-//                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, exporterInterfaceClassModel);
-//
-//                // Create the "source code" report for the Implementation.
-//                enableSourceReport(implementationJavaClassModel);
-            }
+                JavaClassModel interfaceClass = javaClassService.findAll().stream()
+                        .filter(e->e.getQualifiedName().equalsIgnoreCase(serviceInterface))
+                        .findAny()
+                        .orElse(null);
+
+                enableSourceReport(implementationClass);
+                enableSourceReport(interfaceClass);
+
+                String tagName = getTagName(exporterClass);
+
+                // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
+                TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+                technologyTagService.addTagToFileModel(interfaceClass.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
+
+                SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
+                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceClass, exporterJavaClass);
         } catch (Exception e) {
             LOG.severe(e.getMessage());
         }
