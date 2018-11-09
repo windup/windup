@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
+import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -46,13 +47,13 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
     public Configuration getConfiguration(RuleLoaderContext context) {
         return ConfigurationBuilder
                 .begin()
-                .addRule().when(JavaClass.references("org.springframework.remoting.{exporterClass}.setService({serviceInterface})")
+                .addRule().when(JavaClass.references("org.springframework.{exporterClass}.setService({serviceInterface})")
                         .at(TypeReferenceLocation.METHOD_CALL))
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
-                .where("exporter").matches("rmi.RmiServiceExporter|http.HttpInvokerExporter")
-                .where("argument").matches(".*")
+                .where("exporterClass").matches("remoting.rmi.RmiServiceExporter|remoting.http.HttpInvokerServiceExporter|remoting.caucho.HessianServiceExporter|remoting.jaxws.SimpleJaxWsServiceExporter|jms.remoting.JmsInvokerServiceExporter|amqp.remoting.service.AmqpInvokerServiceExporter")
+                .where("serviceInterface").matches(".*")
                 .withId(getClass().getSimpleName() + "_SpringJavaRemoteServicesRule");
     }
 
@@ -89,77 +90,43 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
             JavaClassModel exporterJavaClass = javaClassService.findAll().stream()
-                    .filter(e->e.getQualifiedName().equalsIgnoreCase(exporterClass))
+                    .filter(e->e.getQualifiedName().contains(exporterClass))
                     .findAny().get();
 
 
             SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
-                JavaClassModel implementationClass = springBeanService
-                        .findAll().stream()
-                        .filter(e -> e.getJavaClass().getInterfaces().stream()
-                                .anyMatch(o -> o.getQualifiedName().equalsIgnoreCase(serviceInterface)))
-                        .findFirst().get().getJavaClass();
 
-                JavaClassModel interfaceClass = javaClassService.findAll().stream()
-                        .filter(e->e.getQualifiedName().equalsIgnoreCase(serviceInterface))
-                        .findAny()
-                        .orElse(null);
+            JavaClassModel implementationClass = springBeanService
+                    .findAll().stream()
+                    .filter(e -> e.getJavaClass().getInterfaces().stream()
+                            .anyMatch(o -> o.getQualifiedName().equalsIgnoreCase(serviceInterface)))
+                    .findFirst().get().getJavaClass();
 
-                enableSourceReport(implementationClass);
-                enableSourceReport(interfaceClass);
+            JavaClassModel interfaceClass = javaClassService.findAll().stream()
+                    .filter(e->e.getQualifiedName().equalsIgnoreCase(serviceInterface))
+                    .findFirst().get();
 
-                String tagName = getTagName(exporterClass);
+            enableSourceReport(implementationClass);
+            enableSourceReport(interfaceClass);
 
-                // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
-                TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                technologyTagService.addTagToFileModel(interfaceClass.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
+            SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
+            springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceClass, exporterJavaClass);
 
-                SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
-                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceClass, exporterJavaClass);
+            // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
+            TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+            String tagName = springRemoteRemoteServiceModelService.getTagName(exporterClass);
+            technologyTagService.addTagToFileModel(interfaceClass.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
+
         } catch (Exception e) {
             LOG.severe(e.getMessage());
         }
     }
 
-    private String getTagName(String exporterClass) {
-        if (exporterClass.contains("RmiServiceExporter")) {
-            return "spring-rmi";
-        } else if (exporterClass.contains("HttpInvokerServiceExporter")) {
-            return "spring-httpinvoker";
-        } else if (exporterClass.contains("HessianServiceExporter")) {
-            return "spring-hessian";
-        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
-            return "spring-jaxws";
-        } else if (exporterClass.contains("JmsInvokerServiceExporter")) {
-            return "spring-jms";
-        } else if (exporterClass.contains("AmqpInvokerServiceExporter")) {
-            return "spring-amqp";
-        } else return "spring-undefined";
-    }
-
-
-    private void enableSourceReport(JavaClassModel implementationClass) {
-        if (implementationClass.getOriginalSource() != null) {
-            implementationClass.getOriginalSource().setGenerateSourceReport(true);
+    private void enableSourceReport(JavaClassModel javaClass) {
+        if (javaClass.getOriginalSource() != null) {
+            javaClass.getOriginalSource().setGenerateSourceReport(true);
         } else {
-            implementationClass.getDecompiledSource().setGenerateSourceReport(true);
+            javaClass.getDecompiledSource().setGenerateSourceReport(true);
         }
     }
-
-    private String getImplementationClass(String implementationBean, Document wholeDocument) {
-        return $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class");
-    }
-
-    private String getImplementationBean(Document xmlDocSnippet) {
-        return $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
-    }
-
-    private String getInterfaceName(Document xmlDocSnippet) {
-        return $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
-    }
-
-    private String getExporterClass(Document xmlDocSnippet) {
-        return $(xmlDocSnippet).first().attr("class");
-    }
-
 }
