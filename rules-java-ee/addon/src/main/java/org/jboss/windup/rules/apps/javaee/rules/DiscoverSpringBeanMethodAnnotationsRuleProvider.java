@@ -91,12 +91,18 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
 
     private JavaClassModel getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
         //with that interface we will seach in the next lines the first class implementing that interface
-        return new JavaClassService(event.getGraphContext()).findAll().stream()
-                .filter(e -> e.getInterfaces()
-                        .stream()
-                        .anyMatch(intf -> intf.getQualifiedName().contains(returnType)))
-                .findAny()
-                .get();
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        JavaClassModel returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName().contains(returnType)).findFirst().get();
+        if (returnTypeJavaClassModel.isInterface()) {
+
+            return javaClassService.findAll().stream()
+                    .filter(e -> e.getInterfaces()
+                            .stream()
+                            .anyMatch(intf -> intf.getQualifiedName().contains(returnType)))
+                    .findAny().get();
+        } else {
+            return returnTypeJavaClassModel;
+        }
     }
 
     private String getReturnTypeFromMethodSnippit(JavaTypeReferenceModel javaTypeReference) {
