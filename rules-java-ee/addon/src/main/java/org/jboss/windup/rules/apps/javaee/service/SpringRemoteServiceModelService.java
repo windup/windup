@@ -12,7 +12,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
 import org.jboss.windup.util.Logging;
 
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
@@ -28,20 +27,14 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
     }
 
     public SpringRemoteServiceModel getOrCreate(ProjectModel application, JavaClassModel remoteInterface, JavaClassModel exporterInterface) {
-        LOG.info("Spring Remote Interface: " + remoteInterface.getQualifiedName());
-        SpringRemoteServiceModel remoteServiceModel = findByInterface(remoteInterface);
+        SpringRemoteServiceModel remoteServiceModel = findByInterfaceAndExporter(remoteInterface, exporterInterface);
         if (remoteServiceModel == null) {
             remoteServiceModel = create();
             remoteServiceModel.addApplication(application);
             remoteServiceModel.setInterface(remoteInterface);
             remoteServiceModel.setSpringExporterInterface(exporterInterface);
 
-            Iterator<JavaClassModel> implementations = remoteInterface.getImplementedBy().iterator();
-            while (implementations.hasNext()) {
-                JavaClassModel implModel = implementations.next();
-                LOG.info(" -- Implementations: " + implModel.getQualifiedName());
-                remoteServiceModel.setImplementationClass(implModel);
-            }
+            remoteServiceModel.setImplementationClass(remoteInterface.getImplementedBy().stream().findFirst().orElse(null));
         }
         else {
             if (!remoteServiceModel.isAssociatedWithApplication(application))
@@ -51,16 +44,24 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
         return remoteServiceModel;
     }
 
-    private SpringRemoteServiceModel findByInterface(JavaClassModel rmiInterface) {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(rmiInterface.getElement());
-        pipeline.in(SpringRemoteServiceModel.REMOTESERVICE_INTERFACE);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(SpringRemoteServiceModel.TYPE));
+    private SpringRemoteServiceModel findByInterfaceAndExporter(JavaClassModel rmiInterface, JavaClassModel exporterInterface) {
+        return this.findAll().stream().filter(e-> e.getInterface().getQualifiedName().equalsIgnoreCase(rmiInterface.getQualifiedName()) &&
+                 e.getSpringExporterInterface().getQualifiedName().equalsIgnoreCase(exporterInterface.getQualifiedName())).findFirst().orElse(null);
+    }
 
-        if (pipeline.hasNext()) {
-            return frame(pipeline.next());
-        }
-        else {
-            return null;
-        }
+    public String getTagName(String exporterClass) {
+        if (exporterClass.contains("RmiServiceExporter")) {
+            return "spring-rmi";
+        } else if (exporterClass.contains("HttpInvokerServiceExporter")) {
+            return "spring-httpinvoker";
+        } else if (exporterClass.contains("HessianServiceExporter")) {
+            return "spring-hessian";
+        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
+            return "spring-jaxws";
+        } else if (exporterClass.contains("JmsInvokerServiceExporter")) {
+            return "spring-jms";
+        } else if (exporterClass.contains("AmqpInvokerServiceExporter")) {
+            return "spring-amqp";
+        } else return "spring-undefined";
     }
 }
