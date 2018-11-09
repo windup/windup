@@ -45,7 +45,7 @@ public class DiscoverSpringRestServicesRuleProviderTest extends AbstractTest {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
-            inputPath.setFilePath("src/test/resources/discover-spring-remote-services");
+            inputPath.setFilePath("src/test/resources/remote-services-xml-java");
 
             pm.addFileModel(inputPath);
             pm.setRootFileModel(inputPath);

@@ -10,8 +10,11 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
+import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
+import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -34,13 +38,10 @@ public class DiscoverSpringJavaRemoteServicesRuleProviderTest extends AbstractTe
     @Inject
     private GraphContextFactory factory;
 
-    @Inject
-    private DiscoverSpringJavaRemoteServicesRuleProvider discoverSpringJavaRemoteServicesRuleProvider;
-
     @Test
     public void testFindRemoteServiceOnAnnotatedClass() {
         try (GraphContext context = factory.create(true)) {
-            String inputPath = "src/test/resources/spring/remote-services";
+            String inputPath = "src/test/resources/spring/remote-services-java";
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                     + UUID.randomUUID().toString());
@@ -53,6 +54,16 @@ public class DiscoverSpringJavaRemoteServicesRuleProviderTest extends AbstractTe
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);
+
+            GraphService<SpringRemoteServiceModel> springBeanModelGraphService = new GraphService<>(context, SpringRemoteServiceModel.class);
+            List<SpringRemoteServiceModel> allBeans = springBeanModelGraphService.findAll();
+            assertEquals(6, allBeans.size());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.rmi.RmiServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.http.HttpInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.caucho.HessianServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.jms.remoting.JmsInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
         } catch (IOException e) {
             e.printStackTrace();
         }
