@@ -154,11 +154,11 @@
                                             <#if countInteger gt 0>
                                                 <#assign sortedRowTags = reportModel.rowsHolderTag.designatedTags?sort_by("title") />
                                                 <#assign rowTags = sortedRowTags?reverse />
+                                                <div class="table-tooltiptext">
                                                 <#list rowTags as rowTag>
                                                     <#if isTagUnderTag(boxTag, rowTag)>
                                                         <#assign itemisedStatsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, appProject.getElement().id()?long))! />
                                                         <#list itemisedStatsForThisBox>
-                                                        <div class="table-tooltiptext">
                                                                     <#items as name, stat>
                                                                         <#if (stat.occurrenceCount > 0) >
                                                                                 <div class="row">
@@ -166,11 +166,10 @@
                                                                                 </div>
                                                                             </#if>
                                                                     </#items>
-                                                        </div>
                                                         </#list>
                                                     </#if>
                                                 </#list>
-
+                                                </div>
                                             </#if>
                                         </td>
                                     </#if>
