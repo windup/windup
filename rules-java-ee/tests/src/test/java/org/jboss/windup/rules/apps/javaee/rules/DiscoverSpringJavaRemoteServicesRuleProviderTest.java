@@ -15,6 +15,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
+import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,11 +56,11 @@ public class DiscoverSpringJavaRemoteServicesRuleProviderTest extends AbstractTe
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);
 
-            GraphService<SpringRemoteServiceModel> springBeanModelGraphService = new GraphService<>(context, SpringRemoteServiceModel.class);
+            SpringRemoteServiceModelService springBeanModelGraphService = new SpringRemoteServiceModelService(context);
             List<SpringRemoteServiceModel> allBeans = springBeanModelGraphService.findAll();
             assertEquals(6, allBeans.size());
             assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.rmi.RmiServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
-            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.http.HttpInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
+            assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
             assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.caucho.HessianServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
             assertEquals(1, allBeans.stream().filter(e -> "org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());
             assertEquals(1, allBeans.stream().filter(e -> "org.springframework.jms.remoting.JmsInvokerServiceExporter".equalsIgnoreCase(e.getSpringExporterInterface().getQualifiedName())).count());

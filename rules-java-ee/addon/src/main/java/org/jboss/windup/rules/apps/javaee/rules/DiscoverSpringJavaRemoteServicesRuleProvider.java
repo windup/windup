@@ -90,7 +90,7 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
             JavaClassModel exporterJavaClass = javaClassService.findAll().stream()
-                    .filter(e->e.getQualifiedName().contains(exporterClass))
+                    .filter(e->e.getQualifiedName().toLowerCase().contains(exporterClass.toLowerCase()))
                     .findAny().get();
 
 

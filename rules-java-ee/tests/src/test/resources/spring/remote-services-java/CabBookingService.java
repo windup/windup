@@ -1,4 +1,4 @@
-package com.baeldung.api;
+package com.whatever.api;
 
 public interface CabBookingService {
 }
