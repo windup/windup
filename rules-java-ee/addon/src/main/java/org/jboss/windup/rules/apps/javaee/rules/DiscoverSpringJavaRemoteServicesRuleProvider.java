@@ -52,7 +52,7 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
                 .perform(Iteration.over()
                         .perform(addSpringRMIBeanToGraph())
                         .endIteration())
-                .where("exporterClass").matches("remoting.rmi.RmiServiceExporter|remoting.http.HttpInvokerServiceExporter|remoting.caucho.HessianServiceExporter|remoting.jaxws.SimpleJaxWsServiceExporter|jms.remoting.JmsInvokerServiceExporter|amqp.remoting.service.AmqpInvokerServiceExporter")
+                .where("exporterClass").matches("remoting.rmi.RmiServiceExporter|remoting.httpinvoker.HttpInvokerServiceExporter|remoting.caucho.HessianServiceExporter|remoting.jaxws.SimpleJaxWsServiceExporter|jms.remoting.JmsInvokerServiceExporter|amqp.remoting.service.AmqpInvokerServiceExporter")
                 .where("serviceInterface").matches(".*")
                 .withId(getClass().getSimpleName() + "_SpringJavaRemoteServicesRule");
     }
