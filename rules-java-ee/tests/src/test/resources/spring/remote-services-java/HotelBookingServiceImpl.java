@@ -1,4 +1,4 @@
-package com.baeldung.api;
+package com.whatever.api;
 
 import org.springframework.stereotype.Component;
 

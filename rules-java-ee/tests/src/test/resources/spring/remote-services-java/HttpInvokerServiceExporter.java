@@ -1,4 +1,4 @@
-package org.springframework.remoting.http;
+package org.springframework.remoting.httpinvoker;
 
 public class HttpInvokerServiceExporter {
     

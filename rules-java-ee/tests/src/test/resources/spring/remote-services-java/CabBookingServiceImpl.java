@@ -1,7 +1,7 @@
-package com.baeldung.server;
+package com.whatever.server;
 
 import org.springframework.stereotype.Component;
-import com.baeldung.api.CabBookingService;
+import com.whatever.api.CabBookingService;
 
 @Component
 public class CabBookingServiceImpl implements CabBookingService {

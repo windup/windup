@@ -1,15 +1,15 @@
-package com.baeldung.server;
+package com.whatever.server;
 
-import com.baeldung.api.CabBookingService;
+import com.whatever.api.CabBookingService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.remoting.rmi.RmiServiceExporter;
-import org.springframework.remoting.http.HttpInvokerServiceExporter;
+import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 import org.springframework.remoting.caucho.HessianServiceExporter;
 import org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter;
 import org.springframework.jms.remoting.JmsInvokerServiceExporter;
 import org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter;
 import java.util.Calendar;
-import com.baeldung.api.Booking;
+import com.whatever.api.Booking;
 
 public class SpringRemoteServices {
 
