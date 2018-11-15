@@ -295,6 +295,35 @@ public class TechReportService
 
             return byProject.get(technology);
         }
+
+        public Map<String, TechUsageStatSum> getSummarizedStatsByTechnology(String boxTagName, Long projectId)
+        {
+            Set<String> rowTagNames = map.keySet();
+            Map<String, TechUsageStatSum> returnStatMap = new HashMap<String, TechUsageStatSum>();
+            rowTagNames.forEach(rowTagName -> {
+                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get(rowTagName);
+                final Map<Long, Map<String, TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+                if (boxMap != null) {
+                    Map<String, TechUsageStatSum> statMap = boxMap.get(projectId);
+                    Set<String> returnStatKeys = returnStatMap.keySet();
+                    statMap.keySet().forEach(statKey -> {
+                        if (returnStatKeys.contains(statKey))
+                        {
+                            returnStatMap.get(statKey).count += statMap.get(statKey).count;
+                        }
+                        else
+                        {
+                            returnStatMap.put(statKey, statMap.get(statKey));
+                        }
+                    });
+                }
+            });
+
+
+            return returnStatMap;
+        }
+
+
     }
 
     /**

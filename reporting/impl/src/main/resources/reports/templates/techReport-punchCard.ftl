@@ -152,23 +152,17 @@
                                         <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title} table-tooltip" data-count="${countInteger?c}">
                                             <#-- The circle is put here by CSS :after -->
                                             <#if countInteger gt 0>
-                                                <#assign sortedRowTags = reportModel.rowsHolderTag.designatedTags?sort_by("title") />
-                                                <#assign rowTags = sortedRowTags?reverse />
                                                 <div class="table-tooltiptext">
-                                                <#list rowTags as rowTag>
-                                                    <#if isTagUnderTag(boxTag, rowTag)>
-                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, appProject.getElement().id()?long))! />
+                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.getSummarizedStatsByTechnology(boxTag.name, appProject.getElement().id()?long))! />
                                                         <#list itemisedStatsForThisBox>
-                                                                    <#items as name, stat>
-                                                                        <#if (stat.occurrenceCount > 0) >
-                                                                                <div class="row">
-                                                                                    <div class="tooltiptext-tech-name col-md-10">${stat.name}</div><div class="tooltiptext-tech-count col-md-2">${stat.occurrenceCount}</div>
-                                                                                </div>
-                                                                            </#if>
-                                                                    </#items>
+                                                            <#items as name, stat>
+                                                                <#if (stat.occurrenceCount > 0) >
+                                                                    <div class="row">
+                                                                        <div class="tooltiptext-tech-name col-md-10">${stat.name}</div><div class="tooltiptext-tech-count col-md-2">${stat.occurrenceCount}</div>
+                                                                    </div>
+                                                                </#if>
+                                                            </#items>
                                                         </#list>
-                                                    </#if>
-                                                </#list>
                                                 </div>
                                             </#if>
                                         </td>
