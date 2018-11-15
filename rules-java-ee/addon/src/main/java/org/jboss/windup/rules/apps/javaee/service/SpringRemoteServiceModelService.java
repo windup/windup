@@ -56,7 +56,7 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
             return "spring-httpinvoker";
         } else if (exporterClass.contains("HessianServiceExporter")) {
             return "spring-hessian";
-        } else if (exporterClass.contains("JaxWsPortProxyFactoryBean")) {
+        } else if (exporterClass.contains("SimpleJaxWsServiceExporter")) {
             return "spring-jaxws";
         } else if (exporterClass.contains("JmsInvokerServiceExporter")) {
             return "spring-jms";
