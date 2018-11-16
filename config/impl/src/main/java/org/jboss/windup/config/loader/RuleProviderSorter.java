@@ -115,7 +115,7 @@ public class RuleProviderSorter
     }
 
     /**
-     * Add edges between {@link WinduPRuleProvider}s based upon their dependency relationships.
+     * Add edges between {@link RuleProvider}s based upon their dependency relationships.
      */
     private void addProviderRelationships(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph)
     {
