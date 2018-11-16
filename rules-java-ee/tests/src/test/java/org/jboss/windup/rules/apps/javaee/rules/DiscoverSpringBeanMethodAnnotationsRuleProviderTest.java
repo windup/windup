@@ -54,10 +54,13 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProviderTest extends Abstrac
 
             GraphService<SpringBeanModel> springBeanModelGraphService = new GraphService<>(context, SpringBeanModel.class);
             List<SpringBeanModel> allBeans = springBeanModelGraphService.findAll();
-            assertEquals(1, allBeans.size());
+            assertEquals(2, allBeans.size());
             assertTrue(allBeans.stream().anyMatch(e -> "com.whatever.windup.MyImplementation".equalsIgnoreCase(e.getJavaClass().getQualifiedName()) &&
                                                   e.getJavaClass().getInterfaces().stream()
                                                           .anyMatch(intf -> intf.getQualifiedName().equalsIgnoreCase("com.whatever.windup.MyInterface"))));
+            assertTrue(allBeans.stream().anyMatch(e -> "com.whatever.windup.MyOtherImplementation".equalsIgnoreCase(e.getJavaClass().getQualifiedName()) &&
+                                                  e.getJavaClass().getInterfaces().stream()
+                                                          .anyMatch(intf -> intf.getQualifiedName().equalsIgnoreCase("com.whatever.windup.MyOtherInterface"))));
 
         } catch (IOException e) {
             e.printStackTrace();

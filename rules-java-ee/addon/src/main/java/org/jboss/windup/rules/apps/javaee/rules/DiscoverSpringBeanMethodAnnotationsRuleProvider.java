@@ -78,7 +78,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
 
         String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
         JavaClassModel javaImplementationClass = getImplementationJavaClassModelFromInterface(event, methodReturnType);
-        javaImplementationClass.getDecompiledSource().setGenerateSourceReport(true);
+        enableSourceReport(javaImplementationClass);
 
         // We add the info to the SpringBeanService
         SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
@@ -118,5 +118,13 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
     @Override
     public String toString() {
         return "DiscoverSpringBeanAnnotatedClasses";
+    }
+
+    private void enableSourceReport(JavaClassModel javaClass) {
+        if (javaClass.getOriginalSource() != null) {
+            javaClass.getOriginalSource().setGenerateSourceReport(true);
+        } else {
+            javaClass.getDecompiledSource().setGenerateSourceReport(true);
+        }
     }
 }

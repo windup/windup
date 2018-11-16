@@ -7,11 +7,7 @@ import com.whatever.windup.MyOtherInterface;
 import com.whatever.windup.MyImplementation;
 import com.whatever.windup.MyOtherImplementation;
 
-import javax.annotation.ManagedBean;
-
-
 public class MethodAnnotatedBean {
-    public Calendar mycalendar;
 
     @Bean
     public MyInterface anotherExporter(int number) {
