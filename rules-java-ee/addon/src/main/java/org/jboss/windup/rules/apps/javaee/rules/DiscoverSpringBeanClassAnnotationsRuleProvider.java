@@ -25,13 +25,14 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Scans for classes with Spring bean related annotations, and adds Bean related metadata for these.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverSpringBeanClassAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverSpringBeanClassAnnotationsRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -52,41 +53,29 @@ public class DiscoverSpringBeanClassAnnotationsRuleProvider extends AbstractRule
                     .withId(ruleIDPrefix + "_SpringBeanRule");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name) {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel) {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else {
-            return null;
-        }
-    }
-
     private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
-        JavaClassModel javaClass = javaTypeReference.getFile()
+        Optional<JavaClassModel> javaClass = javaTypeReference.getFile()
                     .getJavaClasses()
                     .stream()
                     .filter(JavaClassModel::isPublic)
-                    .findAny()
-                    .orElse(null); //TODO : check this;
+                    .findAny();
+        if (javaClass.isPresent()) {
+            String beanName = getAnnotationLiteralValue(annotationTypeReference, "name");
+            if (Strings.isNullOrEmpty(beanName)) {
+                beanName = javaClass.get().getClassName();
+            }
 
-        String beanName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(beanName)) {
-            beanName = javaClass.getClassName();
+            SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
+            SpringBeanModel springBeanModel = sessionBeanService.create();
+
+            Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
+            springBeanModel.setApplications(applications);
+            springBeanModel.setSpringBeanName(beanName);
+            springBeanModel.setJavaClass(javaClass.get());
         }
-
-        SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
-        SpringBeanModel springBeanModel = sessionBeanService.create();
-
-        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
-        springBeanModel.setApplications(applications);
-        springBeanModel.setSpringBeanName(beanName);
-        springBeanModel.setJavaClass(javaClass);
     }
 
     @Override
