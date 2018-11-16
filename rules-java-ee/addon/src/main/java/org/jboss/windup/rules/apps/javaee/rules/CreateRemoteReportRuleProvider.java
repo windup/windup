@@ -134,7 +134,8 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
             }
         }
 
-        if (jaxRsList.isEmpty() && jaxWsList.isEmpty() && ejbRemoteList.isEmpty() && rmiList.isEmpty())
+        if (jaxRsList.isEmpty() && jaxWsList.isEmpty() && ejbRemoteList.isEmpty() && rmiList.isEmpty() &&
+                amqpList.isEmpty() && jmsList.isEmpty() && hessianList.isEmpty() && httpinvokerList.isEmpty())
             return;
 
         ApplicationReportModel applicationReportModel = createReportHeader(context, projectModel);
