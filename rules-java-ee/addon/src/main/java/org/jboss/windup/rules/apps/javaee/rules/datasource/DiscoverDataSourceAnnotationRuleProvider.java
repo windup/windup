@@ -22,6 +22,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeR
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
+import org.jboss.windup.rules.apps.javaee.rules.DiscoverAnnotatedClassRuleProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -37,7 +38,7 @@ import java.util.Set;
  *
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvider
+public class DiscoverDataSourceAnnotationRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
 
     @Override
@@ -59,20 +60,6 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
                 .withId(ruleIDPrefix + "_DataSourceDefinition");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     private void extractDataSourceMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {

@@ -43,7 +43,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverJPAAnnotationsRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverJPAAnnotationsRuleProvider.class);
 
@@ -76,21 +76,6 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
             .withId(ruleIDPrefix + "_JPAEntityBeanRule");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     private JavaAnnotationTypeReferenceModel findTableAnnotation(GraphRewrite event, List<AbstractJavaSourceModel> sourceModels)
     {
         for (AbstractJavaSourceModel sourceModel : sourceModels)
@@ -101,10 +86,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
                     .filter(annotationReference -> annotationReference.getResolvedSourceSnippit() != null && annotationReference.getResolvedSourceSnippit().contains("javax.persistence.Table"))
                     .findFirst();
 
-            if (tableAnnotation.isPresent())
-                return tableAnnotation.get();
-            else
-                return findTableAnnotation(event, getParentSourceFiles(event, sourceModel));
+            return tableAnnotation.orElseGet(() -> findTableAnnotation(event, getParentSourceFiles(event, sourceModel)));
         }
         return null;
     }
@@ -236,8 +218,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
                 if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
                 {
-                    JavaAnnotationTypeReferenceModel reference = annotationTypeReference;
-                    addNamedQuery(namedQueryService, jpaEntity, reference);
+                    addNamedQuery(namedQueryService, jpaEntity, annotationTypeReference);
                 }
             }
         }

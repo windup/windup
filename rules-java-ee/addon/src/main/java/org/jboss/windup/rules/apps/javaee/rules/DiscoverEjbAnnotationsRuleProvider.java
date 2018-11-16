@@ -37,7 +37,7 @@ import java.util.Set;
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverEjbAnnotationsRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -67,21 +67,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                         }
                     })
                     .withId(ruleIDPrefix + "_MessageDrivenRule");
-    }
-
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
-            return null;
-        }
     }
 
     private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
