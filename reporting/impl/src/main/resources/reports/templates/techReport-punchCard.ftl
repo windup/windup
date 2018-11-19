@@ -158,7 +158,7 @@
                                                             <#items as name, stat>
                                                                 <#if (stat.occurrenceCount > 0) >
                                                                     <div class="row">
-                                                                        <div class="tooltiptext-tech-name col-md-10">${stat.name}</div><div class="tooltiptext-tech-count col-md-2">${stat.occurrenceCount}</div>
+                                                                        <div class="tooltiptext-tech-name col-md-9">${stat.name}</div><div class="tooltiptext-tech-count col-md-3">${stat.occurrenceCount}</div>
                                                                     </div>
                                                                 </#if>
                                                             </#items>

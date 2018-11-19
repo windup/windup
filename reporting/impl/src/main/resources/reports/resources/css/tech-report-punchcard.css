@@ -152,7 +152,10 @@ table.technologiesPunchCard tbody tr {
     z-index: 1;
 
     font-size: 14pt;
-    padding: 5px;
+    padding-top: 5px;
+    padding-right:10px;
+    padding-left: 5px;
+    padding-bottom: 5px;
 
     /*left tooltip*/
     top: 10px;
@@ -173,7 +176,7 @@ table.technologiesPunchCard tbody tr {
 
 .table-tooltip:hover .table-tooltiptext .tooltiptext-tech-name {
     text-align: left;
-    padding-right: 0 !important;
+    padding-right: 5 !important;
 }
 
 .table-tooltip:hover .table-tooltiptext .tooltiptext-tech-count {
