@@ -154,12 +154,18 @@
                                             <#if countInteger gt 0>
                                                 <div class="table-tooltiptext">
                                                         <#assign itemisedStatsForThisBox = (sortedStatsMatrix.getSummarizedStatsByTechnology(boxTag.name, appProject.getElement().id()?long))! />
+                                                        <#assign countTooltipRows = 0 />
                                                         <#list itemisedStatsForThisBox>
                                                             <#items as name, stat>
                                                                 <#if (stat.occurrenceCount > 0) >
                                                                     <div class="row">
+                                                                        <#if (countTooltipRows == 0)>
+                                                                        <div class="tooltiptext-tech-name-header col-md-9">Total</div><div class="tooltiptext-tech-count-header col-md-3">${stat.occurrenceCount}</div>
+                                                                        <#else>
                                                                         <div class="tooltiptext-tech-name col-md-9">${stat.name}</div><div class="tooltiptext-tech-count col-md-3">${stat.occurrenceCount}</div>
+                                                                        </#if>
                                                                     </div>
+                                                                    <#assign countTooltipRows += 1 />
                                                                 </#if>
                                                             </#items>
                                                         </#list>

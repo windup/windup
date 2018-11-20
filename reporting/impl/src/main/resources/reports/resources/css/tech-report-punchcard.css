@@ -184,6 +184,18 @@ table.technologiesPunchCard tbody tr {
     padding-left: 0px !important;
 }
 
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-name-header {
+    text-align: left;
+    padding-right: 5 !important;
+    font-style: italic;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-count-header {
+    text-align: left;
+    padding-left: 0px !important;
+    font-style: italic;
+}
+
 .table-tooltip .table-tooltiptext::after {
     position: absolute;
     border-width: 5px;
