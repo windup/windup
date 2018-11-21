@@ -1,12 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -20,6 +14,9 @@ import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TagGraphService;
 import org.jboss.windup.util.exception.WindupException;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class TechReportService
 {
@@ -217,7 +214,7 @@ public class TechReportService
                             .map(ProjectModel::getElement)
                             .map(Vertex::id)
                             .map(Long.class::cast)
-                            .collect(Collectors.toList());
+                            .collect(toList());
             }
             else
             {
@@ -295,6 +292,45 @@ public class TechReportService
 
             return byProject.get(technology);
         }
+
+        public Map<String, TechUsageStatSum> getSummarizedStatsByTechnology(String boxTagName, Long projectId)
+        {
+            Set<String> rowTagNames = map.keySet();
+            Map<String, TechUsageStatSum> interimStatMap = new LinkedHashMap<String, TechUsageStatSum>();
+            Map<String, TechUsageStatSum> returnStatMap = new LinkedHashMap<String, TechUsageStatSum>();
+            rowTagNames.forEach(rowTagName -> {
+                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get(rowTagName);
+                final Map<Long, Map<String, TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+                if (boxMap != null) {
+                    Map<String, TechUsageStatSum> statMap = boxMap.get(projectId);
+                    Set<String> interimStatKeys = interimStatMap.keySet();
+                    statMap.keySet().forEach(statKey -> {
+                        if (interimStatKeys.contains(statKey))
+                        {
+                            interimStatMap.get(statKey).count += statMap.get(statKey).count;
+                        }
+                        else
+                        {
+                            interimStatMap.put(statKey, statMap.get(statKey));
+                        }
+                    });
+                }
+            });
+
+            //have the blank key item (title row) first
+            returnStatMap.put("",interimStatMap.get(""));
+            //sort interim map and populate return map, leaving out blank key item (which has been placed in already as the first item)
+            interimStatMap.entrySet().stream()
+                    .filter(e -> e.getKey() != "")
+                    .sorted(Map.Entry.<String, TechUsageStatSum>comparingByValue(new TechUsageStatSumComparator()).reversed())
+                    .forEachOrdered(x ->
+                        returnStatMap.put((String)((Map.Entry) x).getKey(), (TechUsageStatSum)((Map.Entry) x).getValue())
+                    );
+
+            return returnStatMap;
+        }
+
+
     }
 
     /**
@@ -371,6 +407,29 @@ public class TechReportService
         public String toString()
         {
             return "{" + name + " " + count + "×, [" + tags + "]}";
+        }
+    }
+
+    public static class TechUsageStatSumComparator implements Comparator
+    {
+        public int compare(Object o1, Object o2){
+            if (!(o1 instanceof TechUsageStatSum) ||  !(o2 instanceof TechUsageStatSum))
+            {
+                throw new ClassCastException();
+            }
+            if (((TechUsageStatSum)o1).getOccurrenceCount() < ((TechUsageStatSum)o2).getOccurrenceCount())
+            {
+                return -1;
+            }
+            else if(((TechUsageStatSum)o1).getOccurrenceCount() > ((TechUsageStatSum)o2).getOccurrenceCount())
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+
         }
     }
 }

@@ -60,13 +60,16 @@
                 <#assign sectorTags = iterableToList(reportModel.sectorsHolderTag.designatedTags) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
                 <#assign placeTagsParent = getTagModelByName("techReport:mappingOfPlacementTagNames") />
+                <#assign sortedRowTags = iterableToList(reportModel.rowsHolderTag.designatedTags) />
+                <#assign sortedRowTags = sortedRowTags?sort_by("title") />
 
-                <#-- MatrixAndAggregated {
-                       countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
-                       maximumsPerTag       // Map<String, Integer>
-                    }
-                <#assign stats = getTechReportPunchCardStats() />
-                -->
+
+            <#-- MatrixAndAggregated {
+                   countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
+                   maximumsPerTag       // Map<String, Integer>
+                }
+            <#assign stats = getTechReportPunchCardStats() />
+            -->
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
@@ -149,7 +152,24 @@
                                         <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title} table-tooltip" data-count="${countInteger?c}">
                                             <#-- The circle is put here by CSS :after -->
                                             <#if countInteger gt 0>
-                                            <span class="table-tooltiptext">${countInteger?c}</span>
+                                                <div class="table-tooltiptext">
+                                                        <#assign itemisedStatsForThisBox = (sortedStatsMatrix.getSummarizedStatsByTechnology(boxTag.name, appProject.getElement().id()?long))! />
+                                                        <#assign countTooltipRows = 0 />
+                                                        <#list itemisedStatsForThisBox>
+                                                            <#items as name, stat>
+                                                                <#if (stat.occurrenceCount > 0) >
+                                                                    <div class="row">
+                                                                        <#if (countTooltipRows == 0)>
+                                                                        <div class="tooltiptext-tech-name-header col-md-9">Total</div><div class="tooltiptext-tech-count-header col-md-3">${stat.occurrenceCount}</div>
+                                                                        <#else>
+                                                                        <div class="tooltiptext-tech-name col-md-9">${stat.name}</div><div class="tooltiptext-tech-count col-md-3">${stat.occurrenceCount}</div>
+                                                                        </#if>
+                                                                    </div>
+                                                                    <#assign countTooltipRows += 1 />
+                                                                </#if>
+                                                            </#items>
+                                                        </#list>
+                                                </div>
                                             </#if>
                                         </td>
                                     </#if>
