@@ -203,7 +203,7 @@ table.technologiesPunchCard tbody tr {
 
     /* To the right of the tooltip */
     content: "";
-    top: 50%;
+    top: 15px;
     left: 100%;
     margin-top: -5px;
     border-color: transparent transparent transparent #505050;
