@@ -304,16 +304,16 @@ public class TechReportService
                 if (boxMap != null) {
                     Map<String, TechUsageStatSum> statMap = boxMap.get(projectId);
                     Set<String> interimStatKeys = interimStatMap.keySet();
-                    statMap.keySet().forEach(statKey -> {
-                        if (interimStatKeys.contains(statKey))
-                        {
-                            interimStatMap.get(statKey).count += statMap.get(statKey).count;
-                        }
-                        else
-                        {
-                            interimStatMap.put(statKey, statMap.get(statKey));
-                        }
-                    });
+                    if (statMap != null)
+                    {
+                        statMap.keySet().forEach(statKey -> {
+                            if (interimStatKeys.contains(statKey)) {
+                                interimStatMap.get(statKey).count += statMap.get(statKey).count;
+                            } else {
+                                interimStatMap.put(statKey, statMap.get(statKey));
+                            }
+                        });
+                    }
                 }
             });
 
