@@ -70,6 +70,6 @@ public class DiscoverSpringRestServicesRuleProvider extends DiscoverAnnotatedCla
     @Override
     public String toString()
     {
-        return "DiscoverSpringRestnnotatedClasses";
+        return "DiscoverSpringRestServicesRuleProvider";
     }
 }
