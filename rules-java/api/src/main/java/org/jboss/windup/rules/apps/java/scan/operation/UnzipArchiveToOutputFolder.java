@@ -40,7 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
 {
     private static final String MALFORMED_ARCHIVE = "Malformed archive";
-    private static final String ARCHIVES = "archives";
+    public static final String ARCHIVES = "archives";
     private static final String KEY_BAD_ARCHIVES = "unparsableArchives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
 
