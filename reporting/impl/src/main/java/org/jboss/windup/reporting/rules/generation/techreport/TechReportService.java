@@ -180,7 +180,7 @@ public class TechReportService
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
             // A shortcut.
-            if (applicationProjects != null && !applicationProjects.contains(stat.getProjectModel()))
+            if (onlyForApplication != null && !stat.getProjectModel().getApplications().contains(onlyForApplication))
             {
                 LOG.fine("\t\tThis stat is not for this project, skipping.");
                 continue;
