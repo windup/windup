@@ -44,7 +44,7 @@ import com.opencsv.CSVWriter;
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
-    private static final String MERGED_CSV_FILENAME = "MergedAnalysis";
+    private static final String MERGED_CSV_FILENAME = "AllIssues";
 
     // @formatter:off
     @Override
@@ -68,49 +68,28 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             String outputFolderPath = config.getOutputPath().getFilePath() + File.separator;
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             final Map<String, CSVWriter> projectToFile = new HashMap<>();
-            final Iterable<InlineHintModel> hints = hintService.findAll();
-            final Iterable<ClassificationModel> classifications = classificationService.findAll();
-            List reportableEvents = new ArrayList<>();
-            reportableEvents.addAll((List<InlineHintModel>)hints);
-            reportableEvents.addAll((List<ClassificationModel>)classifications);
+            final List<InlineHintModel> hints = hintService.findAll();
+            final List<ClassificationModel> classifications = classificationService.findAll();
+            List<EffortReportModel> reportableEvents = new ArrayList<>();
+            reportableEvents.addAll(hints);
+            reportableEvents.addAll(classifications);
 
             //try{} in case something bad happens, we need to close files
             try
             {
                 reportableEvents.stream().sorted((o1,o2) ->
 
-                        new Comparator() {
-                            public int compare(Object o1, Object o2) {
-                                IssueCategoryModel c1 = null;
-                                IssueCategoryModel c2 = null;
-                                if (!(o1 instanceof EffortReportModel) || !(o2 instanceof EffortReportModel))
-                                {
-                                    throw new ClassCastException();
-                                }
+                        ((Comparator<EffortReportModel>) (o11, o21) -> {
+                            IssueCategoryModel c1 = o11.getIssueCategory();
+                            IssueCategoryModel c2 = o21.getIssueCategory();
+                            Comparator comparator = new IssueCategoryModel.IssueSummaryPriorityComparator();
+                            return comparator.compare(c1, c2);
+                        }).thenComparing(((Comparator<EffortReportModel>) (o112, o212) -> {
+                            int i1 = o112.getEffort();
+                            int i2 = o212.getEffort();
 
-                                c1 = ((EffortReportModel)o1).getIssueCategory();
-                                c2 = ((EffortReportModel)o2).getIssueCategory();
-
-                                Comparator comparator = new IssueCategoryModel.IssueSummaryPriorityComparator();
-                                return comparator.compare(c1,c2);
-                            }
-
-                        }.thenComparing(new Comparator()
-                        {
-                            public int compare(Object o1, Object o2) {
-                                Integer i1 = null;
-                                Integer i2 = null;
-                                if (!(o1 instanceof EffortReportModel) || !(o2 instanceof EffortReportModel))
-                                {
-                                    throw new ClassCastException();
-                                }
-
-                                i1 = ((EffortReportModel)o1).getEffort();
-                                i2 = ((EffortReportModel)o2).getEffort();
-
-                                return Integer.compare(i1,i2);
-                            }
-                        }.reversed()).compare(o1,o2)).forEachOrdered((Object reportableEvent) ->
+                            return Integer.compare(i1, i2);
+                        }).reversed()).compare(o1,o2)).forEachOrdered((Object reportableEvent) ->
 
 
                 {
@@ -221,8 +200,10 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                 projectModel.setCsvFilename(filename);
             }
             projectToFile.get(projectModel.getName()).writeNext(line);
+            //Convert line array to ArrayList, add extra field for merged file on the end,
+            // then convert back to array to send to CSVWriter
             ArrayList<String> mergedList = new ArrayList<String>(Arrays.stream(line).collect(Collectors.toList()));
-            mergedList.add(projectModel.getName());
+            mergedList.add(projectModel.getRootFileModel().asFile().getName());
             String[] mergedLine = new String[ mergedList.size() ];
             projectToFile.get(MERGED_CSV_FILENAME).writeNext(mergedList.toArray(mergedLine));
 

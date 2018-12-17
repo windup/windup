@@ -91,13 +91,13 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             return report;
         }
 
-        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context, boolean isExportingCSV)
+        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context, boolean exportAllIssuesCSV)
         {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(ALL_MIGRATION_ISSUES_REPORT_NAME);
             report.setDisplayInGlobalApplicationIndex(true);
-            report.setIsExportingCSV(isExportingCSV);
+            report.setExportAllIssuesCSV(exportAllIssuesCSV);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
         }

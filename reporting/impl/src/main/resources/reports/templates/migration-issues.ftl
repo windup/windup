@@ -135,8 +135,8 @@
                     <h1>
                         <div class="main">${reportModel.reportName}
                         <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i>
-                        <#if !(reportModel.projectModel??) && reportModel.isExportingCSV>
-                            <a class="csvReport" style="font-size: 14pt;" align="right" href="../MergedAnalysis.csv">(CSV Report)</a>
+                        <#if !(reportModel.projectModel??) && reportModel.isExportAllIssuesCSV>
+                            <a class="csvReport" style="font-size: 14pt;" align="right" href="../AllIssues.csv">(Download All Issues CSV)</a>
                         </#if>
                         </div>
                         <#if reportModel.projectModel??>
