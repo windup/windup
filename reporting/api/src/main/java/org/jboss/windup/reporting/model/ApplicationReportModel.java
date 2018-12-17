@@ -30,6 +30,7 @@ public interface ApplicationReportModel extends ReportModel
     String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
     String REPORT_PRIORITY = "reportPriority";
     String MAIN_APPLICATION_REPORT = "mainApplicationModel";
+    String IS_EXPORTING_CSV = "isExportingCSV";
 
     /**
      * Provides a link to the Navigation Index that is used for this particular report. If there is more than one (for example, in the case of a
@@ -154,4 +155,10 @@ public interface ApplicationReportModel extends ReportModel
      */
     @MapInAdjacentProperties(label = "reportProperties")
     void setReportProperties(Map<String, String> map);
+
+    @Property(IS_EXPORTING_CSV)
+    Boolean getIsExportingCSV();
+
+    @Property(IS_EXPORTING_CSV)
+    void setIsExportingCSV(Boolean isExportingCSV);
 }
