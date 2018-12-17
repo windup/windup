@@ -1,4 +1,4 @@
-<beans xmlns="http://www.springframework.org/schema/beans">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p">
 
 
     <bean id="jaxwsService" class="com.redhat.rmiserver.impl.JaxWSPOJOImpl">
@@ -40,9 +40,8 @@
         <property name="serviceInterface" value="com.redhat.rmiserver.intf.JMSPOJOInterface"/>
     </bean>
 
-    <bean class="org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter">
-        <property name="serviceName" value="amqpService"/>
-        <property name="service" ref="amqpService"/>
-        <property name="serviceInterface" value="com.redhat.rmiserver.intf.AMQPPOJOInterface"/>
-    </bean>
+    <bean class="org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter"
+          p:service-ref="amqpService"
+          p:serviceName="amqpServiceInlined"
+          p:serviceInterface="com.redhat.rmiserver.intf.AMQPPOJOInterface"/>
 </beans>
