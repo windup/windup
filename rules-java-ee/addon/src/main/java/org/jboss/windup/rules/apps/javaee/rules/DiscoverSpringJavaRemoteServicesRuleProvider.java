@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -16,7 +15,6 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.util.Logging;
@@ -25,15 +23,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternBuilder;
-import org.w3c.dom.Document;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.joox.JOOX.$;
 
 /*
 Rule to discover all Spring Remote services : RMI, Hessian, HTTP Invoker , JMS, AMQP, JaxWS that can be discovered
@@ -110,7 +104,7 @@ public class DiscoverSpringJavaRemoteServicesRuleProvider extends AbstractRulePr
             enableSourceReport(interfaceClass);
 
             SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
-            springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceClass, exporterJavaClass);
+            springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceClass, implementationClass, exporterJavaClass);
 
             // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
             TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());

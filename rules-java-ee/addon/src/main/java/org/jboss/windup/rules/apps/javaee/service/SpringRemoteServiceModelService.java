@@ -1,12 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringRemoteServiceModel;
@@ -26,7 +21,7 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
         super(context, SpringRemoteServiceModel.class);
     }
 
-    public SpringRemoteServiceModel getOrCreate(ProjectModel application, JavaClassModel remoteInterface, JavaClassModel exporterInterface) {
+    public SpringRemoteServiceModel getOrCreate(ProjectModel application, JavaClassModel remoteInterface, JavaClassModel implementationClass, JavaClassModel exporterInterface) {
         SpringRemoteServiceModel remoteServiceModel = findByInterfaceAndExporter(remoteInterface, exporterInterface);
         if (remoteServiceModel == null) {
             remoteServiceModel = create();
@@ -34,7 +29,11 @@ public class SpringRemoteServiceModelService extends GraphService<SpringRemoteSe
             remoteServiceModel.setInterface(remoteInterface);
             remoteServiceModel.setSpringExporterInterface(exporterInterface);
 
-            remoteServiceModel.setImplementationClass(remoteInterface.getImplementedBy().stream().findFirst().orElse(null));
+            if (implementationClass != null) {
+                remoteServiceModel.setImplementationClass(implementationClass);
+            } else {
+                remoteServiceModel.setImplementationClass(remoteInterface.getImplementedBy().stream().findFirst().orElse(null));
+            }
         }
         else {
             if (!remoteServiceModel.isAssociatedWithApplication(application))

@@ -14,7 +14,6 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
-import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringRemoteServiceModelService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
@@ -94,9 +93,9 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
                 enableSourceReport(interfaceJavaClassModel);
 
                 SpringRemoteServiceModelService springRemoteRemoteServiceModelService = new SpringRemoteServiceModelService(event.getGraphContext());
-                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, exporterInterfaceClassModel);
+                springRemoteRemoteServiceModelService.getOrCreate(typeReference.getFile().getApplication(), interfaceJavaClassModel, implementationJavaClassModel, exporterInterfaceClassModel);
 
-                // Add the name to the Technological Tag Model, this will be used for Technologycal Usage Report
+                // Add the name to the Technological Tag Model, this will be used for Technology Usage Report
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                 String tagName = springRemoteRemoteServiceModelService.getTagName(exporterClass);
                 technologyTagService.addTagToFileModel(interfaceJavaClassModel.getClassFile(), tagName, TechnologyTagLevel.INFORMATIONAL);
@@ -119,21 +118,25 @@ public class DiscoverSpringXMLRemoteServicesRuleProvider extends AbstractRulePro
     private void enableSourceReport(JavaClassModel implementationClass) {
         if (implementationClass.getOriginalSource() != null) {
             implementationClass.getOriginalSource().setGenerateSourceReport(true);
-        } else {
+        } else if (implementationClass.getDecompiledSource() != null) {
             implementationClass.getDecompiledSource().setGenerateSourceReport(true);
         }
     }
 
-    private String getImplementationClass(String implementationBean, Document wholeDocument) {
-        return $(wholeDocument).xpath("//bean[@id=\"" + implementationBean + "\"]").first().attr("class");
-    }
-
     private String getImplementationBean(Document xmlDocSnippet) {
-        return $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
+        String implementationBean = $(xmlDocSnippet).first().attr("service-ref");
+        if (implementationBean == null) {
+            implementationBean = $(xmlDocSnippet).xpath("//property[@name=\"service\"]").first().attr("ref");
+        }
+        return implementationBean;
     }
 
     private String getInterfaceName(Document xmlDocSnippet) {
-        return $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
+        String serviceInterface = $(xmlDocSnippet).first().attr("serviceInterface");
+        if (serviceInterface == null) {
+            serviceInterface = $(xmlDocSnippet).xpath("//property[@name=\"serviceInterface\"]").first().attr("value");
+        }
+        return serviceInterface;
     }
 
     private String getExporterClass(Document xmlDocSnippet) {
