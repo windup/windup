@@ -171,8 +171,6 @@ public class TechReportService
      */
     public TechStatsMatrix getTechStatsMap(ProjectModel onlyForApplication)
     {
-        Set<ProjectModel> applicationProjects = onlyForApplication == null ? null
-                    : new ProjectModelTraversal(onlyForApplication).getAllProjects(true);
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
