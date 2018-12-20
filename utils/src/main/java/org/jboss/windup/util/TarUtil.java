@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.kamranzafar.jtar.TarEntry;
@@ -23,7 +24,7 @@ import org.kamranzafar.jtar.TarOutputStream;
  */
 public class TarUtil
 {
-    public final static String FULL_TAR_ARCHIVE = "FULL_TAR_ARCHIVE";
+    private static Logger LOG = Logger.getLogger(TarUtil.class.getName());
 
     public static void tarDirectory(Path outputFile, Path inputDirectory) throws IOException
     {
@@ -32,9 +33,8 @@ public class TarUtil
 
     public static void tarDirectory(Path outputFile, Path inputDirectory, List<String> pathPrefixesToExclude) throws IOException
     {
-        System.out.println("Creating archive at: " + outputFile);
-        boolean fullTarArchive = Boolean.valueOf(System.getenv(FULL_TAR_ARCHIVE));
-        if (fullTarArchive) System.out.println("Required full archive creation");
+        LOG.info("Creating archive at: " + outputFile);
+
         Collection<String> collectionPathPrefixesToExclude = CollectionUtils.emptyIfNull(pathPrefixesToExclude);
         // Output file stream
         FileOutputStream dest = new FileOutputStream(outputFile.toFile());
@@ -57,8 +57,7 @@ public class TarUtil
                 try
                 {
                     String relativeName = entry.toString().substring(inputPathLength + 1);
-                    if (!fullTarArchive &&
-                            collectionPathPrefixesToExclude.stream().anyMatch(pathPrefixToExclude -> relativeName.startsWith(pathPrefixToExclude)))
+                    if (collectionPathPrefixesToExclude.stream().anyMatch(pathPrefixToExclude -> relativeName.startsWith(pathPrefixToExclude)))
                         return;
 
                     out.putNextEntry(new TarEntry(entry.toFile(), relativeName));
@@ -76,7 +75,7 @@ public class TarUtil
                 }
                 catch (IOException e)
                 {
-                    System.err.println("Failed to add tar entry due to: " + e.getMessage());
+                    LOG.severe("Failed to add tar entry due to: " + e.getMessage());
                     e.printStackTrace();
                 }
             });
