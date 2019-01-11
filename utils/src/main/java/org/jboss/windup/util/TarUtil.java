@@ -9,7 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.kamranzafar.jtar.TarEntry;
 import org.kamranzafar.jtar.TarInputStream;
 import org.kamranzafar.jtar.TarOutputStream;
@@ -19,9 +24,18 @@ import org.kamranzafar.jtar.TarOutputStream;
  */
 public class TarUtil
 {
+    private static Logger LOG = Logger.getLogger(TarUtil.class.getName());
+
     public static void tarDirectory(Path outputFile, Path inputDirectory) throws IOException
     {
-        System.out.println("Creating archive at: " + outputFile);
+        tarDirectory(outputFile, inputDirectory, Collections.emptyList());
+    }
+
+    public static void tarDirectory(Path outputFile, Path inputDirectory, List<String> pathPrefixesToExclude) throws IOException
+    {
+        LOG.info("Creating archive at: " + outputFile);
+
+        Collection<String> collectionPathPrefixesToExclude = CollectionUtils.emptyIfNull(pathPrefixesToExclude);
         // Output file stream
         FileOutputStream dest = new FileOutputStream(outputFile.toFile());
         final Path outputFileAbsolute = outputFile.normalize().toAbsolutePath();
@@ -43,6 +57,8 @@ public class TarUtil
                 try
                 {
                     String relativeName = entry.toString().substring(inputPathLength + 1);
+                    if (collectionPathPrefixesToExclude.stream().anyMatch(pathPrefixToExclude -> relativeName.startsWith(pathPrefixToExclude)))
+                        return;
 
                     out.putNextEntry(new TarEntry(entry.toFile(), relativeName));
                     BufferedInputStream origin = new BufferedInputStream(new FileInputStream(entry.toFile()));
@@ -59,7 +75,7 @@ public class TarUtil
                 }
                 catch (IOException e)
                 {
-                    System.err.println("Failed to add tar entry due to: " + e.getMessage());
+                    LOG.severe("Failed to add tar entry due to: " + e.getMessage());
                     e.printStackTrace();
                 }
             });
