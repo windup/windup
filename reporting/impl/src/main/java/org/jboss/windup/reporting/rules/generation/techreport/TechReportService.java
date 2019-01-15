@@ -178,7 +178,10 @@ public class TechReportService
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
             // A shortcut.
-            if (onlyForApplication != null && !stat.getProjectModel().getApplications().contains(onlyForApplication))
+            if (onlyForApplication != null &&
+                    (!stat.getProjectModel().getApplications().contains(onlyForApplication)
+                    || (stat.getProjectModel().getApplications().size() > 1
+                            && !onlyForApplication.getName().toLowerCase().contains("shared"))))
             {
                 LOG.fine("\t\tThis stat is not for this project, skipping.");
                 continue;
@@ -219,8 +222,20 @@ public class TechReportService
                 appsToCountTowards = Collections.singletonList(onlyForApplication.getId());
             }
 
+            boolean isSharedApp = appsToCountTowards.size() > 1;
+            List<ProjectModel> apps = stat.getProjectModel().getApplications();
+
             for (Long appToCountTowards : appsToCountTowards)
             {
+                if(isSharedApp)
+                {
+                    List<ProjectModel>sharedApps = apps.stream().filter(app -> app.getName().toLowerCase().contains("shared")).collect(toList());
+                    if(!sharedApps.stream().anyMatch(app -> app.getElement().id().equals(appToCountTowards)))
+                    {
+                        continue;
+                    }
+                }
+
                 // For boxes report - show each tech in sector, row, box. For individual projects.
                 mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), appToCountTowards, stat.getName(), stat, false);
 
