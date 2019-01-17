@@ -167,9 +167,9 @@ public class TechReportService
     /**
      * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> placement label -> TechUsageStatSum.
      *
-     * @param onlyForApplication Sum the statistics only for this project.
+     * @param appBeingSummarized Sum the statistics only for this project.
      */
-    public TechStatsMatrix getTechStatsMap(ProjectModel onlyForApplication)
+    public TechStatsMatrix getTechStatsMap(ProjectModel appBeingSummarized)
     {
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
@@ -177,11 +177,11 @@ public class TechReportService
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            // A shortcut.
-            if (onlyForApplication != null &&
-                    (!stat.getProjectModel().getApplications().contains(onlyForApplication)
+            //If a stat doesn't apply to this project we move on to the next stat without further processing
+            if (appBeingSummarized != null &&
+                    (!stat.getProjectModel().getApplications().contains(appBeingSummarized)
                     || (stat.getProjectModel().getApplications().size() > 1
-                            && !onlyForApplication.getName().toLowerCase().contains("shared"))))
+                            && !appBeingSummarized.getName().toLowerCase().contains("shared"))))
             {
                 LOG.fine("\t\tThis stat is not for this project, skipping.");
                 continue;
@@ -209,7 +209,7 @@ public class TechReportService
             mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
 
             List<Long> appsToCountTowards;
-            if (onlyForApplication == null)
+            if (appBeingSummarized == null)
             {
                 appsToCountTowards = StreamSupport.stream(stat.getProjectModel().getApplications().spliterator(), false)
                             .map(ProjectModel::getElement)
@@ -219,7 +219,7 @@ public class TechReportService
             }
             else
             {
-                appsToCountTowards = Collections.singletonList(onlyForApplication.getId());
+                appsToCountTowards = Collections.singletonList(appBeingSummarized.getId());
             }
 
             boolean isSharedApp = appsToCountTowards.size() > 1;
