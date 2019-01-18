@@ -7,6 +7,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -21,6 +22,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.metadata.RuleMetadata;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -47,13 +51,14 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            int inputApplicationCount = Iterables.size(WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths());
+            WindupConfigurationModel conf = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            int inputApplicationCount = Iterables.size(conf.getInputPaths());
             if (inputApplicationCount > 1)
             {
-                createGlobalMigrationIssuesReport(event.getGraphContext());
+                createGlobalMigrationIssuesReport(event.getGraphContext(), conf.isExportingCSV());
             }
 
-            for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
+            for (FileModel inputPath : conf.getInputPaths())
             {
                 ApplicationReportModel report = createSingleApplicationMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
                 report.setMainApplicationReport(false);
@@ -86,12 +91,13 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             return report;
         }
 
-        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context)
+        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context, boolean exportAllIssuesCSV)
         {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(ALL_MIGRATION_ISSUES_REPORT_NAME);
             report.setDisplayInGlobalApplicationIndex(true);
+            report.setExportAllIssuesCSV(exportAllIssuesCSV);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
         }
