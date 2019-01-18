@@ -178,13 +178,16 @@ public class TechReportService
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
             //If a stat doesn't apply to this project we move on to the next stat without further processing
-            if (appBeingSummarized != null &&
-                    (!stat.getProjectModel().getApplications().contains(appBeingSummarized)
-                    || (stat.getProjectModel().getApplications().size() > 1
-                            && !appBeingSummarized.getName().toLowerCase().contains("shared"))))
+            if (appBeingSummarized != null)
             {
-                LOG.fine("\t\tThis stat is not for this project, skipping.");
-                continue;
+                boolean appIsContainedInStatProject = stat.getProjectModel().getApplications().contains(appBeingSummarized);
+                boolean appIsASharedLibrary = appBeingSummarized.getName().toLowerCase().contains("shared");
+                boolean statAppliesToSeveralApps = stat.getProjectModel().getApplications().size() > 1;
+                if(!appIsContainedInStatProject || (statAppliesToSeveralApps && !appIsASharedLibrary))
+                {
+                    LOG.fine("\t\tThis stat is not for this project, skipping.");
+                    continue;
+                }
             }
 
             final Set<String> placementTags = TechReportService.getPlacementTags(graphContext, stat.getTags());
@@ -224,12 +227,13 @@ public class TechReportService
 
             boolean isSharedApp = appsToCountTowards.size() > 1;
             List<ProjectModel> apps = stat.getProjectModel().getApplications();
+            List<ProjectModel>sharedApps = apps.stream().filter(app -> app.getName().toLowerCase().contains("shared")).collect(toList());
+
 
             for (Long appToCountTowards : appsToCountTowards)
             {
                 if(isSharedApp)
                 {
-                    List<ProjectModel>sharedApps = apps.stream().filter(app -> app.getName().toLowerCase().contains("shared")).collect(toList());
                     if(!sharedApps.stream().anyMatch(app -> app.getElement().id().equals(appToCountTowards)))
                     {
                         continue;
