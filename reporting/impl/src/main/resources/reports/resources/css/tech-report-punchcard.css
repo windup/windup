@@ -145,18 +145,21 @@ table.technologiesPunchCard tbody tr {
 .table-tooltip .table-tooltiptext {
     visibility: hidden;
     color: #fff;
-    text-align: center;
+    text-align: left;
     border-radius: 6px;
 
     position: absolute;
     z-index: 1;
 
     font-size: 14pt;
-    padding: 5px;
+    padding-top: 5px;
+    padding-right:10px;
+    padding-left: 5px;
+    padding-bottom: 5px;
 
     /*left tooltip*/
     top: 10px;
-    right: 85%;
+    right: 100%;
 
     opacity: 0;
     transition: opacity 1s;
@@ -166,6 +169,31 @@ table.technologiesPunchCard tbody tr {
 .table-tooltip:hover .table-tooltiptext {
     visibility: visible;
     opacity: 0.9;
+    display: block;
+    max-width:none;
+    min-width:200px;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-name {
+    text-align: left;
+    padding-right: 5 !important;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-count {
+    text-align: left;
+    padding-left: 0px !important;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-name-header {
+    text-align: left;
+    padding-right: 5 !important;
+    font-style: italic;
+}
+
+.table-tooltip:hover .table-tooltiptext .tooltiptext-tech-count-header {
+    text-align: left;
+    padding-left: 0px !important;
+    font-style: italic;
 }
 
 .table-tooltip .table-tooltiptext::after {
@@ -175,7 +203,7 @@ table.technologiesPunchCard tbody tr {
 
     /* To the right of the tooltip */
     content: "";
-    top: 50%;
+    top: 15px;
     left: 100%;
     margin-top: -5px;
     border-color: transparent transparent transparent #505050;

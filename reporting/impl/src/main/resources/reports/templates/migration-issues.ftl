@@ -134,7 +134,13 @@
                 <div class="page-header page-header-no-border">
                     <h1>
                         <div class="main">${reportModel.reportName}
-                        <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
+                        <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i>
+                        <#if !(reportModel.projectModel??) && reportModel.isExportAllIssuesCSV>
+                        <span style="float: right;">
+                            <a class="csvReport" style="font-size: 14pt;" align="right" href="../AllIssues.csv">(Download All Issues CSV)</a>
+                        </span>
+                        </#if>
+                        </div>
                         <#if reportModel.projectModel??>
                             <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                         </#if>
