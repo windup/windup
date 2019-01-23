@@ -18,25 +18,25 @@
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.15.0</version>
+            <version>3.16.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.15.0</version>
+            <version>3.15.100</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.text</artifactId>
-            <version>3.7.0</version>
+            <version>3.8.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.13.100</version>
+            <version>3.13.200</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

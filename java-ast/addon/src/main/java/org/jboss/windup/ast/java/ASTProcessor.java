@@ -41,7 +41,7 @@ public class ASTProcessor
     public static List<ClassReference> analyze(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
                 Path sourceFile)
     {
-        ASTParser parser = ASTParser.newParser(AST.JLS10);
+        ASTParser parser = ASTParser.newParser(AST.JLS11);
         parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]), null, true);
         parser.setBindingsRecovery(false);
         parser.setResolveBindings(true);
