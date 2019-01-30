@@ -16,27 +16,27 @@
     <dependencies>
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>org.eclipse.tycho</groupId>
+            <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.10.0.v20140604-1726</version>
+            <version>3.16.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.core</groupId>
+            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.6.0.v20100505</version>
+            <version>3.15.100</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.text</groupId>
+            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.text</artifactId>
-            <version>3.5.101</version>
+            <version>3.8.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.core</groupId>
+            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.6.0.v20100526-0737</version>
+            <version>3.13.200</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -56,7 +56,7 @@
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <stripVersion>true</stripVersion>
                             <excludeTransitive>true</excludeTransitive>
-                            <includeGroupIds>org.eclipse.tycho</includeGroupIds>
+                            <includeGroupIds>org.eclipse.jdt</includeGroupIds>
                             <includeArtifactIds>org.eclipse.jdt.core</includeArtifactIds>
                             <excludes>META-INF/**/*</excludes>
                         </configuration>

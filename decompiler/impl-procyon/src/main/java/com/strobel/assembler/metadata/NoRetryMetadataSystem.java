@@ -9,7 +9,7 @@ import com.strobel.core.VerifyArgument;
  * 
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public final class NoRetryMetadataSystem extends MetadataSystem
+public final class NoRetryMetadataSystem extends WindupMetadataSystem
 {
     private final static TypeDefinition[] PRIMITIVE_TYPES_BY_NAME = new TypeDefinition['Z' - 'B' + 1];
     private final static TypeDefinition[] PRIMITIVE_TYPES_BY_DESCRIPTOR = new TypeDefinition[16];
