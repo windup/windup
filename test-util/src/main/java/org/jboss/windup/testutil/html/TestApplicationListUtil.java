@@ -1,21 +1,21 @@
 package org.jboss.windup.testutil.html;
 
-import net.bytebuddy.implementation.bytecode.Throw;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.util.exception.WindupException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.util.exception.WindupException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 /**
  * Contains methods for evaluating and retrieving data from the application list report.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TestApplicationListUtil extends TestReportUtil
+public class TestApplicationListUtil extends TestChromeDriverReportUtil
 {
     /**
      * Gets the total story points for the given application name. This will return -1 if it
@@ -86,7 +86,9 @@ public class TestApplicationListUtil extends TestReportUtil
 
         String xpath = "./div[contains(@class, 'traits')]/div[contains(@class, 'techs')]//span[contains(text(), '" + tagName + "')]/..";
         WebElement tagElement = applicationRow.findElement(By.xpath(xpath));
-        tagElement.click();
+
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click()", tagElement);
     }
 
     public boolean isDisplayed(String applicationName)

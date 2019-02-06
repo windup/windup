@@ -3,11 +3,9 @@ package org.jboss.windup.tests.application;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -30,11 +28,8 @@ import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.jboss.windup.testutil.html.TestHardcodedPReportUtil;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest
+public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest
 {
 
     @Deployment
@@ -54,39 +49,11 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(WindupArchitectureTest.class)
+                    .addClass(WindupArchitectureMediumBinaryModeTest.class)
                     .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
-    @Test
-    public void testRunWindupMediumWithFernflower() throws Exception
-    {
-        final String path = "../test-files/Windup1x-javaee-example.war";
-
-        try (GraphContext context = createGraphContext())
-        {
-            super.runTest(context, path, false);
-            allDecompiledFilesAreLinked(context);
-            validateManifestEntries(context);
-            validateReports(context);
-        }
-
-    }
-
-    @Test
-    public void testRunWindupMediumWithProcyon() throws Exception
-    {
-        final String path = "../test-files/Windup1x-javaee-example.war";
-        try (GraphContext context = createGraphContext())
-        {
-            Properties props = System.getProperties();
-            props.setProperty("windup.decompiler", "Procyon");
-            super.runTest(context, path, false);
-            props.remove("windup.decompiler");
-            allDecompiledFilesAreLinked(context);
-        }
-    }
-
-    private void validateManifestEntries(GraphContext context) throws Exception
+    protected void validateManifestEntries(GraphContext context) throws Exception
     {
         JarManifestService jarManifestService = new JarManifestService(context);
         Iterable<JarManifestModel> manifests = jarManifestService.findAll();
@@ -218,7 +185,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     /**
      * Validate that the report pages were generated correctly
      */
-    private void validateReports(GraphContext context) throws IOException
+    protected void validateReports(GraphContext context) throws IOException
     {
         validateOverviewReport(context);
         validateStaticIPReport(context);
