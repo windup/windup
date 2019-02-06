@@ -81,7 +81,7 @@
                         <tr class="headersSector">
                             <td></td>
                         <#list sectorTags as sector>
-                            <td colspan="${ (iterableToList(sector.designatedTags)?size-1)?c}" class="sector${sector.title}">${sector.title}</td>
+                            <td colspan="${ (iterableToList(sector.designatedTags)?size-1)?c}" class="sectorHeader sector${sector.title}"><div>${sector.title}</div></td>
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
@@ -114,7 +114,7 @@
                         <#list appProjects as appProject> <#-- ProjectModel -->
                         <#if appProject.projectType! != "VIRTUAL" >
                         <tr class="app">
-                            <td class="name">
+                            <td class="name sectorSummary">
                                 <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.getElement().id()?c] > <#-- TechReportModel -->
                                 <a href="${boxReport.reportFilename}">
                                     <#-- For virtual apps, use name rather than the file name. -->
@@ -124,6 +124,8 @@
                                 </a>
                             </td>
                             <#list sectorTags as sectorTag>
+
+                                <#assign countSector = 0 />
                                 <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
                                 <#list sortedBoxTags as boxTag>
                                     <#if !isTagUnderTag(boxTag, placeTagsParent) >
@@ -135,6 +137,7 @@
                                         <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
                                         <#assign countInteger = count?is_number?then(count, 0) />
+                                        <#assign countSector += countInteger />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                         <#if isBooleanTech>
@@ -176,6 +179,7 @@
                                 <#else>
                                     <td>No technology sectors defined.</td>
                                 </#list>
+                            <td class="sector${sectorTag.title}Summary sectorSummary" data-count="${countSector?c}" hidden></td>
                             </#list>
                             <#if isFileADirectory(appProject.rootFileModel)>
                             <td class="sectorStats sector sizeMB" data-count="${(appProject.rootFileModel.getDirectorySize()?c)!0}">
@@ -250,12 +254,21 @@
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
     <script>
         var currentSortColumn = null;
+        var currentSortSector = null;
         var reverse = false;
+        var reverseSector = false;
 
-        function sortTable(column) {
+        function sortTableByColumn(column) {
             // cleanup the previous sort classes
             var groupedHeaderColumns = $('.headersGroup td').get();
             groupedHeaderColumns.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+                $(tdElement).removeClass("sort_asc");
+                $(tdElement).removeClass("sort_desc");
+            });
+
+            var groupedSectors = $('.headersSector .sectorHeader').get();
+            groupedSectors.forEach(function(tdElement) {
                 $(tdElement).removeClass("sectorSorted");
                 $(tdElement).removeClass("sort_asc");
                 $(tdElement).removeClass("sort_desc");
@@ -306,15 +319,87 @@
             });
         }
 
+        function sortTableBySector(sector) {
+            // cleanup the previous sort classes
+            var groupedHeaders = $('.headersGroup td').get();
+            groupedHeaders.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+                $(tdElement).removeClass("sort_asc");
+                $(tdElement).removeClass("sort_desc");
+            });
+
+            var groupedSectors = $('.headersSector td').get();
+            groupedSectors.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+                $(tdElement).removeClass("sort_asc");
+                $(tdElement).removeClass("sort_desc");
+            });
+
+            if (sector == currentSortSector) {
+                reverseSector = !reverseSector;
+            } else {
+                reverseSector = false;
+                currentSortSector = sector;
+            }
+            var f = reverseSector ? 1 : -1;
+
+            $(groupedSectors[sector]).addClass("sectorSorted");
+            $(groupedSectors[sector]).addClass(reverseSector ? "sort_asc" : "sort_desc");
+
+            var rows = $('.technologiesPunchCard tbody tr').get();
+
+            rows.sort(function(a, b) {
+
+                var A = getVal(a);
+                var B = getVal(b);
+                if (!$.isNumeric(A) || !$.isNumeric(B)) {
+                    return B.localeCompare(A) * f;
+                }
+
+                if(A < B) {
+                    return -1*f;
+                }
+                if(A > B) {
+                    return 1*f;
+                }
+                return 0;
+            });
+
+            function getVal(elm) {
+                var v = $(elm).children('.sectorSummary').eq(sector).data("count");
+                if (v == null) {
+                    v = $(elm).children('.sectorSummary').eq(sector).text().trim();
+                } else if($.isNumeric(v)) {
+                    v = parseInt(v,10);
+                }
+                return v;
+            }
+
+            $.each(rows, function(index, row) {
+                $('.technologiesPunchCard').children('tbody').append(row);
+            });
+        }
+
         $().ready(function () {
             $(".headersGroup .sector").click(function (event) {
                 var td = event.target.parentNode;
                 var index = $(td).index();
-                sortTable(index);
+                sortTableByColumn(index);
             });
             reverse = true;
             currentSortColumn = 0;
-            sortTable(0);
+            sortTableByColumn(0);
+        });
+
+        $().ready(function () {
+            $(".headersSector .sectorHeader").click(function (event) {
+                var td = event.target.parentNode;
+                var index = $(td).index();
+                sortTableBySector(index);
+            });
+            reverseSector = true;
+            currentSortSector = 0;
+            sortTableBySector(0);
         });
     </script>
 </body>

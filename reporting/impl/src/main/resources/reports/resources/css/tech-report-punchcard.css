@@ -10,6 +10,10 @@
     border-left: none;
     cursor: pointer;
 }
+
+.headersSector .sectorHeader {
+    cursor: pointer;
+}
 .sector ~ .sector {border-left: 1px solid #E0E0E0;}
 /* (Only for the first columns of the sector.) */
 .sectorView     ~ .sectorView    { border-left: none; }
@@ -49,18 +53,40 @@ tr.headersGroup td:nth-child(1) div {
     padding-left:  0.3em;
 }
 
-tr.headersGroup .sort_asc div:after {
+tr.headersGroup .sort_asc div:after{
     content: "\f107";
     font-family: "FontAwesome";
     font-weight: bold;
     position: relative;
 }
 
-tr.headersGroup .sort_desc div:after {
+tr.headersGroup .sort_desc div:after{
     content: "\f106";
     font-family: "FontAwesome";
     font-weight: bold;
     position: relative;
+}
+
+tr.headersSector .sort_asc div:after{
+    content: "\f107";
+    font-family: "FontAwesome";
+    font-weight: bold;
+    position: relative;
+}
+
+tr.headersSector .sort_desc div:after{
+    content: "\f106";
+    font-family: "FontAwesome";
+    font-weight: bold;
+    position: relative;
+}
+
+tr.headersSector .sort_asc div{
+    font-style: italic;
+}
+
+tr.headersSector .sort_desc div{
+    font-style: italic;
 }
 
 tr.app { font-size: 12pt; }
@@ -107,7 +133,7 @@ table.technologiesPunchCard thead tr td:nth-last-child(4) {
     max-width: 70px;
 }
 
-table.technologiesPunchCard thead tr td:nth-last-child(4) div {
+table.technologiesPunchCard thead tr td.sector:nth-last-child(4) div {
     width: 52px;
 }
 
