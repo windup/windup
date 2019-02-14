@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TestReportIndexReportUtil extends TestReportUtil
+public class TestReportIndexReportUtil extends TestChromeDriverReportUtil
 {
     public boolean checkIncidentByCategoryRow(String category, int incidents, int totalStoryPoints)
     {

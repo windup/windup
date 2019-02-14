@@ -19,7 +19,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TestJavaApplicationOverviewUtil extends TestReportUtil
+public class TestJavaApplicationOverviewUtil extends TestChromeDriverReportUtil
 {
 
     /**
@@ -244,7 +244,6 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
      */
     private String getTextForElement(WebElement element)
     {
-        HtmlUnitDriver driver = (HtmlUnitDriver) getDriver();
         String xpath = getElementXPath(driver, element);
         String result = getStringValueForXpathElement(driver, xpath);
         return result.trim();
