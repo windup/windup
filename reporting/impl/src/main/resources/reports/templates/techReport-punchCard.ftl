@@ -96,7 +96,7 @@
                             <#list sortedBoxTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
-                                    <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
+                                    <td class="sector sector${sectorTag.title}"><div style="width: 100%">${boxTag.title!}</div></td>
                                 </#if>
                             </#list>
                         </#list>
@@ -114,7 +114,7 @@
                         <#list appProjects as appProject> <#-- ProjectModel -->
                         <#if appProject.projectType! != "VIRTUAL" >
                         <tr class="app">
-                            <td class="name sectorSummary">
+                            <td class="name sector sectorSummary">
                                 <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.getElement().id()?c] > <#-- TechReportModel -->
                                 <a href="${boxReport.reportFilename}">
                                     <#-- For virtual apps, use name rather than the file name. -->
@@ -305,9 +305,9 @@
             });
 
             function getVal(elm) {
-                var v = $(elm).children('td').eq(column).data("count");
+                var v = $(elm).children('.sector').eq(column).data("count");
                 if (v == null) {
-                    v = $(elm).children('td').eq(column).text().trim();
+                    v = $(elm).children('.sector').eq(column).text().trim();
                 } else if($.isNumeric(v)) {
                     v = parseInt(v,10);
                 }
