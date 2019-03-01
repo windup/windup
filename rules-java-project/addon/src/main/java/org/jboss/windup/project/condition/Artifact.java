@@ -98,7 +98,7 @@ public class Artifact implements Parameterized
     {
         Set<String> result = new HashSet<>();
         if (groupId != null) result.addAll(groupId.getRequiredParameterNames());
-        result.addAll(artifactId.getRequiredParameterNames());
+        if (artifactId != null) result.addAll(artifactId.getRequiredParameterNames());
         return result;
     }
 
