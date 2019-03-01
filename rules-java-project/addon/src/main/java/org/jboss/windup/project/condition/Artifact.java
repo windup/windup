@@ -96,7 +96,8 @@ public class Artifact implements Parameterized
     @Override
     public Set<String> getRequiredParameterNames()
     {
-        Set<String> result = new HashSet<>(groupId.getRequiredParameterNames());
+        Set<String> result = new HashSet<>();
+        if (groupId != null) result.addAll(groupId.getRequiredParameterNames());
         result.addAll(artifactId.getRequiredParameterNames());
         return result;
     }
