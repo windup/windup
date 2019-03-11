@@ -28,7 +28,7 @@
 <body role="document" class="java-report-index">
 
     <!-- Navbar -->
-    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+    <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
         </div>

@@ -15,7 +15,7 @@
 </head>
 <body role="document" class="source-report">
 
-    <div class="navbar navbar-default navbar-fixed-top" id="main-navbar" style="display: none">
+    <div class="navbar navbar-inverse navbar-fixed-top" id="main-navbar" style="display: none">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
         </div>
