@@ -1,0 +1,1 @@
+/home/jonathan/.sdkman/candidates/java/8.0.181-open/jre/../bin/javadoc -J-Xmx2400m @options @packages
