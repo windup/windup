@@ -30,6 +30,4 @@ public interface SpringRemoteServiceModel extends RemoteServiceModel
 
     @Adjacency(label = SPRINGEXPORTER_INTERFACE, direction = Direction.OUT)
     JavaClassModel getSpringExporterInterface();
-
-
 }
