@@ -126,7 +126,7 @@
 
     <#include "include/timestamp.ftl">
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
     <script src="resources/js/jquery-migrate-1.4.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 
@@ -204,7 +204,11 @@
                 $('div.sausage-set').css('top', parseInt($('#main-navbar').css("height")));
             });
 
-            $(window).load(function () {
+            // Deprecated
+            // $(window).load(function () {
+            //     $('div.sausage-set').css('top', parseInt($('#main-navbar').css("height")));
+            // });
+            $(window).on('load', function () {
                 $('div.sausage-set').css('top', parseInt($('#main-navbar').css("height")));
             });
         });

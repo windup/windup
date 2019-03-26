@@ -435,7 +435,7 @@
         </div>
 
 
-        <script src="resources/js/jquery-1.10.1.min.js"></script>
+        <script src="resources/js/jquery-3.3.1.min.js"></script>
         <script src="resources/js/jquery.storageapi.min.js"></script>
         <script src="resources/js/jquery.color-2.1.2.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>

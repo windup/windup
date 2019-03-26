@@ -85,7 +85,7 @@
 
     </div> <!-- /container main -->
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
 
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>

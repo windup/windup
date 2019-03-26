@@ -227,7 +227,7 @@
         <#include "include/timestamp.ftl">
 
     </div> <!-- /.container-fluid -->
-    <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
+    <script src="reports/resources/js/jquery-3.3.1.min.js"></script>
     <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
