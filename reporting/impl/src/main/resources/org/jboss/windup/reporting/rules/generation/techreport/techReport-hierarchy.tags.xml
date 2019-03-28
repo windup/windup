@@ -88,7 +88,6 @@
             </tag>
             <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown">
                 <tag ref="jax-ws"/>
-                <tag ref="jax-rs"/>
             </tag>
             <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Podcast">
                 <tag ref="jca"/>
@@ -99,8 +98,9 @@
             <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Global_Ecosystem">
                 <tag ref="webservices"/>
             </tag>
-            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded" icon="Science_Circuit">
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded, techRow:java-ee" icon="Science_Circuit">
                 <tag ref="rest"/>
+                <tag ref="jax-rs"/>
             </tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
@@ -188,6 +188,7 @@
             <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:transactions"/>
             <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
+            <tag pseudo="true" name="place:EJB" title="EJB" parents="techBox:ejb"/>
         </tag>
     </tag>
 </tags>
