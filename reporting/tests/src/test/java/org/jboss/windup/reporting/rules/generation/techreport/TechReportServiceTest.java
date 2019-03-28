@@ -1,8 +1,14 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.Arquillian; 
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -22,12 +28,6 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
