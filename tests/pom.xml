@@ -4,13 +4,17 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>4.2.1-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.tests</groupId>
     <artifactId>windup-tests</artifactId>
 
     <name>Windup Engine - Tests</name>
+
+    <properties>
+        <surefire-argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</surefire-argLine>
+    </properties>
 
     <dependencies>
 
@@ -177,7 +181,7 @@
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
                     <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
+                    <argLine>${surefire-argLine}</argLine>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
                 </configuration>
@@ -185,4 +189,33 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>surefire-jdk11</id>
+            <activation>
+                <property>
+                    <name>jdk.version</name>
+                    <value>11</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>${testExcludeString}</exclude>
+                                <exclude>org.jboss.windup.tests.application.WindupArchitectureMediumBinaryModeProcyonTest</exclude>
+                            </excludes>
+                            <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
+                            <argLine>${surefire-argLine} --add-modules java.se</argLine>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

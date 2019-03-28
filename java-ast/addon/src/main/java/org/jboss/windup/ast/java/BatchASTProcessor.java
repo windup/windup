@@ -77,7 +77,7 @@ public class BatchASTProcessor
                     ASTParser parser = ASTParser.newParser(AST.JLS8);
                     parser.setBindingsRecovery(false);
                     parser.setResolveBindings(true);
-                    Map<Object, Object> options = JavaCore.getOptions();
+                    Map<String, String> options = JavaCore.getOptions();
                     JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
                     // these options seem to slightly reduce the number of times that JDT aborts on compilation errors
                     options.put(JavaCore.CORE_INCOMPLETE_CLASSPATH, "warning");

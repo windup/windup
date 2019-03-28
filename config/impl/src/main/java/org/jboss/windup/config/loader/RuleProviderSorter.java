@@ -14,7 +14,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.util.exception.WindupMultiStringException;
-import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
@@ -115,7 +115,7 @@ public class RuleProviderSorter
     }
 
     /**
-     * Add edges between {@link WinduPRuleProvider}s based upon their dependency relationships.
+     * Add edges between {@link RuleProvider}s based upon their dependency relationships.
      */
     private void addProviderRelationships(DefaultDirectedWeightedGraph<RuleProvider, DefaultEdge> graph)
     {

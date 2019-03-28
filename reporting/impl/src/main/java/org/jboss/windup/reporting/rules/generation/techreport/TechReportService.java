@@ -167,23 +167,27 @@ public class TechReportService
     /**
      * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> placement label -> TechUsageStatSum.
      *
-     * @param onlyForApplication Sum the statistics only for this project.
+     * @param appBeingSummarized Sum the statistics only for this project.
      */
-    public TechStatsMatrix getTechStatsMap(ProjectModel onlyForApplication)
+    public TechStatsMatrix getTechStatsMap(ProjectModel appBeingSummarized)
     {
-        Set<ProjectModel> applicationProjects = onlyForApplication == null ? null
-                    : new ProjectModelTraversal(onlyForApplication).getAllProjects(true);
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            // A shortcut.
-            if (applicationProjects != null && !applicationProjects.contains(stat.getProjectModel()))
+            //If a stat doesn't apply to this project we move on to the next stat without further processing
+            if (appBeingSummarized != null)
             {
-                LOG.fine("\t\tThis stat is not for this project, skipping.");
-                continue;
+                boolean appIsContainedInStatProject = stat.getProjectModel().getApplications().contains(appBeingSummarized);
+                boolean appIsASharedLibrary = appBeingSummarized.getName().toLowerCase().contains("shared");
+                boolean statAppliesToSeveralApps = stat.getProjectModel().getApplications().size() > 1;
+                if(!appIsContainedInStatProject || (statAppliesToSeveralApps && !appIsASharedLibrary))
+                {
+                    LOG.fine("\t\tThis stat is not for this project, skipping.");
+                    continue;
+                }
             }
 
             final Set<String> placementTags = TechReportService.getPlacementTags(graphContext, stat.getTags());
@@ -208,7 +212,7 @@ public class TechReportService
             mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
 
             List<Long> appsToCountTowards;
-            if (onlyForApplication == null)
+            if (appBeingSummarized == null)
             {
                 appsToCountTowards = StreamSupport.stream(stat.getProjectModel().getApplications().spliterator(), false)
                             .map(ProjectModel::getElement)
@@ -218,11 +222,24 @@ public class TechReportService
             }
             else
             {
-                appsToCountTowards = Collections.singletonList(onlyForApplication.getId());
+                appsToCountTowards = Collections.singletonList(appBeingSummarized.getId());
             }
+
+            boolean isSharedApp = appsToCountTowards.size() > 1;
+            List<ProjectModel> apps = stat.getProjectModel().getApplications();
+            List<ProjectModel>sharedApps = apps.stream().filter(app -> app.getName().toLowerCase().contains("shared")).collect(toList());
+
 
             for (Long appToCountTowards : appsToCountTowards)
             {
+                if(isSharedApp)
+                {
+                    if(!sharedApps.stream().anyMatch(app -> app.getElement().id().equals(appToCountTowards)))
+                    {
+                        continue;
+                    }
+                }
+
                 // For boxes report - show each tech in sector, row, box. For individual projects.
                 mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), appToCountTowards, stat.getName(), stat, false);
 
