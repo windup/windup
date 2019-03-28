@@ -162,7 +162,7 @@
                     <#list problemsBySeverity?keys as severity>
                         <table class="table table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
-                                <tr class="tablesorter-ignoreRow" style="background: rgb(0, 140, 186);color: #FFFFFF; font-size: 14pt;">
+                                <tr class="tablesorter-ignoreRow" style="background: #337ab7;color: #FFFFFF; font-size: 14pt;">
                                     <td style="border: 0px; padding: 10px 15px"><b>${severity}</b></td>
                                     <td style="border: 0px"></td>
                                     <td style="border: 0px"></td>

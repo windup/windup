@@ -505,9 +505,9 @@ h1 .glyphicon-info-sign:before {
 
 /** Bootstrap 3.4.1 migration compatibility **/
 
-table {
-    font-size: 12px;
-}
+/*table {*/
+    /*font-size: 12px;*/
+/*}*/
 
 @media (min-width: 768px) {
     .navbar-nav > li >a {
@@ -518,13 +518,13 @@ table {
 
 .navbar {
     border: none;
-    font-size: 13px;
-    font-weight: 300;
+    /*font-size: 13px;*/
+    /*font-weight: 300;*/
 }
 
-.navbar-inverse {
-    background-color: #333333;
-}
+/*.navbar-inverse {*/
+    /*background-color: #333333;*/
+/*}*/
 
 .navbar-inverse .navbar-nav > li >a {
     color: #ffffff;
@@ -539,8 +539,8 @@ table {
     border-top-right-radius: 0px;
 }
 
-.panel-primary > .panel-heading {
-    color: #ffffff;
-    background-color: #008cba;
-    border-color: #008cba;
-}
+/*.panel-primary > .panel-heading {*/
+    /*color: #ffffff;*/
+    /*background-color: #008cba;*/
+    /*border-color: #008cba;*/
+/*}*/
