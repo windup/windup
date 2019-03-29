@@ -280,7 +280,7 @@
                 reverse = false;
                 currentSortColumn = column;
             }
-            var f = reverse ? 1 : -1;
+            var reverseSortFactor = reverse ? 1 : -1;
 
             $(groupedHeaderColumns[column]).addClass("sectorSorted");
             $(groupedHeaderColumns[column]).addClass(reverse ? "sort_asc" : "sort_desc");
@@ -292,14 +292,14 @@
                 var A = getVal(a);
                 var B = getVal(b);
                 if (!$.isNumeric(A) || !$.isNumeric(B)) {
-                    return B.localeCompare(A) * f;
+                    return B.localeCompare(A) * reverseSortFactor;
                 }
 
                 if(A < B) {
-                    return -1*f;
+                    return -1*reverseSortFactor;
                 }
                 if(A > B) {
-                    return 1*f;
+                    return 1*reverseSortFactor;
                 }
                 return 0;
             });
@@ -341,7 +341,7 @@
                 reverseSector = false;
                 currentSortSector = sector;
             }
-            var f = reverseSector ? 1 : -1;
+            var reverseSortFactor = reverseSector ? 1 : -1;
 
             $(groupedSectors[sector]).addClass("sectorSorted");
             $(groupedSectors[sector]).addClass(reverseSector ? "sort_asc" : "sort_desc");
@@ -353,14 +353,14 @@
                 var A = getVal(a);
                 var B = getVal(b);
                 if (!$.isNumeric(A) || !$.isNumeric(B)) {
-                    return B.localeCompare(A) * f;
+                    return B.localeCompare(A) * reverseSortFactor;
                 }
 
                 if(A < B) {
-                    return -1*f;
+                    return -1*reverseSortFactor;
                 }
                 if(A > B) {
-                    return 1*f;
+                    return 1*reverseSortFactor;
                 }
                 return 0;
             });
