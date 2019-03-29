@@ -261,17 +261,17 @@
         function sortTableByColumn(column) {
             // cleanup the previous sort classes
             var groupedHeaderColumns = $('.headersGroup td').get();
-            groupedHeaderColumns.forEach(function(tdElement) {
-                $(tdElement).removeClass("sectorSorted");
-                $(tdElement).removeClass("sort_asc");
-                $(tdElement).removeClass("sort_desc");
+            groupedHeaderColumns.forEach(function(columnHeaderElement) {
+                $(columnHeaderElement).removeClass("sectorSorted");
+                $(columnHeaderElement).removeClass("sort_asc");
+                $(columnHeaderElement).removeClass("sort_desc");
             });
 
             var groupedSectors = $('.headersSector .sectorHeader').get();
-            groupedSectors.forEach(function(tdElement) {
-                $(tdElement).removeClass("sectorSorted");
-                $(tdElement).removeClass("sort_asc");
-                $(tdElement).removeClass("sort_desc");
+            groupedSectors.forEach(function(sectorHeaderElement) {
+                $(sectorHeaderElement).removeClass("sectorSorted");
+                $(sectorHeaderElement).removeClass("sort_asc");
+                $(sectorHeaderElement).removeClass("sort_desc");
             });
 
             if (column == currentSortColumn) {
@@ -322,17 +322,17 @@
         function sortTableBySector(sector) {
             // cleanup the previous sort classes
             var groupedHeaders = $('.headersGroup td').get();
-            groupedHeaders.forEach(function(tdElement) {
-                $(tdElement).removeClass("sectorSorted");
-                $(tdElement).removeClass("sort_asc");
-                $(tdElement).removeClass("sort_desc");
+            groupedHeaders.forEach(function(columnHeaderElement) {
+                $(columnHeaderElement).removeClass("sectorSorted");
+                $(columnHeaderElement).removeClass("sort_asc");
+                $(columnHeaderElement).removeClass("sort_desc");
             });
 
             var groupedSectors = $('.headersSector td').get();
-            groupedSectors.forEach(function(tdElement) {
-                $(tdElement).removeClass("sectorSorted");
-                $(tdElement).removeClass("sort_asc");
-                $(tdElement).removeClass("sort_desc");
+            groupedSectors.forEach(function(sectorHeaderElement) {
+                $(sectorHeaderElement).removeClass("sectorSorted");
+                $(sectorHeaderElement).removeClass("sort_asc");
+                $(sectorHeaderElement).removeClass("sort_desc");
             });
 
             if (sector == currentSortSector) {
