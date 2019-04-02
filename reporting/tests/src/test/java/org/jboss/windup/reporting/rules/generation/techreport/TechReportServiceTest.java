@@ -87,7 +87,19 @@ public class TechReportServiceTest
             TechReportService.TechUsageStatSum statSumJavaEE = techStatsMatrix.get("techrow:java-ee", "techbox:ejb", Long.valueOf(0), "mejb");
             Assert.assertNotNull(statSumJavaEE);
             Assert.assertEquals("mejb", statSumJavaEE.getName());
-            Assert.assertEquals(1, statSumJavaEE.getOccurrenceCount());
+            Assert.assertEquals(1, statSumJavaEE.getOccurrenceCount());            
+            
+            TechReportService.TechUsageStatSum statSumValidation = techStatsMatrix.get("techrow:java-ee", "techbox:validation", Long.valueOf(0), "beanvalidation");
+            Assert.assertNotNull(statSumValidation);
+            Assert.assertEquals("beanvalidation", statSumValidation.getName());
+            Assert.assertEquals(1, statSumValidation.getOccurrenceCount());            
+            
+            TechReportService.TechUsageStatSum statSumBinding = techStatsMatrix.get("techrow:java-ee", "techbox:binding", Long.valueOf(0), "jsonb");
+            Assert.assertNotNull(statSumBinding);
+            Assert.assertEquals("jsonb", statSumBinding.getName());
+            Assert.assertEquals(1, statSumBinding.getOccurrenceCount());
+            
+            
         }
         finally
         {
@@ -152,6 +164,8 @@ public class TechReportServiceTest
         rootProject.addChildProject(child2DuplicateProject);
         createTechnologyStats(graphContext, "test", child2DuplicateProject, "Embedded", "Security", "Sustain");
         createTechnologyStats(graphContext, "mejb", child2DuplicateProject, "Java EE", "Bean", "Connect");
+        createTechnologyStats(graphContext, "beanvalidation", child2DuplicateProject, "Java EE", "Validation", "Store");
+        createTechnologyStats(graphContext, "jsonb", child2DuplicateProject, "Java EE", "Binding", "Connect");
         child2DuplicateProject.setCanonicalProject(child2Project);
         child2DuplicateProject.addFileModel(child2);
         child2DuplicateProject.setRootFileModel(child2);
