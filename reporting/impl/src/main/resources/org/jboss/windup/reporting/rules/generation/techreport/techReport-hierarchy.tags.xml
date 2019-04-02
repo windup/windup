@@ -188,7 +188,6 @@
             <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:transactions"/>
             <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
-            <tag pseudo="true" name="place:EJB" title="EJB" parents="techBox:ejb"/>
         </tag>
     </tag>
 </tags>
