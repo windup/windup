@@ -102,6 +102,8 @@
                 <tag ref="rest"/>
                 <tag ref="jax-rs"/>
             </tag>
+            <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Car_Front"></tag>
+
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!--
@@ -119,6 +121,7 @@
             <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
+            <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Car_Front"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
@@ -188,6 +191,8 @@
             <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:transactions"/>
             <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
+            <tag pseudo="true" name="place:Binding" title="Binding" parents="techBox:binding"/>
+            <tag pseudo="true" name="place:Validation" title="Validation" parents="techBox:validation"/>
         </tag>
     </tag>
 </tags>
