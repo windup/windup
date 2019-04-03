@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 
-import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -16,9 +15,6 @@ import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationTypeCondi
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
@@ -27,6 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,20 +74,22 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         javaTypeReference.getFile().setGenerateSourceReport(true);
 
         String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
-        JavaClassModel javaImplementationClass = getImplementationJavaClassModelFromInterface(event, methodReturnType);
-        enableSourceReport(javaImplementationClass);
+        getImplementationJavaClassModelFromInterface(event, methodReturnType)
+                .ifPresent(javaImplementationClass -> {
+                    enableSourceReport(javaImplementationClass);
 
-        // We add the info to the SpringBeanService
-        SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
-        SpringBeanModel springBeanModel = sessionBeanService.create();
+                    // We add the info to the SpringBeanService
+                    SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
+                    SpringBeanModel springBeanModel = sessionBeanService.create();
 
-        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
-        springBeanModel.setApplications(applications);
-        springBeanModel.setSpringBeanName(javaImplementationClass.getClassName());
-        springBeanModel.setJavaClass(javaImplementationClass);
+                    Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
+                    springBeanModel.setApplications(applications);
+                    springBeanModel.setSpringBeanName(javaImplementationClass.getClassName());
+                    springBeanModel.setJavaClass(javaImplementationClass);
+                });
     }
 
-    private JavaClassModel getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
+    private Optional<JavaClassModel> getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
         //with that interface we will seach in the next lines the first class implementing that interface
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName().contains(returnType)).findFirst().get();
@@ -100,9 +99,9 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
                     .filter(e -> e.getInterfaces()
                             .stream()
                             .anyMatch(intf -> intf.getQualifiedName().contains(returnType)))
-                    .findAny().get();
+                    .findAny();
         } else {
-            return returnTypeJavaClassModel;
+            return Optional.ofNullable(returnTypeJavaClassModel);
         }
     }
 
