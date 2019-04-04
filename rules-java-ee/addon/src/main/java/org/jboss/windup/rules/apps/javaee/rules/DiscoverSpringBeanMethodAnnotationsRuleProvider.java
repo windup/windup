@@ -95,8 +95,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         Optional<JavaClassModel> returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName() != null && e.getQualifiedName().contains(returnType)).findFirst();
         if (returnTypeJavaClassModel.isPresent() && returnTypeJavaClassModel.get().isInterface()) {
             return javaClassService.findAll().stream()
-                    .filter(e -> e.getInterfaces()
-                            .stream()
+                    .filter(e -> e.getInterfaces() != null && e.getInterfaces().stream()
                             .anyMatch(intf -> intf.getQualifiedName() != null && intf.getQualifiedName().contains(returnType)))
                     .findAny();
         } else {
