@@ -60,7 +60,12 @@ public class TestTechReportUtil extends TestReportUtil
         }
 
         int colOffset = getPunchCardReportColumnOffset(columnName);
-        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]", appName, colOffset + COLS_BEFORE_BUBBLES + 1);
+        final String precedingSummaryElementXpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[contains(@class, 'sectorSummary')]",
+            appName);
+        List<WebElement> precedingSummaryElements = getDriver().findElements(By.xpath(precedingSummaryElementXpath));
+        //No '+1' in this colOffset as the 'name' field gets counted twice
+        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]",
+                appName, colOffset + COLS_BEFORE_BUBBLES + precedingSummaryElements.size());
         List<WebElement> bubbleCells = getDriver().findElements(By.xpath(xpath));
         if (bubbleCells.isEmpty())
             throw new CheckFailedException(String.format("Cell not found for app %s and column %s;  xpath: " + xpath, appName, pointsType));
@@ -86,7 +91,12 @@ public class TestTechReportUtil extends TestReportUtil
 
         String appName = bubbleExpected.appName.trim();
         int colOffset = getPunchCardReportColumnOffset(bubbleExpected.techColumnLabel);
-        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]", appName, colOffset + COLS_BEFORE_BUBBLES +1);
+        final String precedingSummaryElementXpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[contains(@class, 'sectorSummary') and position()<=%d]",
+                appName, colOffset + COLS_BEFORE_BUBBLES +1);
+        List<WebElement> precedingSummaryElements = getDriver().findElements(By.xpath(precedingSummaryElementXpath));
+        //No '+1' in this colOffset as the 'name' field gets counted twice
+        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]",
+                appName, colOffset + COLS_BEFORE_BUBBLES + precedingSummaryElements.size());
         List<WebElement> bubbleCells = getDriver().findElements(By.xpath(xpath));
         if (bubbleCells.isEmpty())
             throw new CheckFailedException(String.format("Bubble cell not found for app %s and column %s;  xpath: " + xpath, appName, bubbleExpected.techColumnLabel));
@@ -119,6 +129,8 @@ public class TestTechReportUtil extends TestReportUtil
         final String xpath = String.format("//tr[@class='headersGroup']/td[div[normalize-space()='%s']]/preceding-sibling::td", label);
         List<WebElement> precedingSiblings = getDriver().findElements(By.xpath(xpath));
         assertNotEmpty(precedingSiblings, "precending siblings of header column div " + label);
+
+
 
         return precedingSiblings.size() - COLS_BEFORE_BUBBLES; // Substracting the app name column.
     }

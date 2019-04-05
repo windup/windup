@@ -4,12 +4,11 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.Arquillian; 
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -84,6 +83,11 @@ public class TechReportServiceTest
             Assert.assertNotNull(statSum);
             Assert.assertEquals("test", statSum.getName());
             Assert.assertEquals(2, statSum.getOccurrenceCount());
+
+            TechReportService.TechUsageStatSum statSumJavaEE = techStatsMatrix.get("techrow:java-ee", "techbox:ejb", Long.valueOf(0), "mejb");
+            Assert.assertNotNull(statSumJavaEE);
+            Assert.assertEquals("mejb", statSumJavaEE.getName());
+            Assert.assertEquals(1, statSumJavaEE.getOccurrenceCount());
         }
         finally
         {
@@ -124,7 +128,7 @@ public class TechReportServiceTest
         ArchiveModel child1 = createArchive(graphContext, "child1");
         root.addFileToDirectory(child1);
         MavenProjectModel child1Project = mavenProjectModelService.create();
-        createTechnologyStats(graphContext, "test", child1Project);
+        createTechnologyStats(graphContext, "test", child1Project, "Embedded", "Security", "Sustain");
         rootProject.addChildProject(child1Project);
         child1Project.setName("child1_project");
         child1Project.addFileModel(child1);
@@ -136,7 +140,7 @@ public class TechReportServiceTest
         ArchiveModel shared = createArchive(graphContext, "shared");
         ArchiveModel original = createArchive(graphContext, "child2_canonical");
         MavenProjectModel child2Project = mavenProjectModelService.create();
-        createTechnologyStats(graphContext, "test", child2Project);
+        createTechnologyStats(graphContext, "test", child2Project, "Embedded", "Security", "Sustain");
         child2Project.setName("child2_canonical_project");
         child2Project.addFileModel(shared);
         child2Project.setRootFileModel(shared);
@@ -146,7 +150,8 @@ public class TechReportServiceTest
 
         DuplicateProjectModel child2DuplicateProject = duplicateProjectService.create();
         rootProject.addChildProject(child2DuplicateProject);
-        createTechnologyStats(graphContext, "test", child2DuplicateProject);
+        createTechnologyStats(graphContext, "test", child2DuplicateProject, "Embedded", "Security", "Sustain");
+        createTechnologyStats(graphContext, "mejb", child2DuplicateProject, "Java EE", "Bean", "Connect");
         child2DuplicateProject.setCanonicalProject(child2Project);
         child2DuplicateProject.addFileModel(child2);
         child2DuplicateProject.setRootFileModel(child2);
@@ -154,7 +159,7 @@ public class TechReportServiceTest
         return root;
     }
 
-    private TechnologyUsageStatisticsModel createTechnologyStats(GraphContext graphContext, String name, ProjectModel project)
+    private TechnologyUsageStatisticsModel createTechnologyStats(GraphContext graphContext, String name, ProjectModel project, String row, String column, String sector)
     {
         GraphService<TechnologyUsageStatisticsModel> service = new GraphService<>(graphContext, TechnologyUsageStatisticsModel.class);
         TechnologyUsageStatisticsModel model = service.create();
@@ -162,9 +167,9 @@ public class TechReportServiceTest
         model.setName(name);
         TagSetModel tagSetModel = new GraphService<>(graphContext, TagSetModel.class).create();
         Set<String> tagSet = new HashSet<>();
-        tagSet.add("Sustain");
-        tagSet.add("Security");
-        tagSet.add("Embedded");
+        tagSet.add(sector);
+        tagSet.add(column);
+        tagSet.add(row);
         tagSetModel.setTags(tagSet);
         model.setTagModel(tagSetModel);
         model.setOccurrenceCount(1);
