@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.config.classification.Classification;
@@ -194,38 +195,50 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
             ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
             TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
-            final List<ApplicationReportModel> apps = applicationReportService.findAll();
-            Map<ApplicationReportModel,List<TechnologyTagModel>> appsAndTechTags;
-            List<TechnologyTagModel> masterTagList = techTagService.findAll().stream().sorted((o1,o2) ->
+            List<ApplicationReportModel> apps = applicationReportService.findAll();
+            List<TechnologyTagModel> masterTagList = techTagService.findAll().stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
 
                             {
                                 String n1 = o1.getName();
                                 String n2 = o2.getName();
-                                return n1.compareTo(n2);
+                                return n1.compareToIgnoreCase(n2);
                             }).collect(Collectors.toList());
 
             List<String> headerFieldsList = new ArrayList<>();
             headerFieldsList.add("App Name");
+            ArrayList<String> appNames = new ArrayList<>();
+            ArrayList<ApplicationReportModel> distinctApps = new ArrayList<>();
+
+            apps.forEach(app ->
+            {
+                if(!appNames.contains(app.getProjectModel().getRootFileModel().getFileName())) {
+                    appNames.add(app.getProjectModel().getRootFileModel().getFileName());
+                    distinctApps.add(app);
+                }
+            });
+
+
 
             masterTagList.forEach( masterTag -> headerFieldsList.add(masterTag==null?"":masterTag.getName()));
             String[] headerStringsToWrite = headerFieldsList.toArray(new String[0]);
 
-            apps.stream().forEach((ApplicationReportModel app) ->
+            distinctApps.stream().sorted((o1,o2) ->
             {
-                ProjectModelTraversal traversal = new ProjectModelTraversal(app.getProjectModel());
+                String n1 = o1.getProjectModel().getRootFileModel().getFileName();
+                String n2 = o2.getProjectModel().getRootFileModel().getFileName();
+                return n1.compareToIgnoreCase(n2);
+            }).forEachOrdered(app ->
+            {
+                ProjectModelTraversal traversal = new ProjectModelTraversal(app.getProjectModel(),new OnlyOnceTraversalStrategy());
                 ArrayList<TechnologyTagModel> tagsForApp = new ArrayList<>();
                 ArrayList<TechnologyTagModel> structuredTagsForApp = new ArrayList<>();
 
-                Iterable<TechnologyTagModel> tagsForAppIterable = ((TreeSet<TechnologyTagModel>)techTagService.findTechnologyTagsForProject(traversal)).stream().sorted((o1,o2) ->
-
+                ((TreeSet<TechnologyTagModel>)techTagService.findTechnologyTagsForProject(traversal)).stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
                 {
                     String n1 = o1.getName();
                     String n2 = o2.getName();
-                    return n1.compareTo(n2);
-                }).collect(Collectors.toList());
-
-
-                tagsForAppIterable.forEach(tagsForApp::add);
+                    return n1.compareToIgnoreCase(n2);
+                }).forEachOrdered(tagsForApp::add);
 
                 masterTagList.forEach( masterTag ->
                 {
@@ -237,14 +250,14 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                     {
                         structuredTagsForApp.add(null);
                     }
-                    headerFieldsList.add(masterTag==null?"":masterTag.getName());
+                    headerFieldsList.add(masterTag==null?"":masterTag.getName() + (masterTag.getVersion()== null?"":" " + masterTag.getVersion()));
                 });
 
                 List<String> appNameAndTagNames = new ArrayList<>();
                 appNameAndTagNames.add(app.getProjectModel().getRootFileModel().getFileName());
                 structuredTagsForApp.forEach( tag ->
                 {
-                    appNameAndTagNames.add(tag==null?"":tag.getName());
+                    appNameAndTagNames.add(tag==null?"":tag.getName() + (tag.getVersion()== null?"":" " + tag.getVersion()));
                 });
 
 
