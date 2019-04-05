@@ -93,7 +93,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         //with that interface we will seach in the next lines the first class implementing that interface
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         Optional<JavaClassModel> returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName() != null && e.getQualifiedName().contains(returnType)).findFirst();
-        if (returnTypeJavaClassModel.isPresent() && returnTypeJavaClassModel.get().isInterface()) {
+        if (returnTypeJavaClassModel != null && returnTypeJavaClassModel.isPresent() && returnTypeJavaClassModel.get().isInterface()) {
             return javaClassService.findAll().stream()
                     .filter(e -> e.getInterfaces() != null && e.getInterfaces().stream()
                             .anyMatch(intf -> intf.getQualifiedName() != null && intf.getQualifiedName().contains(returnType)))
