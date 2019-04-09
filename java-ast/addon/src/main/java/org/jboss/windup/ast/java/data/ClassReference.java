@@ -19,6 +19,7 @@ public class ClassReference
     private final int column;
     private final int length;
     private final TypeReferenceLocation location;
+    private final String returnType;
     private String line;
 
     /**
@@ -26,7 +27,7 @@ public class ClassReference
      */
     public ClassReference(String qualifiedName, String packageName, String className, String methodName, ResolutionStatus resolutionStatus,
                 TypeReferenceLocation location, int lineNumber,
-                int column, int length, String line)
+                int column, int length, String line, String returnType)
     {
         this.qualifiedName = qualifiedName;
         this.packageName = packageName;
@@ -38,6 +39,14 @@ public class ClassReference
         this.column = column;
         this.length = length;
         this.line = line;
+        this.returnType = returnType;
+    }    
+    
+    public ClassReference(String qualifiedName, String packageName, String className, String methodName, ResolutionStatus resolutionStatus,
+                TypeReferenceLocation location, int lineNumber,
+                int column, int length, String line)
+    {
+        this(qualifiedName, packageName, className, methodName, resolutionStatus, location, lineNumber, column, length, line, null);
     }
 
     /**
@@ -179,5 +188,9 @@ public class ClassReference
                     ", location=" + location +
                     ", line='" + line + '\'' +
                     '}';
+    }
+
+    public String getReturnType() {
+        return returnType;
     }
 }

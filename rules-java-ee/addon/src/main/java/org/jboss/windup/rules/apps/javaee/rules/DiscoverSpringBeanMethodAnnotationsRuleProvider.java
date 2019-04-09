@@ -22,7 +22,6 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -48,7 +47,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
                     {
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
-                            extractAnnotationMetadata(event, payload);
+                            extractAnnotationMetadata(event, context, payload);
                         }
                     })
                     .withId(ruleIDPrefix + "_SpringBeanMethodRule");
@@ -70,8 +69,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         return !m.find();
     }
 
-    private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
-        javaTypeReference.getFile().setGenerateSourceReport(true);
+    private void extractAnnotationMetadata(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel javaTypeReference) {
 
         String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
         getImplementationJavaClassModelFromInterface(event, methodReturnType)
@@ -101,15 +99,6 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         } else {
             return returnTypeJavaClassModel;
         }
-    }
-
-    private String getReturnTypeFromMethodSnippit(JavaTypeReferenceModel javaTypeReference) {
-        //get the type returned by the method---> Bean Interface
-        return Arrays.stream(javaTypeReference.getSourceSnippit()
-                .split(" "))
-                .filter(this::couldBeMethodReturnType)
-                .findFirst()
-                .get();
     }
 
     @Override

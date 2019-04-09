@@ -444,7 +444,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             reference.getResolutionStatus(),
                             reference.getLineNumber(), reference.getColumn(), reference.getLength(),
                             reference.getQualifiedName(),
-                            reference.getLine());
+                            reference.getLine(),
+                            reference.getReturnType());
                 added.put(reference, typeReference);
                 if (reference instanceof AnnotationClassReference)
                 {
