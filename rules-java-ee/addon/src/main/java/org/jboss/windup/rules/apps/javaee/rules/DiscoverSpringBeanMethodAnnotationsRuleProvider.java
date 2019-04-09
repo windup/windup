@@ -24,8 +24,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Scans for classes with Spring bean related annotations, and adds Bean related metadata for these.
@@ -72,7 +70,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
     }
 
     private Optional<JavaClassModel> getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
-        //with that interface we will seach in the next lines the first class implementing that interface
+        //with that interface we will search in the next lines the first class implementing that interface
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         Optional<JavaClassModel> returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName() != null && e.getQualifiedName().contains(returnType)).findFirst();
         if (returnTypeJavaClassModel != null && returnTypeJavaClassModel.isPresent() && returnTypeJavaClassModel.get().isInterface()) {
