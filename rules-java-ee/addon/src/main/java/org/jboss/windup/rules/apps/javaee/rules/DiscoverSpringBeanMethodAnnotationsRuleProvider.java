@@ -47,29 +47,13 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
                     {
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
-                            extractAnnotationMetadata(event, context, payload);
+                            extractAnnotationMetadata(event, payload);
                         }
                     })
                     .withId(ruleIDPrefix + "_SpringBeanMethodRule");
     }
 
-    private boolean couldBeMethodReturnType(String element) {
-
-      if ("public static final private protected".contains(element.trim().toLowerCase())) {
-          return false;
-      } else {
-          // we want elements without any non word character
-          return containsNonWordCharacters(element);
-      }
-    }
-
-    private boolean containsNonWordCharacters(String element) {
-        Pattern p = Pattern.compile("[^\\w\\s]");
-        Matcher m = p.matcher(element);
-        return !m.find();
-    }
-
-    private void extractAnnotationMetadata(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel javaTypeReference) {
+    private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
 
         String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
         getImplementationJavaClassModelFromInterface(event, methodReturnType)
@@ -97,7 +81,7 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
                             .anyMatch(intf -> intf.getQualifiedName() != null && intf.getQualifiedName().contains(returnType)))
                     .findAny();
         } else {
-            return returnTypeJavaClassModel;
+            return Optional.ofNullable(returnTypeJavaClassModel);
         }
     }
 
