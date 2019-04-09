@@ -53,31 +53,30 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
 
     private void extractAnnotationMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
 
-        String methodReturnType = getReturnTypeFromMethodSnippit(javaTypeReference);
-        getImplementationJavaClassModelFromInterface(event, methodReturnType)
-                .ifPresent(javaImplementationClass -> {
-                    enableSourceReport(javaImplementationClass);
+        Optional<JavaClassModel> javaImplementationClass = getImplementationJavaClassModelFromInterface(event, javaTypeReference.getReturnType());
+        if (javaImplementationClass != null && javaImplementationClass.isPresent()) {
+            
+            enableSourceReport(javaImplementationClass.get());
 
-                    // We add the info to the SpringBeanService
-                    SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
-                    SpringBeanModel springBeanModel = sessionBeanService.create();
+            // We add the info to the SpringBeanService
+            SpringBeanService sessionBeanService = new SpringBeanService(event.getGraphContext());
+            SpringBeanModel springBeanModel = sessionBeanService.create();
 
-                    Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
-                    springBeanModel.setApplications(applications);
-                    springBeanModel.setSpringBeanName(javaImplementationClass.getClassName());
-                    springBeanModel.setJavaClass(javaImplementationClass);
-                });
+            Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
+            springBeanModel.setApplications(applications);
+            springBeanModel.setSpringBeanName(javaImplementationClass.get().getClassName());
+            springBeanModel.setJavaClass(javaImplementationClass.get());
+        }
     }
 
     private Optional<JavaClassModel> getImplementationJavaClassModelFromInterface(GraphRewrite event, String returnType) {
         //with that interface we will search in the next lines the first class implementing that interface
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-        Optional<JavaClassModel> returnTypeJavaClassModel = javaClassService.findAll().stream().filter(e -> e.getQualifiedName() != null && e.getQualifiedName().contains(returnType)).findFirst();
-        if (returnTypeJavaClassModel != null && returnTypeJavaClassModel.isPresent() && returnTypeJavaClassModel.get().isInterface()) {
-            return javaClassService.findAll().stream()
-                    .filter(e -> e.getInterfaces() != null && e.getInterfaces().stream()
-                            .anyMatch(intf -> intf.getQualifiedName() != null && intf.getQualifiedName().contains(returnType)))
-                    .findAny();
+        JavaClassModel returnTypeJavaClassModel = javaClassService.getByName(returnType);
+
+        if (returnTypeJavaClassModel != null && returnTypeJavaClassModel.isInterface()) {
+            return returnTypeJavaClassModel.getImplementedBy().stream()
+                    .filter(e -> e.getQualifiedName().equals(returnType)).findFirst();
         } else {
             return Optional.ofNullable(returnTypeJavaClassModel);
         }
