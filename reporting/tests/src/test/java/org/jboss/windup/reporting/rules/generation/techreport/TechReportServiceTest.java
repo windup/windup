@@ -151,7 +151,7 @@ public class TechReportServiceTest
         DuplicateProjectModel child2DuplicateProject = duplicateProjectService.create();
         rootProject.addChildProject(child2DuplicateProject);
         createTechnologyStats(graphContext, "test", child2DuplicateProject, "Embedded", "Security", "Sustain");
-        createTechnologyStats(graphContext, "mejb", child2DuplicateProject, "Java EE", "EJB", "Connect");
+        createTechnologyStats(graphContext, "mejb", child2DuplicateProject, "Java EE", "Bean", "Connect");
         child2DuplicateProject.setCanonicalProject(child2Project);
         child2DuplicateProject.addFileModel(child2);
         child2DuplicateProject.setRootFileModel(child2);
