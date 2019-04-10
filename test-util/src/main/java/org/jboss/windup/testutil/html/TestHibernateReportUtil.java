@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
  * Contains methods for testing the contents of the Hibernate report.
  *
  */
-public class TestHibernateReportUtil extends TestReportUtil
+public class TestHibernateReportUtil extends TestChromeDriverReportUtil
 {
     /**
      * Checks that a Hibernate property is listed with the given key and value
