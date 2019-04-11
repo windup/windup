@@ -1,7 +1,6 @@
-package com.whatever.windup;
+package org.whatever.windup;
 
-import com.whatever.windup.MyOtherInterface;
+import org.whatever.windup.MyOtherInterface;
 
 public class MyOtherImplementation implements MyOtherInterface {
-    public String bookingCode;
 }

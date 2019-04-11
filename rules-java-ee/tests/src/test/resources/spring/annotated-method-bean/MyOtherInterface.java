@@ -1,4 +1,4 @@
-package com.whatever.windup;
+package org.whatever.windup;
 
 public interface MyOtherInterface {
 }

@@ -1,11 +1,11 @@
-package com.whatever.windup;
+package org.whatever.windup;
 
 import java.util.Calendar;
 import org.springframework.context.annotation.Bean;
-import com.whatever.windup.MyInterface;
-import com.whatever.windup.MyOtherInterface;
-import com.whatever.windup.MyImplementation;
-import com.whatever.windup.MyOtherImplementation;
+import org.whatever.windup.MyInterface;
+import org.whatever.windup.MyOtherInterface;
+import org.whatever.windup.MyImplementation;
+import org.whatever.windup.MyOtherImplementation;
 
 public class MethodAnnotatedBean {
 

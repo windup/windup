@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 
+import org.apache.commons.lang.BooleanUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -74,9 +75,11 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProvider extends AbstractRul
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel returnTypeJavaClassModel = javaClassService.getByName(returnType);
 
-        if (returnTypeJavaClassModel != null && returnTypeJavaClassModel.isInterface()) {
-            return returnTypeJavaClassModel.getImplementedBy().stream()
-                    .filter(e -> e.getQualifiedName().equals(returnType)).findFirst();
+        if (returnTypeJavaClassModel != null && BooleanUtils.isTrue(returnTypeJavaClassModel.isInterface())) {
+            return returnTypeJavaClassModel
+                    .getImplementedBy()
+                    .stream()
+                    .findFirst();
         } else {
             return Optional.ofNullable(returnTypeJavaClassModel);
         }
