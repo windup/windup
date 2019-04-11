@@ -13,6 +13,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.LinkModel;
@@ -22,8 +23,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
-import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.model.*;
+import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -42,7 +43,7 @@ import com.opencsv.CSVWriter;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
+@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
@@ -211,7 +212,8 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
             apps.forEach(app ->
             {
-                if(!appNames.contains(app.getProjectModel().getRootFileModel().getFileName())) {
+                if(app.getProjectModel()!= null && app.getProjectModel().getRootFileModel() != null
+                        && !appNames.contains(app.getProjectModel().getRootFileModel().getFileName())) {
                     appNames.add(app.getProjectModel().getRootFileModel().getFileName());
                     distinctApps.add(app);
                 }
@@ -219,7 +221,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
 
 
-            masterTagList.forEach( masterTag -> headerFieldsList.add(masterTag==null?"":masterTag.getName()));
+            masterTagList.forEach( masterTag -> headerFieldsList.add(masterTag.getName()));
             String[] headerStringsToWrite = headerFieldsList.toArray(new String[0]);
 
             distinctApps.stream().sorted((o1,o2) ->

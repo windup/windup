@@ -23,11 +23,15 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
                 "--exportCSV");
 
         File csv = new File(tmp.getRoot(), "Windup1x_javaee_example_tiny_war.csv");
-
         assertTrue(csv.exists());
 
         String csvContent = new String(Files.readAllBytes(csv.toPath()), "UTF-8");
-
         assertTrue(csvContent.contains("Windup1x-javaee-example-tiny.war"));
+
+        File allIssuesCsv = new File(tmp.getRoot(), "AllIssues.csv");
+        assertTrue(allIssuesCsv.exists());
+
+        File appTagsCsv = new File(tmp.getRoot(), "ApplicationFileTechnologies.csv");
+        assertTrue(appTagsCsv.exists());
     }
 }
