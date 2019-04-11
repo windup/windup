@@ -21,7 +21,6 @@ public class AnnotationTypeCondition extends AnnotationCondition
 {
     private RegexParameterizedPatternParser pattern;
     private Map<String, AnnotationCondition> conditions = new HashMap<>();
-
     /**
      * Creates an {@link AnnotationTypeCondition} with the provided pattern.
      */
@@ -46,6 +45,10 @@ public class AnnotationTypeCondition extends AnnotationCondition
                     "pattern=" + pattern +
                     ", conditions=" + conditions +
                     '}';
+    }
+
+    public RegexParameterizedPatternParser getPattern() {
+        return pattern;
     }
 
     public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value)

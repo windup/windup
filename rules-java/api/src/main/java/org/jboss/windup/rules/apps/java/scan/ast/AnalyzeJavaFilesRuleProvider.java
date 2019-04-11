@@ -386,13 +386,12 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
                 shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
 
-                // Check if it is an annotation
-                shouldKeep |= reference instanceof AnnotationClassReference;
-
                 // we are always interested in types + anything that the TypeInterestFactory has registered
-                if (shouldKeep)
-                {
+                if (shouldKeep) {
                     results.add(reference);
+                    if (reference instanceof AnnotationClassReference) {
+                        results.add(((AnnotationClassReference) reference).getOriginalReference());
+                    }                
                 }
             }
             return results;
@@ -469,7 +468,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                     originalReference.getResolutionStatus(),
                                     originalReference.getLineNumber(), originalReference.getColumn(), originalReference.getLength(),
                                     originalReference.getQualifiedName(),
-                                    originalReference.getLine());
+                                    originalReference.getLine(),
+                                    originalReference.getReturnType());
                             added.put(originalReference, originalReferenceModel);
                         }
                         annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);

@@ -1,6 +1,6 @@
-package org.whatever.windup;
+package me.whatever.windup;
 
-import org.whatever.windup.MyOtherInterface;
+import me.whatever.windup.MyOtherInterface;
 
 public class MyOtherImplementation implements MyOtherInterface {
 }

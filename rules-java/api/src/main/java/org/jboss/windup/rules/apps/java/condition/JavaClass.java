@@ -409,6 +409,12 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                         referencePattern.getPattern());
         }
 
+        this.additionalAnnotationConditions.stream().forEach(e -> TypeInterestFactory.registerInterest(
+                this.uniqueID + "_AN_" + e.getPattern(),
+                e.getPattern().getPattern(),
+                e.getPattern().getPattern(),
+                TypeReferenceLocation.ANNOTATION));
+
         referencePattern.setParameterStore(store);
         if (typeFilterPattern != null)
             typeFilterPattern.setParameterStore(store);

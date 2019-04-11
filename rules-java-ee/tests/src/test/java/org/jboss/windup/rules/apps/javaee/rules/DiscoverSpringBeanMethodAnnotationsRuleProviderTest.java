@@ -55,13 +55,13 @@ public class DiscoverSpringBeanMethodAnnotationsRuleProviderTest extends Abstrac
             GraphService<SpringBeanModel> springBeanModelGraphService = new GraphService<>(context, SpringBeanModel.class);
             List<SpringBeanModel> allBeans = springBeanModelGraphService.findAll();
             assertEquals(2, allBeans.size());
-            assertTrue(allBeans.stream().anyMatch(e1 -> "org.whatever.windup.MyImplementation".equalsIgnoreCase(e1.getJavaClass().getQualifiedName()) &&
+            assertTrue(allBeans.stream().anyMatch(e1 -> "me.whatever.windup.MyImplementation".equalsIgnoreCase(e1.getJavaClass().getQualifiedName()) &&
                     e1.getJavaClass().getInterfaces().stream()
-                            .anyMatch(intf1 -> "org.whatever.windup.MyInterface".equalsIgnoreCase(intf1.getQualifiedName()))));
+                            .anyMatch(intf1 -> "me.whatever.windup.MyInterface".equalsIgnoreCase(intf1.getQualifiedName()))));
             
-            assertTrue(allBeans.stream().anyMatch(e -> "org.whatever.windup.MyOtherImplementation".equalsIgnoreCase(e.getJavaClass().getQualifiedName()) &&
+            assertTrue(allBeans.stream().anyMatch(e -> "me.whatever.windup.MyOtherImplementation".equalsIgnoreCase(e.getJavaClass().getQualifiedName()) &&
                                                   e.getJavaClass().getInterfaces().stream()
-                                                          .anyMatch(intf -> "org.whatever.windup.MyOtherInterface".equalsIgnoreCase(intf.getQualifiedName()))));
+                                                          .anyMatch(intf -> "me.whatever.windup.MyOtherInterface".equalsIgnoreCase(intf.getQualifiedName()))));
         } catch (IOException e) {
             e.printStackTrace();
         }
