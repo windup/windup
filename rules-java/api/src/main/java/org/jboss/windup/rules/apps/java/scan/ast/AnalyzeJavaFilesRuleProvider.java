@@ -386,9 +386,15 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
                 shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
 
+                // Check if it is an annotation, and if so, check if any children should be kept
+                if (!shouldKeep && reference instanceof AnnotationClassReference)
+                    shouldKeep = processAnnotation(((AnnotationClassReference) reference).getAnnotationValues().values(), classNotFoundAnalysisEnabled);
+
+
                 // we are always interested in types + anything that the TypeInterestFactory has registered
                 if (shouldKeep) {
                     results.add(reference);
+                    // We add the container element linked to that annotation to the reference list
                     if (reference instanceof AnnotationClassReference) {
                         results.add(((AnnotationClassReference) reference).getOriginalReference());
                     }                
