@@ -78,7 +78,7 @@
 
         <div class="traits">
             <div class="fileName">
-                <a href="reports/${appReport.reportFilename}">
+                <a href="reports/${appReport.reportFilename}" style="float: left; margin-right: 5px;">
                     <#-- For virtual apps, use name rather than the file name. -->
                     ${ (appReport.projectModel.projectType! = "VIRTUAL"
                         && appReport.projectModel.name??)?then(
@@ -91,7 +91,7 @@
                     <a href="${appReport.projectModel.csvFilename}">(CSV Report)</a>
                 </div>
             </#if>
-            <div class="techs">
+            <div class="techs" style="clear: left;">
                 <#list getTechnologyTagsForProjectTraversal(allTraversal) as tag>
                     <#if tag.name != "Decompiled Java File">
                     <@tagRenderer tag>
@@ -183,6 +183,21 @@
         <section class="apps">
             <#assign virtualAppExists = false>
             <div class="real">
+                <fieldset>
+                    <legend>
+                        <a style="float: left; margin-right: 5px;" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
+                        <div style="display: inline;">
+                            <span class="label label-success">Supported</span>
+                            <span class="label label-warning">Embeddable</span>
+                            <span class="label label-danger">Unsupported</span>
+                        </div>
+                    </legend>
+                    <div id="runtimeLegendContent" class="collapse">
+                        <dl class="dl-horizontal dl-horizontal-small left"></dl>
+                    </div>
+                    <br>
+                </fieldset>
+
                 <#-- See CreateApplicationListReportRuleProvider -->
                 <#--
                 <#list iterableToList(reportModel.relatedResources.applications)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>

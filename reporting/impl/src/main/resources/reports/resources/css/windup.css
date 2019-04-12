@@ -502,3 +502,13 @@ h1 .glyphicon-info-sign:before {
     margin: 0 0 12px;
     padding-bottom: 0;
 }
+
+/*Runtime label legend utils*/
+
+.dl-horizontal-small dt {
+    width: 50px !important;
+}
+
+.dl-horizontal-small dd {
+    margin-left: 62px;
+}

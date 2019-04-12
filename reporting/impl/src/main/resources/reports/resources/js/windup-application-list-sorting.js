@@ -1,4 +1,218 @@
 $(document).ready(function () {
+
+    var RUNTIME_TARGETS = [{
+        name: 'JWS',
+        description: 'Jboss Web Server',
+        supported: ['JSF Page', 'JSP Page', 'Web XML File'],
+        embeddable: [],
+        unsupported: [
+            'JPA entities',
+            'JPA named queries',
+            'Persistence units',
+            'EJB',
+            'JAX-RS',
+            'JAX-WS',
+            'JMS Queue',
+            'JMS Topic',
+            'JMS Connection Factory',
+            'JTA',
+            'Spring Boot',
+        ]
+    }, {
+        name: 'EAP',
+        description: 'Any description',
+        supported: [
+            'JDBC datasources',
+            'JDBC XA datasources',
+            'JPA entities',
+            'JPA named queries',
+            'Persistence units',
+            'Web Session',
+            'EJB',
+            'Java EE Batch',
+            'Java EE JSON-P',
+            'CDI',
+            'JAX-RS',
+            'JAX-WS',
+            'Security Realm',
+            'JMS Queue',
+            'JMS Topic',
+            'JMS Connection Factory',
+            'Stateless (SLSB)',
+            'Stateful (SFSB)',
+            'Message (MDB)',
+            'Entity Bean',
+            'JSF Page',
+            'JSP Page',
+            'Web XML File',
+            'WebSocket',
+            'Applet',
+            'JNLP',
+            'JTA',
+            'RMI',
+            'JNI',
+            'JNA',
+            'Mail',
+            'JCA',
+            'File system logging',
+            'Socket handler logging',
+        ],
+        embeddable: [],
+        unsupported: ['Spring Boot']
+    }];
+
+    function runtimeConfig() {
+        var runtimeLegendContentDiv = $('#runtimeLegendContent');
+
+        function initialize() {
+            // Create legend section
+            var runtimeList = runtimeLegendContentDiv.find('dl');
+            RUNTIME_TARGETS.forEach(runtimeTarget => {
+                runtimeList.append(makeRuntimeLegend(runtimeTarget));
+            });
+
+
+            var apps = $('div.real div.appInfo');
+
+            // Create Runtime labels on each application
+            apps.each(function (idx, el) {
+                $(this).find('.fileName').append(makeRuntimeLabel());
+            });
+
+            makeRuntimeLabelsClickable();
+
+            // Check if application matches criteria
+            apps.each(function (idx, el) {
+                var tags = $(this).find('div.techs span.label').map(function () {
+                    return $(this).text().trim();
+                }).toArray();
+
+                $(this).find('div.fileName span.label').each(function () {
+                    evaluateRuntime($(this), tags);
+                })
+
+            });
+
+        }
+
+        function makeRuntimeLegend(runtimeTarget) {
+            var html = $('<dt></dt><dd></dd>');
+
+            var dt = html.filter('dt');
+            dt.text(runtimeTarget.name);
+
+            var dd = html.filter('dd');
+            runtimeTarget.supported.forEach(label => {
+                dd.append(makeLegendLabel('success', label));
+            });
+            runtimeTarget.embeddable.forEach(label => {
+                dd.append(makeLegendLabel('warning', label));
+            });
+            runtimeTarget.unsupported.forEach(label => {
+                dd.append(makeLegendLabel('danger', label));
+            });
+
+            return html;
+        }
+
+        function makeLegendLabel(type, label) {
+            var html = $('<span class="label"></span>');
+            var span = html.filter('span');
+            span.text(label);
+            span.addClass('label-' + type);
+            return html;
+        }
+
+        function makeRuntimeLabel() {
+            var div = $('<div></div>');
+
+            RUNTIME_TARGETS.forEach(runtimeTarget => {
+                var label = $('<span class="label"></span>');
+                var span = label.filter('span');
+                span.text(runtimeTarget.name);
+                span.data({
+                    runtimeTarget: runtimeTarget,
+                    selected: false
+                });
+
+                div.append(label);
+            });
+
+            return div;
+        }
+
+        function makeRuntimeLabelsClickable() {
+            $('div.real div.appInfo').each(function () {
+                var appInfo = $(this);
+
+                appInfo.find('div.fileName span.label').each(function () {
+                    var targetRuntimeSpan = $(this);
+
+                    var runtimeTargetData = targetRuntimeSpan.data().runtimeTarget;
+                    var isTargetRuntimeSelected = targetRuntimeSpan.data().selected;
+
+                    targetRuntimeSpan.on('click', function () {
+                        clearRuntimeSelection(appInfo);
+
+                        isTargetRuntimeSelected = !isTargetRuntimeSelected;
+                        targetRuntimeSpan.data('selected', isTargetRuntimeSelected);
+
+                        if (isTargetRuntimeSelected) {
+                            targetRuntimeSpan.addClass('selected');
+
+                            runtimeTargetData.supported.forEach(rt => {
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                                matchSpans.removeClass();
+                                matchSpans.addClass('label label-success')
+                            });
+                            runtimeTargetData.embeddable.forEach(rt => {
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                                matchSpans.removeClass();
+                                matchSpans.addClass('label label-warning')
+                            });
+                            runtimeTargetData.unsupported.forEach(rt => {
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                                matchSpans.removeClass();
+                                matchSpans.addClass('label label-danger')
+                            });
+                        }
+                    });
+                })
+            });
+        }
+
+        function clearRuntimeSelection(appInfo) {
+            appInfo.find('div.fileName span.label').each(function () {
+                $(this).data('selected', false);
+                $(this).removeClass('selected');
+
+                var tags = appInfo.find('div.techs span.label');
+                tags.removeClass();
+                tags.addClass('label label-info');
+            })
+        }
+
+        function evaluateRuntime(label, tags) {
+            var runtimeTarget = label.data().runtimeTarget;
+
+            var supportedTags = tags.filter(value => runtimeTarget.supported.includes(value));
+            var embeddableTags = tags.filter(value => runtimeTarget.embeddable.includes(value));
+            var unsupportedTags = tags.filter(value => runtimeTarget.unsupported.includes(value));
+
+            if (unsupportedTags.length > 0) {
+                label.addClass('label-danger');
+            } else if (embeddableTags.length > 0) {
+                label.addClass('label-warning');
+            } else if (supportedTags.length > 0) {
+                label.addClass('label-success');
+            } else {
+                label.addClass('label-info');
+            }
+        }
+
+        initialize();
+    }
+
     /**
      * All filtering related code
      **/
@@ -466,4 +680,5 @@ $(document).ready(function () {
 
     filtering();
     sorting();
+    runtimeConfig();
 });
