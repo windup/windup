@@ -148,6 +148,10 @@
 
         body.viewAppList .apps .appInfo:first-of-type { border-top: 1px solid gray; }
     </style>
+
+    <script type="text/javascript">
+         var TARGET_RUNTIME = JSON.parse('${reportModel.reportProperties["target_runtimes"]}');
+     </script>
 </head>
 <body role="document" class="viewAppList" style="margin: auto;">
 

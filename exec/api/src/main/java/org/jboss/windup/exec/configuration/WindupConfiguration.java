@@ -32,6 +32,7 @@ import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.exec.configuration.options.UserLabelsDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
@@ -45,6 +46,7 @@ import org.ocpsoft.rewrite.config.Rule;
 public class WindupConfiguration
 {
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
+    private static final String DEFAULT_USER_LABELS_DIRECTORIES_OPTION = "defaultUserLabelsDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
     public static final boolean DEFAULT_ONLINE = false;
 
@@ -297,6 +299,25 @@ public class WindupConfiguration
     }
 
     /**
+     * Gets all user label directories. This includes both the ones that they specify (eg, /path/to/rules) as well as ones that Windup provides by
+     * default (eg, WINDUP_HOME/rules and ~/.windup/rules).
+     */
+    public Iterable<Path> getAllUserLabelsDirectories()
+    {
+        Set<Path> results = new HashSet<>();
+        results.addAll(getDefaultUserLabelsDirectories());
+
+        Collection<File> userSpecifiedFiles = getOptionValue(UserLabelsDirectoryOption.NAME);
+        if (userSpecifiedFiles != null && !userSpecifiedFiles.isEmpty())
+        {
+            userSpecifiedFiles.stream().forEach(file -> {
+                results.add(file.toPath());
+            });
+        }
+        return results;
+    }
+
+    /**
      * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
      * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
      *
@@ -320,6 +341,19 @@ public class WindupConfiguration
     public List<Path> getDefaultUserRulesDirectories()
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(paths);
+    }
+
+    /**
+     * Contains a list of {@link Path}s with directories that contains user provided labels.
+     */
+    public List<Path> getDefaultUserLabelsDirectories()
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION);
         if (paths == null)
         {
             return Collections.emptyList();

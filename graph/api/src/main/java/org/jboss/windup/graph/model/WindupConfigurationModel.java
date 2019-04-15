@@ -18,6 +18,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     String INPUT_PATH = "inputPath";
     String USER_RULES_PATH = "userRulesPath";
+    String USER_LABELS_PATH = "userLabelsPath";
     String USER_IGNORE_PATH = "userIgnorePath";
     String ONLINE_MODE = "fetchRemoteResources";
     String OUTPUT_PATH = "outputPath";
@@ -52,6 +53,12 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void addUserRulesPath(FileModel userRulesPath);
 
     /**
+     * The location for user provided labels directories (typically JSON Labels)
+     */
+    @Adjacency(label = USER_LABELS_PATH, direction = Direction.OUT)
+    void addUserLabelsPath(FileModel userLabelsPath);
+
+    /**
      * The location for user provided ignore directory (list of ignored jar files)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
@@ -62,6 +69,12 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     List<FileModel> getUserRulesPaths();
+
+    /**
+     * The location for user provided rules directories (typically Groovy or XML Rules)
+     */
+    @Adjacency(label = USER_LABELS_PATH, direction = Direction.OUT)
+    List<FileModel> getUserlabelsPaths();
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)

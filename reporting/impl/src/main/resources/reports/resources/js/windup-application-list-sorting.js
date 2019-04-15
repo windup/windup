@@ -1,65 +1,7 @@
 $(document).ready(function () {
 
-    var RUNTIME_TARGETS = [{
-        name: 'JWS',
-        description: 'Jboss Web Server',
-        supported: ['JSF Page', 'JSP Page', 'Web XML File'],
-        embeddable: [],
-        unsupported: [
-            'JPA entities',
-            'JPA named queries',
-            'Persistence units',
-            'EJB',
-            'JAX-RS',
-            'JAX-WS',
-            'JMS Queue',
-            'JMS Topic',
-            'JMS Connection Factory',
-            'JTA',
-            'Spring Boot',
-        ]
-    }, {
-        name: 'EAP',
-        description: 'Any description',
-        supported: [
-            'JDBC datasources',
-            'JDBC XA datasources',
-            'JPA entities',
-            'JPA named queries',
-            'Persistence units',
-            'Web Session',
-            'EJB',
-            'Java EE Batch',
-            'Java EE JSON-P',
-            'CDI',
-            'JAX-RS',
-            'JAX-WS',
-            'Security Realm',
-            'JMS Queue',
-            'JMS Topic',
-            'JMS Connection Factory',
-            'Stateless (SLSB)',
-            'Stateful (SFSB)',
-            'Message (MDB)',
-            'Entity Bean',
-            'JSF Page',
-            'JSP Page',
-            'Web XML File',
-            'WebSocket',
-            'Applet',
-            'JNLP',
-            'JTA',
-            'RMI',
-            'JNI',
-            'JNA',
-            'Mail',
-            'JCA',
-            'File system logging',
-            'Socket handler logging',
-        ],
-        embeddable: [],
-        unsupported: ['Spring Boot']
-    }];
+    // TARGET_RUNTIME is defined in application_list.ftl
+    var RUNTIME_TARGETS = TARGET_RUNTIME;
 
     function runtimeConfig() {
         var runtimeLegendContentDiv = $('#runtimeLegendContent');

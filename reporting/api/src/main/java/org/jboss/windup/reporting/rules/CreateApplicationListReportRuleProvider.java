@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting.rules;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.json.*;
 
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -18,13 +23,18 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
+import org.jboss.windup.util.file.FileSuffixPredicate;
+import org.jboss.windup.util.file.FileVisit;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -45,6 +55,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 {
     private static final Logger LOG = Logger.getLogger(CreateApplicationListReportRuleProvider.class);
 
+    private static final String XML_EXTENSION = "\\.windup\\.json";
     public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String OUTPUT_FILENAME = "../index.html";
     public static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
@@ -70,6 +81,32 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
     private void createIndexReport(GraphContext context)
     {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
+        for (FileModel userRulesFileModel : cfg.getUserlabelsPaths())
+        {
+            FileSuffixPredicate fileSuffixPredicate = new FileSuffixPredicate(XML_EXTENSION);
+            if (userRulesFileModel.isDirectory()) {
+                Visitor<File> visitor = new Visitor<File>()
+                {
+                    @Override
+                    public void visit(File file)
+                    {
+                        concatFileContentToArray(arrayBuilder, file);
+                    }
+                };
+                FileVisit.visit(userRulesFileModel.asFile(), fileSuffixPredicate, visitor);
+            } else {
+                File file = userRulesFileModel.asFile();
+                if (fileSuffixPredicate.accept(file)) {
+                    concatFileContentToArray(arrayBuilder, file);
+                }
+            }
+        }
+        JsonArray jsonArray = arrayBuilder.build();
+
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
         ApplicationReportModel report = applicationReportService.create();
@@ -81,6 +118,10 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
         report.setDisplayInApplicationReportIndex(false);
         report.setReportFilename(OUTPUT_FILENAME);
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("target_runtimes", jsonArray.toString());
+        report.setReportProperties(properties);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
@@ -106,6 +147,25 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setRelatedResource(relatedData);
     }
 
+    private void concatFileContentToArray(JsonArrayBuilder arrayBuilder, File file) {
+        JsonReader reader = null;
+        try {
+            FileInputStream is = new FileInputStream(file);
+            reader = Json.createReader(is);
+            JsonArray array = reader.readArray();
+
+            for (JsonValue obj: array) {
+                arrayBuilder.add(obj);
+            }
+        } catch (FileNotFoundException e) {
+            // Nothing to do
+            LOG.error(e.getCause().getMessage());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
 
 
     public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
