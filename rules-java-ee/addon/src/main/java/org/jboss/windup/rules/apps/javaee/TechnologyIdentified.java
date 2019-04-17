@@ -114,7 +114,7 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         Set<ProjectModel> projects = new HashSet<>();
-        if (payload instanceof FileReferenceModel)
+        if (payload instanceof FileReferenceModel && ((FileReferenceModel) payload).getFile() != null)
             payload = ((FileReferenceModel) payload).getFile();
 
         if (payload instanceof ClassificationModel)

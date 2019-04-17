@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -20,7 +22,7 @@ import java.util.List;
  * 
  */
 @TypeValue(EjbBeanBaseModel.TYPE)
-public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
+public interface EjbBeanBaseModel extends FileReferenceModel, WindupVertexFrame, HasApplications
 {
     String TYPE = "EjbBeanBaseModel";
 
@@ -114,10 +116,28 @@ public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
     void setEjbClass(JavaClassModel ejbHome);
 
     /**
+     * Contains the {@link FileModel} referenced by this object.
+     */
+    @Override
+    default FileModel setFile(FileModel file)
+    {
+        throw new UnsupportedOperationException("Please use the EjbBeanBaseModel.setEjbClass(JavaClassModel ejbHome) method instead.");
+    }
+
+    /**
      * Contains the bean's implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
     JavaClassModel getEjbClass();
+
+    /**
+     * Contains the {@link FileModel} referenced by this object.
+     */
+    @Override
+    default FileModel getFile()
+    {
+        return getEjbClass() != null ? getEjbClass().getSourceFile() : null;
+    }
 
     /**
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file
