@@ -47,8 +47,11 @@ $(document).ready(function () {
             runtimeTarget.supported.forEach(label => {
                 dd.append(makeLegendLabel('success', label));
             });
-            runtimeTarget.embeddable.forEach(label => {
-                dd.append(makeLegendLabel('warning', label));
+            // runtimeTarget.embeddable.forEach(label => {
+            //     dd.append(makeLegendLabel('warning', label));
+            // });
+            runtimeTarget.neutral.forEach(label => {
+                dd.append(makeLegendLabel('default', label));
             });
             runtimeTarget.unsupported.forEach(label => {
                 dd.append(makeLegendLabel('danger', label));
@@ -103,17 +106,31 @@ $(document).ready(function () {
                             targetRuntimeSpan.addClass('selected');
 
                             runtimeTargetData.supported.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
+                                    var text = $(this).text().trim();
+                                    return text == rt;
+                                });
                                 matchSpans.removeClass();
                                 matchSpans.addClass('label label-success')
                             });
-                            runtimeTargetData.embeddable.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                            // runtimeTargetData.embeddable.forEach(rt => {
+                            //     var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                            //     matchSpans.removeClass();
+                            //     matchSpans.addClass('label label-warning')
+                            // });
+                            runtimeTargetData.neutral.forEach(rt => {
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
+                                    var text = $(this).text().trim();
+                                    return text == rt;
+                                });
                                 matchSpans.removeClass();
-                                matchSpans.addClass('label label-warning')
+                                matchSpans.addClass('label label-default')
                             });
                             runtimeTargetData.unsupported.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
+                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
+                                    var text = $(this).text().trim();
+                                    return text == rt;
+                                });
                                 matchSpans.removeClass();
                                 matchSpans.addClass('label label-danger')
                             });
@@ -138,17 +155,26 @@ $(document).ready(function () {
             var runtimeTarget = label.data().runtimeTarget;
 
             var supportedTags = tags.filter(value => runtimeTarget.supported.includes(value));
-            var embeddableTags = tags.filter(value => runtimeTarget.embeddable.includes(value));
+            // var embeddableTags = tags.filter(value => runtimeTarget.embeddable.includes(value));
+            var neutralTags = tags.filter(value => runtimeTarget.neutral.includes(value));
             var unsupportedTags = tags.filter(value => runtimeTarget.unsupported.includes(value));
+
+            // if (unsupportedTags.length > 0) {
+            //     label.addClass('label-danger');
+            // } else if (embeddableTags.length > 0) {
+            //     label.addClass('label-warning');
+            // } else if (supportedTags.length > 0) {
+            //     label.addClass('label-success');
+            // } else {
+            //     label.addClass('label-info');
+            // }
 
             if (unsupportedTags.length > 0) {
                 label.addClass('label-danger');
-            } else if (embeddableTags.length > 0) {
-                label.addClass('label-warning');
-            } else if (supportedTags.length > 0) {
+            } else if ((neutralTags.length + supportedTags.length) > 0) {
                 label.addClass('label-success');
             } else {
-                label.addClass('label-info');
+                label.addClass('label-warning');
             }
         }
 

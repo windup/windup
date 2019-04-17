@@ -73,6 +73,16 @@ public class WindupConfiguration
             addDefaultUserRulesDirectory(userRulesDir);
         }
 
+        Path userLabelsDir = PathUtil.getUserLabelsDir();
+        if (userLabelsDir != null && !Files.isDirectory(userLabelsDir))
+        {
+            Files.createDirectories(userLabelsDir);
+        }
+        if (userLabelsDir != null)
+        {
+            addDefaultUserLabelsDirectory(userLabelsDir);
+        }
+
         Path userIgnoreDir = PathUtil.getUserIgnoreDir();
         if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
         {
@@ -91,6 +101,16 @@ public class WindupConfiguration
         if (windupHomeRulesDir != null)
         {
             addDefaultUserRulesDirectory(windupHomeRulesDir);
+        }
+
+        Path windupHomeLabelsDir = PathUtil.getWindupLabelsDir();
+        if (windupHomeLabelsDir != null && !Files.isDirectory(windupHomeLabelsDir))
+        {
+            Files.createDirectories(windupHomeLabelsDir);
+        }
+        if (windupHomeLabelsDir != null)
+        {
+            addDefaultUserLabelsDirectory(windupHomeLabelsDir);
         }
 
         Path windupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
@@ -399,6 +419,44 @@ public class WindupConfiguration
                     return this;
                 }
         
+                for (Path existingPath : paths)
+                {
+                    if (existingPath.equals(path))
+                    {
+                        return this;
+                    }
+                }
+            }
+        }
+        paths.add(path);
+        return this;
+    }
+
+    /**
+     * Contains a list of {@link Path}s with the directory that contains user provided labels.
+     *
+     * This method does guard against duplicate directories.
+     */
+    public WindupConfiguration addDefaultUserLabelsDirectory(Path path)
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            paths = new ArrayList<>();
+            setOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION, paths);
+        }
+
+        Iterable<File> userLabelsDirs= getOptionValue(UserLabelsDirectoryOption.NAME);
+        if (userLabelsDirs != null)
+        {
+            for (File userSpecifiedLabelsFile : userLabelsDirs)
+            {
+
+                if (userSpecifiedLabelsFile != null && userSpecifiedLabelsFile.toPath().equals(path))
+                {
+                    return this;
+                }
+
                 for (Path existingPath : paths)
                 {
                     if (existingPath.equals(path))

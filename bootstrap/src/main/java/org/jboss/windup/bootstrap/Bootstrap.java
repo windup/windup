@@ -89,6 +89,12 @@ public class Bootstrap
             rulesDir.mkdirs();
         }
 
+        File runtimeLabelsDir = getUserRuntimeLabelsDir();
+        if (!runtimeLabelsDir.exists())
+        {
+            runtimeLabelsDir.mkdirs();
+        }
+
         final String defaultLog = new File(getUserWindupDir(), "log/rhamt.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
@@ -244,6 +250,11 @@ public class Bootstrap
     private static File getUserRulesDir()
     {
         return new File(getUserWindupDir(), "rules");
+    }
+
+    private static File getUserRuntimeLabelsDir()
+    {
+        return new File(getUserWindupDir(), "labels");
     }
 
     public static File getUserWindupDir()

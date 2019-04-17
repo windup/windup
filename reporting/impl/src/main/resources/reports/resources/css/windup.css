@@ -506,9 +506,9 @@ h1 .glyphicon-info-sign:before {
 /*Runtime label legend utils*/
 
 .dl-horizontal-small dt {
-    width: 50px !important;
+    width: 70px !important;
 }
 
 .dl-horizontal-small dd {
-    margin-left: 62px;
+    margin-left: 82px;
 }
