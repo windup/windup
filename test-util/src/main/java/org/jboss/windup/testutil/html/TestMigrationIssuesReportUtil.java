@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TestMigrationIssuesReportUtil extends TestReportUtil
+public class TestMigrationIssuesReportUtil extends TestChromeDriverReportUtil
 {
     private static final String ISSUES_TABLE_CLASS_NAME = "migration-issues-table";
 

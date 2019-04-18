@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TestJPAReportUtil extends TestReportUtil {
+public class TestJPAReportUtil extends TestChromeDriverReportUtil {
 
     /**
      * Checks that an EJB of the given type and classname is listed with given columns in the table

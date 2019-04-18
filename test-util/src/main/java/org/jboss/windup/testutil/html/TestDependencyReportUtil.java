@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
  * @author mnovotny
  *
  */
-public class TestDependencyReportUtil extends TestReportUtil
+public class TestDependencyReportUtil extends TestChromeDriverReportUtil
 {
 
     public boolean findDependencyElement(String fileName, String gav, String dependencyHash, String version, String org, List<String> paths)

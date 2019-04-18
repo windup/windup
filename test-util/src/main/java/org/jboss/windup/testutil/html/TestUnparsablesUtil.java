@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class TestUnparsablesUtil extends TestReportUtil
+public class TestUnparsablesUtil extends TestChromeDriverReportUtil
 {
     /**
      * Checks that a Hibernate entity is listed with the given entity classname and tablename

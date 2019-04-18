@@ -24,7 +24,7 @@
         <script src="resources/js/angular.min.js"></script>
         <script src="resources/js/d3.v3.min.js" type="text/javascript"></script>
         <script src="resources/js/topology-graph.js"></script>
-        <script type="text/javascript" src="resources/js/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="resources/js/jquery-3.3.1.min.js"></script>
         <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
         <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
         <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
@@ -34,7 +34,7 @@
     </head>
     <body role="document" class="application-graph" ng-app="appDependencies">
         <!-- Navbar -->
-        <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+        <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
             <div class="wu-navbar-header navbar-header">
                 <#include "include/navheader.ftl">
             </div>
