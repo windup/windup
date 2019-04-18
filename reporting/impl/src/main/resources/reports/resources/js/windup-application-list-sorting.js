@@ -47,13 +47,7 @@ $(document).ready(function () {
             runtimeTarget.supported.forEach(label => {
                 dd.append(makeLegendLabel('success', label));
             });
-            // runtimeTarget.embeddable.forEach(label => {
-            //     dd.append(makeLegendLabel('warning', label));
-            // });
-            runtimeTarget.neutral.forEach(label => {
-                dd.append(makeLegendLabel('default', label));
-            });
-            runtimeTarget.unsupported.forEach(label => {
+            runtimeTarget.unsuitable.forEach(label => {
                 dd.append(makeLegendLabel('danger', label));
             });
 
@@ -72,12 +66,12 @@ $(document).ready(function () {
             var div = $('<div></div>');
 
             RUNTIME_TARGETS.forEach(runtimeTarget => {
-                var label = $('<span class="label"></span>');
-                var span = label.filter('span');
+                var label = $('<a href="#"><span class="label"></span></a>');
+                var span = label.find('span');
                 span.text(runtimeTarget.name);
                 span.data({
                     runtimeTarget: runtimeTarget,
-                    selected: false
+                    active: false
                 });
 
                 div.append(label);
@@ -94,16 +88,18 @@ $(document).ready(function () {
                     var targetRuntimeSpan = $(this);
 
                     var runtimeTargetData = targetRuntimeSpan.data().runtimeTarget;
-                    var isTargetRuntimeSelected = targetRuntimeSpan.data().selected;
+                    var isTargetRuntimeActive = targetRuntimeSpan.data().active;
 
-                    targetRuntimeSpan.on('click', function () {
+                    targetRuntimeSpan.on('click', function (event) {
+                        event.preventDefault();
+
                         clearRuntimeSelection(appInfo);
 
-                        isTargetRuntimeSelected = !isTargetRuntimeSelected;
-                        targetRuntimeSpan.data('selected', isTargetRuntimeSelected);
+                        isTargetRuntimeActive = !isTargetRuntimeActive;
+                        targetRuntimeSpan.data('active', isTargetRuntimeActive);
 
-                        if (isTargetRuntimeSelected) {
-                            targetRuntimeSpan.addClass('selected');
+                        if (isTargetRuntimeActive) {
+                            targetRuntimeSpan.addClass('active');
 
                             runtimeTargetData.supported.forEach(rt => {
                                 var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
@@ -113,11 +109,6 @@ $(document).ready(function () {
                                 matchSpans.removeClass();
                                 matchSpans.addClass('label label-success')
                             });
-                            // runtimeTargetData.embeddable.forEach(rt => {
-                            //     var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')");
-                            //     matchSpans.removeClass();
-                            //     matchSpans.addClass('label label-warning')
-                            // });
                             runtimeTargetData.neutral.forEach(rt => {
                                 var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
                                     var text = $(this).text().trim();
@@ -126,7 +117,7 @@ $(document).ready(function () {
                                 matchSpans.removeClass();
                                 matchSpans.addClass('label label-default')
                             });
-                            runtimeTargetData.unsupported.forEach(rt => {
+                            runtimeTargetData.unsuitable.forEach(rt => {
                                 var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
                                     var text = $(this).text().trim();
                                     return text == rt;
@@ -134,6 +125,10 @@ $(document).ready(function () {
                                 matchSpans.removeClass();
                                 matchSpans.addClass('label label-danger')
                             });
+
+                            var matchSpans = appInfo.find("div.techs span.label.label-info");
+                            matchSpans.removeClass();
+                            matchSpans.addClass('label label-warning')
                         }
                     });
                 })
@@ -142,8 +137,8 @@ $(document).ready(function () {
 
         function clearRuntimeSelection(appInfo) {
             appInfo.find('div.fileName span.label').each(function () {
-                $(this).data('selected', false);
-                $(this).removeClass('selected');
+                $(this).data('active', false);
+                $(this).removeClass('active');
 
                 var tags = appInfo.find('div.techs span.label');
                 tags.removeClass();
@@ -157,21 +152,11 @@ $(document).ready(function () {
             var supportedTags = tags.filter(value => runtimeTarget.supported.includes(value));
             // var embeddableTags = tags.filter(value => runtimeTarget.embeddable.includes(value));
             var neutralTags = tags.filter(value => runtimeTarget.neutral.includes(value));
-            var unsupportedTags = tags.filter(value => runtimeTarget.unsupported.includes(value));
+            var unsuitableTags = tags.filter(value => runtimeTarget.unsuitable.includes(value));
 
-            // if (unsupportedTags.length > 0) {
-            //     label.addClass('label-danger');
-            // } else if (embeddableTags.length > 0) {
-            //     label.addClass('label-warning');
-            // } else if (supportedTags.length > 0) {
-            //     label.addClass('label-success');
-            // } else {
-            //     label.addClass('label-info');
-            // }
-
-            if (unsupportedTags.length > 0) {
+            if (unsuitableTags.length > 0) {
                 label.addClass('label-danger');
-            } else if ((neutralTags.length + supportedTags.length) > 0) {
+            } else if ((neutralTags.length + supportedTags.length) == tags.length) {
                 label.addClass('label-success');
             } else {
                 label.addClass('label-warning');

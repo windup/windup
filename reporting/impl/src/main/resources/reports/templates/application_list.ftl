@@ -8,7 +8,7 @@
 
 <#macro tagRenderer tag>
     <#if tag.level?? && tag.level == "IMPORTANT">
-        <span class="label label-danger" title="${tag.level}">
+        <span class="label label-info label-important" title="${tag.level}">
     <#else>
         <span class="label label-info" title="${tag.level}">
     </#if>
@@ -192,8 +192,8 @@
                         <a style="float: left; margin-right: 5px;" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
                         <div style="display: inline;">
                             <span class="label label-success">Supported</span>
-                            <span class="label label-warning">Embeddable</span>
-                            <span class="label label-danger">Won't work</span>
+                            <span class="label label-warning">Partially supported</span>
+                            <span class="label label-danger">Unsuitable</span>
                         </div>
                     </legend>
                     <div id="runtimeLegendContent" class="collapse">

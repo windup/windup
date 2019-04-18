@@ -512,3 +512,21 @@ h1 .glyphicon-info-sign:before {
 .dl-horizontal-small dd {
     margin-left: 82px;
 }
+
+.label-success.active {
+    color: #fff;
+    background-color: #2c8463;
+    border-color: #255625;
+}
+
+.label-warning.active {
+    color: #fff;
+    background-color: #c67d15;
+    border-color: #d58512;
+}
+
+.label-danger.active {
+    color: #fff;
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
