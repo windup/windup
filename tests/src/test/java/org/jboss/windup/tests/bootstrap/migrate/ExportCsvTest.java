@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -41,11 +42,7 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
         assertTrue(appTagsCsv.exists());
 
         List<List<String>> records = readCSVFile(appTagsCsv);
-        records.forEach(record ->
-                {
-                   assertTrue(isRowSorted(record));
-                }
-        );
+        assertTrue(records.stream().allMatch(this::isRowSorted));
     }
 
     private List<List<String>> readCSVFile(File csvFile) throws IOException
@@ -55,7 +52,9 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
             String lineString;
             while ((lineString = buffer.readLine()) != null) {
                 String[] columns = lineString.split(DELIMITER);
-                rows.add(Arrays.asList(columns));
+                //remove first element from Array, as this is always the app name and is not part of the sort
+                String[] columnsWithoutAppName = Arrays.copyOfRange(columns,1,columns.length );
+                rows.add(Arrays.asList(columnsWithoutAppName));
             }
         }
 
@@ -64,15 +63,6 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
 
     public boolean isRowSorted(List<String> row)
     {
-        //This loop ignores the first entry in the list (ie where i=0) which is the app name,
-        //only the entries after that are sorted
-        for(int i=1;i<row.size()-1;i++)
-        {
-            if(row.get(i).compareTo(row.get(i+1))>0)
-            {
-                return false;
-            }
-        }
-        return true;
+        return row.equals(row.stream().sorted().collect(Collectors.toList()));
     }
 }
