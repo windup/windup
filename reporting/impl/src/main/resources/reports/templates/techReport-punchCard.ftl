@@ -96,15 +96,15 @@
                             <#list sortedBoxTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
-                                    <td class="sector sector${sectorTag.title}"><div style="width: 100%">${boxTag.title!}</div></td>
+                                    <td class="sector sector${sectorTag.title}"><div style="width: 100%; padding-left: 10px;">${boxTag.title!}</div></td>
                                 </#if>
                             </#list>
                         </#list>
-                            <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                            <td class="sector sectorStats libsCount"><div>Libraries</div></td>
-                            <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
-                            <td class="sector sectorStats storyPoints"><div>Cloud Mandatory (SP)</div></td>
-                            <td class="sector sectorStats storyPoints"><div>Potential (Count)</div></td>
+                            <td class="sector sectorStats sizeMB"><div style="width: 100%; padding-left: 5px;">Size (MB)</div></td>
+                            <td class="sector sectorStats libsCount"><div style="width: 100%; padding-left: 5px;">Libraries</div></td>
+                            <td class="sector sectorStats storyPoints"><div style="width: 100%; padding-left: 5px;">Mandatory (SP)</div></td>
+                            <td class="sector sectorStats storyPoints"><div style="width: 100%; padding-left: 5px;">Cloud Mandatory (SP)</div></td>
+                            <td class="sector sectorStats storyPoints"><div style="width: 100%; padding-left: 5px;">Potential (Count)</div></td>
                             <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>

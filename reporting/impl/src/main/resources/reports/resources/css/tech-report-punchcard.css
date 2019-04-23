@@ -103,7 +103,7 @@ tr.app td.circle.size3:after { content: '\2B24'; font-size: 15pt; vertical-align
 tr.app td.circle.size4:after { content: '\2B24'; font-size: 18pt; vertical-align: middle; }
 tr.app td.circle.size5:after { content: '\2B24'; font-size: 20pt; vertical-align: middle; }
 
-tr.app td.sectorStats.libsCount, tr.app td.sectorStats.storyPoints { padding-right: 20px }
+tr.app td.sectorStats.libsCount, tr.app td.sectorStats.storyPoints { padding-right: 10px }
 
 /********* Styles for scrolling ******************/
 table.technologiesPunchCard thead, table.technologiesPunchCard tbody {
