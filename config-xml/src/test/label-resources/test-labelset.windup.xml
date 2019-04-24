@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labelset id="core_labels"
+          xmlns="http://windup.jboss.org/schema/jboss-labelset"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://windup.jboss.org/schema/jboss-labelset http://windup.jboss.org/schema/jboss-labelset/windup-jboss-labelset.xsd">
+    <labels>
+        <label id="label1">
+            <name>label1</name>
+            <description>label1 description</description>
+            <supported>
+                <tag>tagA</tag>
+                <tag>tagAA</tag>
+            </supported>
+            <unsuitable>
+                <tag>tagB</tag>
+                <tag>tagBB</tag>
+            </unsuitable>
+            <neutral>
+                <tag>tagC</tag>
+                <tag>tagCC</tag>
+            </neutral>
+        </label>
+        <label id="label2">
+            <name>label2</name>
+            <description>label2 description</description>
+            <supported>
+                <tag>tag1</tag>
+                <tag>tag11</tag>
+            </supported>
+            <unsuitable>
+                <tag>tag2</tag>
+                <tag>tag22</tag>
+            </unsuitable>
+            <neutral>
+                <tag>tag3</tag>
+                <tag>tag33</tag>
+            </neutral>
+        </label>
+    </labels>
+</labelset>

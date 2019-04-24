@@ -43,6 +43,13 @@
                             <dir>src/test/resources</dir>
                             <systemId>schema/windup-jboss-ruleset.xsd</systemId>
                         </validationSet>
+                        <validationSet>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                            <dir>src/test/label-resources</dir>
+                            <systemId>schema/windup-jboss-labelset.xsd</systemId>
+                        </validationSet>
                     </validationSets>
                 </configuration>
             </plugin>
