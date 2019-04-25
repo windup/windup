@@ -1,31 +1,15 @@
 package org.jboss.windup.reporting.rules;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.json.*;
-
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.*;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -33,12 +17,17 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
-import org.jboss.windup.util.file.FileSuffixPredicate;
-import org.jboss.windup.util.file.FileVisit;
+import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import javax.inject.Inject;
+import javax.json.*;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This renders an application index page listing all applications analyzed by the current execution of windup.
@@ -55,7 +44,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 {
     private static final Logger LOG = Logger.getLogger(CreateApplicationListReportRuleProvider.class);
 
-    private static final String XML_EXTENSION = "\\.windup\\.json";
+    private static final String XML_EXTENSION = "\\.windup\\.xml";
     public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String OUTPUT_FILENAME = "../index.html";
     public static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
@@ -63,6 +52,8 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
     @Inject
     private Furnace furnace;
 
+    @Inject
+    private LabelLoader labelLoader;
 
     // @formatter:off
     @Override
@@ -81,28 +72,22 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
     private void createIndexReport(GraphContext context)
     {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel userRulesFileModel : cfg.getUserlabelsPaths())
+        List<Path> userRulesPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
+
+        Set<Path> defaultRulePaths = new HashSet<>();
+        defaultRulePaths.add(PathUtil.getWindupLabelsDir());
+        defaultRulePaths.add(PathUtil.getUserLabelsDir());
+        defaultRulePaths.addAll(userRulesPaths);
+
+        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
+        Collection<Label> labels = labelLoader.loadLabels(labelLoaderContext);
+
+
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (Label label: labels)
         {
-            FileSuffixPredicate fileSuffixPredicate = new FileSuffixPredicate(XML_EXTENSION);
-            if (userRulesFileModel.isDirectory()) {
-                Visitor<File> visitor = new Visitor<File>()
-                {
-                    @Override
-                    public void visit(File file)
-                    {
-                        concatFileContentToArray(arrayBuilder, file);
-                    }
-                };
-                FileVisit.visit(userRulesFileModel.asFile(), fileSuffixPredicate, visitor);
-            } else {
-                File file = userRulesFileModel.asFile();
-                if (fileSuffixPredicate.accept(file)) {
-                    concatFileContentToArray(arrayBuilder, file);
-                }
-            }
+            arrayBuilder.add(toJson(label));
         }
         JsonArray jsonArray = arrayBuilder.build();
 
@@ -126,7 +111,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         final Iterable<ApplicationReportModel> apps = applicationReportService.findAll();
-        List<ApplicationReportModel> appsList = new ArrayList();
+        List<ApplicationReportModel> appsList = new ArrayList<>();
         for (ApplicationReportModel applicationReportModel : apps)
         {
             if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
@@ -147,24 +132,23 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setRelatedResource(relatedData);
     }
 
-    private void concatFileContentToArray(JsonArrayBuilder arrayBuilder, File file) {
-        JsonReader reader = null;
-        try {
-            FileInputStream is = new FileInputStream(file);
-            reader = Json.createReader(is);
-            JsonArray array = reader.readArray();
+    private JsonObject toJson(Label label) {
+        JsonArrayBuilder supportedJsonArrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder unsuitableJsonArrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder neutralJsonArrayBuilder = Json.createArrayBuilder();
 
-            for (JsonValue obj: array) {
-                arrayBuilder.add(obj);
-            }
-        } catch (FileNotFoundException e) {
-            // Nothing to do
-            LOG.error(e.getCause().getMessage());
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
+        label.getSupported().forEach(supportedJsonArrayBuilder::add);
+        label.getUnsuitable().forEach(unsuitableJsonArrayBuilder::add);
+        label.getNeutral().forEach(neutralJsonArrayBuilder::add);
+
+        return Json.createObjectBuilder()
+                .add("id", label.getId())
+                .add("name", label.getName())
+                .add("description", label.getDescription())
+                .add("supported", supportedJsonArrayBuilder.build())
+                .add("unsuitable", unsuitableJsonArrayBuilder.build())
+                .add("neutral", neutralJsonArrayBuilder.build())
+                .build();
     }
 
 

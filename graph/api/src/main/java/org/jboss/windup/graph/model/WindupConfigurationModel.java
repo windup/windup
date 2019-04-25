@@ -74,7 +74,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_LABELS_PATH, direction = Direction.OUT)
-    List<FileModel> getUserlabelsPaths();
+    List<FileModel> getUserLabelsPaths();
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
