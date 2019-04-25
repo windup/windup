@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public class TestSpringBeanReportUtil extends TestReportUtil
+public class TestSpringBeanReportUtil extends TestChromeDriverReportUtil
 {
     /**
      * Checks that for the given filename, location, and IP

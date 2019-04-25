@@ -156,7 +156,7 @@
 <body role="document" class="viewAppList" style="margin: auto;">
 
     <!-- Navbar -->
-    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+    <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
         </div>
@@ -246,7 +246,7 @@
         <#include "include/timestamp.ftl">
 
     </div> <!-- /.container-fluid -->
-    <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
+    <script src="reports/resources/js/jquery-3.3.1.min.js"></script>
     <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){

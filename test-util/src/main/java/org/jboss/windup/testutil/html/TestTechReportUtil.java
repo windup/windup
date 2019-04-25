@@ -19,7 +19,7 @@ import org.openqa.selenium.WebElement;
  *
  * @author Ondrej Zizka
  */
-public class TestTechReportUtil extends TestReportUtil
+public class TestTechReportUtil extends TestChromeDriverReportUtil
 {
     private final static Logger LOG = Logger.getLogger(TestReportUtil.class.getName());
 

@@ -21,7 +21,7 @@
                     <div class="path">${application.applicationName?html}</div>
                 </h1>
 
-                <div class="navbar navbar-default">
+                <div class="navbar navbar-inverse">
                 <div class="wu-navbar-header navbar-header">
                     <#include "include/navheader.ftl">
                 </div>

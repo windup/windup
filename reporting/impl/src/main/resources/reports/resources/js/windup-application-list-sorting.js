@@ -219,8 +219,8 @@ $(document).ready(function () {
 
         /** Available filter options */
         var filterOptions = [
-            { name: 'Name', value: 'name', hint: "Filter By Name...", data: '', callback:  checkNameMatchCallback },
-            { name: 'Tag', value: 'tags', hint: "Filter By Tag...", callback: hasItemInArrayCallback, data: '' }
+            { name: 'Name', value: 'name', hint: "Filter by name...", data: '', callback:  checkNameMatchCallback },
+            { name: 'Tag', value: 'tags', hint: "Filter by tag...", callback: hasItemInArrayCallback, data: '' }
         ];
 
         var andReducer = function(prev, curr) { return prev && curr; };

@@ -15,7 +15,7 @@
 <body role="document">
 
     <!-- Navbar -->
-    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+    <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
         </div>
@@ -161,7 +161,7 @@
     <#include "include/timestamp.ftl">
     </div><!-- /container main-->
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>

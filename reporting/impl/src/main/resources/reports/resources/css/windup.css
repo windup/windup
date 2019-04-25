@@ -503,6 +503,32 @@ h1 .glyphicon-info-sign:before {
     padding-bottom: 0;
 }
 
+/** Bootstrap 3.4.1 migration compatibility **/
+
+@media (min-width: 768px) {
+    .navbar-nav > li >a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+.navbar {
+    border: none;
+}
+
+.navbar-inverse .navbar-nav > li >a {
+    color: #ffffff;
+}
+
+.panel {
+    border-radius: 0px;
+}
+
+.panel-heading {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
 /*Runtime label legend utils*/
 
 .dl-horizontal-small dt {
