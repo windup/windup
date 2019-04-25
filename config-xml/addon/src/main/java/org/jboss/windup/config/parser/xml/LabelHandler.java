@@ -14,7 +14,9 @@ import java.util.Set;
 import static org.joox.JOOX.$;
 
 /**
- * Handles parsing the "label" element to add labels to the current labelset.
+ * Handles parsing the "label" element
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
 @NamespaceElementHandler(elementName = "label", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
 public class LabelHandler implements ElementHandler<Label>

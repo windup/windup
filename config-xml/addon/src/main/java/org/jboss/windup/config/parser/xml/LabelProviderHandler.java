@@ -13,20 +13,29 @@ import java.util.Set;
 
 import static org.joox.JOOX.$;
 
+/**
+ * Handles parsing the "labelset" element
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
 @NamespaceElementHandler(elementName = "labelset", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelProviderHandler implements ElementHandler<Set<Label>> {
+public class LabelProviderHandler implements ElementHandler<Set<Label>>
+{
 
     public static final String WINDUP_LABEL_NAMESPACE = "http://windup.jboss.org/schema/jboss-labelset";
 
     public static final String TRANSFORM = "labels";
 
     @Override
-    public Set<Label> processElement(ParserContext context, Element element) throws ConfigurationException {
+    public Set<Label> processElement(ParserContext context, Element element) throws ConfigurationException
+    {
         Set<Label> labels = null;
 
         List<Element> children = $(element).children().get();
-        for (Element child : children) {
-            if (StringUtils.equals(TRANSFORM, child.getTagName())) {
+        for (Element child : children)
+        {
+            if (StringUtils.equals(TRANSFORM, child.getTagName()))
+            {
                 labels = context.processElement(child);
             }
         }

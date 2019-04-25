@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Label {
-
+/**
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
+public class Label
+{
     private final String id;
     private final String name;
     private final String description;

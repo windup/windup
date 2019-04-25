@@ -13,31 +13,32 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-public class XMLLabelLoader implements LabelLoader {
+/**
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
+public class XMLLabelLoader implements LabelLoader
+{
     private static final String XML_EXTENSION = ".windup.label.xml";
 
     @Inject
     private Furnace furnace;
 
     @Override
-    public Collection<Label> loadLabels(RuleLoaderContext ruleLoaderContext) {
+    public Collection<Label> loadLabels(RuleLoaderContext ruleLoaderContext)
+    {
         Set<Label> labels = new HashSet<>();
 
-        for (Path userRulesPath : ruleLoaderContext.getRulePaths()) {
-            Visitor<File> visitor = new Visitor<File>() {
-                @Override
-                public void visit(File file) {
-                    labels.addAll(loadTransformers(file));
-                }
-            };
-
+        for (Path userRulesPath : ruleLoaderContext.getRulePaths())
+        {
+            Visitor<File> visitor = file -> labels.addAll(loadTransformers(file));
             FileVisit.visit(userRulesPath.toFile(), new FileSuffixPredicate(XML_EXTENSION), visitor);
         }
 
         return labels;
     }
 
-    private Set<Label> loadTransformers(File file) {
+    private Set<Label> loadTransformers(File file)
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
 

@@ -80,16 +80,17 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         defaultRulePaths.add(PathUtil.getUserLabelsDir());
         defaultRulePaths.addAll(userRulesPaths);
 
+        // Load all labels from xml files
         RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
         Collection<Label> labels = labelLoader.loadLabels(labelLoaderContext);
 
 
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder labelsJsonArrayBuilder = Json.createArrayBuilder();
         for (Label label: labels)
         {
-            arrayBuilder.add(toJson(label));
+            labelsJsonArrayBuilder.add(toJson(label));
         }
-        JsonArray jsonArray = arrayBuilder.build();
+        JsonArray labelsJsonArray = labelsJsonArrayBuilder.build();
 
 
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
@@ -105,7 +106,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setReportFilename(OUTPUT_FILENAME);
 
         Map<String, String> properties = new HashMap<>();
-        properties.put("target_runtimes", jsonArray.toString());
+        properties.put("target_runtimes", labelsJsonArray.toString());
         report.setReportProperties(properties);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);

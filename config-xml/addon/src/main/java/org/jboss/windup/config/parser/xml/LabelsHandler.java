@@ -12,14 +12,22 @@ import java.util.Set;
 
 import static org.joox.JOOX.$;
 
+/**
+ * Handles parsing the "labels" element
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
 @NamespaceElementHandler(elementName = "labels", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelsHandler implements ElementHandler<Set<Label>> {
+public class LabelsHandler implements ElementHandler<Set<Label>>
+{
     @Override
-    public Set<Label> processElement(ParserContext context, Element element) {
+    public Set<Label> processElement(ParserContext context, Element element)
+    {
         Set<Label> labels = new HashSet<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children) {
+        for (Element child : children)
+        {
             labels.add(context.processElement(child));
         }
 
