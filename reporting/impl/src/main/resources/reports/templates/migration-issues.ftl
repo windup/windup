@@ -116,7 +116,7 @@
     </head>
     <body role="document" class="migration-issues">
         <!-- Navbar -->
-        <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+        <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
             <div class="wu-navbar-header navbar-header">
                 <#include "include/navheader.ftl">
             </div>
@@ -162,7 +162,7 @@
                     <#list problemsBySeverity?keys as severity>
                         <table class="table table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
-                                <tr class="tablesorter-ignoreRow" style="background: rgb(0, 140, 186);color: #FFFFFF; font-size: 14pt;">
+                                <tr class="tablesorter-ignoreRow" style="background: #337ab7;color: #FFFFFF; font-size: 14pt;">
                                     <td style="border: 0px; padding: 10px 15px"><b>${severity}</b></td>
                                     <td style="border: 0px"></td>
                                     <td style="border: 0px"></td>
@@ -199,7 +199,7 @@
             <#include "include/timestamp.ftl">
         </div>
 
-        <script src="resources/js/jquery-1.10.1.min.js"></script>
+        <script src="resources/js/jquery-3.3.1.min.js"></script>
         <script src="resources/js/jquery-ui.min.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/jquery.tablesorter.min.js"></script>

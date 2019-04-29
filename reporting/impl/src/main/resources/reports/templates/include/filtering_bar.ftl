@@ -13,7 +13,7 @@
                                 <!-- Dynamically load content here -->
                             </ul>
                         </div><!-- /btn-group -->
-                        <input type="text" class="form-control" id="filter" placeholder="Filter By Name..." autocomplete="off" title="">
+                        <input type="text" class="form-control" id="filter" placeholder="Filter by name..." autocomplete="off" title="">
                         <div class="input-group-btn" id="filter-type">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true"
