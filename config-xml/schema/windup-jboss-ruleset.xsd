@@ -32,7 +32,7 @@
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
-                            <xs:element name="dependencies">
+                            <xs:element name="dependencies" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element name="addon" minOccurs="1" maxOccurs="unbounded">
