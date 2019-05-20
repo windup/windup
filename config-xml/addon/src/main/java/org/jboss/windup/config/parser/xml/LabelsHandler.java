@@ -6,9 +6,8 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.joox.JOOX.$;
 
@@ -18,12 +17,12 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
 @NamespaceElementHandler(elementName = "labels", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelsHandler implements ElementHandler<Set<Label>>
+public class LabelsHandler implements ElementHandler<List<Label>>
 {
     @Override
-    public Set<Label> processElement(ParserContext context, Element element)
+    public List<Label> processElement(ParserContext context, Element element)
     {
-        Set<Label> labels = new HashSet<>();
+        List<Label> labels = new ArrayList<>();
 
         List<Element> children = $(element).children().get();
         for (Element child : children)

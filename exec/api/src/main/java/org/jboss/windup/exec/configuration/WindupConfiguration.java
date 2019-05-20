@@ -71,6 +71,7 @@ public class WindupConfiguration
         if (userRulesDir != null)
         {
             addDefaultUserRulesDirectory(userRulesDir);
+            addDefaultUserLabelsDirectory(userRulesDir); // Search for labels into /rules folder
         }
 
         Path userLabelsDir = PathUtil.getUserLabelsDir();
@@ -101,6 +102,7 @@ public class WindupConfiguration
         if (windupHomeRulesDir != null)
         {
             addDefaultUserRulesDirectory(windupHomeRulesDir);
+            addDefaultUserLabelsDirectory(windupHomeRulesDir); // Search for labels into /rules folder
         }
 
         Path windupHomeLabelsDir = PathUtil.getWindupLabelsDir();

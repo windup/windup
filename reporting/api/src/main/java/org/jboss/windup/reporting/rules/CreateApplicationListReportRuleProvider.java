@@ -3,6 +3,8 @@ package org.jboss.windup.reporting.rules;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.LabelProvider;
+import org.jboss.windup.config.loader.LabelLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.*;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -17,7 +19,6 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
-import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -75,14 +76,13 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
         List<Path> userRulesPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
 
-        Set<Path> defaultRulePaths = new HashSet<>();
-        defaultRulePaths.add(PathUtil.getWindupLabelsDir());
-        defaultRulePaths.add(PathUtil.getUserLabelsDir());
-        defaultRulePaths.addAll(userRulesPaths);
-
         // Load all labels from xml files
-        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
-        Collection<Label> labels = labelLoader.loadLabels(labelLoaderContext);
+        List<Label> labels = new ArrayList<>();
+        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(userRulesPaths, null);
+        LabelProviderRegistry labelProviderRegistry = labelLoader.loadConfiguration(labelLoaderContext);
+        for (LabelProvider provider : labelProviderRegistry.getProviders()) {
+            labels.addAll(provider.getData().getLabels());
+        }
 
 
         JsonArrayBuilder labelsJsonArrayBuilder = Json.createArrayBuilder();
