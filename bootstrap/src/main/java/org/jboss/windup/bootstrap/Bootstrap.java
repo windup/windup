@@ -53,6 +53,7 @@ import org.jboss.windup.bootstrap.commands.windup.ListTagsCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListTargetTechnologiesCommand;
 import org.jboss.windup.bootstrap.commands.windup.RunWindupCommand;
 import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
+import org.jboss.windup.bootstrap.commands.windup.ToolingModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
@@ -107,7 +108,7 @@ public class Bootstrap
         }
 
         Bootstrap bootstrap = new Bootstrap();
-        if (!bootstrap.serverMode(bootstrapArgs))
+        if (!bootstrap.serverMode(bootstrapArgs) && !bootstrap.toolingMode(bootstrapArgs))
         {
             bootstrap.run(bootstrapArgs);
             bootstrap.stop();
@@ -534,6 +535,17 @@ public class Bootstrap
             }
         }
         return true;
+    }
+
+    private boolean toolingMode(List<String> arguments)
+    {
+        if (ToolingModeCommand.isToolingMode(arguments))
+        {
+            ToolingModeCommand toolingCommand = new ToolingModeCommand(arguments);
+            toolingCommand.execute();
+            return true;
+        }
+        return false;
     }
 
 //    private File getWindupAddonsDir()

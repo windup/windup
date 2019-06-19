@@ -31,9 +31,21 @@ public class IssueCategoryImpl implements IssueCategory
     }
 
     @Override
+    public void setCategoryID(String categoryID)
+    {
+        this.categoryID = categoryID;
+    }
+
+    @Override
     public String getOrigin()
     {
         return origin;
+    }
+
+    @Override
+    public void setOrigin(String origin)
+    {
+        this.origin = origin;
     }
 
     @Override
@@ -43,14 +55,32 @@ public class IssueCategoryImpl implements IssueCategory
     }
 
     @Override
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @Override
     public String getDescription()
     {
         return description;
     }
 
     @Override
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    @Override
     public Integer getPriority()
     {
         return priority;
+    }
+
+    @Override
+    public void setPriority(Integer priority)
+    {
+        this.priority = priority;
     }
 }
