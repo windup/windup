@@ -53,7 +53,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void addUserRulesPath(FileModel userRulesPath);
 
     /**
-     * The location for user provided labels directories (typically JSON Labels)
+     * The location for user provided labels directories (typically XML Labels)
      */
     @Adjacency(label = USER_LABELS_PATH, direction = Direction.OUT)
     void addUserLabelsPath(FileModel userLabelsPath);
@@ -71,7 +71,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     List<FileModel> getUserRulesPaths();
 
     /**
-     * The location for user provided rules directories (typically Groovy or XML Rules)
+     * The location for user provided labels directories (typically XML Labels)
      */
     @Adjacency(label = USER_LABELS_PATH, direction = Direction.OUT)
     List<FileModel> getUserLabelsPaths();
@@ -156,7 +156,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     /**
      * Indicate whether skip all reports rendering
-     * 
+     *
      * @return
      */
     @Property(SKIP_REPORTS_RENDERING)
@@ -164,7 +164,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     /**
      * Indicate whether skip all reports rendering
-     * 
+     *
      */
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
