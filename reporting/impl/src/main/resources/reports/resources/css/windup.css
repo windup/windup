@@ -539,6 +539,10 @@ h1 .glyphicon-info-sign:before {
     margin-left: 82px;
 }
 
+.fileName .label {
+    border-style: outset;
+}
+
 .label-success.active {
     color: #fff;
     background-color: #2c8463;
@@ -555,4 +559,8 @@ h1 .glyphicon-info-sign:before {
     color: #fff;
     background-color: #c9302c;
     border-color: #ac2925;
+}
+
+.label-success.active, .label-warning.active, .label-danger.active {
+    border-style: inset;
 }

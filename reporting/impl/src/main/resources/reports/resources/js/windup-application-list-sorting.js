@@ -88,11 +88,12 @@ $(document).ready(function () {
                     var targetRuntimeSpan = $(this);
 
                     var runtimeTargetData = targetRuntimeSpan.data().runtimeTarget;
-                    var isTargetRuntimeActive = targetRuntimeSpan.data().active;
+                    targetRuntimeSpan.data('active', false);
 
                     targetRuntimeSpan.on('click', function (event) {
                         event.preventDefault();
 
+                        var isTargetRuntimeActive = targetRuntimeSpan.data().active;
                         clearRuntimeSelection(appInfo);
 
                         isTargetRuntimeActive = !isTargetRuntimeActive;
