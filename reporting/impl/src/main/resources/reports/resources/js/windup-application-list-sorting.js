@@ -69,6 +69,7 @@ $(document).ready(function () {
                 var label = $('<a href="#"><span class="label"></span></a>');
                 var span = label.find('span');
                 span.text(runtimeTarget.name);
+                span.attr('title', runtimeTarget.description);
                 span.data({
                     runtimeTarget: runtimeTarget,
                     active: false

@@ -541,6 +541,7 @@ h1 .glyphicon-info-sign:before {
 
 .fileName .label {
     border-style: outset;
+    cursor: pointer;
 }
 
 .label-success.active {
