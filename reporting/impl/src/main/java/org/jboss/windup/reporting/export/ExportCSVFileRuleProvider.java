@@ -13,19 +13,22 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
-import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.EffortReportModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.*;
+import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
@@ -40,11 +43,12 @@ import com.opencsv.CSVWriter;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
+@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
     private static final String MERGED_CSV_FILENAME = "AllIssues";
+    private static final String APP_FILE_TECH_CSV_FILENAME = "ApplicationFileTechnologies";
 
     // @formatter:off
     @Override
@@ -116,7 +120,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                                 projectNameString,
                                 fileName, filePath, String.valueOf(
                                 hint.getLineNumber()), String.valueOf(hint.getEffort())};
-                        writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings);
+                        writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null,false);
 
                     }
                     if (reportableEvent instanceof ClassificationModel)
@@ -142,7 +146,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                                     projectNameString, fileName, filePath, "N/A",
                                     String.valueOf(
                                             classification.getEffort()) };
-                            writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings);
+                            writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null,false);
 
                         }
                     }
@@ -150,6 +154,8 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
 
                 );
+
+                produceApplicationListCSV(event,projectToFile,outputFolderPath);
 
             }
             finally
@@ -183,50 +189,141 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             return linksString.toString();
         }
 
-        private void writeCsvRecordForProject(Map<String, CSVWriter> projectToFile, String outputFolderPath, ProjectModel projectModel, String[] line)
+        private void produceApplicationListCSV(GraphRewrite event, Map<String, CSVWriter> projectToFile, String outputFolderPath)
+        {
+
+
+
+            ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
+            TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
+            List<ApplicationReportModel> apps = applicationReportService.findAll();
+            List<TechnologyTagModel> masterTagList = techTagService.findAll().stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
+
+                            {
+                                String n1 = o1.getName();
+                                String n2 = o2.getName();
+                                return n1.compareToIgnoreCase(n2);
+                            }).collect(Collectors.toList());
+
+            List<String> headerFieldsList = new ArrayList<>();
+            headerFieldsList.add("App Name");
+            ArrayList<String> appNames = new ArrayList<>();
+            ArrayList<ApplicationReportModel> distinctApps = new ArrayList<>();
+
+            apps.forEach(app ->
+            {
+                if(app.getProjectModel()!= null && app.getProjectModel().getRootFileModel() != null
+                        && !appNames.contains(app.getProjectModel().getRootFileModel().getFileName())) {
+                    appNames.add(app.getProjectModel().getRootFileModel().getFileName());
+                    distinctApps.add(app);
+                }
+            });
+
+
+
+            masterTagList.forEach( masterTag -> headerFieldsList.add(masterTag.getName()));
+            String[] headerStringsToWrite = headerFieldsList.toArray(new String[0]);
+
+            distinctApps.stream().sorted((o1,o2) ->
+            {
+                String n1 = o1.getProjectModel().getRootFileModel().getFileName();
+                String n2 = o2.getProjectModel().getRootFileModel().getFileName();
+                return n1.compareToIgnoreCase(n2);
+            }).forEachOrdered(app ->
+            {
+                ProjectModelTraversal traversal = new ProjectModelTraversal(app.getProjectModel(),new OnlyOnceTraversalStrategy());
+                ArrayList<TechnologyTagModel> tagsForApp = new ArrayList<>();
+                ArrayList<TechnologyTagModel> structuredTagsForApp = new ArrayList<>();
+
+                ((TreeSet<TechnologyTagModel>)techTagService.findTechnologyTagsForProject(traversal)).stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
+                {
+                    String n1 = o1.getName();
+                    String n2 = o2.getName();
+                    return n1.compareToIgnoreCase(n2);
+                }).forEachOrdered(tagsForApp::add);
+
+                masterTagList.forEach( masterTag ->
+                {
+                    if (tagsForApp.contains(masterTag))
+                    {
+                        structuredTagsForApp.add(masterTag);
+                    }
+                    else
+                    {
+                        structuredTagsForApp.add(null);
+                    }
+                    headerFieldsList.add(masterTag==null?"":masterTag.getName() + (masterTag.getVersion()== null?"":" " + masterTag.getVersion()));
+                });
+
+                List<String> appNameAndTagNames = new ArrayList<>();
+                appNameAndTagNames.add(app.getProjectModel().getRootFileModel().getFileName());
+                structuredTagsForApp.forEach( tag ->
+                {
+                    appNameAndTagNames.add(tag==null?"":tag.getName() + (tag.getVersion()== null?"":" " + tag.getVersion()));
+                });
+
+
+                String[] stringsToWrite = appNameAndTagNames.toArray(new String[0]);
+                writeCsvRecordForProject(projectToFile,outputFolderPath,app.getProjectModel(),stringsToWrite, headerStringsToWrite, true);
+            });
+
+
+        }
+
+        private void writeCsvRecordForProject(Map<String, CSVWriter> projectToFile, String outputFolderPath, ProjectModel projectModel, String[] line, String[] dynamicHeaderLine, boolean isLineForAppTagFile)
         {
             if (!projectToFile.containsKey(MERGED_CSV_FILENAME))
             {
+                String[] headerLine;
+                headerLine = new String[]{"Rule Id", "Issue Category", "Title", "Description", "Links", "Application", "File Name",
+                        "File Path", "Line", "Story points", "Parent Application"};
                 String mergedFilename = PathUtil.cleanFileName(MERGED_CSV_FILENAME) + ".csv";
-                CSVWriter mergedFileWriter = initCSVWriter(outputFolderPath + mergedFilename, true);
+                CSVWriter mergedFileWriter = initCSVWriter(outputFolderPath + mergedFilename, headerLine);
                 projectToFile.put(MERGED_CSV_FILENAME, mergedFileWriter);
             }
             if (!projectToFile.containsKey(projectModel.getName()))
             {
+                String[] headerLine;
+                headerLine = new String[]{"Rule Id", "Issue Category", "Title", "Description", "Links", "Application", "File Name",
+                        "File Path", "Line", "Story points"};
                 String filename = PathUtil.cleanFileName(projectModel.getRootFileModel().getFileName()) + ".csv";
-                CSVWriter writer = initCSVWriter(outputFolderPath + filename, false);
+                CSVWriter writer = initCSVWriter(outputFolderPath + filename, headerLine);
                 projectToFile.put(projectModel.getName(), writer);
                 LOG.info("Setting csv filename to: " + filename + " for id: " + projectModel.getId());
                 projectModel.setCsvFilename(filename);
             }
-            projectToFile.get(projectModel.getName()).writeNext(line);
-            //Convert line array to ArrayList, add extra field for merged file on the end,
-            // then convert back to array to send to CSVWriter
-            ArrayList<String> mergedList = new ArrayList<String>(Arrays.stream(line).collect(Collectors.toList()));
-            mergedList.add(projectModel.getRootFileModel().asFile().getName());
-            String[] mergedLine = new String[ mergedList.size() ];
-            projectToFile.get(MERGED_CSV_FILENAME).writeNext(mergedList.toArray(mergedLine));
+            if (!projectToFile.containsKey(APP_FILE_TECH_CSV_FILENAME) && isLineForAppTagFile)
+            {
+                String[] headerLine;
+                headerLine = dynamicHeaderLine;
+                String appFileTechFilename = PathUtil.cleanFileName(APP_FILE_TECH_CSV_FILENAME) + ".csv";
+                CSVWriter appFileTechWriter = initCSVWriter(outputFolderPath + appFileTechFilename, headerLine);
+                projectToFile.put(APP_FILE_TECH_CSV_FILENAME, appFileTechWriter);
+            }
+            if (isLineForAppTagFile)
+            {
+                projectToFile.get(APP_FILE_TECH_CSV_FILENAME).writeNext(line);
+            }
+            else
+            {
+                projectToFile.get(projectModel.getName()).writeNext(line);
+                //Convert line array to ArrayList, add extra field for merged file on the end,
+                // then convert back to array to send to CSVWriter
+                ArrayList<String> mergedList = new ArrayList<String>(Arrays.stream(line).collect(Collectors.toList()));
+                mergedList.add(projectModel.getRootFileModel().asFile().getName());
+                String[] mergedLine = new String[mergedList.size()];
+                projectToFile.get(MERGED_CSV_FILENAME).writeNext(mergedList.toArray(mergedLine));
+            }
 
         }
 
-        private CSVWriter initCSVWriter(String path, boolean isMergedFile)
+        private CSVWriter initCSVWriter(String path, String[] headerLine)
         {
             try
             {
                 CSVWriter writer = new CSVWriter(
                             new FileWriter(path), ',');
-                String[] headerLine;
-                if (!isMergedFile)
-                {
-                    headerLine = new String[]{"Rule Id", "Issue Category", "Title", "Description", "Links", "Application", "File Name",
-                            "File Path", "Line", "Story points"};
-                }
-                else
-                {
 
-                    headerLine = new String[]{"Rule Id", "Issue Category", "Title", "Description", "Links", "Application", "File Name",
-                            "File Path", "Line", "Story points", "Parent Application"};
-                }
                 writer.writeNext(headerLine);
                 return writer;
             }
