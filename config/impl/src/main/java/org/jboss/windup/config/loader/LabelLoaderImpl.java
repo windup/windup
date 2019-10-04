@@ -61,22 +61,24 @@ public class LabelLoaderImpl implements LabelLoader
     private List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         LOG.info("Starting provider load...");
-        List<LabelProvider> providers = new ArrayList<>();
+        List<LabelProvider> unsortedProviders = new ArrayList<>();
         for (LabelProviderLoader loader : loaders)
         {
             if (ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())
                 continue;
 
-            providers.addAll(loader.getProviders(ruleLoaderContext));
+            unsortedProviders.addAll(loader.getProviders(ruleLoaderContext));
         }
         LOG.info("Loaded, now sorting, etc");
 
-        checkForDuplicateProviders(providers);
+        checkForDuplicateProviders(unsortedProviders);
 
-        ServiceLogger.logLoadedServices(LOG, LabelProvider.class, providers);
+        List<LabelProvider> sortedProviders = new ArrayList<>(unsortedProviders);
+        sortedProviders.sort(Comparator.comparingInt(t -> t.getMetadata().getPriority()));
+        ServiceLogger.logLoadedServices(LOG, LabelProvider.class, sortedProviders);
 
         LOG.info("Finished provider load");
-        return Collections.unmodifiableList(providers);
+        return Collections.unmodifiableList(sortedProviders);
     }
 
     private LabelProviderRegistry build(RuleLoaderContext ruleLoaderContext)

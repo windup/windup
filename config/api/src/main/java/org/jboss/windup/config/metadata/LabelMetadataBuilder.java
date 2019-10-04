@@ -4,9 +4,17 @@ public class LabelMetadataBuilder extends AbstractLabelsetMetadata implements La
 {
     private String origin;
     private String description;
+    private int priority;
 
     public LabelMetadataBuilder(String ID, String description) {
         super(ID);
+        this.description = description;
+        this.priority = Integer.MAX_VALUE;
+    }
+
+    public LabelMetadataBuilder(String ID, int priority, String description) {
+        super(ID);
+        this.priority = priority;
         this.description = description;
     }
 
@@ -25,5 +33,10 @@ public class LabelMetadataBuilder extends AbstractLabelsetMetadata implements La
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
     }
 }

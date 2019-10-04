@@ -7,4 +7,6 @@ public interface LabelsetMetadata
     String getOrigin();
 
     String getDescription();
+
+    int getPriority();
 }

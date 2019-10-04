@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <labelset id="core_labels"
-          priority="1"
           xmlns="http://windup.jboss.org/schema/jboss-labelset"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://windup.jboss.org/schema/jboss-labelset http://windup.jboss.org/schema/jboss-labelset/windup-jboss-labelset.xsd">

@@ -32,7 +32,11 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
     @Override
     public LabelProvider processElement(ParserContext context, Element element) throws ConfigurationException
     {
-        String ID = $(element).attr("id");;
+        String ID = $(element).attr("id");
+
+        String priorityString = $(element).attr("priority");
+        Integer priority = priorityString != null ? Integer.parseInt(priorityString) : null;
+
         String description = null;
         List<Label> labels = new ArrayList<>();
 
@@ -57,7 +61,12 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
             }
         };
 
-        LabelProviderMetadata metadata = new LabelMetadataBuilder(ID, description);
+        LabelProviderMetadata metadata;
+        if (priority == null) {
+            metadata = new LabelMetadataBuilder(ID, description);
+        } else {
+            metadata = new LabelMetadataBuilder(ID, priority, description);
+        }
         return new AbstractLabelProvider(metadata, data);
     }
 
