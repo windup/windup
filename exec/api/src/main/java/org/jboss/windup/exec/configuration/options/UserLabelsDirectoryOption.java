@@ -2,8 +2,17 @@ package org.jboss.windup.exec.configuration.options;
 
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
+import org.jboss.windup.config.ValidationResult;
+import org.jboss.windup.config.loader.LabelLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.exception.WindupException;
 
+import javax.inject.Inject;
 import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Indicates the file that will contain custom labels provided by the user.
@@ -14,7 +23,11 @@ import java.io.File;
  */
 public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
 {
+
     public static final String NAME = "userLabelsDirectory";
+
+    @Inject
+    private LabelLoader labelLoader;
 
     public UserLabelsDirectoryOption()
     {
@@ -61,5 +74,41 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
     public int getPriority()
     {
         return 7500;
+    }
+
+    @Override
+    public ValidationResult validate(Object fileObject) {
+        ValidationResult validate = super.validate(fileObject);
+        if (validate.getLevel().equals(ValidationResult.Level.ERROR)) {
+            return validate;
+        }
+
+        List<Path> userLabelsPaths = new ArrayList<>();
+        if (fileObject instanceof Iterable && !(fileObject instanceof Path))
+        {
+            for (Object listItem : (Iterable) fileObject)
+            {
+                userLabelsPaths.add(castToPath(listItem));
+            }
+        } else {
+            userLabelsPaths.add(castToPath(fileObject));
+        }
+
+        List<Path> defaultRulePaths = new ArrayList<>();
+
+        defaultRulePaths.add(PathUtil.getWindupRulesDir());
+        defaultRulePaths.add(PathUtil.getUserRulesDir());
+        defaultRulePaths.add(PathUtil.getWindupLabelsDir());
+        defaultRulePaths.add(PathUtil.getUserLabelsDir());
+        defaultRulePaths.addAll(userLabelsPaths);
+
+        try {
+            RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
+            labelLoader.loadConfiguration(labelLoaderContext);
+        } catch (WindupException e) {
+            return new ValidationResult(ValidationResult.Level.ERROR, e.getMessage());
+        }
+
+        return validate;
     }
 }

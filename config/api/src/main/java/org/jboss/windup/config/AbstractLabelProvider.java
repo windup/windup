@@ -24,4 +24,21 @@ public class AbstractLabelProvider extends ContextBase implements LabelProvider
         return data;
     }
 
+    @Override
+    public boolean equals(Object other)
+    {
+        boolean result = false;
+        if (other instanceof AbstractLabelProvider)
+        {
+            AbstractLabelProvider that = (AbstractLabelProvider) other;
+            result = this.getMetadata().equals(that.getMetadata());
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return getMetadata().hashCode();
+    }
 }

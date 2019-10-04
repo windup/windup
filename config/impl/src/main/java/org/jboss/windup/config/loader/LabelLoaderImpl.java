@@ -1,14 +1,14 @@
 package org.jboss.windup.config.loader;
 
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.util.ServiceLogger;
+import org.jboss.windup.util.exception.WindupException;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class LabelLoaderImpl implements LabelLoader
@@ -28,6 +28,36 @@ public class LabelLoaderImpl implements LabelLoader
         return build(ruleLoaderContext);
     }
 
+    private void checkForDuplicateProviders(List<LabelProvider> providers)
+    {
+        /*
+         * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
+         */
+        Map<LabelProvider, LabelProvider> duplicates = new HashMap<>(providers.size());
+        for (LabelProvider provider : providers)
+        {
+            LabelProvider previousProvider = duplicates.get(provider);
+            if (previousProvider != null)
+            {
+                String typeMessage;
+                String currentProviderOrigin = provider.getMetadata().getOrigin();
+                String previousProviderOrigin = previousProvider.getMetadata().getOrigin();
+                if (previousProvider.getClass().equals(provider.getClass()))
+                {
+                    typeMessage = " (type: " + previousProviderOrigin + " and " + currentProviderOrigin + ")";
+                }
+                else
+                {
+                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
+                            + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
+                }
+
+                throw new WindupException("Found two providers with the same id: " + provider.getMetadata().getID() + typeMessage);
+            }
+            duplicates.put(provider, provider);
+        }
+    }
+
     private List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         LOG.info("Starting provider load...");
@@ -40,6 +70,8 @@ public class LabelLoaderImpl implements LabelLoader
             providers.addAll(loader.getProviders(ruleLoaderContext));
         }
         LOG.info("Loaded, now sorting, etc");
+
+        checkForDuplicateProviders(providers);
 
         ServiceLogger.logLoadedServices(LOG, LabelProvider.class, providers);
 

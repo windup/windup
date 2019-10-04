@@ -74,11 +74,11 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
     private void createIndexReport(GraphContext context)
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        List<Path> userRulesPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
+        List<Path> userLabelPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
 
         // Load all labels from xml files
         List<Label> labels = new ArrayList<>();
-        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(userRulesPaths, null);
+        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(userLabelPaths, null);
         LabelProviderRegistry labelProviderRegistry = labelLoader.loadConfiguration(labelLoaderContext);
         for (LabelProvider provider : labelProviderRegistry.getProviders()) {
             labels.addAll(provider.getData().getLabels());
