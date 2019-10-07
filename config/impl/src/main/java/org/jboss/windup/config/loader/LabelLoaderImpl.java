@@ -3,6 +3,7 @@ package org.jboss.windup.config.loader;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.LabelProvider;
+import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.util.ServiceLogger;
 import org.jboss.windup.util.exception.WindupException;
@@ -10,6 +11,7 @@ import org.jboss.windup.util.exception.WindupException;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class LabelLoaderImpl implements LabelLoader
 {
@@ -89,7 +91,20 @@ public class LabelLoaderImpl implements LabelLoader
 
         for (LabelProvider provider : providers)
         {
-            registry.setLabels(provider, provider.getData().getLabels());
+            List<Label> labels = provider.getData().getLabels();
+            List<String> labelIDs = labels.stream().map(Label::getId)
+                    .collect(Collectors.toList());
+            List<Label> repeatedLabels = labels.stream()
+                    .filter(i -> Collections.frequency(labelIDs, i.getId()) > 1)
+                    .collect(Collectors.toList());
+
+            if (!repeatedLabels.isEmpty()) {
+                throw new WindupException("Found multiple labels with the same id: " +
+                        repeatedLabels.stream().map(Label::getId).distinct().collect(Collectors.joining(",")) +
+                        " within the same labelSet: " + provider.getMetadata().getID());
+            }
+
+            registry.setLabels(provider, labels);
         }
         return registry;
     }
