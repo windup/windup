@@ -84,14 +84,17 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
         }
 
         List<Path> userLabelsPaths = new ArrayList<>();
-        if (fileObject instanceof Iterable && !(fileObject instanceof Path))
+        if(fileObject != null)
         {
-            for (Object listItem : (Iterable) fileObject)
+            if (fileObject instanceof Iterable && !(fileObject instanceof Path))
             {
-                userLabelsPaths.add(castToPath(listItem));
+                for (Object listItem : (Iterable) fileObject)
+                {
+                    userLabelsPaths.add(castToPath(listItem));
+                }
+            } else {
+                userLabelsPaths.add(castToPath(fileObject));
             }
-        } else {
-            userLabelsPaths.add(castToPath(fileObject));
         }
 
         List<Path> defaultRulePaths = new ArrayList<>();
