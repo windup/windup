@@ -54,11 +54,11 @@ public class Version
         boolean result = true;
         if (from != null)
         {
-            result = result && firstVersionLesser(from, versionString);
+            result = firstVersionLesser(from, versionString);
         }
-        if (to != null)
+        if (result && to != null)
         {
-            result = result && firstVersionLesser(versionString, to);
+            result = firstVersionLesser(versionString, to);
         }
         return result;
     }

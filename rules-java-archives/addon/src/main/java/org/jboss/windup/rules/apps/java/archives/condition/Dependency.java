@@ -9,7 +9,6 @@ import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -24,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 /**
  * Condition used to search the dependencies based on GAV
@@ -115,37 +115,23 @@ public class Dependency extends ParameterizedGraphCondition
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
         List<WindupVertexFrame> result = new ArrayList<>();
         Iterable<IdentifiedArchiveModel> identifiedArchiveModels = identifiedArchiveModelService.findAll();
-        identifiedArchiveModels.forEach(identifiedArchiveModel ->
-        {
-            ArchiveCoordinateModel archiveCoordinateModel = identifiedArchiveModel.getCoordinate();
-            boolean passed = true;
-            if (groupId != null)
-            {
-                passed = groupId.parse(archiveCoordinateModel.getGroupId()).matches();
-            }
-            if (passed && artifactId != null)
-            {
-                passed = artifactId.parse(archiveCoordinateModel.getArtifactId()).matches();
-            }
 
-            if (passed && version != null)
-            {
-                passed = version.validate(archiveCoordinateModel.getVersion());
-            }
-            if (passed)
-            {
-                FileLocationModel fileLocationModel = fileLocationService.create();
-                fileLocationModel.setFile(identifiedArchiveModel);
-                fileLocationModel.setColumnNumber(1);
-                fileLocationModel.setLineNumber(1);
-                fileLocationModel.setLength(1);
-                fileLocationModel.setSourceSnippit("Dependency Archive Match");
+        StreamSupport.stream(identifiedArchiveModels.spliterator(), false)
+                .filter(identifiedArchiveModel -> groupId == null || groupId.parse(identifiedArchiveModel.getCoordinate().getGroupId()).matches())
+                .filter(identifiedArchiveModel -> artifactId == null || artifactId.parse(identifiedArchiveModel.getCoordinate().getArtifactId()).matches())
+                .filter(identifiedArchiveModel -> version == null || version.validate(identifiedArchiveModel.getCoordinate().getVersion()))
+                .forEach(identifiedArchiveModel -> {
+                    FileLocationModel fileLocationModel = fileLocationService.create();
+                    fileLocationModel.setFile(identifiedArchiveModel);
+                    fileLocationModel.setColumnNumber(1);
+                    fileLocationModel.setLineNumber(1);
+                    fileLocationModel.setLength(1);
+                    fileLocationModel.setSourceSnippit("Dependency Archive Match");
 
-                result.add(fileLocationModel);
-                evaluationStrategy.modelMatched();
-                evaluationStrategy.modelSubmitted(fileLocationModel);
-            }
-        });
+                    result.add(fileLocationModel);
+                    evaluationStrategy.modelMatched();
+                    evaluationStrategy.modelSubmitted(fileLocationModel);
+                });
 
         if (result.isEmpty())
         {
