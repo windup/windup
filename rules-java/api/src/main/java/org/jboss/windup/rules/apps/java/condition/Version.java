@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.archives.condition;
+package org.jboss.windup.rules.apps.java.condition;
 
 /**
  * Object used to specify the version range

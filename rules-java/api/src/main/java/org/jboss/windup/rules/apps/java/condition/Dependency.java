@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.archives.condition;
+package org.jboss.windup.rules.apps.java.condition;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
@@ -6,10 +6,13 @@ import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
+import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
@@ -23,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 /**
@@ -111,27 +115,41 @@ public class Dependency extends ParameterizedGraphCondition
     public boolean evaluate(GraphRewrite event, EvaluationContext context,
                 final EvaluationStrategy evaluationStrategy)
     {
-        final GraphService<IdentifiedArchiveModel> identifiedArchiveModelService = new GraphService<>(event.getGraphContext(), IdentifiedArchiveModel.class);
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
         List<WindupVertexFrame> result = new ArrayList<>();
-        Iterable<IdentifiedArchiveModel> identifiedArchiveModels = identifiedArchiveModelService.findAll();
+        final Consumer<ArchiveModel> archiveModelConsumer = archiveModel -> {
+            FileLocationModel fileLocationModel = fileLocationService.create();
+            fileLocationModel.setFile(archiveModel);
+            fileLocationModel.setColumnNumber(1);
+            fileLocationModel.setLineNumber(1);
+            fileLocationModel.setLength(1);
+            fileLocationModel.setSourceSnippit("Dependency Archive Match");
 
+            result.add(fileLocationModel);
+            evaluationStrategy.modelMatched();
+            evaluationStrategy.modelSubmitted(fileLocationModel);
+        };
+
+        // check if the dependency is in one the IdentifiedArchiveModel using the Lucene Maven Index
+        final GraphService<IdentifiedArchiveModel> identifiedArchiveModelService = new GraphService<>(event.getGraphContext(), IdentifiedArchiveModel.class);
+        Iterable<IdentifiedArchiveModel> identifiedArchiveModels = identifiedArchiveModelService.findAll();
         StreamSupport.stream(identifiedArchiveModels.spliterator(), false)
                 .filter(identifiedArchiveModel -> groupId == null || groupId.parse(identifiedArchiveModel.getCoordinate().getGroupId()).matches())
                 .filter(identifiedArchiveModel -> artifactId == null || artifactId.parse(identifiedArchiveModel.getCoordinate().getArtifactId()).matches())
                 .filter(identifiedArchiveModel -> version == null || version.validate(identifiedArchiveModel.getCoordinate().getVersion()))
-                .forEach(identifiedArchiveModel -> {
-                    FileLocationModel fileLocationModel = fileLocationService.create();
-                    fileLocationModel.setFile(identifiedArchiveModel);
-                    fileLocationModel.setColumnNumber(1);
-                    fileLocationModel.setLineNumber(1);
-                    fileLocationModel.setLength(1);
-                    fileLocationModel.setSourceSnippit("Dependency Archive Match");
+                .forEach(archiveModelConsumer);
 
-                    result.add(fileLocationModel);
-                    evaluationStrategy.modelMatched();
-                    evaluationStrategy.modelSubmitted(fileLocationModel);
-                });
+        // it could be that we have found the `pom.xml` file within a JarArchiveModel and hence it could be the dependency we're searching for
+        // especially if the JAR is quite new and the Lucene Maven Index has not been updated yet to contain it
+        final GraphService<JarArchiveModel> jarArchiveModelService = new GraphService<>(event.getGraphContext(), JarArchiveModel.class);
+        Iterable<JarArchiveModel> jarArchiveModels = jarArchiveModelService.findAll();
+        StreamSupport.stream(jarArchiveModels.spliterator(), false)
+                .filter(jarArchiveModel -> !result.contains(jarArchiveModel))
+                .filter(jarArchiveModel -> jarArchiveModel.getProjectModel() instanceof MavenProjectModel)
+                .filter(jarArchiveModelWithMavenPom -> groupId == null || groupId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getGroupId()).matches())
+                .filter(jarArchiveModelWithMavenPom -> artifactId == null || artifactId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getArtifactId()).matches())
+                .filter(jarArchiveModelWithMavenPom -> version == null || version.validate(jarArchiveModelWithMavenPom.getProjectModel().getVersion()))
+                .forEach(archiveModelConsumer);
 
         if (result.isEmpty())
         {

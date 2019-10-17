@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.archives.condition;
+package org.jboss.windup.rules.java;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -21,6 +21,8 @@ import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.rules.apps.java.condition.Dependency;
+import org.jboss.windup.rules.apps.java.condition.Version;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.junit.Assert;

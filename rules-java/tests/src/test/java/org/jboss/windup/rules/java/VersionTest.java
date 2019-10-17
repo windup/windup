@@ -1,5 +1,6 @@
-package org.jboss.windup.rules.apps.java.archives.condition;
+package org.jboss.windup.rules.java;
 
+import org.jboss.windup.rules.apps.java.condition.Version;
 import org.junit.Assert;
 import org.junit.Test;
 
