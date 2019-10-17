@@ -37,6 +37,58 @@ $(document).ready(function () {
 
         }
 
+        /**
+         * Takes an array of strings and convert all
+         * elements with the pattern 'regex()' to an RexExp object.
+         * E.g. given ['a', 'b', 'regex(myRegex)'], then return ['a', 'b', 'new RegExp("myRegex")']
+         * @param array of strings
+         **/
+        function mapRegexValues(array) {
+            var isRegex = (value) => value.startsWith("regex(") && value.endsWith(")");
+            var getRegexValue = (value) => value.substring(value.indexOf("regex(") + 6, value.lastIndexOf(")"));
+
+            return array.map(value => {
+                if (isRegex(value)) {
+                    const regex = getRegexValue(value);
+                    return new RegExp(regex);
+                } else if (value.endsWith("*")) {
+                    return new RegExp("^" + value)
+                } else if (value.startsWith("*")) {
+                    return new RegExp(value.substr(1) + "$")
+                } else {
+                    return value;
+                }
+            })
+        }
+
+        /**
+         * @param array of strings
+         * @param text which will be tested
+         * @return true if some array element matches the text
+         **/
+        function arrayMatchesText(array, text) {
+            return array.some(regex => {
+                if (regex instanceof RegExp) {
+                    return regex.test(text);
+                } else {
+                    return text === regex;
+                }
+            })
+        }
+
+        /**
+         * @param array of strings; some of them can contain regexp
+         * @param texts which will be tested
+         * @return subgroup of elements of 'texts' which matches 'array'
+         **/
+        function getMatchedTexts(array, texts) {
+            const mappedArray = mapRegexValues(array);
+
+            return texts.filter(text => {
+                return arrayMatchesText(mappedArray, text);
+            });
+        }
+
         function makeRuntimeLegend(runtimeTarget) {
             var html = $('<dt></dt><dd></dd>');
 
@@ -103,32 +155,28 @@ $(document).ready(function () {
                         if (isTargetRuntimeActive) {
                             targetRuntimeSpan.addClass('active');
 
-                            runtimeTargetData.supported.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
-                                    var text = $(this).text().trim();
-                                    return text == rt;
-                                });
-                                matchSpans.removeClass();
-                                matchSpans.addClass('label label-success')
-                            });
-                            runtimeTargetData.neutral.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
-                                    var text = $(this).text().trim();
-                                    return text == rt;
-                                });
-                                matchSpans.removeClass();
-                                matchSpans.addClass('label label-default')
-                            });
-                            runtimeTargetData.unsuitable.forEach(rt => {
-                                var matchSpans = appInfo.find("div.techs span.label:contains('" + rt + "')").filter(function() {
-                                    var text = $(this).text().trim();
-                                    return text == rt;
-                                });
-                                matchSpans.removeClass();
-                                matchSpans.addClass('label label-danger')
-                            });
+                            const supported = mapRegexValues(runtimeTargetData.supported);
+                            const neutral = mapRegexValues(runtimeTargetData.neutral);
+                            const unsuitable = mapRegexValues(runtimeTargetData.unsuitable);
 
-                            var matchSpans = appInfo.find("div.techs span.label.label-info");
+                            const labels = appInfo.find("div.techs span.label");
+
+                            labels.filter(function () {
+                                const text = $(this).text().trim();
+                                return arrayMatchesText(supported, text);
+                            }).removeClass().addClass('label label-success');
+
+                            labels.filter(function () {
+                                const text = $(this).text().trim();
+                                return arrayMatchesText(neutral, text);
+                            }).removeClass().addClass('label label-default');
+
+                            labels.filter(function () {
+                                const text = $(this).text().trim();
+                                return arrayMatchesText(unsuitable, text);
+                            }).removeClass().addClass('label label-danger');
+
+                            const matchSpans = appInfo.find("div.techs span.label.label-info");
                             matchSpans.removeClass();
                             matchSpans.addClass('label label-warning')
                         }
@@ -151,10 +199,9 @@ $(document).ready(function () {
         function evaluateRuntime(label, tags) {
             var runtimeTarget = label.data().runtimeTarget;
 
-            var supportedTags = tags.filter(value => runtimeTarget.supported.includes(value));
-            // var embeddableTags = tags.filter(value => runtimeTarget.embeddable.includes(value));
-            var neutralTags = tags.filter(value => runtimeTarget.neutral.includes(value));
-            var unsuitableTags = tags.filter(value => runtimeTarget.unsuitable.includes(value));
+            var supportedTags = getMatchedTexts(runtimeTarget.supported, tags);
+            var neutralTags = getMatchedTexts(runtimeTarget.neutral, tags);
+            var unsuitableTags = getMatchedTexts(runtimeTarget.unsuitable, tags);
 
             if (unsuitableTags.length > 0) {
                 label.addClass('label-danger');
