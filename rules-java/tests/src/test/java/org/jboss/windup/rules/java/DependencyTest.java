@@ -88,6 +88,10 @@ public class DependencyTest {
             dependency.setCoordinate(archiveCoordinateModel);
             projectModel.addFileModel(dependency);
 
+            IdentifiedArchiveModel dependencyWithoutCoordinate = context.getFramed().addFramedVertex(IdentifiedArchiveModel.class);
+            dependencyWithoutCoordinate.setFilePath("src/test/resources/dependencies/known-package-case.jar");
+            projectModel.addFileModel(dependencyWithoutCoordinate);
+
             ArchiveCoordinateModel tooNewArchiveCoordinateModel = context.getFramed().addFramedVertex(ArchiveCoordinateModel.class);
             tooNewArchiveCoordinateModel.setGroupId("org.springframework.boot");
             tooNewArchiveCoordinateModel.setArtifactId("spring-boot-starter-logging");
