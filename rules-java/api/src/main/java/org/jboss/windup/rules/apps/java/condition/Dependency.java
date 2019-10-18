@@ -6,9 +6,9 @@ import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
-import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
@@ -116,8 +116,9 @@ public class Dependency extends ParameterizedGraphCondition
                 final EvaluationStrategy evaluationStrategy)
     {
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
-        List<WindupVertexFrame> result = new ArrayList<>();
-        final Consumer<ArchiveModel> archiveModelConsumer = archiveModel -> {
+        List<FileLocationModel> result = new ArrayList<>();
+        Set<String> archiveFoundFilePaths = new HashSet<>();
+        final Consumer<FileModel> archiveModelConsumer = archiveModel -> {
             FileLocationModel fileLocationModel = fileLocationService.create();
             fileLocationModel.setFile(archiveModel);
             fileLocationModel.setColumnNumber(1);
@@ -126,6 +127,7 @@ public class Dependency extends ParameterizedGraphCondition
             fileLocationModel.setSourceSnippit("Dependency Archive Match");
 
             result.add(fileLocationModel);
+            archiveFoundFilePaths.add(archiveModel.getFilePath());
             evaluationStrategy.modelMatched();
             evaluationStrategy.modelSubmitted(fileLocationModel);
         };
@@ -144,7 +146,7 @@ public class Dependency extends ParameterizedGraphCondition
         final GraphService<JarArchiveModel> jarArchiveModelService = new GraphService<>(event.getGraphContext(), JarArchiveModel.class);
         Iterable<JarArchiveModel> jarArchiveModels = jarArchiveModelService.findAll();
         StreamSupport.stream(jarArchiveModels.spliterator(), false)
-                .filter(jarArchiveModel -> !result.contains(jarArchiveModel))
+                .filter(jarArchiveModel -> !archiveFoundFilePaths.contains(jarArchiveModel.getFilePath()))
                 .filter(jarArchiveModel -> jarArchiveModel.getProjectModel() instanceof MavenProjectModel)
                 .filter(jarArchiveModelWithMavenPom -> groupId == null || groupId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getGroupId()).matches())
                 .filter(jarArchiveModelWithMavenPom -> artifactId == null || artifactId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getArtifactId()).matches())

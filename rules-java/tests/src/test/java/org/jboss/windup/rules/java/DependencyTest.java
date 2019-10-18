@@ -17,14 +17,19 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
+import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.rules.apps.java.condition.Dependency;
 import org.jboss.windup.rules.apps.java.condition.Version;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
+import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,28 +74,61 @@ public class DependencyTest {
     @Test
     public void testDependencyWithHint() throws IOException {
         try (GraphContext context = factory.create(true)) {
-            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
-            pm.setName("Main Project");
+            ProjectModel projectModel = context.getFramed().addFramedVertex(ProjectModel.class);
+            projectModel.setName("Main Project");
+
+            ArchiveModel dependencyArchiveModel = context.getFramed().addFramedVertex(ArchiveModel.class);
+            dependencyArchiveModel.setFilePath("src/test/resources/dependencies/spring-boot-starter-logging-1.2.7.RELEASE.jar");
 
             ArchiveCoordinateModel archiveCoordinateModel = context.getFramed().addFramedVertex(ArchiveCoordinateModel.class);
             archiveCoordinateModel.setGroupId("org.springframework.boot");
             archiveCoordinateModel.setArtifactId("spring-boot-starter-logging");
             archiveCoordinateModel.setVersion("1.2.7.RELEASE");
-            IdentifiedArchiveModel dependency = context.getFramed().addFramedVertex(IdentifiedArchiveModel.class);
-            dependency.setFilePath("src/test/resources/spring-boot-starter-logging-1.2.7.RELEASE.jar");
+            IdentifiedArchiveModel dependency = context.service(IdentifiedArchiveModel.class).addTypeToModel(dependencyArchiveModel);
             dependency.setCoordinate(archiveCoordinateModel);
-            pm.addFileModel(dependency);
+            projectModel.addFileModel(dependency);
+
+            ArchiveCoordinateModel tooNewArchiveCoordinateModel = context.getFramed().addFramedVertex(ArchiveCoordinateModel.class);
+            tooNewArchiveCoordinateModel.setGroupId("org.springframework.boot");
+            tooNewArchiveCoordinateModel.setArtifactId("spring-boot-starter-logging");
+            tooNewArchiveCoordinateModel.setVersion("7.2.1.RELEASE");
+            IdentifiedArchiveModel tooNewDependency = context.getFramed().addFramedVertex(IdentifiedArchiveModel.class);
+            tooNewDependency.setFilePath("src/test/resources/dependencies/spring-boot-starter-logging-7.2.1.RELEASE.jar");
+            tooNewDependency.setCoordinate(tooNewArchiveCoordinateModel);
+            projectModel.addFileModel(tooNewDependency);
+
+            // this has exactly the same coordinates of the above 'archiveCoordinateModel' so that it can be checked
+            // that the same JAR do not trigger twice the dependency condition
+            MavenProjectModel dependencyMavenProjectModel = context.getFramed().addFramedVertex(MavenProjectModel.class);
+            dependencyMavenProjectModel.setName("Dependency Project");
+            dependencyMavenProjectModel.setGroupId("org.springframework.boot");
+            dependencyMavenProjectModel.setArtifactId("spring-boot-starter-logging");
+            dependencyMavenProjectModel.setVersion("1.2.7.RELEASE");
+            JarArchiveModel jarArchiveModel = context.service(JarArchiveModel.class).addTypeToModel(dependencyArchiveModel);
+            dependencyMavenProjectModel.addFileModel(jarArchiveModel);
+            dependencyMavenProjectModel.setRootFileModel(jarArchiveModel);
+            projectModel.addChildProject(dependencyMavenProjectModel);
+
+            MavenProjectModel wrongArtifactIdMavenProjectModel = context.getFramed().addFramedVertex(MavenProjectModel.class);
+            wrongArtifactIdMavenProjectModel.setGroupId("org.springframework.boot");
+            wrongArtifactIdMavenProjectModel.setArtifactId("spring-boot-starter-web");
+            wrongArtifactIdMavenProjectModel.setVersion("1.2.7.RELEASE");
+            JarArchiveModel wrongArtifactIdJarArchiveModel = context.getFramed().addFramedVertex(JarArchiveModel.class);
+            wrongArtifactIdJarArchiveModel.setFilePath("src/test/resources/dependencies/spring-boot-starter-web-1.2.7.RELEASE.jar");
+            wrongArtifactIdMavenProjectModel.addFileModel(wrongArtifactIdJarArchiveModel);
+            wrongArtifactIdMavenProjectModel.setRootFileModel(wrongArtifactIdJarArchiveModel);
+            projectModel.addChildProject(wrongArtifactIdMavenProjectModel);
 
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFilePath("src/test/resources/dependencies/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                     + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            pm.addFileModel(inputPath);
-            pm.setRootFileModel(inputPath);
+            projectModel.addFileModel(inputPath);
+            projectModel.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                     .setGraphContext(context);
@@ -98,7 +136,7 @@ public class DependencyTest {
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            Assert.assertEquals(6, provider.getMatches().size());
+            Assert.assertEquals(11, provider.getMatches().size());
             Assert.assertEquals(1, provider.getMatches().get(0).getLineNumber());
             Assert.assertEquals(1, provider.getMatches().get(0).getColumnNumber());
             Assert.assertEquals(1, provider.getMatches().get(0).getLength());
@@ -141,40 +179,40 @@ public class DependencyTest {
                     .when(Dependency.withGroupId("org.springframework.boot")
                             .andArtifactId("spring-boot-starter-logging")
                             .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(1).and(addMatch))
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.{*}")
                             .andArtifactId("spring-boot-starter{artifactName}")
                             .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
-                    .where("artifactName").matches(".*")
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(2).and(addMatch))
+                    .where("artifactName").matches("-logging")
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.{*}")
                             .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(3).and(addMatch))
                     .addRule()
                     .when(Dependency.withArtifactId("spring-boot-starter{artifactName}")
                             .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(4).and(addMatch))
                     .where("artifactName").matches(".*")
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.{*}")
                             .andArtifactId("spring-boot-starter{artifactName}"))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(5).and(addMatch))
                     .where("artifactName").matches(".*")
                     .addRule()
                     .when(Dependency.withVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(6).and(addMatch))
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.boot")
                             .andArtifactId("spring-boot-starter-logging")
                             .andVersion(Version.fromVersion("1.0.0").to("1.2.0.RELEASE")))
-                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(1).and(addMatch))
+                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(7).and(addMatch))
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.boot")
                             .andArtifactId("spring-boot-starter-logging")
                             .andVersion(Version.fromVersion("2.1.3.Final").to("3.2")))
-                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(2).and(addMatch));
+                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(8).and(addMatch));
         }
         // @formatter:on
     }
