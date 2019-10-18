@@ -8,7 +8,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.project.condition.Artifact;
-import org.jboss.windup.project.condition.Version;
+import org.jboss.windup.rules.apps.java.condition.Version;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "artifact", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
