@@ -136,6 +136,7 @@ public class Dependency extends ParameterizedGraphCondition
         final GraphService<IdentifiedArchiveModel> identifiedArchiveModelService = new GraphService<>(event.getGraphContext(), IdentifiedArchiveModel.class);
         Iterable<IdentifiedArchiveModel> identifiedArchiveModels = identifiedArchiveModelService.findAll();
         StreamSupport.stream(identifiedArchiveModels.spliterator(), false)
+                .filter(identifiedArchiveModel -> identifiedArchiveModel.getCoordinate() != null)
                 .filter(identifiedArchiveModel -> groupId == null || groupId.parse(identifiedArchiveModel.getCoordinate().getGroupId()).matches())
                 .filter(identifiedArchiveModel -> artifactId == null || artifactId.parse(identifiedArchiveModel.getCoordinate().getArtifactId()).matches())
                 .filter(identifiedArchiveModel -> version == null || version.validate(identifiedArchiveModel.getCoordinate().getVersion()))
