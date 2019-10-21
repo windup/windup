@@ -1,9 +1,7 @@
-package org.jboss.windup.project.condition;
+package org.jboss.windup.rules.apps.java.condition;
 
 /**
  * Object used to specify the version range
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
 public class Version
@@ -56,11 +54,11 @@ public class Version
         boolean result = true;
         if (from != null)
         {
-            result = result && firstVersionLesser(from, versionString);
+            result = firstVersionLesser(from, versionString);
         }
-        if (to != null)
+        if (result && to != null)
         {
-            result = result && firstVersionLesser(versionString, to);
+            result = firstVersionLesser(versionString, to);
         }
         return result;
     }
@@ -89,4 +87,10 @@ public class Version
         }
         return true;
     }
+
+    public String toString()
+    {
+        return "Version (" + from + ", " + to + ")";
+    }
+
 }
