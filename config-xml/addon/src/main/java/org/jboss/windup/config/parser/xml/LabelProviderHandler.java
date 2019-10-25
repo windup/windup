@@ -1,10 +1,13 @@
 package org.jboss.windup.config.parser.xml;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.config.AbstractLabelProvider;
 import org.jboss.windup.config.LabelProvider;
+import org.jboss.windup.config.builder.LabelProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
-import org.jboss.windup.config.metadata.*;
+import org.jboss.windup.config.metadata.Label;
+import org.jboss.windup.config.metadata.LabelMetadataBuilder;
+import org.jboss.windup.config.metadata.LabelProviderData;
+import org.jboss.windup.config.metadata.LabelProviderMetadata;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
@@ -67,7 +70,7 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
         } else {
             metadata = new LabelMetadataBuilder(ID, priority, description);
         }
-        return new AbstractLabelProvider(metadata, data);
+        return new LabelProviderBuilder(metadata, data);
     }
 
 }

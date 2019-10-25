@@ -17,10 +17,17 @@ public class Label
     private Set<String> unsuitable = new HashSet<>();
     private Set<String> neutral = new HashSet<>();
 
+    private String labelString;
+
     public Label(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    public Label(String id, String name, String description, String labelString) {
+        this(id, name, description);
+        this.labelString = labelString;
     }
 
     public void addSupportedTags(Collection<String> tags) {
@@ -57,6 +64,10 @@ public class Label
 
     public String getId() {
         return id;
+    }
+
+    public String getLabelString() {
+        return labelString;
     }
 
     @Override

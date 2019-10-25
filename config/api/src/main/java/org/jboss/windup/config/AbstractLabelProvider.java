@@ -4,7 +4,7 @@ import org.jboss.windup.config.metadata.LabelProviderData;
 import org.jboss.windup.config.metadata.LabelProviderMetadata;
 import org.ocpsoft.rewrite.context.ContextBase;
 
-public class AbstractLabelProvider extends ContextBase implements LabelProvider
+public abstract class AbstractLabelProvider extends ContextBase implements LabelProvider
 {
     private final LabelProviderMetadata metadata;
     private final LabelProviderData data;
@@ -40,5 +40,18 @@ public class AbstractLabelProvider extends ContextBase implements LabelProvider
     public int hashCode()
     {
         return getMetadata().hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append(metadata.getID());
+
+        if (!metadata.getID().equals(metadata.getOrigin())) {
+            builder.append(" from ").append(metadata.getOrigin());
+        }
+
+        return builder.toString();
     }
 }

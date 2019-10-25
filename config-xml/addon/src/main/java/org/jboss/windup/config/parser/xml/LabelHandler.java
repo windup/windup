@@ -5,6 +5,7 @@ import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.util.xml.XmlUtil;
 import org.w3c.dom.Element;
 
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class LabelHandler implements ElementHandler<Label>
             }
         }
 
-        Label label = new Label(id, name, description);
+        Label label = new Label(id, name, description, XmlUtil.nodeToString(element));
         label.addSupportedTags(supported);
         label.addUnsuitableTags(unsuitable);
         label.addNeutralTags(neutral);
