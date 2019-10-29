@@ -250,6 +250,20 @@
         <xs:attribute type="xs:string" name="as" use="optional" />
     </xs:complexType>
 
+    <!-- Dependency -->
+    <xs:element name="dependency">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="groupId" />
+                    <xs:attribute type="xs:string" name="artifactId" />
+                    <xs:attribute type="xs:string" name="fromVersion" />
+                    <xs:attribute type="xs:string" name="toVersion" />
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
     <!-- TEST CONDITION DEFINITIONS -->
 
    <xs:element name="classification-exists">
@@ -529,6 +543,7 @@
             <xs:element name="to-file-model" type="when-base" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="graph-query" type="graph-query" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="technology-tag-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="dependency" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 

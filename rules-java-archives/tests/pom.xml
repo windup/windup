@@ -57,6 +57,12 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Test Data Dependencies -->
         <dependency>
