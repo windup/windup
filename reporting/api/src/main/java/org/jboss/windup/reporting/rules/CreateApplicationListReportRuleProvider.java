@@ -22,7 +22,6 @@ import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import javax.inject.Inject;
