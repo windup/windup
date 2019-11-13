@@ -11,7 +11,7 @@ public class AbstractLabelsetMetadata implements LabelProviderMetadata
      */
     public AbstractLabelsetMetadata(String id)
     {
-        Assert.notNull(id, "Ruleset ID must not be null.");
+        Assert.notNull(id, "Labelset ID must not be null.");
         this.id = id;
     }
 
