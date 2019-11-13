@@ -12,7 +12,7 @@ public class LabelMetadataBuilder extends AbstractLabelsetMetadata implements La
         this.priority = Integer.MAX_VALUE;
     }
 
-    public LabelMetadataBuilder(String ID, int priority, String description) {
+    public LabelMetadataBuilder(String ID, String description, int priority) {
         super(ID);
         this.priority = priority;
         this.description = description;
