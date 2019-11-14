@@ -46,29 +46,39 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
-            if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
+            if (StringUtils.equals(DESCRIPTION, child.getTagName()))
+            {
                 description = $(child).text();
-            } else if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
+            }
+            else if (StringUtils.equals(DESCRIPTION, child.getTagName()))
+            {
                 description = $(child).text();
-            } else if (StringUtils.equals(TRANSFORM, child.getTagName())) {
+            }
+            else if (StringUtils.equals(TRANSFORM, child.getTagName()))
+            {
                 List<Label> l = context.processElement(child);
                 labels.addAll(l);
             }
         }
 
         List<Label> allLabels = labels;
-        LabelProviderData data = new LabelProviderData() {
+        LabelProviderData data = new LabelProviderData()
+        {
             @Override
-            public List<Label> getLabels() {
+            public List<Label> getLabels()
+            {
                 return allLabels;
             }
         };
 
         LabelProviderMetadata metadata;
-        if (priority == null) {
+        if (priority == null)
+        {
             metadata = new LabelMetadataBuilder(ID, description);
-        } else {
-            metadata = new LabelMetadataBuilder(ID, priority, description);
+        }
+        else
+        {
+            metadata = new LabelMetadataBuilder(ID, description, priority);
         }
         return new LabelProviderBuilder(metadata, data);
     }

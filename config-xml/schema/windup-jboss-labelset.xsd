@@ -2,20 +2,6 @@
 <xs:schema targetNamespace="http://windup.jboss.org/schema/jboss-labelset" xmlns="http://windup.jboss.org/schema/jboss-labelset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     elementFormDefault="qualified">
 
-    <!-- Root element for Windup tests labels. -->
-    <xs:element name="labeltest">
-        <xs:annotation>
-            <xs:documentation>Root element of Windup labels test.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="labelset" minOccurs="0" maxOccurs="unbounded" />
-            </xs:sequence>
-            <xs:attribute type="xs:string" name="id"/>
-        </xs:complexType>
-    </xs:element>
-
     <!-- Root element. -->
     <xs:element name="labelset">
         <xs:annotation>

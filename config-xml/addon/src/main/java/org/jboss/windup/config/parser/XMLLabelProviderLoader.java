@@ -2,9 +2,11 @@ package org.jboss.windup.config.parser;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.loader.LabelProviderLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.metadata.LabelMetadataBuilder;
 import org.jboss.windup.config.metadata.LabelProviderMetadata;
 import org.jboss.windup.util.Logging;
@@ -24,7 +26,10 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
+ * Searches for and loads {@link LabelProvider}s from XML files. This searches for filenames that ends in ".windup.label.xml" or ".rhamt.label.xml".
+ *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ *
  */
 public class XMLLabelProviderLoader implements LabelProviderLoader
 {
@@ -39,13 +44,21 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
     @Inject
     private FurnaceClasspathScanner scanner;
 
+    /**
+     * {@link LabelProviderLoader#isFileBased()}
+     **/
     @Override
-    public boolean isFileBased() {
+    public boolean isFileBased()
+    {
         return true;
     }
 
+    /**
+     * {@link LabelProviderLoader#getProviders(RuleLoaderContext)}
+     **/
     @Override
-    public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext) {
+    public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
+    {
         List<LabelProvider> providers = new ArrayList<>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -81,7 +94,7 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
                 catch (Exception e)
                 {
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString()
-                            + " due to: " + e.getMessage(), e);
+                                + " due to: " + e.getMessage(), e);
                 }
             }
         }
@@ -90,7 +103,8 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
         {
             // Log the files found
             final Collection<URL> userXmlLabelsetFiles = getWindupUserDirectoryXmlFiles(userLabelsPath);
-            StringBuilder sb = new StringBuilder(System.lineSeparator()+"Found " + userXmlLabelsetFiles.size() + " user XML labels in: " + userLabelsPath);
+            StringBuilder sb = new StringBuilder(
+                        System.lineSeparator() + "Found " + userXmlLabelsetFiles.size() + " user XML labels in: " + userLabelsPath);
             for (URL resource : userXmlLabelsetFiles)
             {
                 sb.append(System.lineSeparator()).append("\t").append(resource.toString());
@@ -123,12 +137,15 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
         return providers;
     }
 
+    /**
+     * Sets {@Link LabelProvider} origin using the URL parameter.
+     */
     private void setOrigin(LabelProvider provider, URL resource)
     {
         LabelProviderMetadata metadata = provider.getMetadata();
         if (metadata instanceof LabelMetadataBuilder)
         {
-            ((LabelMetadataBuilder)metadata).setOrigin(resource.toExternalForm());
+            ((LabelMetadataBuilder) metadata).setOrigin(resource.toExternalForm());
         }
     }
 
@@ -139,12 +156,14 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
         return addon;
     }
 
+    /**
+     * Return a collection of all files which might contain custom labels
+     */
     private Collection<URL> getWindupUserDirectoryXmlFiles(Path userLabelsPath)
     {
         // no user dir, so just return the ones that we found in the classpath
         if (userLabelsPath == null)
             return Collections.emptyList();
-
 
         try
         {
@@ -178,14 +197,14 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
         catch (IOException e)
         {
             throw new WindupException("Failed to search userdir: \"" + userLabelsPath + "\" for XML labels due to: "
-                    + e.getMessage(), e);
+                        + e.getMessage(), e);
         }
     }
 
     private boolean pathMatchesNamePattern(Path file)
     {
         return file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_WINDUP_EXTENSION)
-                || file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_RHAMT_EXTENSION);
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_RHAMT_EXTENSION);
     }
 
 }

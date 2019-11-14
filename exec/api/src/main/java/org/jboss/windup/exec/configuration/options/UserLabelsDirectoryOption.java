@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Indicates the file that will contain custom labels provided by the user.
- * Multiple paths can be specified separated by a space (for example, --userLabelsDirectory PATH_1 PATH_2).
+ * Indicates the file that will contain custom labels provided by the user. Multiple paths can be specified separated by a space (for example,
+ * --userLabelsDirectory PATH_1 PATH_2).
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  *
@@ -77,14 +77,21 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
     }
 
     @Override
-    public ValidationResult validate(Object fileObject) {
+    public ValidationResult validate(Object fileObject)
+    {
         ValidationResult validate = super.validate(fileObject);
-        if (validate.getLevel().equals(ValidationResult.Level.ERROR)) {
+        if (validate.getLevel().equals(ValidationResult.Level.ERROR))
+        {
             return validate;
         }
 
+        /*
+         * In order to validate labels before running an analysis, this block of code will
+         * force to load all labels so LabelLoader can validate them and detect if there are
+         * more than one 'LabelSet' using the same ID.
+         */
         List<Path> userLabelsPaths = new ArrayList<>();
-        if(fileObject != null)
+        if (fileObject != null)
         {
             if (fileObject instanceof Iterable && !(fileObject instanceof Path))
             {
@@ -92,7 +99,9 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
                 {
                     userLabelsPaths.add(castToPath(listItem));
                 }
-            } else {
+            }
+            else
+            {
                 userLabelsPaths.add(castToPath(fileObject));
             }
         }
@@ -105,10 +114,13 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
         defaultRulePaths.add(PathUtil.getUserLabelsDir());
         defaultRulePaths.addAll(userLabelsPaths);
 
-        try {
+        try
+        {
             RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
             labelLoader.loadConfiguration(labelLoaderContext);
-        } catch (WindupException e) {
+        }
+        catch (WindupException e)
+        {
             return new ValidationResult(ValidationResult.Level.ERROR, e.getMessage());
         }
 

@@ -5,6 +5,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
+import org.jboss.windup.config.metadata.LabelsetMetadata;
 import org.jboss.windup.util.ServiceLogger;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -24,16 +25,24 @@ public class LabelLoaderImpl implements LabelLoader
     {
     }
 
+    /**
+     * {@link LabelLoader#loadConfiguration(RuleLoaderContext)}
+     */
     @Override
     public LabelProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return build(ruleLoaderContext);
     }
 
+    /**
+     * Multiple 'Labelsets' with the same ID are not allowed. See {@link LabelsetMetadata#getID()}
+     *
+     * @throws WindupException in case there are multiple 'Labelsets' using the same ID
+     **/
     private void checkForDuplicateProviders(List<LabelProvider> providers)
     {
         /*
-         * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
+         * LabelsetMetadata We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
          */
         Map<LabelProvider, LabelProvider> duplicates = new HashMap<>(providers.size());
         for (LabelProvider provider : providers)
@@ -51,7 +60,7 @@ public class LabelLoaderImpl implements LabelLoader
                 else
                 {
                     typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
-                            + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
+                                + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
                 }
 
                 throw new WindupException("Found two providers with the same id: " + provider.getMetadata().getID() + typeMessage);
@@ -60,6 +69,9 @@ public class LabelLoaderImpl implements LabelLoader
         }
     }
 
+    /**
+     * Returns all the {@Link LabelProvider} found inside the folders described in {@Link RuleLoaderContext}
+     */
     private List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         LOG.info("Starting provider load...");
@@ -83,6 +95,9 @@ public class LabelLoaderImpl implements LabelLoader
         return Collections.unmodifiableList(sortedProviders);
     }
 
+    /**
+     * Loads all {@Link LabelProvider} within {@Link RuleLoaderContext}
+     **/
     private LabelProviderRegistry build(RuleLoaderContext ruleLoaderContext)
     {
         List<LabelProvider> providers = getProviders(ruleLoaderContext);
@@ -93,15 +108,16 @@ public class LabelLoaderImpl implements LabelLoader
         {
             List<Label> labels = provider.getData().getLabels();
             List<String> labelIDs = labels.stream().map(Label::getId)
-                    .collect(Collectors.toList());
+                        .collect(Collectors.toList());
             List<Label> repeatedLabels = labels.stream()
-                    .filter(i -> Collections.frequency(labelIDs, i.getId()) > 1)
-                    .collect(Collectors.toList());
+                        .filter(i -> Collections.frequency(labelIDs, i.getId()) > 1)
+                        .collect(Collectors.toList());
 
-            if (!repeatedLabels.isEmpty()) {
+            if (!repeatedLabels.isEmpty())
+            {
                 throw new WindupException("Found multiple labels with the same id: " +
-                        repeatedLabels.stream().map(Label::getId).distinct().collect(Collectors.joining(",")) +
-                        " within the same labelSet: " + provider.getMetadata().getID());
+                            repeatedLabels.stream().map(Label::getId).distinct().collect(Collectors.joining(",")) +
+                            " within the same labelSet: " + provider.getMetadata().getID());
             }
 
             registry.setLabels(provider, labels);

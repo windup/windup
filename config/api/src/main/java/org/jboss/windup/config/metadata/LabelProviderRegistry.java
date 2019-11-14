@@ -3,8 +3,16 @@ package org.jboss.windup.config.metadata;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.LabelProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
 
+/**
+ * Keeps a collection of all {@link LabelProvider} instances that have been loaded by Windup.
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
 public class LabelProviderRegistry
 {
     private final List<LabelProvider> providers = new ArrayList<>();

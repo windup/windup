@@ -2,6 +2,11 @@ package org.jboss.windup.config.metadata;
 
 import org.jboss.forge.furnace.util.Assert;
 
+/**
+ * Base class for constructing {@link LabelsetMetadata} instances. Provides sensible defaults.
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
 public class AbstractLabelsetMetadata implements LabelProviderMetadata
 {
     private final String id;
@@ -34,7 +39,8 @@ public class AbstractLabelsetMetadata implements LabelProviderMetadata
     }
 
     @Override
-    public int getPriority() {
+    public int getPriority()
+    {
         return 0;
     }
 
