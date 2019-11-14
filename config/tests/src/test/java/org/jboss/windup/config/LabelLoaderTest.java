@@ -1,13 +1,5 @@
 package org.jboss.windup.config;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -23,19 +15,15 @@ import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelMetadataBuilder;
 import org.jboss.windup.config.metadata.LabelProviderData;
 import org.jboss.windup.config.metadata.LabelProviderMetadata;
-import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.phase.ArchiveExtractionPhase;
-import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.ocpsoft.rewrite.event.Rewrite;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(Arquillian.class)
 public class LabelLoaderTest

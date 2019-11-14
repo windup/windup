@@ -1,7 +1,7 @@
 package org.jboss.windup.config.metadata;
 
 /**
- * Create concrete classes of {@Link LabelProviderMetadata}
+ * Create concrete classes of {@link LabelProviderMetadata}
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */

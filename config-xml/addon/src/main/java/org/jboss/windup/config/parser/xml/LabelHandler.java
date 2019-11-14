@@ -39,20 +39,30 @@ public class LabelHandler implements ElementHandler<Label>
         Set<String> neutral = new HashSet<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children) {
-            if (StringUtils.equals(NAME, child.getTagName())) {
+        for (Element child : children)
+        {
+            if (StringUtils.equals(NAME, child.getTagName()))
+            {
                 name = $(child).text();
-            } else if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
+            }
+            else if (StringUtils.equals(DESCRIPTION, child.getTagName()))
+            {
                 description = $(child).text();
-            } else if (StringUtils.equals(SUPPORTED, child.getTagName())) {
+            }
+            else if (StringUtils.equals(SUPPORTED, child.getTagName()))
+            {
                 $(child).children().get().forEach(tagElements -> {
                     supported.add(context.processElement(tagElements));
                 });
-            } else if (StringUtils.equals(UNSUITABLE, child.getTagName())) {
+            }
+            else if (StringUtils.equals(UNSUITABLE, child.getTagName()))
+            {
                 $(child).children().get().forEach(tagElements -> {
                     unsuitable.add(context.processElement(tagElements));
                 });
-            } else if (StringUtils.equals(NEUTRAL, child.getTagName())) {
+            }
+            else if (StringUtils.equals(NEUTRAL, child.getTagName()))
+            {
                 $(child).children().get().forEach(tagElements -> {
                     neutral.add(context.processElement(tagElements));
                 });

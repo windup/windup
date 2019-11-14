@@ -2,11 +2,9 @@ package org.jboss.windup.config.parser;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.loader.LabelProviderLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.metadata.LabelMetadataBuilder;
 import org.jboss.windup.config.metadata.LabelProviderMetadata;
 import org.jboss.windup.util.Logging;
@@ -20,9 +18,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -138,7 +144,7 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
     }
 
     /**
-     * Sets {@Link LabelProvider} origin using the URL parameter.
+     * Sets {@link LabelProvider} origin using the URL parameter.
      */
     private void setOrigin(LabelProvider provider, URL resource)
     {

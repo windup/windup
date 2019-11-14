@@ -11,7 +11,7 @@ import java.util.List;
 public interface LabelProviderData
 {
     /**
-     * Return the list of {@Link Label}s inside a 'Labelset'
+     * Return the list of {@link Label}s inside a 'Labelset'
      */
     List<Label> getLabels();
 }

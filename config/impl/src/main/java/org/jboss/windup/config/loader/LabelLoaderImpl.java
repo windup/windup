@@ -10,10 +10,20 @@ import org.jboss.windup.util.ServiceLogger;
 import org.jboss.windup.util.exception.WindupException;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Tales all {@link LabelProviderLoader}s available in the system and use them to load {@link LabelProvider}s.
+ *
+ * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
+ */
 public class LabelLoaderImpl implements LabelLoader
 {
     public static Logger LOG = Logger.getLogger(LabelLoaderImpl.class.getName());
@@ -70,7 +80,7 @@ public class LabelLoaderImpl implements LabelLoader
     }
 
     /**
-     * Returns all the {@Link LabelProvider} found inside the folders described in {@Link RuleLoaderContext}
+     * Returns all the {@link LabelProvider} found inside the folders described in {@link RuleLoaderContext}
      */
     private List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
@@ -96,7 +106,7 @@ public class LabelLoaderImpl implements LabelLoader
     }
 
     /**
-     * Loads all {@Link LabelProvider} within {@Link RuleLoaderContext}
+     * Loads all {@link LabelProvider} within {@link RuleLoaderContext}
      **/
     private LabelProviderRegistry build(RuleLoaderContext ruleLoaderContext)
     {

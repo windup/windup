@@ -1,12 +1,5 @@
 package org.jboss.windup.config.parser;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -14,20 +7,18 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.LabelProvider;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.LabelProviderLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.Label;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.And;
-import org.ocpsoft.rewrite.config.Condition;
-import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
-import org.ocpsoft.rewrite.config.Operation;
-import org.ocpsoft.rewrite.config.RuleBuilder;
-import org.ocpsoft.rewrite.config.True;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 @RunWith(Arquillian.class)
 public class XMLLabelProviderLoaderTest

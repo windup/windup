@@ -86,9 +86,8 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
         }
 
         /*
-         * In order to validate labels before running an analysis, this block of code will
-         * force to load all labels so LabelLoader can validate them and detect if there are
-         * more than one 'LabelSet' using the same ID.
+         * In order to validate labels before running an analysis, this block of code will force to load all labels so LabelLoader can validate them
+         * and detect if there are more than one 'LabelSet' using the same ID.
          */
         List<Path> userLabelsPaths = new ArrayList<>();
         if (fileObject != null)
