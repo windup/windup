@@ -20,12 +20,12 @@ public class TagHandler implements ElementHandler<String>
     @Override
     public String processElement(ParserContext context, Element element)
     {
-        String message = $(element).text();
-        if (StringUtils.isBlank(message))
+        String content = element.getTextContent();
+        if (StringUtils.isBlank(content))
         {
             throw new WindupException("Error, 'tag' element must not be blank");
         }
-        return message;
+        return content;
     }
 
 }
