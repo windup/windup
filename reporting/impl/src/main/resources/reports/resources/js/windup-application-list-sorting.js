@@ -93,7 +93,10 @@ $(document).ready(function () {
             var html = $('<dt></dt><dd></dd>');
 
             var dt = html.filter('dt');
-            dt.text(runtimeTarget.name);
+            var dtSpan = $('<span></span>');
+            dtSpan.text(runtimeTarget.name);
+            dtSpan.attr('title', runtimeTarget.description);
+            dt.append(dtSpan);
 
             var dd = html.filter('dd');
             runtimeTarget.supported.forEach(label => {
