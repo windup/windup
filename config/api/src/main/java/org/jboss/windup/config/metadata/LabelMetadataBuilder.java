@@ -16,14 +16,13 @@ public class LabelMetadataBuilder extends AbstractLabelsetMetadata implements La
      */
     public LabelMetadataBuilder(String ID, String description)
     {
-        super(ID);
-        this.description = description;
-        this.priority = Integer.MAX_VALUE;
+        this(ID, description, Integer.MAX_VALUE);
     }
 
     public LabelMetadataBuilder(String ID, String description, int priority)
     {
-        this(ID, description);
+        super(ID);
+        this.description = description;
         this.priority = priority;
     }
 
