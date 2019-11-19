@@ -44,6 +44,13 @@ public class Label
      */
     private String labelString;
 
+    public Label(String id, String name)
+    {
+        this.id = id;
+        this.name = name;
+        this.description = null;
+    }
+
     public Label(String id, String name, String description)
     {
         this.id = id;

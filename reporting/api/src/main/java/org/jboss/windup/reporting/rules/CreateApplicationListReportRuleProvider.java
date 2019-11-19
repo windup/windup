@@ -154,7 +154,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         return Json.createObjectBuilder()
                     .add("id", label.getId())
                     .add("name", label.getName())
-                    .add("description", label.getDescription())
+                    .add("description", label.getDescription() != null ? label.getDescription() : "")
                     .add("supported", supportedJsonArrayBuilder.build())
                     .add("unsuitable", unsuitableJsonArrayBuilder.build())
                     .add("neutral", neutralJsonArrayBuilder.build())

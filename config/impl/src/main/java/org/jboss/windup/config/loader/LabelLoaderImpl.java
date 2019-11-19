@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -116,18 +117,43 @@ public class LabelLoaderImpl implements LabelLoader
 
         for (LabelProvider provider : providers)
         {
+            if (ruleLoaderContext.getLabelProviderFilter() != null)
+            {
+                boolean accepted = ruleLoaderContext.getLabelProviderFilter().accept(provider);
+                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleLoaderContext.getLabelProviderFilter() + "]");
+                if (!accepted)
+                    continue;
+            }
+
             List<Label> labels = provider.getData().getLabels();
+
+            // Validate repeated IDs
             List<String> labelIDs = labels.stream().map(Label::getId)
                         .collect(Collectors.toList());
             List<Label> repeatedLabels = labels.stream()
                         .filter(i -> Collections.frequency(labelIDs, i.getId()) > 1)
                         .collect(Collectors.toList());
-
             if (!repeatedLabels.isEmpty())
             {
                 throw new WindupException("Found multiple labels with the same id: " +
                             repeatedLabels.stream().map(Label::getId).distinct().collect(Collectors.joining(",")) +
                             " within the same labelSet: " + provider.getMetadata().getID());
+            }
+
+            // Validate Label Bean
+            List<Label> invalidLabels = labels
+                        .stream()
+                        .filter(p -> Objects.isNull(p.getId()) ||
+                                    Objects.isNull(p.getName()) ||
+                                    p.getId().trim().isEmpty() ||
+                                    p.getName().trim().isEmpty())
+                        .collect(Collectors.toList());
+            if (!invalidLabels.isEmpty())
+            {
+                throw new WindupException("Found invalid labels: " +
+                            invalidLabels.stream().map(Label::getId).collect(Collectors.joining(",")) +
+                            " within the labelSet:" + provider.getMetadata().getID()
+                            + ". Label[id] and Label[name] name should not be null or empty");
             }
 
             registry.setLabels(provider, labels);
