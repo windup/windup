@@ -532,11 +532,11 @@ h1 .glyphicon-info-sign:before {
 /*Runtime label legend utils*/
 
 .dl-horizontal-small dt {
-    width: 70px !important;
+    width: 80px !important;
 }
 
 .dl-horizontal-small dd {
-    margin-left: 82px;
+    margin-left: 92px;
 }
 
 .fileName .label {
