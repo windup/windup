@@ -24,8 +24,8 @@
 
     <xs:complexType name="label">
         <xs:sequence>
-            <xs:element name="name" type="xs:string" />
-            <xs:element name="description" type="xs:string" />
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="supported" type="tags" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unsuitable" type="tags" minOccurs="0" maxOccurs="1"/>
             <xs:element name="neutral" type="tags" minOccurs="0" maxOccurs="1"/>
