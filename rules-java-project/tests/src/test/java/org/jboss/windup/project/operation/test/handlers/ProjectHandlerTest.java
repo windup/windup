@@ -21,7 +21,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
-import org.jboss.windup.project.condition.Version;
+import org.jboss.windup.rules.apps.java.condition.Version;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
