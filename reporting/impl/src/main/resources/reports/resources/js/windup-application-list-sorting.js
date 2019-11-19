@@ -92,10 +92,12 @@ $(document).ready(function () {
         function makeRuntimeLegend(runtimeTarget) {
             var html = $('<dt></dt><dd></dd>');
 
+            var title = runtimeTarget.name + (runtimeTarget.description ? (" - " + runtimeTarget.description) : "");
+
             var dt = html.filter('dt');
             var dtSpan = $('<span></span>');
             dtSpan.text(runtimeTarget.name);
-            dtSpan.attr('title', runtimeTarget.description);
+            dtSpan.attr('title', title);
             dt.append(dtSpan);
 
             var dd = html.filter('dd');
