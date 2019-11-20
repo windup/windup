@@ -24,8 +24,10 @@ public class PathUtil
 
     public static final String WINDUP_HOME = "windup.home";
     public static final String WINDUP_RULESETS_DIR_SYSPROP = "windup.rulesets.dir";
+    public static final String WINDUP_LABELSETS_DIR_SYSPROP = "windup.labelsets.dir";
 
     public static final String RULES_DIRECTORY_NAME = "rules";
+    public static final String LABELS_DIRECTORY_NAME = "labels";
     public static final String IGNORE_DIRECTORY_NAME = "ignore";
     public static final String CACHE_DIRECTORY_NAME = "cache";
     public static final String ADDONS_DIRECTORY_NAME = "addons";
@@ -116,6 +118,14 @@ public class PathUtil
     }
 
     /**
+     * The path $USER_HOME/labels
+     */
+    public static Path getUserLabelsDir()
+    {
+        return getUserSubdirectory(LABELS_DIRECTORY_NAME);
+    }
+
+    /**
      * The path $WINDUP_HOME/rules
      */
     public static Path getWindupRulesDir()
@@ -130,6 +140,23 @@ public class PathUtil
         }
         else
             return getWindupSubdirectory(RULES_DIRECTORY_NAME);
+    }
+
+    /**
+     * The path $WINDUP_HOME/labels
+     */
+    public static Path getWindupLabelsDir()
+    {
+        String labelsDir = System.getProperty(WINDUP_LABELSETS_DIR_SYSPROP);
+        if (labelsDir != null)
+        {
+            Path path = Paths.get(labelsDir);
+            if (!path.toFile().exists())
+                LOG.warning(WINDUP_LABELSETS_DIR_SYSPROP + " points to a non-existent directory!" + path.toAbsolutePath().toString());
+            return path;
+        }
+        else
+            return getWindupSubdirectory(LABELS_DIRECTORY_NAME);
     }
 
     /**

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema targetNamespace="http://windup.jboss.org/schema/jboss-labelset" xmlns="http://windup.jboss.org/schema/jboss-labelset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+
+    <!-- Root element. -->
+    <xs:element name="labelset">
+        <xs:annotation>
+            <xs:documentation>Root element of Windup labelset.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="labels" minOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="label" minOccurs="0" maxOccurs="unbounded" type="label" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="id" use="optional" />
+            <xs:attribute type="xs:integer" name="priority" use="optional" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="label">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="supported" type="tags" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="unsuitable" type="tags" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="neutral" type="tags" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="id" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="tags">
+        <xs:sequence>
+            <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

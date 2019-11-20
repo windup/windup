@@ -162,6 +162,17 @@ public class WindupProcessorImpl implements WindupProcessor
                 configurationModel.addUserRulesPath(getFileModel(context, path));
             }
 
+            for (Path path : configuration.getAllUserLabelsDirectories())
+            {
+                System.out.println("Using user labels dir: " + path);
+                if (path == null)
+                {
+                    throw new WindupException("Null path found (all paths are: "
+                            + configuration.getAllUserLabelsDirectories() + ")");
+                }
+                configurationModel.addUserLabelsPath(getFileModel(context, path));
+            }
+
             for (Path path : configuration.getAllIgnoreDirectories())
             {
                 configurationModel.addUserIgnorePath(getFileModel(context, path));

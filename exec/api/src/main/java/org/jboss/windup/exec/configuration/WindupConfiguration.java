@@ -32,6 +32,7 @@ import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.exec.configuration.options.UserLabelsDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
@@ -45,6 +46,7 @@ import org.ocpsoft.rewrite.config.Rule;
 public class WindupConfiguration
 {
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
+    private static final String DEFAULT_USER_LABELS_DIRECTORIES_OPTION = "defaultUserLabelsDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
     public static final boolean DEFAULT_ONLINE = false;
 
@@ -69,6 +71,17 @@ public class WindupConfiguration
         if (userRulesDir != null)
         {
             addDefaultUserRulesDirectory(userRulesDir);
+            addDefaultUserLabelsDirectory(userRulesDir); // Search for labels into /rules folder
+        }
+
+        Path userLabelsDir = PathUtil.getUserLabelsDir();
+        if (userLabelsDir != null && !Files.isDirectory(userLabelsDir))
+        {
+            Files.createDirectories(userLabelsDir);
+        }
+        if (userLabelsDir != null)
+        {
+            addDefaultUserLabelsDirectory(userLabelsDir);
         }
 
         Path userIgnoreDir = PathUtil.getUserIgnoreDir();
@@ -89,6 +102,17 @@ public class WindupConfiguration
         if (windupHomeRulesDir != null)
         {
             addDefaultUserRulesDirectory(windupHomeRulesDir);
+            addDefaultUserLabelsDirectory(windupHomeRulesDir); // Search for labels into /rules folder
+        }
+
+        Path windupHomeLabelsDir = PathUtil.getWindupLabelsDir();
+        if (windupHomeLabelsDir != null && !Files.isDirectory(windupHomeLabelsDir))
+        {
+            Files.createDirectories(windupHomeLabelsDir);
+        }
+        if (windupHomeLabelsDir != null)
+        {
+            addDefaultUserLabelsDirectory(windupHomeLabelsDir);
         }
 
         Path windupHomeIgnoreDir = PathUtil.getWindupIgnoreDir();
@@ -297,6 +321,25 @@ public class WindupConfiguration
     }
 
     /**
+     * Gets all user label directories. This includes both the ones that they specify (eg, /path/to/rules) as well as ones that Windup provides by
+     * default (eg, WINDUP_HOME/rules and ~/.windup/rules).
+     */
+    public Iterable<Path> getAllUserLabelsDirectories()
+    {
+        Set<Path> results = new HashSet<>();
+        results.addAll(getDefaultUserLabelsDirectories());
+
+        Collection<File> userSpecifiedFiles = getOptionValue(UserLabelsDirectoryOption.NAME);
+        if (userSpecifiedFiles != null && !userSpecifiedFiles.isEmpty())
+        {
+            userSpecifiedFiles.stream().forEach(file -> {
+                results.add(file.toPath());
+            });
+        }
+        return results;
+    }
+
+    /**
      * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
      * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
      *
@@ -320,6 +363,19 @@ public class WindupConfiguration
     public List<Path> getDefaultUserRulesDirectories()
     {
         List<Path> paths = getOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(paths);
+    }
+
+    /**
+     * Contains a list of {@link Path}s with directories that contains user provided labels.
+     */
+    public List<Path> getDefaultUserLabelsDirectories()
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION);
         if (paths == null)
         {
             return Collections.emptyList();
@@ -365,6 +421,44 @@ public class WindupConfiguration
                     return this;
                 }
         
+                for (Path existingPath : paths)
+                {
+                    if (existingPath.equals(path))
+                    {
+                        return this;
+                    }
+                }
+            }
+        }
+        paths.add(path);
+        return this;
+    }
+
+    /**
+     * Contains a list of {@link Path}s with the directory that contains user provided labels.
+     *
+     * This method does guard against duplicate directories.
+     */
+    public WindupConfiguration addDefaultUserLabelsDirectory(Path path)
+    {
+        List<Path> paths = getOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION);
+        if (paths == null)
+        {
+            paths = new ArrayList<>();
+            setOptionValue(DEFAULT_USER_LABELS_DIRECTORIES_OPTION, paths);
+        }
+
+        Iterable<File> userLabelsDirs= getOptionValue(UserLabelsDirectoryOption.NAME);
+        if (userLabelsDirs != null)
+        {
+            for (File userSpecifiedLabelsFile : userLabelsDirs)
+            {
+
+                if (userSpecifiedLabelsFile != null && userSpecifiedLabelsFile.toPath().equals(path))
+                {
+                    return this;
+                }
+
                 for (Path existingPath : paths)
                 {
                     if (existingPath.equals(path))
