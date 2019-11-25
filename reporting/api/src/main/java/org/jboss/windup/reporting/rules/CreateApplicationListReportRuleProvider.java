@@ -1,26 +1,22 @@
 package org.jboss.windup.reporting.rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.LabelProvider;
+import org.jboss.windup.config.loader.LabelLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.metadata.Label;
+import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -29,6 +25,20 @@ import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This renders an application index page listing all applications analyzed by the current execution of windup.
@@ -52,6 +62,8 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
     @Inject
     private Furnace furnace;
 
+    @Inject
+    private LabelLoader labelLoader;
 
     // @formatter:off
     @Override
@@ -70,6 +82,25 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
     private void createIndexReport(GraphContext context)
     {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
+        List<Path> userLabelPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
+
+        // Load all labels from xml files
+        List<Label> labels = new ArrayList<>();
+        RuleLoaderContext labelLoaderContext = new RuleLoaderContext(userLabelPaths, null);
+        LabelProviderRegistry labelProviderRegistry = labelLoader.loadConfiguration(labelLoaderContext);
+        for (LabelProvider provider : labelProviderRegistry.getProviders())
+        {
+            labels.addAll(provider.getData().getLabels());
+        }
+
+        JsonArrayBuilder labelsJsonArrayBuilder = Json.createArrayBuilder();
+        for (Label label : labels)
+        {
+            labelsJsonArrayBuilder.add(toJson(label));
+        }
+        JsonArray labelsJsonArray = labelsJsonArrayBuilder.build();
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
         ApplicationReportModel report = applicationReportService.create();
@@ -82,10 +113,14 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setDisplayInApplicationReportIndex(false);
         report.setReportFilename(OUTPUT_FILENAME);
 
+        Map<String, String> properties = new HashMap<>();
+        properties.put("target_runtimes", labelsJsonArray.toString());
+        report.setReportProperties(properties);
+
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         final Iterable<ApplicationReportModel> apps = applicationReportService.findAll();
-        List<ApplicationReportModel> appsList = new ArrayList();
+        List<ApplicationReportModel> appsList = new ArrayList<>();
         for (ApplicationReportModel applicationReportModel : apps)
         {
             if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
@@ -106,7 +141,25 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setRelatedResource(relatedData);
     }
 
+    private JsonObject toJson(Label label)
+    {
+        JsonArrayBuilder supportedJsonArrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder unsuitableJsonArrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder neutralJsonArrayBuilder = Json.createArrayBuilder();
 
+        label.getSupported().forEach(supportedJsonArrayBuilder::add);
+        label.getUnsuitable().forEach(unsuitableJsonArrayBuilder::add);
+        label.getNeutral().forEach(neutralJsonArrayBuilder::add);
+
+        return Json.createObjectBuilder()
+                    .add("id", label.getId())
+                    .add("name", label.getName())
+                    .add("description", label.getDescription() != null ? label.getDescription() : "")
+                    .add("supported", supportedJsonArrayBuilder.build())
+                    .add("unsuitable", unsuitableJsonArrayBuilder.build())
+                    .add("neutral", neutralJsonArrayBuilder.build())
+                    .build();
+    }
 
     public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
     {

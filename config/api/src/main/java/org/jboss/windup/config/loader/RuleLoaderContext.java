@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
@@ -16,6 +17,7 @@ public class RuleLoaderContext
     private final Context context;
     private final Iterable<Path> rulePaths;
     private final Predicate<RuleProvider> ruleProviderFilter;
+    private final Predicate<LabelProvider> labelProviderFilter;
     private boolean fileBasedRulesOnly;
 
     public RuleLoaderContext()
@@ -25,6 +27,7 @@ public class RuleLoaderContext
         };
         this.rulePaths = Collections.emptyList();
         this.ruleProviderFilter = (provider) -> true;
+        this.labelProviderFilter = (provider) -> true;
     }
 
     public RuleLoaderContext(Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter)
@@ -34,6 +37,17 @@ public class RuleLoaderContext
         };
         this.rulePaths = rulePaths;
         this.ruleProviderFilter = ruleProviderFilter;
+        this.labelProviderFilter = (provider) -> true;
+    }
+
+    public RuleLoaderContext(Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter, Predicate<LabelProvider> labelProviderFilter)
+    {
+        this.context = new ContextBase()
+        {
+        };
+        this.rulePaths = rulePaths;
+        this.ruleProviderFilter = ruleProviderFilter;
+        this.labelProviderFilter = labelProviderFilter;
     }
 
     public RuleLoaderContext(Context context, Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter)
@@ -41,6 +55,15 @@ public class RuleLoaderContext
         this.context = context;
         this.rulePaths = rulePaths;
         this.ruleProviderFilter = ruleProviderFilter;
+        this.labelProviderFilter = (provider) -> true;
+    }
+
+    public RuleLoaderContext(Context context, Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter, Predicate<LabelProvider> labelProviderFilter)
+    {
+        this.context = context;
+        this.rulePaths = rulePaths;
+        this.ruleProviderFilter = ruleProviderFilter;
+        this.labelProviderFilter = labelProviderFilter;
     }
 
     public RuleLoaderContext setFileBasedRulesOnly()
@@ -67,5 +90,9 @@ public class RuleLoaderContext
     public Predicate<RuleProvider> getRuleProviderFilter()
     {
         return ruleProviderFilter;
+    }
+
+    public Predicate<LabelProvider> getLabelProviderFilter() {
+        return labelProviderFilter;
     }
 }

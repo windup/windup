@@ -8,7 +8,7 @@
 
 <#macro tagRenderer tag>
     <#if tag.level?? && tag.level == "IMPORTANT">
-        <span class="label label-danger" title="${tag.level}">
+        <span class="label label-info label-important" title="${tag.level}">
     <#else>
         <span class="label label-info" title="${tag.level}">
     </#if>
@@ -78,7 +78,7 @@
 
         <div class="traits">
             <div class="fileName">
-                <a href="reports/${appReport.reportFilename}">
+                <a href="reports/${appReport.reportFilename}" style="float: left; margin-right: 5px;">
                     <#-- For virtual apps, use name rather than the file name. -->
                     ${ (appReport.projectModel.projectType! = "VIRTUAL"
                         && appReport.projectModel.name??)?then(
@@ -91,7 +91,7 @@
                     <a href="${appReport.projectModel.csvFilename}">(CSV Report)</a>
                 </div>
             </#if>
-            <div class="techs">
+            <div class="techs" style="clear: left;">
                 <#list getTechnologyTagsForProjectTraversal(allTraversal) as tag>
                     <#if tag.name != "Decompiled Java File">
                     <@tagRenderer tag>
@@ -148,6 +148,10 @@
 
         body.viewAppList .apps .appInfo:first-of-type { border-top: 1px solid gray; }
     </style>
+
+    <script type="text/javascript">
+         var TARGET_RUNTIME = JSON.parse('${reportModel.reportProperties["target_runtimes"]}');
+     </script>
 </head>
 <body role="document" class="viewAppList" style="margin: auto;">
 
@@ -183,6 +187,21 @@
         <section class="apps">
             <#assign virtualAppExists = false>
             <div class="real">
+                <fieldset style="margin-bottom: 10px;">
+                    <legend>
+                        <a style="float: left; margin-right: 5px;" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
+                        <div style="display: inline;">
+                            <span class="label label-success">Supported</span>
+                            <span class="label label-warning">Partially supported</span>
+                            <span class="label label-danger">Unsuitable</span>
+                        </div>
+                    </legend>
+                    <div id="runtimeLegendContent" class="collapse">
+                        <dl class="dl-horizontal dl-horizontal-small left"></dl>
+                    </div>
+                    <br>
+                </fieldset>
+
                 <#-- See CreateApplicationListReportRuleProvider -->
                 <#--
                 <#list iterableToList(reportModel.relatedResources.applications)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>

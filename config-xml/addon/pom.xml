@@ -74,6 +74,7 @@
                         <configuration>
                             <tasks>
                                 <copy file="../schema/windup-jboss-ruleset.xsd" tofile="${project.build.directory}/schema-versioned/windup-jboss-ruleset-${project.version}.xsd" />
+                                <copy file="../schema/windup-jboss-labelset.xsd" tofile="${project.build.directory}/schema-versioned/windup-jboss-labelset-${project.version}.xsd" />
                             </tasks>
                         </configuration>
                     </execution>

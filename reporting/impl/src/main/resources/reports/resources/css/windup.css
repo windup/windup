@@ -528,3 +528,40 @@ h1 .glyphicon-info-sign:before {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
 }
+
+/*Runtime label legend utils*/
+
+.dl-horizontal-small dt {
+    width: 80px !important;
+}
+
+.dl-horizontal-small dd {
+    margin-left: 92px;
+}
+
+.fileName .label {
+    border-style: outset;
+    cursor: pointer;
+}
+
+.label-success.active {
+    color: #fff;
+    background-color: #2c8463;
+    border-color: #255625;
+}
+
+.label-warning.active {
+    color: #fff;
+    background-color: #c67d15;
+    border-color: #d58512;
+}
+
+.label-danger.active {
+    color: #fff;
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.label-success.active, .label-warning.active, .label-danger.active {
+    border-style: inset;
+}

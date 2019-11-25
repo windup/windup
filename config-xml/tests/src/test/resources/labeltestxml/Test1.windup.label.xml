@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labelset id="testlabelprovider1"
+          priority="1"
+          xmlns="http://windup.jboss.org/schema/jboss-labelset"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://windup.jboss.org/schema/jboss-labelset http://windup.jboss.org/schema/jboss-labelset/windup-jboss-labelset.xsd">
+    <labels>
+        <label id="label1">
+            <name>Label1</name>
+            <description>Label1 test</description>
+            <supported>
+                <tag>tag1</tag>
+            </supported>
+            <unsuitable>
+                <tag>tag2</tag>
+                <tag>tag3</tag>
+            </unsuitable>
+            <neutral>
+                <tag>tag4</tag>
+                <tag>tag5</tag>
+                <tag>tag6</tag>
+            </neutral>
+        </label>
+        <label id="label2">
+            <name>Label2</name>
+            <description>Label2 test</description>
+            <supported>
+                <tag>tag7</tag>
+            </supported>
+            <unsuitable>
+                <tag>tag8</tag>
+            </unsuitable>
+        </label>
+    </labels>
+</labelset>
