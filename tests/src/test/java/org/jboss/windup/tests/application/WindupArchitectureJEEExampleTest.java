@@ -324,11 +324,12 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateTechReport(context, bubblesExpected, boxesExpected);
     }
 
-    private void validateLabels(GraphContext context) {
+    private void validateLabels(GraphContext context)
+    {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = reportService.getUniqueByProperty(
-                ReportModel.TEMPLATE_PATH,
-                CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
+                    ReportModel.TEMPLATE_PATH,
+                    CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
         Assert.assertNotNull(reportModel);
 
         Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
@@ -346,10 +347,11 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     {
         WebElement runtimeLegendContent = util.getApplicationTargetRuntimeLegendContent();
         WebElement legendsDL = runtimeLegendContent.findElement(By.tagName("dl"));
-        
+
         // validate tech sort
         List<WebElement> dd = legendsDL.findElements(By.tagName("dd"));
-        for (WebElement webElement : dd) {
+        for (WebElement webElement : dd)
+        {
             List<WebElement> supportedTechLabels = webElement.findElements(By.className("label-success"));
             List<WebElement> unsuitableTechLabels = webElement.findElements(By.className("label-danger"));
             List<WebElement> neutralTechLabels = webElement.findElements(By.className("label-info"));
@@ -360,12 +362,15 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         }
     }
 
-    private boolean verifyOrderedAlphabetically(List<WebElement> webElements) {
+    private boolean verifyOrderedAlphabetically(List<WebElement> webElements)
+    {
         boolean ordered = true;
-        for (int i = 1; i < webElements.size(); i++) {
+        for (int i = 1; i < webElements.size(); i++)
+        {
             WebElement currentWebElement = webElements.get(i);
             WebElement previousWebElement = webElements.get(i - 1);
-            if (currentWebElement.getText().trim().compareTo(previousWebElement.getText().trim()) < 0) {
+            if (currentWebElement.getText().trim().compareTo(previousWebElement.getText().trim()) < 0)
+            {
                 ordered = false;
                 break;
             }
@@ -394,7 +399,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertEquals(LABEL_SUCCESS, spanTarget3.getAttribute("class"));
     }
 
-    private void validateApplicationTargetRuntimeLabelsClickable(TestApplicationListUtil util) {
+    private void validateApplicationTargetRuntimeLabelsClickable(TestApplicationListUtil util)
+    {
         final String appName = "jee-example-app-1.0.0.ear";
 
         List<WebElement> targetRuntimes = util.getApplicationTargetRuntimeLabels(appName);
@@ -441,7 +447,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         verifyTechLabelsInitialState(applicationTechLabels);
     }
 
-    private void verifyTechLabelsInitialState(List<WebElement> applicationTechLabels) {
+    private void verifyTechLabelsInitialState(List<WebElement> applicationTechLabels)
+    {
         for (WebElement webElement : applicationTechLabels)
         {
             String techLabelClass = webElement.getAttribute("class");
@@ -452,7 +459,10 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         }
     }
 
-    private void verifyTechLabelsClicked(List<WebElement> applicationTechLabels, List<String> supported, List<String> unsuitable, List<String> neutral) {
+    private void verifyTechLabelsClicked(
+                List<WebElement> applicationTechLabels,
+                List<String> supported, List<String> unsuitable, List<String> neutral)
+    {
         for (WebElement webElement : applicationTechLabels)
         {
             String techLabel = webElement.getText().trim();
