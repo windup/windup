@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labelset id="custom_labels"
+          xmlns="http://windup.jboss.org/schema/jboss-labelset"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://windup.jboss.org/schema/jboss-labelset http://windup.jboss.org/schema/jboss-labelset/windup-jboss-labelset.xsd">
+    <labels>
+        <label id="target1">
+            <name>Target1</name>
+            <description>Custom target runtime 2</description>
+            <supported>
+                <tag>EJB*</tag>
+            </supported>
+            <unsuitable>
+                <tag>WebLogic*</tag>
+            </unsuitable>
+            <neutral>
+                <tag>Maven XML*</tag>
+                <tag>Web XML*</tag>
+            </neutral>
+        </label>
+        <label id="target2">
+            <name>Target2</name>
+            <description>Custom target runtime 1</description>
+            <supported>
+                <tag>WebLogic*</tag>
+            </supported>
+            <unsuitable>
+                <tag>JPA*</tag>
+            </unsuitable>
+            <neutral>
+                <tag>Maven XML*</tag>
+                <tag>Web XML*</tag>
+            </neutral>
+        </label>
+        <label id="target3">
+            <name>Target3</name>
+            <description>Custom target runtime 3</description>
+            <supported>
+                <tag>WebLogic*</tag>
+                <tag>EJB*</tag>
+            </supported>
+            <unsuitable>
+                <tag>JPA*</tag>
+            </unsuitable>
+            <neutral>
+                <tag>Maven XML*</tag>
+                <tag>Web XML*</tag>
+                <tag>Manifest</tag>
+                <tag>Properties</tag>
+            </neutral>
+        </label>
+    </labels>
+</labelset>
