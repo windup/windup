@@ -2,6 +2,11 @@ $(document).ready(function () {
 
     // TARGET_RUNTIME is defined in application_list.ftl
     var RUNTIME_TARGETS = TARGET_RUNTIME;
+    RUNTIME_TARGETS.forEach(runtimeTarget => {
+        runtimeTarget.supported.sort();
+        runtimeTarget.unsuitable.sort();
+        runtimeTarget.neutral.sort();
+    });
 
     function runtimeConfig() {
         var runtimeLegendContentDiv = $('#runtimeLegendContent');
@@ -106,6 +111,9 @@ $(document).ready(function () {
             });
             runtimeTarget.unsuitable.forEach(label => {
                 dd.append(makeLegendLabel('danger', label));
+            });
+            runtimeTarget.neutral.forEach(label => {
+                dd.append(makeLegendLabel('info', label));
             });
 
             return html;

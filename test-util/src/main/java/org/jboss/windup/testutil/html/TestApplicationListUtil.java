@@ -78,6 +78,55 @@ public class TestApplicationListUtil extends TestChromeDriverReportUtil
         return Collections.unmodifiableList(result);
     }
 
+    public WebElement getApplicationTargetRuntimeLegendContent()
+    {
+        return getDriver().findElement(By.id("runtimeLegendContent"));
+    }
+
+    public List<WebElement> getApplicationTargetRuntimeLabels(String applicationName)
+    {
+        List<WebElement> result = new ArrayList<>();
+
+        List<WebElement> appInfoElements = getDriver().findElements(By.cssSelector(".appInfo"));
+        for (WebElement appInfoRow : appInfoElements)
+        {
+            WebElement filename = appInfoRow.findElement(By.cssSelector(".fileName"));
+            if (filename != null) {
+                WebElement tagLink = filename.findElement(By.tagName("a"));
+                if (!tagLink.getText().trim().equals(applicationName)) {
+                    continue;
+                }
+
+                WebElement tagDiv = filename.findElement(By.tagName("div"));
+                result.addAll(tagDiv.findElements(By.tagName("a")));
+            }
+        }
+
+        return Collections.unmodifiableList(result);
+    }
+
+    public List<WebElement> getApplicationTechLabels(String applicationName)
+    {
+        List<WebElement> result = new ArrayList<>();
+
+        List<WebElement> appInfoElements = getDriver().findElements(By.cssSelector(".appInfo"));
+        for (WebElement appInfoRow : appInfoElements)
+        {
+            WebElement filename = appInfoRow.findElement(By.cssSelector(".fileName"));
+            if (filename != null) {
+                WebElement tagLink = filename.findElement(By.tagName("a"));
+                if (!tagLink.getText().trim().equals(applicationName)) {
+                    continue;
+                }
+
+                List<WebElement> techLabels = appInfoRow.findElements(By.cssSelector(".techs .label"));
+                result.addAll(techLabels);
+            }
+        }
+
+        return Collections.unmodifiableList(result);
+    }
+
     public void clickTag(String applicationName, String tagName)
     {
         WebElement applicationRow = getApplicationRow(applicationName);

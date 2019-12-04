@@ -3,6 +3,8 @@ package org.jboss.windup.tests.application;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,12 +24,14 @@ import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TechReportModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
+import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
+import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
@@ -35,10 +39,18 @@ import org.jboss.windup.testutil.html.TestTechReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 {
+    static final String LABEL_SUCCESS = "label label-success";
+    static final String LABEL_DANGER = "label label-danger";
+    static final String LABEL_WARNING = "label label-warning";
+    static final String LABEL_INFO = "label label-info";
+    static final String LABEL_DEFAULT = "label label-default";
+
     @Deployment
     @AddonDependencies({
         @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
@@ -70,6 +82,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             validateEjbXmlReferences(context);
             validateReports(context);
             validateParentOfSourceReports(context);
+            validateLabels(context);
         }
     }
 
@@ -309,5 +322,168 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Execute", "Rules & Processes", "iLog", 1, 1));
 
         validateTechReport(context, bubblesExpected, boxesExpected);
+    }
+
+    private void validateLabels(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
+        Assert.assertNotNull(reportModel);
+
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
+        Assert.assertNotNull(appReportPath);
+
+        TestApplicationListUtil util = new TestApplicationListUtil();
+        util.loadPage(appReportPath);
+
+        validateRuntimeLabelsLegend(util);
+        validateApplicationTargetRuntimeLabels(util);
+        validateApplicationTargetRuntimeLabelsClickable(util);
+    }
+
+    private void validateRuntimeLabelsLegend(TestApplicationListUtil util)
+    {
+        WebElement runtimeLegendContent = util.getApplicationTargetRuntimeLegendContent();
+        WebElement legendsDL = runtimeLegendContent.findElement(By.tagName("dl"));
+
+        // validate tech sort
+        List<WebElement> dd = legendsDL.findElements(By.tagName("dd"));
+        for (WebElement webElement : dd)
+        {
+            List<WebElement> supportedTechLabels = webElement.findElements(By.className("label-success"));
+            List<WebElement> unsuitableTechLabels = webElement.findElements(By.className("label-danger"));
+            List<WebElement> neutralTechLabels = webElement.findElements(By.className("label-info"));
+
+            Assert.assertTrue((verifyOrderedAlphabetically(supportedTechLabels)));
+            Assert.assertTrue((verifyOrderedAlphabetically(unsuitableTechLabels)));
+            Assert.assertTrue((verifyOrderedAlphabetically(neutralTechLabels)));
+        }
+    }
+
+    private boolean verifyOrderedAlphabetically(List<WebElement> webElements)
+    {
+        boolean ordered = true;
+        for (int i = 1; i < webElements.size(); i++)
+        {
+            WebElement currentWebElement = webElements.get(i);
+            WebElement previousWebElement = webElements.get(i - 1);
+            if (currentWebElement.getText().trim().compareTo(previousWebElement.getText().trim()) < 0)
+            {
+                ordered = false;
+                break;
+            }
+        }
+        return ordered;
+    }
+
+    private void validateApplicationTargetRuntimeLabels(TestApplicationListUtil util)
+    {
+        final String appName = "jee-example-app-1.0.0.ear";
+
+        List<WebElement> targetRuntimes = util.getApplicationTargetRuntimeLabels(appName);
+        Assert.assertEquals(3, targetRuntimes.size());
+
+        WebElement spanTarget1 = targetRuntimes.get(0).findElement(By.tagName("span"));
+        WebElement spanTarget2 = targetRuntimes.get(1).findElement(By.tagName("span"));
+        WebElement spanTarget3 = targetRuntimes.get(2).findElement(By.tagName("span"));
+
+        Assert.assertEquals("Target1", spanTarget1.getText().trim());
+        Assert.assertEquals(LABEL_DANGER, spanTarget1.getAttribute("class"));
+
+        Assert.assertEquals("Target2", spanTarget2.getText().trim());
+        Assert.assertEquals(LABEL_WARNING, spanTarget2.getAttribute("class"));
+
+        Assert.assertEquals("Target3", spanTarget3.getText().trim());
+        Assert.assertEquals(LABEL_SUCCESS, spanTarget3.getAttribute("class"));
+    }
+
+    private void validateApplicationTargetRuntimeLabelsClickable(TestApplicationListUtil util)
+    {
+        final String appName = "jee-example-app-1.0.0.ear";
+
+        List<WebElement> targetRuntimes = util.getApplicationTargetRuntimeLabels(appName);
+        Assert.assertEquals(3, targetRuntimes.size());
+
+        WebElement spanTarget1 = targetRuntimes.get(0).findElement(By.tagName("span"));
+        WebElement spanTarget2 = targetRuntimes.get(1).findElement(By.tagName("span"));
+        WebElement spanTarget3 = targetRuntimes.get(2).findElement(By.tagName("span"));
+
+        // Verify initial state of tech labels
+        List<WebElement> applicationTechLabels = util.getApplicationTechLabels(appName);
+        Assert.assertFalse(applicationTechLabels.isEmpty());
+        verifyTechLabelsInitialState(applicationTechLabels);
+
+        // The supported, unsuitable, and neutral values are taken from tests/src/test/xml/rules/test.windup.label.xml
+        spanTarget1.click();
+        applicationTechLabels = util.getApplicationTechLabels(appName);
+        Assert.assertFalse(applicationTechLabels.isEmpty());
+        List<String> supported = Collections.singletonList("EJB");
+        List<String> unsuitable = Collections.singletonList("WebLogic");
+        List<String> neutral = Arrays.asList("Maven XML", "Web XML");
+        verifyTechLabelsClicked(applicationTechLabels, supported, unsuitable, neutral);
+
+        spanTarget2.click();
+        applicationTechLabels = util.getApplicationTechLabels(appName);
+        Assert.assertFalse(applicationTechLabels.isEmpty());
+        supported = Collections.singletonList("WebLogic");
+        unsuitable = Collections.singletonList("JPA");
+        neutral = Arrays.asList("Maven XML", "Web XML");
+        verifyTechLabelsClicked(applicationTechLabels, supported, unsuitable, neutral);
+
+        spanTarget3.click();
+        applicationTechLabels = util.getApplicationTechLabels(appName);
+        Assert.assertFalse(applicationTechLabels.isEmpty());
+        supported = Arrays.asList("WebLogic", "EJB");
+        unsuitable = Collections.singletonList("JPA");
+        neutral = Arrays.asList("Maven XML", "Web XML", "Manifest", "Properties");
+        verifyTechLabelsClicked(applicationTechLabels, supported, unsuitable, neutral);
+
+        // Should unselect all labels
+        spanTarget3.click();
+        applicationTechLabels = util.getApplicationTechLabels(appName);
+        Assert.assertFalse(applicationTechLabels.isEmpty());
+        verifyTechLabelsInitialState(applicationTechLabels);
+    }
+
+    private void verifyTechLabelsInitialState(List<WebElement> applicationTechLabels)
+    {
+        for (WebElement webElement : applicationTechLabels)
+        {
+            String techLabelClass = webElement.getAttribute("class");
+
+            // Assert using contains instead of equals since application_list.ftl contains
+            // an additional class 'label-important' in the labels. E.g. <span class="label label-info label-important" title="${tag.level}">
+            Assert.assertTrue(techLabelClass.contains(LABEL_INFO));
+        }
+    }
+
+    private void verifyTechLabelsClicked(
+                List<WebElement> applicationTechLabels,
+                List<String> supported, List<String> unsuitable, List<String> neutral)
+    {
+        for (WebElement webElement : applicationTechLabels)
+        {
+            String techLabel = webElement.getText().trim();
+            String techLabelClass = webElement.getAttribute("class");
+
+            if (supported.stream().anyMatch(techLabel::startsWith))
+            {
+                Assert.assertEquals(LABEL_SUCCESS, techLabelClass);
+            }
+            else if (unsuitable.stream().anyMatch(techLabel::startsWith))
+            {
+                Assert.assertEquals(LABEL_DANGER, techLabelClass);
+            }
+            else if (neutral.stream().anyMatch(techLabel::startsWith))
+            {
+                Assert.assertEquals(LABEL_DEFAULT, techLabelClass);
+            }
+            else
+            {
+                Assert.assertEquals(LABEL_WARNING, techLabelClass);
+            }
+        }
     }
 }
