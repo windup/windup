@@ -171,6 +171,7 @@ public abstract class WindupArchitectureTest
         if (userRulesDirs != null)        {
             for (File uRulesDir : userRulesDirs)            {
                 windupConfiguration.addDefaultUserRulesDirectory(uRulesDir.toPath());
+                windupConfiguration.addDefaultUserLabelsDirectory(uRulesDir.toPath());
             }
         }
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
