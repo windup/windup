@@ -194,6 +194,7 @@
                             <span class="label label-success">Supported</span>
                             <span class="label label-warning">Partially supported</span>
                             <span class="label label-danger">Unsuitable</span>
+                            <span class="label label-default">Neutral</span>
                         </div>
                     </legend>
                     <div id="runtimeLegendContent" class="collapse">
