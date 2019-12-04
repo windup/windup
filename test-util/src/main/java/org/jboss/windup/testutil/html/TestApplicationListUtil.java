@@ -78,6 +78,11 @@ public class TestApplicationListUtil extends TestChromeDriverReportUtil
         return Collections.unmodifiableList(result);
     }
 
+    public WebElement getApplicationTargetRuntimeLegendHeader()
+    {
+        return getDriver().findElement(By.id("runtimeLegendHeader"));
+    }
+
     public WebElement getApplicationTargetRuntimeLegendContent()
     {
         return getDriver().findElement(By.id("runtimeLegendContent"));

@@ -187,13 +187,14 @@
         <section class="apps">
             <#assign virtualAppExists = false>
             <div class="real">
-                <fieldset style="margin-bottom: 10px;">
-                    <legend>
+                <fieldset id="runtimeLegend" style="margin-bottom: 10px;">
+                    <legend id="runtimeLegendHeader">
                         <a style="float: left; margin-right: 5px;" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
                         <div style="display: inline;">
                             <span class="label label-success">Supported</span>
                             <span class="label label-warning">Partially supported</span>
                             <span class="label label-danger">Unsuitable</span>
+                            <span class="label label-default">Neutral</span>
                         </div>
                     </legend>
                     <div id="runtimeLegendContent" class="collapse">

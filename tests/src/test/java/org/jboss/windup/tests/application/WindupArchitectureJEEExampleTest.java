@@ -338,12 +338,34 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         TestApplicationListUtil util = new TestApplicationListUtil();
         util.loadPage(appReportPath);
 
-        validateRuntimeLabelsLegend(util);
+        validateRuntimeLabelsLegendHeader(util);
+        validateRuntimeLabelsLegendContent(util);
         validateApplicationTargetRuntimeLabels(util);
         validateApplicationTargetRuntimeLabelsClickable(util);
     }
 
-    private void validateRuntimeLabelsLegend(TestApplicationListUtil util)
+    private void validateRuntimeLabelsLegendHeader(TestApplicationListUtil util)
+    {
+        WebElement runtimeLegendHeader = util.getApplicationTargetRuntimeLegendHeader();
+        WebElement legendHeaderText = runtimeLegendHeader.findElement(By.tagName("a"));
+        Assert.assertEquals("Runtime labels legend", legendHeaderText.getText().trim());
+
+        List<WebElement> legendHeaderLabels = runtimeLegendHeader.findElements(By.tagName("span"));
+
+        Assert.assertEquals("Supported", legendHeaderLabels.get(0).getText().trim());
+        Assert.assertEquals(LABEL_SUCCESS, legendHeaderLabels.get(0).getAttribute("class"));
+
+        Assert.assertEquals("Partially supported", legendHeaderLabels.get(1).getText().trim());
+        Assert.assertEquals(LABEL_WARNING, legendHeaderLabels.get(1).getAttribute("class"));
+
+        Assert.assertEquals("Unsuitable", legendHeaderLabels.get(2).getText().trim());
+        Assert.assertEquals(LABEL_DANGER, legendHeaderLabels.get(2).getAttribute("class"));
+
+        Assert.assertEquals("Neutral", legendHeaderLabels.get(3).getText().trim());
+        Assert.assertEquals(LABEL_DEFAULT, legendHeaderLabels.get(3).getAttribute("class"));
+    }
+
+    private void validateRuntimeLabelsLegendContent(TestApplicationListUtil util)
     {
         WebElement runtimeLegendContent = util.getApplicationTargetRuntimeLegendContent();
         WebElement legendsDL = runtimeLegendContent.findElement(By.tagName("dl"));
