@@ -33,9 +33,11 @@ import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,6 +85,7 @@ public class ProjectWithHintTest
             ProjectModel subProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
             MavenProjectModel subsubProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
             subsubProject.setArtifactId("abc");
+            subsubProject.setGroupId("xyz");
             ProjectDependencyModel dependency = context.getFramed().addFramedVertex(ProjectDependencyModel.class);
             dependency.setClassifier("abc");
             dependency.setProject(subsubProject);
@@ -126,10 +129,28 @@ public class ProjectWithHintTest
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            Assert.assertEquals(1, provider.getMatches().size());
+            Assert.assertEquals(4, provider.getMatches().size());
             Assert.assertEquals(3, provider.getMatches().get(0).getLineNumber());
             Assert.assertEquals(4, provider.getMatches().get(0).getColumnNumber());
             Assert.assertEquals(5, provider.getMatches().get(0).getLength());
+
+            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+            List<InlineHintModel> hints = hintService.findAll();
+            Long hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test abc"))
+                    .filter(hint -> hint.getHint().equals("Test abc Body"))
+                    .count();
+            Assert.assertEquals(1l, hintsWithParameterizedHint.longValue());
+            hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test xyz"))
+                    .filter(hint -> hint.getHint().equals("Test xyz Body"))
+                    .count();
+            Assert.assertEquals(1l, hintsWithParameterizedHint.longValue());
+            hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test xyz:abc"))
+                    .filter(hint -> hint.getHint().equals("Test xyz:abc Body"))
+                    .count();
+            Assert.assertEquals(1l, hintsWithParameterizedHint.longValue());
         }
     }
 
@@ -172,7 +193,25 @@ public class ProjectWithHintTest
                     .begin()
                     .addRule()
                     .when(Project.dependsOnArtifact(Artifact.withArtifactId("abc")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch));
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch))
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withArtifactId("{param}")))
+                    .perform(Hint.titled("Test {param}").withText("Test {param} Body").withEffort(42).and(addMatch))
+                    .where("param").matches("abc")
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withGroupId("{param}")))
+                    .perform(Hint.titled("Test {param}").withText("Test {param} Body").withEffort(42).and(addMatch))
+                    .where("param").matches("xyz")
+                    // deliberately not matching rule to have a evaluationStrategy.modelSubmissionRejected() case
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withGroupId("{param}").andArtifactId("{param}")))
+                    .perform(Hint.titled("Test {param}").withText("Test {param} Body").withEffort(42).and(addMatch))
+                    .where("param").matches("xyz")
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withGroupId("{param}").andArtifactId("{param-artifact}")))
+                    .perform(Hint.titled("Test {param}:{param-artifact}").withText("Test {param}:{param-artifact} Body").withEffort(42).and(addMatch))
+                    .where("param").matches("xyz")
+                    .where("param-artifact").matches("abc");
         }
         // @formatter:on
     }

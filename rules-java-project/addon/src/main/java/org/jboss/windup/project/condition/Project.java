@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.util.Maps;
 
 /**
@@ -80,13 +81,14 @@ public class Project extends ParameterizedGraphCondition
                 {
                     boolean passed = true;
                     MavenProjectModel maven = (MavenProjectModel) projectModel;
+                    evaluationStrategy.modelMatched();
                     if (artifact.getGroupId() != null)
                     {
-                        passed = passed && artifact.getGroupId().parse(maven.getGroupId()).matches();
+                        passed = passed && artifact.getGroupId().parse(maven.getGroupId()).submit(event, context);
                     }
                     if (artifact.getArtifactId() != null)
                     {
-                        passed = passed && artifact.getArtifactId().parse(maven.getArtifactId()).matches();
+                        passed = passed && artifact.getArtifactId().parse(maven.getArtifactId()).submit(event, context);
                     }
 
                     if (passed && artifact.getVersion() != null)
@@ -97,9 +99,12 @@ public class Project extends ParameterizedGraphCondition
                     {
                         dependency.getFileLocationReference().forEach(location -> {
                             result.add(location);
-                            evaluationStrategy.modelMatched();
                             evaluationStrategy.modelSubmitted(location);
                         });
+                    }
+                    else
+                    {
+                        evaluationStrategy.modelSubmissionRejected();
                     }
                 }
             }
