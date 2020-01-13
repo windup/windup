@@ -191,7 +191,7 @@
                             </td>
                             </#if>
                             <#assign noOfLibraries = getNumberOfLibraries(appProject) />
-                            <td class="sectorStats libsCount" data-count="${noOfLibraries?c}">
+                            <td class="sectorStats sector libsCount" data-count="${noOfLibraries?c}">
                                 ${ noOfLibraries! }
                             </td>
 
@@ -202,12 +202,12 @@
                             <#assign potentialIssuesCategory = ["potential"] />
 
                             <#assign mandatoryStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
-                            <td class="sectorStats storyPoints" data-count="${mandatoryStoryPoints?c}">
+                            <td class="sectorStats sector storyPoints" data-count="${mandatoryStoryPoints?c}">
                                 ${ mandatoryStoryPoints! }
                             </td>
 
                             <#assign cloudMandatoryStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], cloudMandatoryCategory)! />
-                            <td class="sectorStats storyPoints" data-count="${cloudMandatoryStoryPoints?c}">
+                            <td class="sectorStats sector storyPoints" data-count="${cloudMandatoryStoryPoints?c}">
                                 ${ cloudMandatoryStoryPoints! }
                             </td>
 
@@ -217,13 +217,13 @@
                                 <#if issueCategory.categoryID == "potential">
                                     <#assign potentialFound = true>
                                     <#assign potentialIncidents = incidentCountByCategory?api.get(issueCategory) >
-                                    <td class="sectorStats storyPoints" data-count="${potentialIncidents?c}">
+                                    <td class="sectorStats sector storyPoints" data-count="${potentialIncidents?c}">
                                         ${ potentialIncidents! }
                                     </td>
                                 </#if>
                             </#list>
                             <#if !potentialFound>
-                                <td class="sectorStats storyPoints" data-count="0">
+                                <td class="sectorStats sector storyPoints" data-count="0">
                                     0
                                 </td>
                             </#if>
