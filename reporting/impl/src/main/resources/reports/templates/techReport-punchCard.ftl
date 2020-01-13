@@ -96,7 +96,7 @@
                             <#list sortedBoxTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
-                                    <td class="sector sector${sectorTag.title}"><div style="width: 100%">${boxTag.title!}</div></td>
+                                    <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
                                 </#if>
                             </#list>
                         </#list>
@@ -382,7 +382,7 @@
         }
 
         $().ready(function () {
-            $(".headersGroup .sector").click(function (event) {
+            $(".headersGroup .sector div").click(function (event) {
                 var td = event.target.parentNode;
                 var index = $(td).index();
                 sortTableByColumn(index);
