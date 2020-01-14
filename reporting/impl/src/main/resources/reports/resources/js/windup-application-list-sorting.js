@@ -218,10 +218,13 @@ $(document).ready(function () {
 
             if (unsuitableTags.length > 0) {
                 label.addClass('label-danger');
-            } else if ((neutralTags.length + supportedTags.length) == tags.length) {
+                label.attr('title', "Unsuitable: " + (runtimeTarget.description || tags.name));
+            } else if ((neutralTags.length + supportedTags.length) === tags.length) {
                 label.addClass('label-success');
+                label.attr('title', "Supported: " + (runtimeTarget.description || tags.name));
             } else {
                 label.addClass('label-warning');
+                label.attr('title', "Partially supported: " + (runtimeTarget.description || runtimeTarget.name));
             }
         }
 
