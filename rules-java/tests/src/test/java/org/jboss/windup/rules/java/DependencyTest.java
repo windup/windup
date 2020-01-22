@@ -24,6 +24,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.condition.Dependency;
 import org.jboss.windup.rules.apps.java.condition.Version;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
@@ -140,11 +141,32 @@ public class DependencyTest {
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            Assert.assertEquals(11, provider.getMatches().size());
+            Assert.assertEquals(14, provider.getMatches().size());
             Assert.assertEquals(1, provider.getMatches().get(0).getLineNumber());
             Assert.assertEquals(1, provider.getMatches().get(0).getColumnNumber());
             Assert.assertEquals(1, provider.getMatches().get(0).getLength());
             Assert.assertEquals("Dependency Archive Match", provider.getMatches().get(0).getSourceSnippit());
+
+            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+            List<InlineHintModel> hints = hintService.findAll();
+            Long hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test Hint -logging"))
+                    .filter(hint -> hint.getHint().equals("Test Hint Body -logging"))
+                    .count();
+            Assert.assertEquals(1l, hintsWithParameterizedHint.longValue());
+
+            hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test Hint boot:logging"))
+                    .filter(hint -> hint.getHint().equals("Test Hint Body boot:logging"))
+                    .count();
+            Assert.assertEquals(1l, hintsWithParameterizedHint.longValue());
+
+            hintsWithParameterizedHint = hints.stream()
+                    .filter(hint -> hint.getTitle().equals("Test Hint boot"))
+                    .filter(hint -> hint.getHint().equals("Test Hint Body boot"))
+                    .count();
+            Assert.assertEquals(2l, hintsWithParameterizedHint.longValue());
+
         }
     }
 
@@ -188,7 +210,7 @@ public class DependencyTest {
                     .when(Dependency.withGroupId("org.springframework.{*}")
                             .andArtifactId("spring-boot-starter{artifactName}")
                             .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
-                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(2).and(addMatch))
+                    .perform(Hint.titled("Test Hint {artifactName}").withText("Test Hint Body {artifactName}").withEffort(2).and(addMatch))
                     .where("artifactName").matches("-logging")
                     .addRule()
                     .when(Dependency.withGroupId("org.springframework.{*}")
@@ -216,7 +238,19 @@ public class DependencyTest {
                     .when(Dependency.withGroupId("org.springframework.boot")
                             .andArtifactId("spring-boot-starter-logging")
                             .andVersion(Version.fromVersion("2.1.3.Final").to("3.2")))
-                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(8).and(addMatch));
+                    .perform(Hint.titled("Wrong Test Hint").withText("Wrong Test Hint Body").withEffort(8).and(addMatch))
+                    .addRule()
+                    .when(Dependency.withGroupId("org.springframework.{groupName}")
+                            .andArtifactId("spring-boot-starter-{artifactName}")
+                            .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
+                    .perform(Hint.titled("Test Hint {groupName}:{artifactName}").withText("Test Hint Body {groupName}:{artifactName}").withEffort(9).and(addMatch))
+                    .where("groupName").matches("boot")
+                    .where("artifactName").matches("logging")
+                    .addRule()
+                    .when(Dependency.withGroupId("org.springframework.{groupName}")
+                            .andVersion(Version.fromVersion("1.2.3.RELEASE").to("2.1.3.Final")))
+                    .perform(Hint.titled("Test Hint {groupName}").withText("Test Hint Body {groupName}").withEffort(10).and(addMatch))
+                    .where("groupName").matches("boot");
         }
         // @formatter:on
     }
