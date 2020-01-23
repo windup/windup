@@ -185,6 +185,14 @@ public class FileContentTest
             Assert.assertTrue(foundFile3Needle);
 
             Assert.assertEquals(1, provider.count);
+
+            Assert.assertEquals(1L, provider.rule3ResultStrings.size());
+            Assert.assertEquals("NEEDLE", provider.rule3ResultStrings.get(0));
+            Assert.assertEquals(1L, provider.rule3ResultModels.size());
+            final FileLocationModel fileLocationModel = provider.rule3ResultModels.get(0);
+            Assert.assertEquals("file3.txt", fileLocationModel.getFile().getFileName());
+            Assert.assertEquals(30721, fileLocationModel.getLineNumber());
+            Assert.assertEquals(15 , fileLocationModel.getColumnNumber());
         }
     }
 
@@ -192,10 +200,12 @@ public class FileContentTest
     @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
     public static class FileContentTestRuleProvider extends AbstractRuleProvider
     {
-        private List<String> rule1ResultStrings = new ArrayList<>();
-        private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
-        private List<String> rule2ResultStrings = new ArrayList<>();
-        private List<FileLocationModel> rule2ResultModels = new ArrayList<>();
+        private final List<String> rule1ResultStrings = new ArrayList<>();
+        private final List<FileLocationModel> rule1ResultModels = new ArrayList<>();
+        private final List<String> rule2ResultStrings = new ArrayList<>();
+        private final List<FileLocationModel> rule2ResultModels = new ArrayList<>();
+        private final List<String> rule3ResultStrings = new ArrayList<>();
+        private final List<FileLocationModel> rule3ResultModels = new ArrayList<>();
         public int count = 0;
 
         // @formatter:off
@@ -255,7 +265,29 @@ public class FileContentTest
                      {
                         count++;
                      }}
-            ).endIteration());
+            ).endIteration())
+            .addRule()
+            .when(FileContent.matches(" THE {foo} IN THE HAYSTACK {*}"))
+            .perform(new ParameterizedIterationOperation<FileLocationModel>() {
+                private final RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{foo}");
+
+                @Override
+                public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
+                    rule3ResultStrings.add(textPattern.getBuilder().build(event, context));
+                    rule3ResultModels.add(payload);
+                }
+
+                @Override
+                public Set<String> getRequiredParameterNames() {
+                    return textPattern.getRequiredParameterNames();
+                }
+
+                @Override
+                public void setParameterStore(ParameterStore store) {
+                    textPattern.setParameterStore(store);
+                }
+            })
+            .where("foo").matches("NEEDLE");
          }
         // @formatter:on
     }
