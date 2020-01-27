@@ -225,8 +225,8 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                         if (passed)
                         {
                             evaluationStrategy.modelMatched();
-                            if (parsedFileNamePattern2 == null || (parsedFileNamePattern2.submit(event, context)
-                                        && (contentPattern == null || contentPatternResult.submit(event, context))))
+                            if ((parsedFileNamePattern2 == null || parsedFileNamePattern2.submit(event, context))
+                                        && (contentPattern == null || contentPatternResult.submit(event, context)))
                             {
                                 FileLocationModel fileLocationModel = fileLocationService.create();
                                 fileLocationModel.setFile(fileModel);
