@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.exec</groupId>
         <artifactId>windup-exec-parent</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>4.3.1.Beta1</version>
     </parent>
 
     <artifactId>windup-exec</artifactId>
