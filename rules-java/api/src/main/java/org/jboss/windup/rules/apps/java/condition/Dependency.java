@@ -17,6 +17,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternParser;
+import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
@@ -118,18 +119,28 @@ public class Dependency extends ParameterizedGraphCondition
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
         List<FileLocationModel> result = new ArrayList<>();
         Set<String> archiveFoundFilePaths = new HashSet<>();
-        final Consumer<FileModel> archiveModelConsumer = archiveModel -> {
+        final Consumer<DependencyFound> archiveModelConsumer = (dependencyFound) -> {
             FileLocationModel fileLocationModel = fileLocationService.create();
-            fileLocationModel.setFile(archiveModel);
+            fileLocationModel.setFile(dependencyFound.getFileModel());
             fileLocationModel.setColumnNumber(1);
             fileLocationModel.setLineNumber(1);
             fileLocationModel.setLength(1);
             fileLocationModel.setSourceSnippit("Dependency Archive Match");
 
-            result.add(fileLocationModel);
-            archiveFoundFilePaths.add(archiveModel.getFilePath());
             evaluationStrategy.modelMatched();
-            evaluationStrategy.modelSubmitted(fileLocationModel);
+            ParameterizedPatternResult groupIdParameterizedPatternResult = dependencyFound.getGroupIdParameterizedPattern();
+            ParameterizedPatternResult artifactIdParameterizedPatternResult = dependencyFound.getArtifactIdParameterizedPattern();
+            if ((groupIdParameterizedPatternResult == null || groupIdParameterizedPatternResult.submit(event, context)) &&
+                (artifactIdParameterizedPatternResult == null || artifactIdParameterizedPatternResult.submit(event, context)))
+            {
+                result.add(fileLocationModel);
+                archiveFoundFilePaths.add(dependencyFound.getFileModel().getFilePath());
+                evaluationStrategy.modelSubmitted(fileLocationModel);
+            }
+            else
+            {
+                evaluationStrategy.modelSubmissionRejected();
+            }
         };
 
         // check if the dependency is in one the IdentifiedArchiveModel using the Lucene Maven Index
@@ -138,9 +149,26 @@ public class Dependency extends ParameterizedGraphCondition
         StreamSupport.stream(identifiedArchiveModels.spliterator(), false)
                 // IdentifiedArchiveModel coming from ArchivePackageNameIdentificationGraphChangedListener hasn't got Coordinate so it must be filtered out
                 .filter(identifiedArchiveModel -> identifiedArchiveModel.getCoordinate() != null)
-                .filter(identifiedArchiveModel -> groupId == null || groupId.parse(identifiedArchiveModel.getCoordinate().getGroupId()).matches())
-                .filter(identifiedArchiveModel -> artifactId == null || artifactId.parse(identifiedArchiveModel.getCoordinate().getArtifactId()).matches())
-                .filter(identifiedArchiveModel -> version == null || version.validate(identifiedArchiveModel.getCoordinate().getVersion()))
+                .map(DependencyFound::new)
+                .filter(dependencyFound -> {
+                    if (groupId == null) return true;
+                    else
+                    {
+                        ParameterizedPatternResult groupIdParameterizedPatternResult = groupId.parse(dependencyFound.getFileModel().getCoordinate().getGroupId());
+                        dependencyFound.setGroupIdParameterizedPattern(groupIdParameterizedPatternResult);
+                        return groupIdParameterizedPatternResult.matches();
+                    }
+                })
+                .filter(dependencyFound -> {
+                    if (artifactId == null) return true;
+                    else
+                    {
+                        ParameterizedPatternResult artifactIdParameterizedPatternResult = artifactId.parse(dependencyFound.getFileModel().getCoordinate().getArtifactId());
+                        dependencyFound.setArtifactIdParameterizedPattern(artifactIdParameterizedPatternResult);
+                        return artifactIdParameterizedPatternResult.matches();
+                    }
+                })
+                .filter(dependencyFound -> version == null || version.validate(dependencyFound.getFileModel().getCoordinate().getVersion()))
                 .forEach(archiveModelConsumer);
 
         // it could be that we have found the `pom.xml` file within a JarArchiveModel and hence it could be the dependency we're searching for
@@ -150,9 +178,26 @@ public class Dependency extends ParameterizedGraphCondition
         StreamSupport.stream(jarArchiveModels.spliterator(), false)
                 .filter(jarArchiveModel -> !archiveFoundFilePaths.contains(jarArchiveModel.getFilePath()))
                 .filter(jarArchiveModel -> jarArchiveModel.getProjectModel() instanceof MavenProjectModel)
-                .filter(jarArchiveModelWithMavenPom -> groupId == null || groupId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getGroupId()).matches())
-                .filter(jarArchiveModelWithMavenPom -> artifactId == null || artifactId.parse(((MavenProjectModel)jarArchiveModelWithMavenPom.getProjectModel()).getArtifactId()).matches())
-                .filter(jarArchiveModelWithMavenPom -> version == null || version.validate(jarArchiveModelWithMavenPom.getProjectModel().getVersion()))
+                .map(DependencyFound::new)
+                .filter(dependencyFound -> {
+                    if (groupId == null) return true;
+                    else
+                    {
+                        ParameterizedPatternResult groupIdParameterizedPatternResult = groupId.parse(((MavenProjectModel)dependencyFound.getFileModel().getProjectModel()).getGroupId());
+                        dependencyFound.setGroupIdParameterizedPattern(groupIdParameterizedPatternResult);
+                        return groupIdParameterizedPatternResult.matches();
+                    }
+                })
+                .filter(dependencyFound -> {
+                    if (artifactId == null) return true;
+                    else
+                    {
+                        ParameterizedPatternResult artifactIdParameterizedPatternResult = artifactId.parse(((MavenProjectModel)dependencyFound.getFileModel().getProjectModel()).getArtifactId());
+                        dependencyFound.setArtifactIdParameterizedPattern(artifactIdParameterizedPatternResult);
+                        return artifactIdParameterizedPatternResult.matches();
+                    }
+                })
+                .filter(dependencyFound -> version == null || version.validate(dependencyFound.getFileModel().getProjectModel().getVersion()))
                 .forEach(archiveModelConsumer);
 
         if (result.isEmpty())
@@ -242,5 +287,49 @@ public class Dependency extends ParameterizedGraphCondition
 
         if (artifactId != null)
             artifactId.setParameterStore(store);
+    }
+
+    /**
+     * Class used to collect the found {@link FileModel} together with the matched {@link ParameterizedPatternResult}s
+     * to avoid having to call multiple times the {@link RegexParameterizedPatternParser#parse(java.lang.String)} method
+     * on the same objects to recreate the same {@link ParameterizedPatternResult}s.
+     *
+     * @param <T> the {@link FileModel} found
+     */
+    private static class DependencyFound<T extends FileModel>
+    {
+        private final T fileModel;
+        private ParameterizedPatternResult groupIdParameterizedPattern;
+        private ParameterizedPatternResult artifactIdParameterizedPattern;
+
+        DependencyFound(T fileModel)
+        {
+            this.fileModel = fileModel;
+        }
+
+        public T getFileModel()
+        {
+            return fileModel;
+        }
+
+        public ParameterizedPatternResult getGroupIdParameterizedPattern()
+        {
+            return groupIdParameterizedPattern;
+        }
+
+        public void setGroupIdParameterizedPattern(ParameterizedPatternResult groupIdParameterizedPattern)
+        {
+            this.groupIdParameterizedPattern = groupIdParameterizedPattern;
+        }
+
+        public ParameterizedPatternResult getArtifactIdParameterizedPattern()
+        {
+            return artifactIdParameterizedPattern;
+        }
+
+        public void setArtifactIdParameterizedPattern(ParameterizedPatternResult artifactIdParameterizedPattern)
+        {
+            this.artifactIdParameterizedPattern = artifactIdParameterizedPattern;
+        }
     }
 }

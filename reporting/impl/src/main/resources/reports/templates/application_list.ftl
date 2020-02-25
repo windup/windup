@@ -78,7 +78,7 @@
 
         <div class="traits">
             <div class="fileName">
-                <a href="reports/${appReport.reportFilename}" style="float: left; margin-right: 5px;">
+                <a href="reports/${appReport.reportFilename}" style="float: left; margin-right: 5px; margin-top: 6px;">
                     <#-- For virtual apps, use name rather than the file name. -->
                     ${ (appReport.projectModel.projectType! = "VIRTUAL"
                         && appReport.projectModel.name??)?then(
@@ -189,7 +189,7 @@
             <div class="real">
                 <fieldset id="runtimeLegend" style="margin-bottom: 10px;">
                     <legend id="runtimeLegendHeader">
-                        <a style="float: left; margin-right: 5px;" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
+                        <a style="float: left; margin-right: 5px; margin-top: 2px" role="button" data-toggle="collapse" href="#runtimeLegendContent" aria-expanded="false" aria-controls="runtimeLegendContent">Runtime labels legend</a>
                         <div style="display: inline;">
                             <span class="label label-success">Supported</span>
                             <span class="label label-warning">Partially supported</span>
