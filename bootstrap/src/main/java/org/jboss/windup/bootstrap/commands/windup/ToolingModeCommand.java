@@ -88,6 +88,27 @@ public class ToolingModeCommand implements Command
         List<String> source = this.getSource();
         List<String> target = this.getTarget();
         List<File> rulesDir = this.getUserRulesDir();
+
+        if (input.isEmpty()) {
+            System.out.println("Error - `input` required");
+            return;
+        }
+
+        if (output == null) {
+            System.out.println("Error - `output` required");
+            return;
+        }
+
+        if (windupHome == null) {
+            System.out.println("Error - `windupHome` required");
+            return;
+        }
+
+        if (target.isEmpty()) {
+            System.out.println("Error - `target` required");
+            return;
+        }
+
         System.out.println("Using Data: ");
         System.out.println("input: " + input);
         System.out.println("output: " + output);
@@ -122,10 +143,9 @@ public class ToolingModeCommand implements Command
 
     private String getOutput()
     {
-        int outputIndex = arguments.indexOf(toArg(IOptionKeys.OUTPUT)) + 1;
-        String output = arguments.get(outputIndex);
-        System.out.println(output);
-        return String.valueOf(output);
+        int index = arguments.indexOf(toArg(IOptionKeys.OUTPUT)) + 1;
+        List<String> values = this.getValues(index);
+        return values.size() == 1 ? values.get(0) : null;
     }
 
     private boolean isSourceMode()
@@ -140,16 +160,15 @@ public class ToolingModeCommand implements Command
 
     private List<String> getIgnorePatterns()
     {
-        int index = arguments.indexOf(toArg(IOptionKeys.IGNORE_PATTERN));
+        int index = arguments.indexOf(toArg(IOptionKeys.IGNORE_PATTERN)) + 1;
         return this.getValues(index);
     }
 
     private String getWindupHome()
     {
-        int homeIndex = arguments.indexOf(toArg(IOptionKeys.HOME)) + 1;
-        String home = arguments.get(homeIndex);
-        System.out.println(home);
-        return String.valueOf(home);
+        int index = arguments.indexOf(toArg(IOptionKeys.HOME)) + 1;
+        List<String> values = this.getValues(index);
+        return values.size() == 1 ? values.get(0) : null;
     }
 
     private List<String> getSource()
