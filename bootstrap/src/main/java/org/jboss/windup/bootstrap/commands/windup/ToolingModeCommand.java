@@ -36,8 +36,11 @@ public class ToolingModeCommand implements Command
 
     private static String getAddonDirectory(List<String> arguments)
     {
-        int addDirectoryIndex = arguments.indexOf("--immutableAddonDir") + 1;
-        return arguments.get(addDirectoryIndex);
+        int index = arguments.indexOf("--immutableAddonDir");
+        if (index == -1) {
+            return "";
+        }
+        return arguments.get(++index);
     }
 
     @Override
