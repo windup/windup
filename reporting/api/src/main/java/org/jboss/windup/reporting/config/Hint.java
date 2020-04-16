@@ -1,5 +1,36 @@
 package org.jboss.windup.reporting.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.jboss.forge.furnace.util.Assert;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
+import org.jboss.windup.graph.model.FileLocationModel;
+import org.jboss.windup.graph.model.FileReferenceModel;
+import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.WindupFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+import org.jboss.windup.reporting.model.EffortReportModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
+import org.jboss.windup.reporting.model.QuickfixModel;
+import org.jboss.windup.reporting.quickfix.Quickfix;
+import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
+import org.ocpsoft.rewrite.config.OperationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,36 +40,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Assert;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
-import org.jboss.windup.graph.model.FileLocationModel;
-import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.reporting.model.IssueDisplayMode;
-import org.jboss.windup.reporting.model.QuickfixModel;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
-import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.quickfix.Quickfix;
-import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.reporting.category.IssueCategory;
-import org.jboss.windup.reporting.category.IssueCategoryModel;
-import org.jboss.windup.reporting.category.IssueCategoryRegistry;
-import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.Logging;
-import org.ocpsoft.rewrite.config.OperationBuilder;
-import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.ocpsoft.rewrite.param.ParameterStore;
-import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
-
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
 public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode
 {
     private static final Logger LOG = Logging.get(Hint.class);
+    private static final String HINT_PIPELINE_LABEL = "InlineHintModels";
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
@@ -116,8 +124,67 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         {
             GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
+            String hintText;
+            try
+            {
+                hintText = hintTextPattern.getBuilder().build(event, context);
+            }
+            catch (Throwable t)
+            {
+                LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
+                hintText = hintTextPattern.toString();
+            }
+            hintText = StringUtils.trim(hintText);
+            
+            String hintTitle;
+            if (hintTitlePattern != null)
+            {
+                try
+                {
+                    hintTitle = StringUtils.trim(hintTitlePattern.getBuilder().build(event, context));
+                }
+                catch (Throwable t)
+                {
+                    LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
+                    hintTitle= hintTitlePattern.toString().trim();
+                }
+            }
+            else
+            {
+                // If there is no title, just use the description of the location
+                // (eg, 'Constructing com.otherproduct.Foo()')
+                hintTitle = locationModel.getDescription();
+            }
+            
+            String ruleId = ((Rule) context.get(Rule.class)).getId();
+
+            // NOT checking links, quickfixes and tags since they are not parameterized hence checking the same rule generated the hint 
+            // means the links and quickfixes will be mandatory the same as well since they can not change based on parameters
+            boolean hintAlreadyAdded = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V().match(
+                            __.as(HINT_PIPELINE_LABEL)
+                                    .has(WindupFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE))
+                                    .has(InlineHintModel.RULE_ID, ruleId)
+                                    .has(FileLocationModel.LINE_NUMBER, locationModel.getLineNumber())
+                                    .has(FileLocationModel.COLUMN_NUMBER, locationModel.getColumnNumber())
+                                    .has(FileLocationModel.LENGTH, locationModel.getLength())
+                                    .has(EffortReportModel.EFFORT, effort)
+                                    .has(InlineHintModel.ISSUE_DISPLAY_MODE, issueDisplayMode.name())
+                                    .has(InlineHintModel.HINT, hintText)
+                                    .has(InlineHintModel.TITLE, hintTitle),
+                            __.as(HINT_PIPELINE_LABEL).out(FileReferenceModel.FILE_MODEL).has(FileModel.FILE_PATH, locationModel.getFile().getFilePath()),
+                            __.as(HINT_PIPELINE_LABEL).out(InlineHintModel.FILE_LOCATION_REFERENCE).has(FileLocationModel.SOURCE_SNIPPIT, locationModel.getSourceSnippit())
+                    ).select(HINT_PIPELINE_LABEL).hasNext();
+            if (hintAlreadyAdded)
+            {
+                if (LOG.isLoggable(Level.WARNING))
+                    LOG.warning(String.format("Not an error but the hint '%s' has been already added from the rule '%s' to file %s in the same line (%d) and column (%d) so it will NOT be added again.", 
+                        hintTitle, ruleId, locationModel.getFile().getFilePath(), locationModel.getLineNumber(), locationModel.getColumnNumber()));
+                return;
+            }
+
             InlineHintModel hintModel = service.create();
-            hintModel.setRuleID(((Rule) context.get(Rule.class)).getId());
+            hintModel.setRuleID(ruleId);
             hintModel.setLineNumber(locationModel.getLineNumber());
             hintModel.setColumnNumber(locationModel.getColumnNumber());
             hintModel.setLength(locationModel.getLength());
@@ -134,36 +201,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 issueCategoryModel = issueCategoryRegistry.loadFromGraph(event.getGraphContext(), this.issueCategory.getCategoryID());
 
             hintModel.setIssueCategory(issueCategoryModel);
-            if (hintTitlePattern != null)
-            {
-                try
-                {
-                    hintModel.setTitle(StringUtils.trim(hintTitlePattern.getBuilder().build(event, context)));
-                }
-                catch (Throwable t)
-                {
-                    LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
-                    hintModel.setTitle(hintTitlePattern.toString().trim());
-                }
-            }
-            else
-            {
-                // If there is no title, just use the description of the location
-                // (eg, 'Constructing com.otherproduct.Foo()')
-                hintModel.setTitle(locationModel.getDescription());
-            }
-
-            String hintText;
-            try
-            {
-                hintText = hintTextPattern.getBuilder().build(event, context);
-            }
-            catch (Throwable t)
-            {
-                LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
-                hintText = hintTextPattern.toString();
-            }
-            hintModel.setHint(StringUtils.trim(hintText));
+            hintModel.setTitle(hintTitle);
+            hintModel.setHint(hintText);
 
             GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
             for (Link link : links)
