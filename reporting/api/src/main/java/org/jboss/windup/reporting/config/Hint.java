@@ -22,6 +22,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.quickfix.Quickfix;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -46,7 +47,6 @@ import java.util.logging.Logger;
 public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode
 {
     private static final Logger LOG = Logging.get(Hint.class);
-    private static final String HINT_PIPELINE_LABEL = "InlineHintModels";
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
@@ -122,7 +122,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         ExecutionStatistics.get().begin("Hint.performParameterized");
         try
         {
-            GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
+            InlineHintService service = new InlineHintService(event.getGraphContext());
 
             String hintText;
             try
@@ -156,10 +156,11 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 hintTitle = locationModel.getDescription();
             }
             
-            String ruleId = ((Rule) context.get(Rule.class)).getId();
+            final String ruleId = ((Rule) context.get(Rule.class)).getId();
 
             // NOT checking links, quickfixes and tags since they are not parameterized hence checking the same rule generated the hint 
             // means the links and quickfixes will be mandatory the same as well since they can not change based on parameters
+/*
             boolean hintAlreadyAdded = new GraphTraversalSource(event.getGraphContext().getGraph())
                     .V().match(
                             __.as(HINT_PIPELINE_LABEL)
@@ -175,10 +176,11 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                             __.as(HINT_PIPELINE_LABEL).out(FileReferenceModel.FILE_MODEL).has(FileModel.FILE_PATH, locationModel.getFile().getFilePath()),
                             __.as(HINT_PIPELINE_LABEL).out(InlineHintModel.FILE_LOCATION_REFERENCE).has(FileLocationModel.SOURCE_SNIPPIT, locationModel.getSourceSnippit())
                     ).select(HINT_PIPELINE_LABEL).hasNext();
-            if (hintAlreadyAdded)
+*/
+            if (service.alreadyAdded(event, ruleId, hintText, hintTitle, locationModel))
             {
-                if (LOG.isLoggable(Level.WARNING))
-                    LOG.warning(String.format("Not an error but the hint '%s' has been already added from the rule '%s' to file %s in the same line (%d) and column (%d) so it will NOT be added again.", 
+                if (LOG.isLoggable(Level.FINE))
+                    LOG.fine(String.format("Not an error but the hint '%s' has been already added from the rule '%s' to file %s in the same line (%d) and column (%d) so it will NOT be added again.", 
                         hintTitle, ruleId, locationModel.getFile().getFilePath(), locationModel.getLineNumber(), locationModel.getColumnNumber()));
                 return;
             }
@@ -226,6 +228,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             if (locationModel.getFile() instanceof SourceFileModel)
                 ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
+            service.cacheInlineHintModel(event, hintModel);
             LOG.fine("Hint added to " + locationModel.getFile().getPrettyPathWithinProject()
                     + ":\n    " + this.toString(hintModel.getTitle(), null));
         }
