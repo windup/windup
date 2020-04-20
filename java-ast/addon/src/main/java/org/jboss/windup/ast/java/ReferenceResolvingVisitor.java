@@ -149,7 +149,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
                     ResolutionStatus superResolutionStatus = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
 
-                    classReferences.add(new ClassReference(resolvedResult.result, superClassName, superPackageName, null,
+                    classReferences.add(new ClassReference(resolvedResult.result, superPackageName, superClassName, null,
                                 superResolutionStatus,
                                 TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
                                 compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
@@ -164,7 +164,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         String superPackageName = resolveBinding.getPackage().getName();
                         String superClassName = resolveBinding.getName();
 
-                        classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), superClassName, superPackageName, null,
+                        classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), superPackageName, superClassName, null,
                                     ResolutionStatus.RESOLVED,
                                     TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
                                     compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
