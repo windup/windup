@@ -1,5 +1,7 @@
 package org.jboss.windup.ast.java.data;
 
+import java.util.Objects;
+
 /**
  * Contains a name that has been referenced by the Java source file. This can include the qualified name (for example, com.example.data.Foo) as well
  * as information about the reference. Information includes indicating where the reference was found within the file (line, column, and length) as
@@ -143,6 +145,10 @@ public class ClassReference
         if (length != reference.length)
             return false;
         if (qualifiedName != null ? !qualifiedName.equals(reference.qualifiedName) : reference.qualifiedName != null)
+            return false;
+        if (!Objects.equals(packageName, reference.packageName))
+            return false;
+        if (!Objects.equals(className, reference.className))
             return false;
         if (resolutionStatus != reference.resolutionStatus)
             return false;
