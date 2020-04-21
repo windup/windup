@@ -32,7 +32,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 5, 23, 4,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
+                    new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.String[]", "java.lang", "String[]", null, ResolutionStatus.RESOLVED,
@@ -125,7 +125,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0, 191,
                                 "public class JavaLangReferences {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 119,
+                    new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 119,
                                 "public void someMethod(){")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.String", "java.lang", "String", null, ResolutionStatus.RESOLVED,
@@ -169,7 +169,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 TypeReferenceLocation.VARIABLE_INITIALIZER,
                                 5, 4, 56, "private int foo=com.proprietary.Constants.MY_CONSTANT;")));
         Assert.assertTrue(
-                    references.contains(new ClassReference("OtherConstants.OTHER_CONSTANT", "", "OtherConstants", null, ResolutionStatus.RECOVERED,
+                    references.contains(new ClassReference("OtherConstants.OTHER_CONSTANT", null, "OtherConstants", null, ResolutionStatus.RECOVERED,
                                 TypeReferenceLocation.VARIABLE_INITIALIZER,
                                 6, 4, 49, "private int foo2=OtherConstants.OTHER_CONSTANT;")));
     }

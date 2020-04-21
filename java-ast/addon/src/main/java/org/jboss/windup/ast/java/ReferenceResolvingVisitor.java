@@ -498,7 +498,12 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 {
                     ResolveClassnameResult result = resolveClassname(expressionName.getFullyQualifiedName());
                     ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
-                    PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
+                    // when dealing with FieldDeclaration with an initializer Expression of type Name (SimpleName or QualifiedName [1])
+                    // with a null binding (i.e. not from code like "private int i = 0; private int j = i;"),
+                    // it means we're in front of a constant from https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.28
+                    // and hence we can use the PackageAndClassName.parseFromQualifiedNameWithConstant method
+                    // [1] https://help.eclipse.org/2020-03/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/index.html
+                    PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedNameWithConstant(result.result);
 
                     processTypeAsString(result.result,
                                 packageAndClassName.packageName,
@@ -506,7 +511,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                                 status,
                                 TypeReferenceLocation.VARIABLE_INITIALIZER,
                                 lineNumber,
-                                columnNumber, node.getLength(), node.toString());                                        
+                                columnNumber, node.getLength(), node.toString());
                 }
                 else
                 {   
@@ -1496,7 +1501,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             // remove the .* if this was a package import
             if (qualifiedName.contains(".*"))
             {
-                packageName = qualifiedName.replace("*", "");
+                packageName = qualifiedName.replace(".*", "");
                 className = null;
             }
             else
@@ -1514,6 +1519,12 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 }
             }
             return new PackageAndClassName(packageName, className);
+        }
+
+        private static PackageAndClassName parseFromQualifiedNameWithConstant(String qualifiedName)
+        {
+            int lastDot = qualifiedName.lastIndexOf('.');
+            return lastDot > -1 ? parseFromQualifiedName(qualifiedName.substring(0, lastDot)) : parseFromQualifiedName(qualifiedName);
         }
     }
 
