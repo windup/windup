@@ -31,6 +31,16 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 ResolutionStatus.RESOLVED, TypeReferenceLocation.METHOD,
                                 5, 23, 4,
                                 "public static void main(String[] argv) throws Exception {")));
+        Assert.assertFalse(references.contains(
+                    new ClassReference("testclasses.helloworld.HelloWorld.main(String[])", "testclasses.MYEXTRAPACKAGE.helloworld", "HelloWorld", "main",
+                                ResolutionStatus.RESOLVED, TypeReferenceLocation.METHOD,
+                                5, 23, 4,
+                                "public static void main(String[] argv) throws Exception {")));
+        Assert.assertFalse(references.contains(
+                new ClassReference("testclasses.helloworld.HelloWorld.main(String[])", "testclasses.helloworld", "HelloWorldXX", "main",
+                                ResolutionStatus.RESOLVED, TypeReferenceLocation.METHOD,
+                                5, 23, 4,
+                                "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
                                 "public static void main(String[] argv) throws Exception {")));
