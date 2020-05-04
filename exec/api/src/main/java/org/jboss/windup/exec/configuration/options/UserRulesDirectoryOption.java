@@ -1,7 +1,6 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.io.File;
-import java.nio.file.Path;
 
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
