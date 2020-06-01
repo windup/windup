@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="testruleprovider3" phase="DiscoveryPhase">
+
+    <!-- This defaults to MIGRATION_RULES, set a non-default value for test purposes -->
+
+    <rules>
+
+        <rule>
+            <when>
+                <true/>
+            </when>
+            <perform>
+                <log message="test log message"/>
+            </perform>
+        </rule>
+
+        <rule>
+            <when>
+                <true/>
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <true/>
+                    </when>
+                    <perform>
+                        <log message="test {foo} iteration perform"/>
+                    </perform>
+                    <otherwise>
+                        <log message="test {foo} iteration otherwise"/>
+                    </otherwise>
+                </iteration>
+            </perform>
+            <otherwise>
+                <log message="test rule {foo} otherwise"/>
+            </otherwise>
+            <where param="foo">
+                <matches pattern="\d+"/>
+            </where>
+        </rule>
+        
+        <rule id="withNested">
+            <when><true/></when>
+            <perform>
+                <log message="mainperform"/>
+                <rule>
+                    <when><true/></when>
+                    <perform>
+                        <log message="subsetperform"/>
+                    </perform>
+                </rule>
+            </perform>
+        </rule>
+
+    </rules>
+</ruleset>
