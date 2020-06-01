@@ -17,7 +17,7 @@
     <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/mta-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 
@@ -59,10 +59,10 @@
                             <dd><a href="https://twitter.com/jbosswindup">@jbossWindup</a></dd>
 
                             <dt>Website</dt>
-                            <dd><a href="https://developers.redhat.com/products/rhamt/overview/">https://developers.redhat.com/products/rhamt/overview/</a></dd>
+                            <dd><a href="https://developers.redhat.com/products/mta/overview/">https://developers.redhat.com/products/mta/overview/</a></dd>
 
                             <dt>Documentation</dt>
-                            <dd><a href="https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/">https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/</a></dd>
+                            <dd><a href="https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/">https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/</a></dd>
                         </dl>
 
                         <dl class="dl-horizontal">

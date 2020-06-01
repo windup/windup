@@ -51,6 +51,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 
     private static final String XML_RULES_WINDUP_EXTENSION = "windup.xml";
     private static final String XML_RULES_RHAMT_EXTENSION = "rhamt.xml";
+    private static final String XML_RULES_MTA_EXTENSION = "mta.xml";
 
     @Inject
     private Furnace furnace;
@@ -157,6 +158,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     {
         Map<Addon, List<URL>> addon = scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_WINDUP_EXTENSION));
         addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_RHAMT_EXTENSION)));
+        addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_MTA_EXTENSION)));
         return addon;
     }
 
@@ -206,6 +208,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     private boolean pathMatchesNamePattern(Path file)
     {
         return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_WINDUP_EXTENSION)
-                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION);
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION)
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_MTA_EXTENSION);
     }
 }

@@ -59,6 +59,14 @@ public class XMLRuleProviderLoaderTest
                     .addAsResource(new File("src/test/resources/testxml/Test2.rhamt.xml"));
     }
 
+    @Deployment(name = "mta,1")
+    public static AddonArchive getMtaDeployment()
+    {
+        return ShrinkWrap.create(AddonArchive.class)
+                    .addBeansXML()
+                    .addAsResource(new File("src/test/resources/testxml/Test3.mta.xml"));
+    }
+
     @Inject
     private XMLRuleProviderLoader loader;
     @Inject
@@ -72,7 +80,7 @@ public class XMLRuleProviderLoaderTest
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
         List<RuleProvider> providers = loader.getProviders(ruleLoaderContext);
         Assert.assertNotNull(providers);
-        Assert.assertTrue(providers.size() == 2);
+        Assert.assertTrue(providers.size() == 3);
 
         RuleProvider provider = providers.get(providers.indexOf(RuleProviderBuilder.begin("testruleprovider")));
         checkWindupMetadata(provider);
@@ -107,6 +115,23 @@ public class XMLRuleProviderLoaderTest
 
         rule = (RuleBuilder) rules.get(3);
         checkRule3(rule);
+
+        provider = providers.get(providers.indexOf(RuleProviderBuilder.begin("testruleprovider3")));
+        checkMtaMetadata(provider);
+        rules = provider.getConfiguration(null).getRules();
+        Assert.assertEquals(4, rules.size());
+
+        rule = (RuleBuilder) rules.get(0);
+        checkRule1(rule);
+
+        rule = (RuleBuilder) rules.get(1);
+        checkRule2(rule);
+
+        rule = (RuleBuilder) rules.get(2);
+        checkRule2_Otherwise(rule);
+
+        rule = (RuleBuilder) rules.get(3);
+        checkRule3(rule);
     }
 
     private void checkWindupMetadata(RuleProvider provider)
@@ -124,6 +149,14 @@ public class XMLRuleProviderLoaderTest
         Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/rhamt-1.*/Test2.rhamt.xml"));
      }
+
+     private void checkMtaMetadata(RuleProvider provider)
+     {
+         String id = provider.getMetadata().getID();
+         Assert.assertEquals("testruleprovider3", id);
+         Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
+         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/mta-1.*/Test3.mta.xml"));
+      }
 
     private void checkRule1(RuleBuilder rule)
     {

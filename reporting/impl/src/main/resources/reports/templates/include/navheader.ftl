@@ -4,5 +4,5 @@
                 <span class="icon-bar"></span>
             </button>
             <span class="wu-navbar-header">
-              <strong class="wu-navbar-header">Red Hat Application Migration Toolkit</strong>
+              <strong class="wu-navbar-header">Migration Toolkit for Applications by Red Hat</strong>
             </span>
