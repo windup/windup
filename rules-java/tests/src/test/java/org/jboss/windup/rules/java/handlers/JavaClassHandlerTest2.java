@@ -33,6 +33,7 @@ public class JavaClassHandlerTest2
 
     private static final String JAVA_CLASS_XML_WINDUP_FILE = "src/test/resources/handler/javaclass-enumconst.windup.xml";
     private static final String JAVA_CLASS_XML_RHAMT_FILE = "src/test/resources/handler/javaclass-enumconst.rhamt.xml";
+    private static final String JAVA_CLASS_XML_MTA_FILE = "src/test/resources/handler/javaclass-enumconst.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -64,6 +65,13 @@ public class JavaClassHandlerTest2
     public void testRhamtJavaClassEnumLocationCondition() throws Exception
     {
         File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testJavaClassEnumLocationCondition(fXmlFile);
+    }
+
+    @Test
+    public void testMtaJavaClassEnumLocationCondition() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_MTA_FILE);
         testJavaClassEnumLocationCondition(fXmlFile);
     }
 

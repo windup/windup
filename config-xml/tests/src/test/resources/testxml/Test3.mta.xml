@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="testruleprovider3" phase="DiscoveryPhase">
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="testruleprovider3" phase="ReportGenerationPhase">
 
     <!-- This defaults to MIGRATION_RULES, set a non-default value for test purposes -->
 

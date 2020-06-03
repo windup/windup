@@ -32,7 +32,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Rule Providers Execution Overview
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists 'rule providers', or sets of ${getWindupBrandName()} rules. They may originate from a '.windup.xml' or '.rhamt.xml' file
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists 'rule providers', or sets of ${getWindupBrandName()} rules. They may originate from a '.windup.xml', a '.rhamt.xml', or a '.mta.xml' file
                     or a Java class implementing 'RuleProvider'."></i></div>
                 </h1>
             </div>

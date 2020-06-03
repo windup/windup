@@ -45,6 +45,7 @@ public class LoadGroovyRulesTest
     // path to use for the groovy example file in the addon
     private static final String EXAMPLE_GROOVY_WINDUP_FILE = "/org/jboss/windup/addon/groovy/GroovyExampleRule.windup.groovy";
     private static final String EXAMPLE_GROOVY_RHAMT_FILE = "/org/jboss/windup/addon/groovy/GroovyExampleRule.rhamt.groovy";
+    private static final String EXAMPLE_GROOVY_MTA_FILE = "/org/jboss/windup/addon/groovy/GroovyExampleRule.mta.groovy";
 
     @Deployment
     @AddonDependencies({
@@ -58,7 +59,8 @@ public class LoadGroovyRulesTest
                     .create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.windup.groovy"), EXAMPLE_GROOVY_WINDUP_FILE)
-                    .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.rhamt.groovy"), EXAMPLE_GROOVY_RHAMT_FILE);
+                    .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.rhamt.groovy"), EXAMPLE_GROOVY_RHAMT_FILE)
+                    .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.mta.groovy"), EXAMPLE_GROOVY_MTA_FILE);
         return archive;
     }
 
@@ -87,6 +89,8 @@ public class LoadGroovyRulesTest
         boolean foundRuleOrigin = false;
         boolean foundRhamtRuleProviderOrigin = false;
         boolean foundRhamtRuleOrigin = false;
+        boolean foundMtaRuleProviderOrigin = false;
+        boolean foundMtaRuleOrigin = false;
         for (RuleProvider provider : allProviders)
         {
             String providerOrigin = provider.getMetadata().getOrigin();
@@ -98,6 +102,11 @@ public class LoadGroovyRulesTest
             if (providerOrigin.contains(EXAMPLE_GROOVY_RHAMT_FILE))
             {
                 foundRhamtRuleProviderOrigin = true;
+            }
+
+            if (providerOrigin.contains(EXAMPLE_GROOVY_MTA_FILE))
+            {
+                foundMtaRuleProviderOrigin = true;
             }
 
             Rule rule = RuleBuilder.define();
@@ -114,11 +123,17 @@ public class LoadGroovyRulesTest
             {
                 foundRhamtRuleOrigin = true;
             }
+            else if (ruleOrigin.contains(EXAMPLE_GROOVY_MTA_FILE))
+            {
+                foundMtaRuleOrigin = true;
+            }
         }
         Assert.assertTrue("Script path should have been set in Rule Metatada", foundRuleOrigin);
         Assert.assertTrue("Script path should have been set in Rule Provider Metatada", foundRuleProviderOrigin);
         Assert.assertTrue("Script path should have been set in RHAMT Rule Metatada", foundRhamtRuleOrigin);
         Assert.assertTrue("Script path should have been set in RHAMT Rule Provider Metatada", foundRhamtRuleProviderOrigin);
+        Assert.assertTrue("Script path should have been set in MTA Rule Metatada", foundMtaRuleOrigin);
+        Assert.assertTrue("Script path should have been set in MTA Rule Provider Metatada", foundMtaRuleProviderOrigin);
         Assert.assertTrue(allProviders.size() > 0);
     }
 
@@ -133,6 +148,7 @@ public class LoadGroovyRulesTest
             Files.createDirectories(userRulesPath);
             Path exampleGroovyUserDirWindupGroovyFile = userRulesPath.resolve("ExampleUserFile.windup.groovy");
             Path exampleGroovyUserDirRhamtGroovyFile = userRulesPath.resolve("ExampleUserFile.rhamt.groovy");
+            Path exampleGroovyUserDirMtaGroovyFile = userRulesPath.resolve("ExampleUserFile.mta.groovy");
 
             // copy a groovy rule example to it
             try (InputStream is = getClass().getResourceAsStream(EXAMPLE_GROOVY_WINDUP_FILE);
@@ -143,6 +159,12 @@ public class LoadGroovyRulesTest
 
             try (InputStream is = getClass().getResourceAsStream(EXAMPLE_GROOVY_RHAMT_FILE);
                         OutputStream os = new FileOutputStream(exampleGroovyUserDirRhamtGroovyFile.toFile()))
+            {
+                IOUtils.copy(is, os);
+            }
+
+            try (InputStream is = getClass().getResourceAsStream(EXAMPLE_GROOVY_MTA_FILE);
+                        OutputStream os = new FileOutputStream(exampleGroovyUserDirMtaGroovyFile.toFile()))
             {
                 IOUtils.copy(is, os);
             }
@@ -162,6 +184,7 @@ public class LoadGroovyRulesTest
 
             boolean foundScriptPath = false;
             boolean foundRhamtScriptPath = false;
+            boolean foundMtaScriptPath = false;
             for (RuleProvider provider : allProviders)
             {
                 Rule rule = RuleBuilder.define();
@@ -181,9 +204,15 @@ public class LoadGroovyRulesTest
                     // make sure we found the one from the user dir
                     foundRhamtScriptPath = true;
                 }
+                else if (origin.endsWith("ExampleUserFile.mta.groovy"))
+                {
+                    // make sure we found the one from the user dir
+                    foundMtaScriptPath = true;
+                }
             }
             Assert.assertTrue("Script path should have been set in Rule Metatada", foundScriptPath);
             Assert.assertTrue("Script path should have been set in RHAMT Rule Metatada", foundRhamtScriptPath);
+            Assert.assertTrue("Script path should have been set in MTA Rule Metatada", foundMtaScriptPath);
             Assert.assertTrue(allProviders.size() > 0);
         }
         finally

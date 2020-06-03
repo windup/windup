@@ -49,6 +49,7 @@ public class XSLTTransformationHandlerTest
 
     private static final String XSLT_WINDUP_FILE = "src/test/resources/unit/xslt.windup.xml";
     private static final String XSLT_RHAMT_FILE = "src/test/resources/unit/xslt.rhamt.xml";
+    private static final String XSLT_MTA_FILE = "src/test/resources/unit/xslt.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -88,6 +89,13 @@ public class XSLTTransformationHandlerTest
     public void testRhamtXSLTOperation() throws Exception
     {
         File fXmlFile = new File(XSLT_RHAMT_FILE);
+        testXSLTOperation(fXmlFile);
+    }
+
+    @Test
+    public void testMtaXSLTOperation() throws Exception
+    {
+        File fXmlFile = new File(XSLT_MTA_FILE);
         testXSLTOperation(fXmlFile);
     }
 
@@ -175,6 +183,13 @@ public class XSLTTransformationHandlerTest
         testXSLTWithoutExtension(fXmlFile);
     }
 
+    @Test(expected = WindupException.class)
+    public void testMtaXSLTWithoutExtension() throws Exception
+    {
+        File fXmlFile = new File(XSLT_MTA_FILE);
+        testXSLTWithoutExtension(fXmlFile);
+    }
+
     public void testXSLTWithoutExtension(File fXmlFile) throws Exception
     {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
@@ -201,6 +216,13 @@ public class XSLTTransformationHandlerTest
     public void testRhamtXSLTWithoutTemplate() throws Exception
     {
         File fXmlFile = new File(XSLT_RHAMT_FILE);
+        testXSLTWithoutTemplate(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testMtaXSLTWithoutTemplate() throws Exception
+    {
+        File fXmlFile = new File(XSLT_MTA_FILE);
         testXSLTWithoutTemplate(fXmlFile);
     }
 
