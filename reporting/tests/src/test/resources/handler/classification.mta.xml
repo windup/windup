@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <classification effort="5" title="test message" of="testVariable">
+        <description>simple description</description>
+        <link href="someUrl" title="someDescription" />
+    </classification>
+
+    <classification title="test-message" category-id='optional'>
+        <link href="url1" title="description1" />
+        <link href="url2" title="description2" />
+        <link href="url3" title="description3" />
+    </classification>
+
+    <classification in="testVariable">
+        <link href="url1" title="description1" />
+        <link href="url2" title="description2" />
+        <link href="url3" title="description3" />
+    </classification>
+
+    <classification effort="asbas" title="test-message" in="testVariable">
+        <link href="url1" title="description1" />
+        <link href="url2" title="description2" />
+        <link href="url3" title="description3" />
+    </classification>
+
+</test>
+            

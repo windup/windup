@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+    <javaclass as="testVariable" references="org.apache.commons.{*}" in="{*}File1">
+        <location>METHOD_CALL</location>
+        <annotation-list name="firstName" index="1">
+            <annotation-literal pattern="firstPattern"/>
+        </annotation-list>
+    </javaclass>
+    <javaclass references="org.apache.commons.{*}" matchesSource="source-match">
+        <location>IMPORT</location>
+        <location>METHOD_CALL</location>
+        <location>INHERITANCE</location>
+        <annotation-type name="secondName" pattern="secondPattern">
+            <annotation-literal name="subLiteral" pattern="subLiteralPattern"/>
+        </annotation-type>
+    </javaclass>
+    <javaclass references="javax.annotation.sql.DataSourceDefinitions" >
+        <location>ANNOTATION</location>
+        <annotation-list>
+            <annotation-type pattern="javax.annotation.sql.DataSourceDefinition" />
+        </annotation-list>
+    </javaclass>
+</test>
+
