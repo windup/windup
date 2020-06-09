@@ -34,7 +34,6 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
-import org.jboss.windup.tooling.ToolingXMLService;
 import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
 import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;

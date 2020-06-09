@@ -74,8 +74,7 @@ public class ToolingModeTest
 
     @Inject
     private TestProvider testProvider;
-    @Inject
-    private ToolingModeRunner toolingRunner;
+
     @Inject
     private Furnace furnace;
 
