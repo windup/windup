@@ -369,6 +369,12 @@ strong.wu-navbar-header {
     font-size: 18px;
 }
 
+img.wu-navbar-header {
+    line-height: 45px;
+    height: 45px;
+    padding-top: 12px;
+}
+
 
 /**************** Migration issues *******************************/
 .table-inner-wrapping-td {
