@@ -17,7 +17,7 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/flot/plot.css" />
-    <link href="resources/img/mta-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
 .report-index-row {
     margin: 10px -32px 0px 5px;

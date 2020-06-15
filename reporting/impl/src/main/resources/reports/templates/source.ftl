@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
-    <link rel="shortcut icon" href="resources/img/mta-icon-128.png" type="image/x-icon"/>
+    <link rel="shortcut icon" href="resources/img/mta-icon.png" type="image/x-icon"/>
 </head>
 <body role="document" class="source-report">
 
