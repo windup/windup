@@ -38,6 +38,8 @@ public class MetaDataHandlerTest
     private static final String XML_WINDUP_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.windup.xml";
     private static final String XML_RHAMT_FILE = "src/test/resources/testxml/metadata.rhamt.xml";
     private static final String XML_RHAMT_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.rhamt.xml";
+    private static final String XML_MTA_FILE = "src/test/resources/testxml/metadata.mta.xml";
+    private static final String XML_MTA_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -67,6 +69,13 @@ public class MetaDataHandlerTest
     public void testRhamtXmlParsinfOfRulesetMetadata() throws Exception
     {
         File fXmlFile = new File(XML_RHAMT_FILE);
+        testXmlParsinfOfRulesetMetadata(fXmlFile);
+    }
+
+    @Test
+    public void testMtaXmlParsinfOfRulesetMetadata() throws Exception
+    {
+        File fXmlFile = new File(XML_MTA_FILE);
         testXmlParsinfOfRulesetMetadata(fXmlFile);
     }
 
@@ -123,6 +132,13 @@ public class MetaDataHandlerTest
     public void testRhamtXmlRuleOverrideProviderMetadata() throws Exception
     {
         File fXmlFile = new File(XML_RHAMT_WITH_OVERRIDE_FILE);
+        testXmlRuleOverrideProviderMetadata(fXmlFile);
+    }
+
+    @Test
+    public void testMtaXmlRuleOverrideProviderMetadata() throws Exception
+    {
+        File fXmlFile = new File(XML_MTA_WITH_OVERRIDE_FILE);
         testXmlRuleOverrideProviderMetadata(fXmlFile);
     }
 

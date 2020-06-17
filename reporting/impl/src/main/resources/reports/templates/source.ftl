@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
-    <link rel="shortcut icon" href="resources/img/rhamt-icon-128.png" type="image/x-icon"/>
+    <link rel="shortcut icon" href="resources/img/mta-icon.png" type="image/x-icon"/>
 </head>
 <body role="document" class="source-report">
 
@@ -38,7 +38,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Source Report
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Red Hat Application Migration Toolkit found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Migration Toolkit for Applications by Red Hat found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
 
                     <#list reportModel.projectEdges as toProjectEdge>
                         <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">

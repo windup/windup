@@ -46,7 +46,7 @@ public class PathUtil
             LOG.warning("$USER_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
-        return Paths.get(userHome).resolve(".rhamt");
+        return Paths.get(userHome).resolve(".mta");
     }
 
     /**

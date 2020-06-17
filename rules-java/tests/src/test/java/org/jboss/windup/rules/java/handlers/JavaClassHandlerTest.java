@@ -35,6 +35,7 @@ public class JavaClassHandlerTest
 
     private static final String JAVA_CLASS_XML_WINDUP_FILE = "src/test/resources/handler/javaclass.windup.xml";
     private static final String JAVA_CLASS_XML_RHAMT_FILE = "src/test/resources/handler/javaclass.rhamt.xml";
+    private static final String JAVA_CLASS_XML_MTA_FILE = "src/test/resources/handler/javaclass.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -67,6 +68,13 @@ public class JavaClassHandlerTest
     public void testRhamtJavaClassCondition() throws Exception
     {
         File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testJavaClassCondition(fXmlFile);
+    }
+
+    @Test
+    public void testMtaJavaClassCondition() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_MTA_FILE);
         testJavaClassCondition(fXmlFile);
     }
 
@@ -116,6 +124,13 @@ public class JavaClassHandlerTest
     public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception
     {
         File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testMtaXmlFileWithoutPublidIdAndXpath() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_MTA_FILE);
         testXmlFileWithoutPublidIdAndXpath(fXmlFile);
     }
 

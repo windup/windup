@@ -72,7 +72,7 @@ public class WindupUpdateDistributionCommand implements UICommand
 
         distUpdater.replaceWindupDirectoryWithDistribution(latestDist);
 
-        return Results.success("Sucessfully updated "+Util.WINDUP_BRAND_NAME_ACRONYM+" CLI to version " + latestDist.getVersion() + ". Please restart RHAMT CLI.");
+        return Results.success("Sucessfully updated "+Util.WINDUP_BRAND_NAME_ACRONYM+" CLI to version " + latestDist.getVersion() + ". Please restart MTA CLI.");
     }
 
 

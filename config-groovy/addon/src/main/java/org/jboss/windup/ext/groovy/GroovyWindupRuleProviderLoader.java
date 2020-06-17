@@ -56,6 +56,7 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 
     private static final String GROOVY_RULES_WINDUP_EXTENSION = "windup.groovy";
     private static final String GROOVY_RULES_RHAMT_EXTENSION = "rhamt.groovy";
+    private static final String GROOVY_RULES_MTA_EXTENSION = "mta.groovy";
 
     @Inject
     private FurnaceClasspathScanner scanner;
@@ -181,6 +182,8 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
         results.addAll(windupScripts);
         List<URL> rhamtScripts = scanner.scan(GROOVY_RULES_RHAMT_EXTENSION);
         results.addAll(rhamtScripts);
+        List<URL> mtaScripts = scanner.scan(GROOVY_RULES_MTA_EXTENSION);
+        results.addAll(mtaScripts);
 
         for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
@@ -228,6 +231,7 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
     private boolean pathMatchesNamePattern(Path file)
     {
         return file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_WINDUP_EXTENSION)
-                    || file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_RHAMT_EXTENSION);
+                    || file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_RHAMT_EXTENSION)
+                    || file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_MTA_EXTENSION);
     }
 }

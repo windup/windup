@@ -36,6 +36,7 @@ public class HasHintHandlerTest
 
     private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hashint.windup.xml";
     private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hashint.rhamt.xml";
+    private static final String HINT_XML_MTA_FILE = "src/test/resources/handler/hashint.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -65,6 +66,13 @@ public class HasHintHandlerTest
     public void testRhamtHintHandler() throws Exception
     {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    @Test
+    public void testMtaHintHandler() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_MTA_FILE);
         testHintHandler(fXmlFile);
     }
 

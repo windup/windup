@@ -36,6 +36,7 @@ public class QuickfixHandlerTest
 {
     private static final String QUICKFIX_XML_WINDUP_FILE = "src/test/resources/handler/quickfix.windup.xml";
     private static final String QUICKFIX_XML_RHAMT_FILE = "src/test/resources/handler/quickfix.rhamt.xml";
+    private static final String QUICKFIX_XML_MTA_FILE = "src/test/resources/handler/quickfix.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -63,6 +64,13 @@ public class QuickfixHandlerTest
     public void testRhamtClassificationParsing() throws Exception
     {
         File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    @Test
+    public void testMtaClassificationParsing() throws Exception
+    {
+        File fXmlFile = new File(QUICKFIX_XML_MTA_FILE);
         testClassificationParsing(fXmlFile);
     }
 
@@ -122,6 +130,13 @@ public class QuickfixHandlerTest
     public void testRhamtHintParsing() throws Exception
     {
         File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
+        testHintParsing(fXmlFile);
+    }
+
+    @Test
+    public void testMtaHintParsing() throws Exception
+    {
+        File fXmlFile = new File(QUICKFIX_XML_MTA_FILE);
         testHintParsing(fXmlFile);
     }
 

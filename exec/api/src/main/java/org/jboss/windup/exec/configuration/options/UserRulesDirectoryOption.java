@@ -36,7 +36,7 @@ public class UserRulesDirectoryOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "User Rules Directory (Search pattern: *.windup.groovy, *.windup.xml, *.rhamt.groovy and *.rhamt.xml). Multiple paths can be specified separated by a space (for example, --userRulesDirectory PATH_1 PATH_2).";
+        return "User Rules Directory (Search pattern: *.windup.groovy, *.windup.xml, *.rhamt.groovy, *.rhamt.xml, *.mta.groovy and *.mta.xml). Multiple paths can be specified separated by a space (for example, --userRulesDirectory PATH_1 PATH_2).";
     }
 
     @Override

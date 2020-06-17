@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <has-classification />
+    <has-classification title="test-message" />
+    <has-classification title="test-message" in="test-in" />
+
+</test>

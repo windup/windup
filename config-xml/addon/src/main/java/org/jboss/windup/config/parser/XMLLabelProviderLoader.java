@@ -43,6 +43,8 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
 
     private static final String XML_LABELS_WINDUP_EXTENSION = "windup.label.xml";
     private static final String XML_LABELS_RHAMT_EXTENSION = "rhamt.label.xml";
+    private static final String XML_LABELS_MTA_EXTENSION = "mta.label.xml";
+
 
     @Inject
     private Furnace furnace;
@@ -159,6 +161,7 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
     {
         Map<Addon, List<URL>> addon = scanner.scanForAddonMap(new FileExtensionFilter(XML_LABELS_WINDUP_EXTENSION));
         addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_LABELS_RHAMT_EXTENSION)));
+        addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_LABELS_MTA_EXTENSION)));
         return addon;
     }
 
@@ -210,7 +213,8 @@ public class XMLLabelProviderLoader implements LabelProviderLoader
     private boolean pathMatchesNamePattern(Path file)
     {
         return file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_WINDUP_EXTENSION)
-                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_RHAMT_EXTENSION);
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_RHAMT_EXTENSION)
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_LABELS_MTA_EXTENSION);
     }
 
 }
