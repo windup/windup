@@ -96,7 +96,7 @@ public class Bootstrap
             runtimeLabelsDir.mkdirs();
         }
 
-        final String defaultLog = new File(getUserWindupDir(), "log/rhamt.log").getAbsolutePath();
+        final String defaultLog = new File(getUserWindupDir(), "log/mta.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
         System.setProperty("org.jboss.forge.log.file", logDir);
@@ -235,7 +235,7 @@ public class Bootstrap
 
     public static String getVersionString()
     {
-        return "> Red Hat Application Migration Toolkit (RHAMT) CLI, version " + getRuntimeAPIVersion() + ".";
+        return "> Migration Toolkit for Applications by Red Hat (MTA) CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
     public static Version getRuntimeAPIVersion()
@@ -266,7 +266,7 @@ public class Bootstrap
             Path path = new File("").toPath();
             return path.toFile();
         }
-        return Paths.get(userHome).resolve(".rhamt").toFile();
+        return Paths.get(userHome).resolve(".mta").toFile();
     }
 
     private static File getUserAddonsDir()

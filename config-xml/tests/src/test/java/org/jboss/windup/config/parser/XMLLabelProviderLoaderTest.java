@@ -47,6 +47,14 @@ public class XMLLabelProviderLoaderTest
                     .addAsResource(new File("src/test/resources/labeltestxml/Test2.rhamt.label.xml"));
     }
 
+    @Deployment(name = "mta,1")
+    public static AddonArchive getMtaDeployment()
+    {
+        return ShrinkWrap.create(AddonArchive.class)
+                    .addBeansXML()
+                    .addAsResource(new File("src/test/resources/labeltestxml/Test3.mta.label.xml"));
+    }
+
     @Inject
     private LabelProviderLoader loader;
 
@@ -58,7 +66,7 @@ public class XMLLabelProviderLoaderTest
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
         List<LabelProvider> providers = loader.getProviders(ruleLoaderContext);
         Assert.assertNotNull(providers);
-        Assert.assertEquals(2, providers.size());
+        Assert.assertEquals(3, providers.size());
 
 
         LabelProvider provider = providers
@@ -91,6 +99,22 @@ public class XMLLabelProviderLoaderTest
 
         label = labels.get(1);
         checkLabel2(label);
+
+
+        provider = providers
+                .stream()
+                .filter(p -> p.getMetadata().getID().equals("testlabelprovider3"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalAccessError("No testlabelprovider3 found"));
+        checkMtaMetadata(provider);
+        labels = provider.getData().getLabels();
+        Assert.assertEquals(3, labels.size());
+
+        label = labels.get(0);
+        checkLabel1(label);
+
+        label = labels.get(1);
+        checkLabel2(label);
     }
 
     private void checkWindupMetadata(LabelProvider provider)
@@ -108,6 +132,14 @@ public class XMLLabelProviderLoaderTest
         Assert.assertEquals("testlabelprovider2", id);
         Assert.assertNull(provider.getMetadata().getDescription());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/rhamt-1.*/Test2.rhamt.label.xml"));
+    }
+
+    private void checkMtaMetadata(LabelProvider provider)
+    {
+        String id = provider.getMetadata().getID();
+        Assert.assertEquals("testlabelprovider3", id);
+        Assert.assertNull(provider.getMetadata().getDescription());
+        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/mta-1.*/Test3.mta.label.xml"));
     }
 
     private void checkLabel1(Label label)

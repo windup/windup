@@ -34,7 +34,7 @@ public class UserIgnorePathOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "A path to the list of path patterns to skip during execution. If it points to a directory, all contained files named '*rhamt-ignore.txt' or '*windup-ignore.txt' will be considered as such list.";
+        return "A path to the list of path patterns to skip during execution. If it points to a directory, all contained files named '*rhamt-ignore.txt', '*windup-ignore.txt' or '*mta-ignore.txt' will be considered as such list.";
     }
 
     @Override

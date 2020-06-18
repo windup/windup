@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+	<xslt of="testVariable_instance" title="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
+	<xslt title="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
+	<xslt of="testVariable_instance" title="XSLT Tranformed Output" template="simpleXSLT.xsl" />
+	<xslt of="testVariable_instance" title="XSLT Tranformed Output" extension="-test-result.html" use-saxon="true" />
+	<xslt of="testVariable_instance" title="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" use-saxon="true" />
+</test>
+            

@@ -126,9 +126,9 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
     {
         if (origin == null)
             return RuleProvider.RuleProviderType.JAVA;
-        else if (origin.startsWith("file:") && (origin.endsWith(".windup.xml") || origin.endsWith(".rhamt.xml")))
+        else if (origin.startsWith("file:") && (origin.endsWith(".windup.xml") || origin.endsWith(".rhamt.xml") || origin.endsWith(".mta.xml")))
             return RuleProvider.RuleProviderType.XML;
-        else if (origin.startsWith("file:") && origin.endsWith(".windup.groovy"))
+        else if (origin.startsWith("file:") && (origin.endsWith(".windup.groovy") || origin.endsWith(".rhamt.groovy") || origin.endsWith(".mta.groovy")))
             return RuleProvider.RuleProviderType.GROOVY;
         else
             return RuleProvider.RuleProviderType.JAVA;

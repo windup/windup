@@ -35,6 +35,7 @@ public class ClassificationHandlerTest
 
     private static final String CLASSIFICATION_XML_WINDUP_FILE = "src/test/resources/handler/classification.windup.xml";
     private static final String CLASSIFICATION_XML_RHAMT_FILE = "src/test/resources/handler/classification.rhamt.xml";
+    private static final String CLASSIFICATION_XML_MTA_FILE = "src/test/resources/handler/classification.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -62,6 +63,13 @@ public class ClassificationHandlerTest
     public void testRhamtClassificationParsing() throws Exception
     {
         File fXmlFile = new File(CLASSIFICATION_XML_RHAMT_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    @Test
+    public void testMtaClassificationParsing() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_MTA_FILE);
         testClassificationParsing(fXmlFile);
     }
 
@@ -119,6 +127,13 @@ public class ClassificationHandlerTest
         testClassificationWithoutMessage(fXmlFile);
     }
 
+    @Test(expected = WindupException.class)
+    public void testMtaClassificationWithoutMessage() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_MTA_FILE);
+        testClassificationWithoutMessage(fXmlFile);
+    }
+
     public void testClassificationWithoutMessage(File fXmlFile) throws Exception
     {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
@@ -143,6 +158,13 @@ public class ClassificationHandlerTest
     public void testRhamtClassificationWithWrongEffort() throws Exception
     {
         File fXmlFile = new File(CLASSIFICATION_XML_RHAMT_FILE);
+        testClassificationWithWrongEffort(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testMtaClassificationWithWrongEffort() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_MTA_FILE);
         testClassificationWithWrongEffort(fXmlFile);
     }
 

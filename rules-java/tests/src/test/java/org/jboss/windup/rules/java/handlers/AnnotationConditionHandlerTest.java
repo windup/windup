@@ -32,6 +32,7 @@ public class AnnotationConditionHandlerTest
 
     private static final String ANNOTATION_HANDLER_XML_WINDUP_FILE = "src/test/resources/handler/annotationcondition.windup.xml";
     private static final String ANNOTATION_HANDLER_XML_RHAMT_FILE = "src/test/resources/handler/annotationcondition.rhamt.xml";
+    private static final String ANNOTATION_HANDLER_XML_MTA_FILE = "src/test/resources/handler/annotationcondition.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -64,6 +65,13 @@ public class AnnotationConditionHandlerTest
     public void testRhamtCondition() throws Exception
     {
         File fXmlFile = new File(ANNOTATION_HANDLER_XML_RHAMT_FILE);
+        testCondition(fXmlFile);
+    }
+
+    @Test
+    public void testMtaCondition() throws Exception
+    {
+        File fXmlFile = new File(ANNOTATION_HANDLER_XML_MTA_FILE);
         testCondition(fXmlFile);
     }
 

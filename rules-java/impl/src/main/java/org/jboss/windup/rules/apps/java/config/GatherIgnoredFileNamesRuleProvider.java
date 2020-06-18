@@ -42,7 +42,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<WindupConfigurationModel>
 {
 
-    private final static String[] IGNORE_FILE_EXTENSIONS = {"windup-ignore.txt", "rhamt-ignore.txt" };
+    private final static String[] IGNORE_FILE_EXTENSIONS = {"windup-ignore.txt", "rhamt-ignore.txt", "mta-ignore.txt" };
     private static final Logger LOG = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
 
     @Override

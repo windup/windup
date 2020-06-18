@@ -49,7 +49,7 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "User Labels Directory (Search pattern: *.windup.label.xml, *.rhamt.label.xml). Multiple paths can be specified separated by a space (for example, --userLabelsDirectory PATH_1 PATH_2).";
+        return "User Labels Directory (Search pattern: *.windup.label.xml, *.rhamt.label.xml, and *.mta.label.xml). Multiple paths can be specified separated by a space (for example, --userLabelsDirectory PATH_1 PATH_2).";
     }
 
     @Override

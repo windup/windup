@@ -53,7 +53,7 @@ public abstract class AbstractListCommand extends AbstractListCommandWithoutFurn
         Path userRulesDir = PathUtil.getUserRulesDir();
         try
         {
-            // do not filter files contained in UserRulesDir to search for "rhamt.xml" or "windup.xml"
+            // do not filter files contained in UserRulesDir to search for "rhamt.xml", "windup.xml" or "mta.xml"
             // as it do not filter in the case of userProvidedPaths.
             // It just adds the dir to be scanned by RuleProviderRegistryCache
             if (Files.list(userRulesDir).count() > 0) userProvidedPaths.add(userRulesDir);

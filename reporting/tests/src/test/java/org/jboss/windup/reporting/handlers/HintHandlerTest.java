@@ -36,6 +36,7 @@ public class HintHandlerTest
 
     private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hint.windup.xml";
     private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hint.rhamt.xml";
+    private static final String HINT_XML_MTA_FILE = "src/test/resources/handler/hint.mta.xml";
 
     @Deployment
     @AddonDependencies({
@@ -65,6 +66,13 @@ public class HintHandlerTest
     public void testRhamtHintHandler() throws Exception
     {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    @Test
+    public void testMtaHintHandler() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_MTA_FILE);
         testHintHandler(fXmlFile);
     }
 
@@ -127,6 +135,13 @@ public class HintHandlerTest
     public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception
     {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testMtaXmlFileWithoutPublidIdAndXpath() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_MTA_FILE);
         testXmlFileWithoutPublidIdAndXpath(fXmlFile);
     }
 
