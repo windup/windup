@@ -138,7 +138,7 @@ public class ToolingModeCommand implements Command
         return arguments.contains(ToolingModeCommand.COMMAND_ID);
     }
 
-    private Set<String> getInput()
+    public Set<String> getInput()
     {
         int index = arguments.indexOf(toArg(IOptionKeys.INPUT)) + 1;
         return Sets.toSet(this.getValues(index));
@@ -211,8 +211,7 @@ public class ToolingModeCommand implements Command
             {
                 break;
             }
-            for (String value : StringUtils.split(arg, ' '))
-                values.add(value);
+            values.add(arg.replace("\"", ""));
             index++;
         }
         return values;
