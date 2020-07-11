@@ -23,7 +23,7 @@
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
-        <version.freemarker>2.3.26-incubating</version.freemarker>
+        <version.freemarker>2.3.30</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
