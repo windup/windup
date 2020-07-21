@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.LogRecord;
 
@@ -33,19 +34,22 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
         Set<String> input,
         String output,
         boolean sourceMode,
-        boolean ignoreReport,
+        boolean skipReports,
         List<String> ignorePatterns,
         String windupHome,
         List<String> source,
         List<String> target,
-        List<File> rulesDir) 
+        List<File> rulesDir,
+        List<String> packages,
+        List<String> excludePackages,
+        Map<String, Object> options) 
     {
         try 
         {
             executionBuilder.setInput(input);
             executionBuilder.setOutput(output);
             executionBuilder.setOption(IOptionKeys.SOURCE_MODE, sourceMode);
-            executionBuilder.setOption(IOptionKeys.SKIP_REPORTS, ignoreReport);
+            executionBuilder.setOption(IOptionKeys.SKIP_REPORTS, skipReports);
             for (Iterator<String> iter = ignorePatterns.iterator(); iter.hasNext();) 
             {
                 executionBuilder.ignore(iter.next());
@@ -55,6 +59,12 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
             executionBuilder.setOption(IOptionKeys.TARGET, target);
             executionBuilder.setOption(IOptionKeys.CUSTOM_RULES_DIR, rulesDir);
             executionBuilder.setProgressMonitor((WindupToolingProgressMonitor) this.progressMonitor);
+
+            executionBuilder.includePackages(packages);
+            executionBuilder.excludePackages(excludePackages);
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                executionBuilder.setOption(entry.getKey(), entry.getValue());
+            }
             ExecutionResults results = executionBuilder.execute();
             results.serializeToXML(Paths.get(output + File.separatorChar + "results.xml"));
             System.out.println(":progress: {\"op\":\"complete\"}");

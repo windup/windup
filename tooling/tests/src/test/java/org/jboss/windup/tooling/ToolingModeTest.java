@@ -1,24 +1,17 @@
 package org.jboss.windup.tooling;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,29 +23,21 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.logmanager.Level;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.exec.configuration.options.OnlineModeOption;
-import org.jboss.windup.exec.configuration.options.SourceOption;
-import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.tooling.data.QuickfixType;
-import org.jboss.windup.tooling.rules.RuleProvider;
-import org.jboss.windup.tooling.rules.RuleProviderRegistry;
-import org.jboss.windup.tooling.ToolingModeRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,8 +45,8 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -70,7 +55,6 @@ import com.google.common.collect.Sets;
 @RunWith(Arquillian.class)
 public class ToolingModeTest
 {
-    private static Logger LOG = Logger.getLogger(ToolingModeTest.class.getName());
 
     @Inject
     private TestProvider testProvider;
@@ -133,6 +117,10 @@ public class ToolingModeTest
         List<String> source = Lists.newArrayList("eap");
         List<String> target = Lists.newArrayList("eap");
         List<File> rulesDir = Lists.newArrayList();
+        List<String> packages = Lists.newArrayList();
+        List<String> excludePackages = Lists.newArrayList();
+        Map<String, Object> options = Maps.newHashMap();
+
         ToolingModeRunner runner = furnace.getAddonRegistry().getServices(ToolingModeRunner.class).get();
         Assert.assertNotNull(runner);
         
@@ -140,7 +128,7 @@ public class ToolingModeTest
         runner.setProgressMonitor(progressWithLogging);
         
         ExecutionResults results = runner.run(input, output.toString(), sourceMode, ignoreReport, ignorePatterns,
-                    windupHome, source, target, rulesDir);
+                    windupHome, source, target, rulesDir, packages, excludePackages, options);
 
         Assert.assertNotNull(results);
 
