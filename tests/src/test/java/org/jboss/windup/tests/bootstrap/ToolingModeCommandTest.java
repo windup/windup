@@ -71,6 +71,6 @@ public class ToolingModeCommandTest {
         Assert.assertTrue((Boolean)options.get("mavenize"));
         Assert.assertTrue((Boolean)options.get("online"));
         Assert.assertTrue((Boolean)options.get("disableTattletale"));
-        Assert.assertTrue(options.get("exportCSV") == null);
+        Assert.assertFalse((Boolean)options.get("exportCSV"));
     }
 }
