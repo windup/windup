@@ -1,13 +1,14 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import com.google.common.collect.Lists;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.util.Sets;
@@ -92,6 +93,10 @@ public class ToolingModeCommand implements Command
         List<String> target = this.getTarget();
         List<File> rulesDir = this.getUserRulesDir();
 
+        List<String> packages = this.getPackages();
+        List<String> excludePackage = this.getExcludePackages();
+        Map<String, Object> options = this.collectOptions();
+
         if (input.isEmpty()) {
             System.out.println("Error - `input` required");
             return;
@@ -122,9 +127,85 @@ public class ToolingModeCommand implements Command
         System.out.println("source: " + source);
         System.out.println("target: " + target);
         System.out.println("userRulesDirectory: " + rulesDir);
-        furnace.getAddonRegistry().getServices(ToolingModeRunner.class).get()
-            .run(input, output, sourceMode, ignoreReport, ignorePatterns,
-                    windupHome, source, target, rulesDir);
+        furnace.getAddonRegistry().getServices(ToolingModeRunner.class).get().run(input, output, sourceMode,
+                ignoreReport, ignorePatterns, windupHome, source, target, rulesDir, packages, excludePackage, options);
+    }
+
+    public Map<String, Object> collectOptions()
+    {
+        Map<String, Object> options = new HashMap<String, Object>();
+
+        // userIgnorePath
+        String userIgnorePath = this.getUserIgnorePath();
+        if (userIgnorePath != null) {
+            options.put(IOptionKeys.USER_IGNORE_PATH, userIgnorePath);
+        }
+
+        // overwrite
+        options.put(IOptionKeys.OVERWRITE, this.overwrite());
+
+        // excludePackages - skip, special case
+
+        // mavenizeGroupId
+        String mavenizeGroupId = this.getMavenizeGroupId();
+        if (mavenizeGroupId != null) {
+            options.put(IOptionKeys.MAVENIZE_GROUP_ID, mavenizeGroupId);
+        }
+
+        // exportCSV
+        options.put(IOptionKeys.EXPORT_CSV, this.exportCSV());
+
+        // excludeTags
+        List<String> excludeTags = this.getExcludeTags();
+        if (!excludeTags.isEmpty()) {
+            options.put(IOptionKeys.EXCLUDE_TAGS, excludeTags);
+        }
+
+        // packages - skip, special case
+
+        // additionalClasspath
+        List<File> additionalClasspath = this.getAdditionalClasspath();
+        if (!additionalClasspath.isEmpty()) {
+            options.put(IOptionKeys.ADDITIONAL_CLASSPATH, additionalClasspath);
+        }
+
+        // disableTattletale
+        options.put(IOptionKeys.DISABLE_TATTLETALE, this.disableTattletale());
+
+        // enableCompatibleFilesReport
+        options.put(IOptionKeys.ENABLE_COMPATIBLE_FILES_REPORT, this.enableCompatibleFilesReport());
+
+        // includeTags
+        List<String> includeTags = this.getIncludeTags();
+        if (!includeTags.isEmpty()) {
+            options.put(IOptionKeys.INCLUDE_TAGS, includeTags);
+        }
+
+        // online
+        options.put(IOptionKeys.ONLINE, this.online());
+
+        // enableClassNotFoundAnalysis
+        options.put(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS, this.enableClassNotFoundAnalysis());
+
+        // enableTattletale
+        options.put(IOptionKeys.ENABLE_TATTLETALE, this.enableTattletale());
+
+        // explodedApp
+        options.put(IOptionKeys.EXPLODED_APP, this.explodedApp());
+
+        // keepWorkDirs
+        options.put(IOptionKeys.KEEP_WORK_DIRS, this.keepWorkDirs());
+
+        // mavenize
+        options.put(IOptionKeys.MAVENIZE, this.mavenize());
+
+        // inputApplicationName
+        String inputApplicationName = this.getInputApplicationName();
+        if (inputApplicationName != null) {
+            options.put(IOptionKeys.INPUT_APPLICATION_NAME, inputApplicationName);
+        }
+
+        return options;
     }
 
     @Override
@@ -195,7 +276,129 @@ public class ToolingModeCommand implements Command
         return rules;
     }
 
-    private String toArg(String name) {
+    // userIgnorePath
+    private String getUserIgnorePath()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.USER_IGNORE_PATH)) + 1;
+        List<String> values = this.getValues(index);
+        return values.size() == 1 ? values.get(0) : null;
+    }
+
+    // overwrite
+    private boolean overwrite()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.OVERWRITE));
+    }
+
+    // excludePackages
+    public List<String> getExcludePackages()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.EXCLUDE_PACKAGES)) + 1;
+        return this.getValues(index);
+    }
+
+    // mavenizeGroupId
+    private String getMavenizeGroupId()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.MAVENIZE_GROUP_ID)) + 1;
+        List<String> values = this.getValues(index);
+        return values.size() == 1 ? values.get(0) : null;
+    }
+
+    // exportCSV
+    private boolean exportCSV()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.EXPORT_CSV));
+    }
+
+    // excludeTags
+    private List<String> getExcludeTags()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.EXCLUDE_TAGS)) + 1;
+        return this.getValues(index);
+    }
+
+    // packages
+    public List<String> getPackages()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.PACKAGES)) + 1;
+        return this.getValues(index);
+    }
+
+    // additionalClasspath
+    private List<File> getAdditionalClasspath()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.ADDITIONAL_CLASSPATH)) + 1;
+        List<File> locations = Lists.newArrayList();
+        List<String> values = this.getValues(index);
+        values.forEach(value -> locations.add(new File(value)));
+        return locations;
+    }
+
+    // disableTattletale
+    private boolean disableTattletale()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.DISABLE_TATTLETALE));
+    }
+
+    // enableCompatibleFilesReport
+    private boolean enableCompatibleFilesReport()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.ENABLE_COMPATIBLE_FILES_REPORT));
+    }
+
+    // includeTags
+    private List<String> getIncludeTags()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.INCLUDE_TAGS)) + 1;
+        return this.getValues(index);
+    }
+
+    // online
+    private boolean online()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.ONLINE));
+    }
+
+    // enableClassNotFoundAnalysis
+    private boolean enableClassNotFoundAnalysis()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS));
+    }
+
+    // enableTattletale
+    private boolean enableTattletale()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.ENABLE_TATTLETALE));
+    }
+
+    // explodedApp
+    private boolean explodedApp()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.EXPLODED_APP));
+    }
+
+    // keepWorkDirs
+    private boolean keepWorkDirs()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.KEEP_WORK_DIRS));
+    }
+
+    // mavenize
+    private boolean mavenize()
+    {
+        return this.arguments.contains(toArg(IOptionKeys.MAVENIZE));
+    }
+
+    // inputApplicationName
+    private String getInputApplicationName()
+    {
+        int index = arguments.indexOf(toArg(IOptionKeys.INPUT_APPLICATION_NAME)) + 1;
+        List<String> values = this.getValues(index);
+        return values.size() == 1 ? values.get(0) : null;
+    }
+
+    private static String toArg(String name) {
         return "--" + name;
     }
 
@@ -204,9 +407,9 @@ public class ToolingModeCommand implements Command
         if (index == 0) {
             return values;
         }
-        while (index < arguments.size())
+        while (index < this.arguments.size())
         {
-            final String arg = arguments.get(index);
+            final String arg = this.arguments.get(index);
             if (arg.contains("--"))
             {
                 break;
