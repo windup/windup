@@ -9,6 +9,7 @@ import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileLocationService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
@@ -116,16 +117,11 @@ public class Dependency extends ParameterizedGraphCondition
     public boolean evaluate(GraphRewrite event, EvaluationContext context,
                 final EvaluationStrategy evaluationStrategy)
     {
-        final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
-        List<FileLocationModel> result = new ArrayList<>();
-        Set<String> archiveFoundFilePaths = new HashSet<>();
+        final FileLocationService fileLocationService = new FileLocationService(event.getGraphContext());
+        final List<FileLocationModel> result = new ArrayList<>();
+        final Set<String> archiveFoundFilePaths = new HashSet<>();
         final Consumer<DependencyFound> archiveModelConsumer = (dependencyFound) -> {
-            FileLocationModel fileLocationModel = fileLocationService.create();
-            fileLocationModel.setFile(dependencyFound.getFileModel());
-            fileLocationModel.setColumnNumber(1);
-            fileLocationModel.setLineNumber(1);
-            fileLocationModel.setLength(1);
-            fileLocationModel.setSourceSnippit("Dependency Archive Match");
+            FileLocationModel fileLocationModel = fileLocationService.getOrCreate(dependencyFound.getFileModel(), 1, 1, 1, "Dependency Archive Match");
 
             evaluationStrategy.modelMatched();
             ParameterizedPatternResult groupIdParameterizedPatternResult = dependencyFound.getGroupIdParameterizedPattern();
