@@ -58,7 +58,16 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
+        <!--
+            This dependency has to be added in order to have org.jboss.windup.ext.groovy.GroovyWindupRuleProviderLoader.getCompositeClassloader
+            to install this "windup-rules-java-ee" addon installed when executing Groovy rules
+        -->
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-groovy</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Furnace Container -->
         <dependency>

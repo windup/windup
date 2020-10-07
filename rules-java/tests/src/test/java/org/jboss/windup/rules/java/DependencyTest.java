@@ -1,5 +1,16 @@
 package org.jboss.windup.rules.java;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,16 +30,16 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
-import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileLocationService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.rules.apps.java.condition.Dependency;
-import org.jboss.windup.rules.apps.java.condition.Version;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.condition.Dependency;
+import org.jboss.windup.rules.apps.java.condition.Version;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.junit.Assert;
@@ -37,16 +48,6 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @RunWith(Arquillian.class)
 public class DependencyTest {
@@ -167,6 +168,14 @@ public class DependencyTest {
                     .count();
             Assert.assertEquals(2l, hintsWithParameterizedHint.longValue());
 
+            FileLocationService fileLocationService = new FileLocationService(context);
+            FileLocationModel fileLocationModel = fileLocationService.getUnique(
+                        provider.getMatches().get(0).getFile(),
+                        provider.getMatches().get(0).getLineNumber(),
+                        provider.getMatches().get(0).getLineNumber(),
+                        provider.getMatches().get(0).getLength(),
+                        provider.getMatches().get(0).getSourceSnippit());
+            Assert.assertNotNull(fileLocationModel);
         }
     }
 
