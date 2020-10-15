@@ -333,12 +333,14 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier | ./classifier", namespaces);
             String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope | ./scope", namespaces);
             String dependencyType = XmlUtil.xpathExtract(node, "./pom:type | ./type", namespaces);
+            String dependencyOptional = XmlUtil.xpathExtract(node, "./pom:optional | ./optional", namespaces);
 
             dependencyGroupId = resolveProperty(document, namespaces, dependencyGroupId, version);
             dependencyArtifactId = resolveProperty(document, namespaces, dependencyArtifactId, version);
             dependencyVersion = resolveProperty(document, namespaces, dependencyVersion, version);
 
-            if (StringUtils.isNotBlank(dependencyGroupId))
+            // optional check introduced with WINDUP-2771
+            if (StringUtils.isNotBlank(dependencyGroupId) && !Boolean.parseBoolean(dependencyOptional))
             {
                 MavenProjectModel dependency = getMavenProject(mavenProjectService, dependencyGroupId, dependencyArtifactId, dependencyVersion);
                 if (dependency == null)
