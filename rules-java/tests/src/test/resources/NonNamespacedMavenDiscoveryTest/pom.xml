@@ -14,5 +14,11 @@
             <version>1.4</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>testdependency-groupid</groupId>
+            <artifactId>testdependency-artifactid-1</artifactId>
+            <version>1.4</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
