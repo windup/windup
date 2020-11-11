@@ -13,6 +13,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -43,7 +44,10 @@ import com.opencsv.CSVWriter;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class, haltOnException = true)
+@RuleMetadata(phase = DependentPhase.class,
+        after = PostReportGenerationPhase.class,
+        before = AttachApplicationReportsToIndexRuleProvider.class,
+        haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
