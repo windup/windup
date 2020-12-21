@@ -3,7 +3,13 @@ package org.jboss.windup.reporting.export;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -13,19 +19,22 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
-import org.jboss.windup.reporting.model.*;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.EffortReportModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
-import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -43,7 +52,10 @@ import com.opencsv.CSVWriter;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class, haltOnException = true)
+@RuleMetadata(phase = DependentPhase.class,
+        after = PostReportGenerationPhase.class,
+        before = AttachApplicationReportsToIndexRuleProvider.class,
+        haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
@@ -191,45 +203,20 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
         private void produceApplicationListCSV(GraphRewrite event, Map<String, CSVWriter> projectToFile, String outputFolderPath)
         {
-
-
-
-            ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
-            TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
-            List<ApplicationReportModel> apps = applicationReportService.findAll();
-            List<TechnologyTagModel> masterTagList = techTagService.findAll().stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
-
-                            {
-                                String n1 = o1.getName();
-                                String n2 = o2.getName();
-                                return n1.compareToIgnoreCase(n2);
-                            }).collect(Collectors.toList());
-
             List<String> headerFieldsList = new ArrayList<>();
             headerFieldsList.add("App Name");
-            ArrayList<String> appNames = new ArrayList<>();
-            ArrayList<ApplicationReportModel> distinctApps = new ArrayList<>();
-
-            apps.forEach(app ->
+            TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
+            List<TechnologyTagModel> masterTagList = techTagService.findAll().stream().filter(tag -> !tag.getName().equals("Decompiled Java File")).sorted((o1,o2) ->
             {
-                if(app.getProjectModel()!= null && app.getProjectModel().getRootFileModel() != null
-                        && !appNames.contains(app.getProjectModel().getRootFileModel().getFileName())) {
-                    appNames.add(app.getProjectModel().getRootFileModel().getFileName());
-                    distinctApps.add(app);
-                }
-            });
-
-
-
+                String n1 = o1.getName();
+                String n2 = o2.getName();
+                return n1.compareToIgnoreCase(n2);
+            }).collect(Collectors.toList());
             masterTagList.forEach( masterTag -> headerFieldsList.add(masterTag.getName()));
             String[] headerStringsToWrite = headerFieldsList.toArray(new String[0]);
 
-            distinctApps.stream().sorted((o1,o2) ->
-            {
-                String n1 = o1.getProjectModel().getRootFileModel().getFileName();
-                String n2 = o2.getProjectModel().getRootFileModel().getFileName();
-                return n1.compareToIgnoreCase(n2);
-            }).forEachOrdered(app ->
+            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            configuration.getInputPaths().forEach(app ->
             {
                 ProjectModelTraversal traversal = new ProjectModelTraversal(app.getProjectModel(),new OnlyOnceTraversalStrategy());
                 ArrayList<TechnologyTagModel> tagsForApp = new ArrayList<>();
