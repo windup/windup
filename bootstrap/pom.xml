@@ -74,7 +74,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm-all</artifactId>
+                    <artifactId>asm</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.jboss.windup.ast</groupId>

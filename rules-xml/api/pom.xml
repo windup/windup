@@ -21,8 +21,8 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-            <version>5.0.4</version>
+            <artifactId>asm</artifactId>
+            <version>9.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
