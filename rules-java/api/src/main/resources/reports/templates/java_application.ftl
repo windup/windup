@@ -113,7 +113,7 @@
         var $tagLabels = $("#${projectID} .projectFile .tech .label");
         var $tagWarns = $tagLabels.find(".warning");
         $tagWarns.add( $tagLabels.find(".danger") );
-        thisProject.warnings = $tagWarns.size();
+        thisProject.warnings = $tagWarns.length;
         thisProject.tags = []; /// TODO: Need to execute all this after the tag JS analysis.
 
         if (parentProject == null) {
@@ -323,7 +323,10 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+    
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
     <script src="resources/js/windup-overview-head.js"></script>
+    
     <style>
         .desc { z-index: 5000; }
 
@@ -435,7 +438,7 @@
         </div>
 
 
-        <script src="resources/js/jquery-3.3.1.min.js"></script>
+
         <script src="resources/js/jquery.storageapi.min.js"></script>
         <script src="resources/js/jquery.color-2.1.2.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>

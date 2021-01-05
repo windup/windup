@@ -69,6 +69,8 @@
         tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
         tr.headersGroup { height: 215px; }
     </style>
+
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
 
 <body role="document">
@@ -170,7 +172,7 @@
         </div>
     </div>
 
-    <script src="resources/js/jquery-3.3.1.min.js"></script>
+
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>

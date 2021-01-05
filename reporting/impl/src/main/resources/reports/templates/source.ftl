@@ -12,6 +12,8 @@
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
     <link rel="shortcut icon" href="resources/img/mta-icon.png" type="image/x-icon"/>
+
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
 <body role="document" class="source-report">
 
@@ -126,7 +128,7 @@
 
     <#include "include/timestamp.ftl">
 
-    <script src="resources/js/jquery-3.3.1.min.js"></script>
+
     <script src="resources/js/jquery-migrate-1.4.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 
