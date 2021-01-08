@@ -24,6 +24,8 @@
     margin-bottom: 25px;
 }
     </style>
+
+    <script type="text/javascript" src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
 <body role="document" class="java-report-index">
 
@@ -151,7 +153,7 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="resources/js/jquery-3.3.1.min.js"></script>
+
     <script src="resources/js/jquery.color-2.1.2.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.js"></script>

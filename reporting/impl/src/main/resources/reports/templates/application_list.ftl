@@ -149,6 +149,7 @@
         body.viewAppList .apps .appInfo:first-of-type { border-top: 1px solid gray; }
     </style>
 
+    <script src="reports/resources/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript">
          var TARGET_RUNTIME = JSON.parse('${reportModel.reportProperties["target_runtimes"]}');
      </script>
@@ -247,7 +248,7 @@
         <#include "include/timestamp.ftl">
 
     </div> <!-- /.container-fluid -->
-    <script src="reports/resources/js/jquery-3.3.1.min.js"></script>
+
     <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){

@@ -11,6 +11,8 @@
     <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
 <body role="document">
 
@@ -67,7 +69,7 @@
 
     <#include "include/timestamp.ftl">
     </div><!-- /container main -->
-    <script src="resources/js/jquery-3.3.1.min.js"></script>
+
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
