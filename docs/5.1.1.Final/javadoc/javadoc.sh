@@ -1,0 +1,1 @@
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.275.b01-6.fc33.x86_64/jre/../bin/javadoc -J-Xmx2400m @options @packages
