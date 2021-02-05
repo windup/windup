@@ -14,6 +14,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -39,7 +40,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
-@RuleMetadata(phase = MigrationRulesPhase.class, tags = {"cloud-readiness"})
+@RuleMetadata(phase = MigrationRulesPhase.class, tags = {"cloud-readiness"}, targetTechnologies = {@Technology(id = "cloud-readiness")})
 public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
 {
     private static final String IP_PATTERN = "(?<![\\w./-])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.-])";

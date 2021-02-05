@@ -113,6 +113,8 @@
             tr.problemSummary.effortUNKNOWN td.level { color: #C42F0E; }
             */
         </style>
+
+        <script src="resources/js/jquery-3.3.1.min.js"></script>
     </head>
     <body role="document" class="migration-issues">
         <!-- Navbar -->
@@ -199,7 +201,7 @@
             <#include "include/timestamp.ftl">
         </div>
 
-        <script src="resources/js/jquery-3.3.1.min.js"></script>
+
         <script src="resources/js/jquery-ui.min.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/jquery.tablesorter.min.js"></script>

@@ -72,7 +72,7 @@ public class DependencyVisitor extends ClassVisitor
 
     public DependencyVisitor()
     {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
     }
 
     // ClassVisitor

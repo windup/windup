@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-xml-parent</artifactId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>5.1.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-rules-xml-api</artifactId>
@@ -21,8 +21,8 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-            <version>5.0.4</version>
+            <artifactId>asm</artifactId>
+            <version>9.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-fernflower</artifactId>
-            <version>5.1.1-SNAPSHOT</version>
+            <version>5.1.2-SNAPSHOT</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>

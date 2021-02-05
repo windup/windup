@@ -10,6 +10,8 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
     <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
 <body role="document">
 
@@ -85,7 +87,7 @@
 
     </div> <!-- /container main -->
 
-    <script src="resources/js/jquery-3.3.1.min.js"></script>
+
 
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
