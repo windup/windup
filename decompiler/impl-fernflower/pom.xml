@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
-            <version>6.11.0</version>
+            <version>7.17.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
