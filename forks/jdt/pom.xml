@@ -59,12 +59,6 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.16.200</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.jobs</artifactId>
             <version>3.10.1100</version>
             <scope>provided</scope>
