@@ -39,6 +39,7 @@ class GraphModelScanner
                 this.skipPackages.add("org.openrdf.model.");
                 this.skipPackages.add("org.apache.bcel.");
                 this.skipPackages.add("org.eclipse.jdt.");
+                this.skipPackages.add("org.eclipse.jface.");
                 this.skipPackages.add("javax.");
                 this.skipPackages.add("org.jboss.weld.");
                 this.skipPackages.add("freemarker.");
