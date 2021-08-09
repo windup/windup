@@ -18,8 +18,8 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.9.2.Final</version.forge>
-        <version.furnace>2.28.4.Final</version.furnace>
+        <version.forge>3.9.8.Final</version.forge>
+        <version.furnace>2.28.5.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
@@ -150,7 +150,7 @@
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.3.0</version>
+                <version>2.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
@@ -196,9 +196,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.8.1</version>
                     <configuration>
-                        <compilerVersion>1.8</compilerVersion>
+                        <compilerVersion>11</compilerVersion>
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
