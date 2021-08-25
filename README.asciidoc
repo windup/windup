@@ -26,7 +26,7 @@ After that, follow the link:https://github.com/windup/windup/wiki/Execute[User G
 
 Windup distribution contains a sample file to try Windup with. Try the following command in a console:
 
-    bin/windup --target eap --input samples/jee-example-app-1.0.0.ear
+    bin/mta-cli --target eap7 --input samples/jee-example-app-1.0.0.ear
 
 This will create a report next to the scanned archive:
 
