@@ -34,9 +34,9 @@ public class GreetingListener implements ContainerLifecycleListener
         PrintWriter out = new PrintWriter(sw, true);
         out.println();
         out.println("");
-        out.print("Migration Toolkit for Applications (MTA) CLI, version [ ");
+        out.print("Tackle Analysis CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ] - by Red Hat, Inc. [ https://developers.redhat.com/products/mta/overview/ ]");
+        out.print(" ] - [ https://developers.redhat.com/products/mta/overview/ ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());

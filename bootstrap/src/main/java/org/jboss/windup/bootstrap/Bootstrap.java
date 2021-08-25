@@ -235,7 +235,7 @@ public class Bootstrap
 
     public static String getVersionString()
     {
-        return "> Migration Toolkit for Applications by Red Hat (MTA) CLI, version " + getRuntimeAPIVersion() + ".";
+        return "> Tackle Analysis CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
     public static Version getRuntimeAPIVersion()

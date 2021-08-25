@@ -40,7 +40,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Source Report
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Migration Toolkit for Applications by Red Hat found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Tackle Analysis found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
 
                     <#list reportModel.projectEdges as toProjectEdge>
                         <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">
