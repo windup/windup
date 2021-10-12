@@ -115,6 +115,7 @@
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
         <module>rules-tattletale</module>
+        <module>rules-openrewrite</module>
         <module>rules-xml</module>
 
         <module>exec</module>
