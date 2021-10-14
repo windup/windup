@@ -16,7 +16,7 @@ public class EnableOpenrewriteOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "If set, Openrewrite auto-migration recipres will be applied to each application.";
+        return "If set, Openrewrite auto-migration recipes will be applied to each application.";
     }
 
     @Override
