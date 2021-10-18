@@ -42,6 +42,12 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Furnace Container -->
         <dependency>
@@ -61,6 +67,17 @@
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
             <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-module-spec</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
