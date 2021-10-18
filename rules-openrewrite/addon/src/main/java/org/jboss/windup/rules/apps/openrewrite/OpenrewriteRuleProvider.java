@@ -4,9 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.SecureClassLoader;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -71,7 +75,8 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                     //Load openrewrite environment
                     ClassLoader classLoader = getClass().getClassLoader();
                     File rewriteYml = new File(classLoader.getResource("rewrite.yml").getFile());
-                    try(InputStream rewriteInputStream = new FileInputStream(rewriteYml)) {
+                    try(InputStream rewriteInputStream = classLoader.getResourceAsStream("rewrite.yml")) {
+
                         ResourceLoader rewriteYmlLoader = new YamlResourceLoader(
                                 rewriteInputStream,
                                 // wouldn't have to exist on disk necessarily (just used in logging)
@@ -90,11 +95,21 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
 
                         Recipe recipe = env.activateRecipes("org.konveyor.tackle.JavaxToJakarta");
 
+                        ClassLoader parent = Java8Parser.class.getClassLoader();
+                        URL[] urls = new URL[] { rewriteYml.getAbsoluteFile().toURI().toURL()};
+                        URLClassLoader urlClassLoader = new URLClassLoader(urls, parent);
+
+
+                        Class aClass = urlClassLoader.loadClass("org.openrewrite.java.Java8Parser");
+
+
 
                         Java8Parser parser = new Java8Parser.Builder().build();
-                        Path homePath = Paths.get("~");
+
+                        
+
                         Path inputPath = Paths.get(new URI(inputFilePath));
-                        List<J.CompilationUnit> fileList =  parser.parse(inputPath, homePath , new InMemoryExecutionContext());
+                        List<J.CompilationUnit> fileList =  parser.parse(inputPath, null , new InMemoryExecutionContext());
 
                         recipe.run(fileList);
                     }
