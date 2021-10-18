@@ -21,9 +21,9 @@
 
         <!-- Addon Dependencies -->
         <dependency>
-            <groupId>io.tackle</groupId>
+            <groupId>com.github.konveyor.tackle-diva</groupId>
             <artifactId>diva-windup</artifactId>
-            <version>0.0.1</version>
+            <version>main-SNAPSHOT</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>

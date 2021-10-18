@@ -32,6 +32,7 @@ public class CreateDivaReportRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logging.get(CreateDivaReportRuleProvider.class);
 
+
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         GraphOperation addReport = new GraphOperation() {

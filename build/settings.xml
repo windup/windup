@@ -33,29 +33,21 @@
         </profile>
 
         <profile>
-            <id>github-tackle-diva</id>
+            <id>jitpack.io</id>
             <repositories>
                 <repository>
-                    <id>github</id>
-                    <name>GitHub Pacakges Location for io.tackle:diva-windup</name>
-                    <url>https://maven.pkg.github.com/akihikot/tackle-diva</url>
+                    <id>jitpack.io</id>
+                    <name>Jitpack Repository</name>
+                    <url>https://jitpack.io/</url>
                 </repository>
             </repositories>
         </profile>
 
     </profiles>
 
-    <servers>
-        <server>
-        <id>github</id>
-        <username>akihikot</username>
-        <password>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</password> <!-- Github packages R-only  -->
-        </server>
-    </servers>
-
     <activeProfiles>
         <activeProfile>jboss-default</activeProfile>
-        <activeProfile>github-tackle-diva</activeProfile>
+        <activeProfile>jitpack.io</activeProfile>
     </activeProfiles>
 
 </settings>
