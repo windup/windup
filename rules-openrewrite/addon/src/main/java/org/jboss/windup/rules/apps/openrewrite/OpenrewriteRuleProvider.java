@@ -1,19 +1,17 @@
 package org.jboss.windup.rules.apps.openrewrite;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecureClassLoader;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -22,7 +20,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -52,6 +50,14 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
+                    .when(SourceMode.isEnabled(),
+                            new GraphCondition() {
+                                @Override
+                                public boolean evaluate(GraphRewrite event, EvaluationContext context) {
+                                    return (Boolean) event.getGraphContext().getOptionMap().getOrDefault(EnableOpenrewriteOption.NAME, Boolean.FALSE);
+                                }
+                            }
+                    )
                     .perform(new OpenrewriteOperation());
     }
 
@@ -61,9 +67,6 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            if (!isOpenrewriteEnabled(event))
-                return;
-
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             for (FileModel input : configuration.getInputPaths())
             {
@@ -119,18 +122,6 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                     throw new WindupException("Failed to run openrewrite due to: " + e.getMessage());
                 }
             }
-        }
-
-
-
-        private boolean isOpenrewriteEnabled(GraphRewrite event)
-        {
-            Boolean enableOpenrewrite = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(EnableOpenrewriteOption.NAME, Boolean.FALSE);
-            Boolean enableSourceMode = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(SourceModeOption.NAME, Boolean.FALSE);
-            if (enableOpenrewrite && enableSourceMode)
-                return true;
-            else
-                return false;
         }
     }
 }
