@@ -3,8 +3,6 @@ package org.jboss.windup.rules.apps.openrewrite;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -30,7 +28,7 @@ import org.openrewrite.Recipe;
 import org.openrewrite.config.Environment;
 import org.openrewrite.config.ResourceLoader;
 import org.openrewrite.config.YamlResourceLoader;
-import org.openrewrite.java.Java8Parser;
+import org.openrewrite.java.Java11Parser;
 import org.openrewrite.java.tree.J;
 
 /**
@@ -95,22 +93,11 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                                 .scanUserHome() // looks for `~/.rewrite/rewrite.yml
                                 .build();
 
-
                         Recipe recipe = env.activateRecipes("org.konveyor.tackle.JavaxToJakarta");
 
-                        ClassLoader parent = Java8Parser.class.getClassLoader();
-                        URL[] urls = new URL[] { rewriteYml.getAbsoluteFile().toURI().toURL()};
-                        URLClassLoader urlClassLoader = new URLClassLoader(urls, parent);
-
-
-                        Class aClass = urlClassLoader.loadClass("org.openrewrite.java.Java8Parser");
-
-
-
-                        Java8Parser parser = new Java8Parser.Builder().build();
-
+                        Java11Parser.Builder builder = Java11Parser.builder();
+                        Java11Parser parser = builder.build();
                         
-
                         Path inputPath = Paths.get(new URI(inputFilePath));
                         List<J.CompilationUnit> fileList =  parser.parse(inputPath, null , new InMemoryExecutionContext());
 
@@ -119,7 +106,7 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                 }
                 catch (Exception e)
                 {
-                    throw new WindupException("Failed to run openrewrite due to: " + e.getMessage());
+                       throw new WindupException("Failed to run openrewrite due to: " + e.getMessage());
                 }
             }
         }
