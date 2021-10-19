@@ -1,9 +1,12 @@
 package org.jboss.windup.rules.apps.openrewrite;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,11 +31,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.Result;
+import org.openrewrite.SourceFile;
 import org.openrewrite.config.Environment;
 import org.openrewrite.config.ResourceLoader;
 import org.openrewrite.config.YamlResourceLoader;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.tree.J;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Runs Openrewrite on the Windup's input.
@@ -101,8 +107,16 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                         JavaParser javaParser = WindupJava8Parser.builder().build();
                         // TODO change this temporary solution (just for running the test) with something that
                         // retrieves all the ".java" files available within the input path
-                        Path inputPath = Paths.get(inputFilePath, "OpenrewriteTestFile1.java");
-                        List<J.CompilationUnit> fileList =  javaParser.parse(Arrays.asList(inputPath), null, new InMemoryExecutionContext());
+                        Path sourceRoot = Paths.get(inputFilePath);
+                        List<Path> inputPaths = new ArrayList<>();
+                        try {
+                            inputPaths =  Files.walk(sourceRoot)
+                                    .filter(f -> !Files.isDirectory(f) && f.toFile().getName().endsWith(".java"))
+                                    .collect(toList());
+                        } catch (IOException e) {
+                            throw new Exception("Unable to list Java source files", e);
+                        }
+                        List<J.CompilationUnit> fileList =  javaParser.parse(inputPaths, null, new InMemoryExecutionContext());
 
                         List<Result> results = recipe.run(fileList);
                         LOG.info(String.format("%d files changed", results.size()));

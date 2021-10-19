@@ -82,7 +82,7 @@ public class WindupJava8Parser implements JavaParser {
                         if (loadedClass == null) {
                             try {
                                 loadedClass = findClass(name);
-                            } catch (ClassNotFoundException e) {
+                            } catch (Exception e) {
                                 loadedClass = super.loadClass(name, resolve);
                             }
                         }
