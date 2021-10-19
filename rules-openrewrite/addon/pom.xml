@@ -10,13 +10,17 @@
     <artifactId>windup-rules-openrewrite</artifactId>
     <name>Windup Rules - openrewrite</name>
 
+    <properties>
+        <openrewrite.version>7.15.0</openrewrite.version>
+    </properties>
+
     <dependencies>
 
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-core</artifactId>
-            <version>7.9.0</version>
+            <version>${openrewrite.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openrewrite.recipe</groupId>
@@ -25,8 +29,13 @@
         </dependency>
         <dependency>
             <groupId>org.openrewrite</groupId>
-            <artifactId>rewrite-java-11</artifactId>
-            <version>7.9.0</version>
+            <artifactId>rewrite-java</artifactId>
+            <version>${openrewrite.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-java-8</artifactId>
+            <version>${openrewrite.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -60,6 +69,15 @@
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>${java.version}</version>
+            <scope>system</scope>
+            <optional>true</optional>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
 
         <!-- Test Dependencies -->

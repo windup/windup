@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.java;
+package org.jboss.windup.rules.openrewrite;
 
 import javax.ejb.EJBHome;
 

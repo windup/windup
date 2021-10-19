@@ -2,10 +2,11 @@ package org.jboss.windup.rules.apps.openrewrite;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -19,16 +20,18 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.condition.SourceMode;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.Result;
 import org.openrewrite.config.Environment;
 import org.openrewrite.config.ResourceLoader;
 import org.openrewrite.config.YamlResourceLoader;
-import org.openrewrite.java.Java11Parser;
+import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.tree.J;
 
 /**
@@ -37,6 +40,7 @@ import org.openrewrite.java.tree.J;
 @RuleMetadata(phase = InitialAnalysisPhase.class)
 public class OpenrewriteRuleProvider extends AbstractRuleProvider
 {
+    private static final Logger LOG = Logging.get(OpenrewriteRuleProvider.class);
 
     public OpenrewriteRuleProvider()
     {
@@ -70,7 +74,6 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
             {
                 String inputFilePath = input.getFilePath();
 
-
                 try
                 {
                     //Load openrewrite environment
@@ -95,18 +98,22 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
 
                         Recipe recipe = env.activateRecipes("org.konveyor.tackle.JavaxToJakarta");
 
-                        Java11Parser.Builder builder = Java11Parser.builder();
-                        Java11Parser parser = builder.build();
-                        
-                        Path inputPath = Paths.get(new URI(inputFilePath));
-                        List<J.CompilationUnit> fileList =  parser.parse(inputPath, null , new InMemoryExecutionContext());
+                        JavaParser javaParser = WindupJava8Parser.builder().build();
+                        // TODO change this temporary solution (just for running the test) with something that
+                        // retrieves all the ".java" files available within the input path
+                        Path inputPath = Paths.get(inputFilePath, "OpenrewriteTestFile1.java");
+                        List<J.CompilationUnit> fileList =  javaParser.parse(Arrays.asList(inputPath), null, new InMemoryExecutionContext());
 
-                        recipe.run(fileList);
+                        List<Result> results = recipe.run(fileList);
+                        LOG.info(String.format("%d files changed", results.size()));
+                        results.forEach(result -> LOG.info(result.toString()));
+                        // TODO should results be stored into the graph in some way?
                     }
                 }
                 catch (Exception e)
                 {
-                       throw new WindupException("Failed to run openrewrite due to: " + e.getMessage());
+                    e.printStackTrace();
+                    throw new WindupException("Failed to run openrewrite due to: " + e.getMessage());
                 }
             }
         }
