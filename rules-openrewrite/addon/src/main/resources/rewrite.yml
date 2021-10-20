@@ -3,7 +3,6 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.konveyor.tackle.JavaxToJakarta
 displayName: migrate javax to jakarta
 recipeList:
-  - org.openrewrite.java.migrate.JavaxMigrationToJakarta
   - org.konveyor.tackle.JavaxDecoratorToJakartaDecorator
   - org.konveyor.tackle.JavaxEjbToJakartaEjb
   - org.konveyor.tackle.JavaxElToJakartaEl
@@ -38,26 +37,10 @@ name: org.konveyor.tackle.JavaxDecoratorToJakartaDecorator
 displayName: Change type example
 recipeList:
 
-  - org.openrewrite.maven.AddDependency:
-      groupId: jakarta.enterprise
-      artifactId: jakarta.enterprise.cdi-api
-      version: 3.x
-      onlyIfUsing: javax.decorator.*
-
-  # Upgrade the dependency to use the jakarta namespace if an older version already exists.
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: jakarta.enterprise
-      artifactId: jakarta.enterprise.cdi-api
-      newVersion: 3.x
-
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.decorator
       newPackageName: jakarta.decorator
 
-  # Remove Javax API(x)
-  - org.openrewrite.maven.RemoveDependency:
-      groupId: javax.enterprise
-      artifactId: cdi-api
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -83,26 +66,9 @@ name: org.konveyor.tackle.JavaxEnterpriseToJakartaEnterprise
 displayName: Change type example
 recipeList:
 
-  - org.openrewrite.maven.AddDependency:
-      groupId: jakarta.enterprise
-      artifactId: jakarta.enterprise.cdi-api
-      version: 3.x
-      onlyIfUsing: javax.enterprise.*
-
-  # Upgrade the dependency to use the jakarta namespace if an older version already exists.
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: jakarta.enterprise
-      artifactId: jakarta.enterprise.cdi-api
-      newVersion: 3.x
-
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.enterprise
       newPackageName: jakarta.enterprise
-
-  # Remove Javax API(x)
-  - org.openrewrite.maven.RemoveDependency:
-      groupId: javax.enterprise
-      artifactId: cdi-api
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -173,27 +139,10 @@ name: org.konveyor.tackle.JavaxMailToJakartaMail
 displayName: Change type example
 recipeList:
 
-  - org.openrewrite.maven.AddDependency:
-      groupId: com.sun.mail
-      artifactId: jakarta.mail
-      version: 2.x
-      onlyIfUsing: javax.mail.*
-
-  # Upgrade the dependency to use the jakarta namespace if an older version already exists.
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: com.sun.mail
-      artifactId: jakarta.mail
-      newVersion: 2.x
-
-
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.mail
       newPackageName: jakarta.mail
 
-  # Remove Javax API(x)
-  - org.openrewrite.maven.RemoveDependency:
-      groupId: com.sun.mail
-      artifactId: javax.mail
 
 ---
 type: specs.openrewrite.org/v1beta/recipe

@@ -11,7 +11,7 @@
     <name>Windup Rules - openrewrite</name>
 
     <properties>
-        <openrewrite.version>7.15.0</openrewrite.version>
+        <openrewrite.version>7.14.0</openrewrite.version>
     </properties>
 
     <dependencies>
