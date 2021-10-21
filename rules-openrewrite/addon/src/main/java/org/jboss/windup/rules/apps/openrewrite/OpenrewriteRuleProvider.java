@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -95,7 +96,7 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
 
                         Environment env = Environment.builder()
                                 .load(rewriteYmlLoader) // can be called more than once for multiple files
-                                //.scanRuntimeClasspath() // classpath scans for META-INF/rewrite/*.yml
+                                .scanRuntimeClasspath(inputFilePath) // classpath scans for META-INF/rewrite/*.yml
                                 .scanUserHome() // looks for `~/.rewrite/rewrite.yml
                                 .build();
 
@@ -117,10 +118,25 @@ public class OpenrewriteRuleProvider extends AbstractRuleProvider
                         List<J.CompilationUnit> fileList =  javaParser.parse(inputPaths, null, ctx);
                         recipe.validateAll(ctx);
 
-                        List<Result> results = recipe.run(fileList, ctx);
+                        List<Result> results = recipe.run(fileList);
 
                         LOG.info(String.format("%d files changed", results.size()));
-                        results.forEach(result -> LOG.info(result.toString()));
+
+                                    results.forEach(result -> {
+                                        LOG.info(result.toString());
+
+                                        //overwrite the file on disk with changes.
+
+                                        try {
+                                            Files.write(result.getAfter().getSourcePath(),
+                                                    Collections.singleton(result.getAfter().print()));
+
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            //throw new Exception("Unable to write changes to Java source files", e);
+                                        }
+                                    });
+
                         // TODO should results be stored into the graph in some way?
                     }
                 }
