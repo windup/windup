@@ -387,6 +387,15 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             result.addAll(typeFilterPattern.getRequiredParameterNames());
         if (lineMatchPattern != null)
             result.addAll(lineMatchPattern.getRequiredParameterNames());
+        if (annotationCondition != null)
+            result.addAll(annotationCondition.getRequiredParameterNames());
+        if (additionalAnnotationConditions != null && !additionalAnnotationConditions.isEmpty())
+        {
+            for (AnnotationCondition condition : additionalAnnotationConditions)
+            {
+                result.addAll(condition.getRequiredParameterNames());
+            }
+        }
         return result;
     }
 
