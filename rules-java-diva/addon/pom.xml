@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -19,14 +21,57 @@
             <version>1.2.0</version>
         </dependency>
 
-        <!-- Addon Dependencies -->
         <dependency>
             <groupId>com.github.konveyor.tackle-diva</groupId>
-            <artifactId>diva-windup</artifactId>
-            <version>0.1.0</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
+            <artifactId>diva-core</artifactId>
+            <version>0.1.1</version>
+            <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.ibm.wala</groupId>
+            <artifactId>com.ibm.wala.util</artifactId>
+            <version>1.5.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.wala</groupId>
+            <artifactId>com.ibm.wala.core</artifactId>
+            <version>1.5.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.wala</groupId>
+            <artifactId>com.ibm.wala.cast</artifactId>
+            <version>1.5.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.wala</groupId>
+            <artifactId>com.ibm.wala.cast.java</artifactId>
+            <version>1.5.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.wala</groupId>
+            <artifactId>com.ibm.wala.cast.java.ecj</artifactId>
+            <version>1.5.7</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- Addon Dependencies -->
+
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java</artifactId>
@@ -39,10 +84,9 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        <!--
-            This dependency has to be added in order to have org.jboss.windup.ext.groovy.GroovyWindupRuleProviderLoader.getCompositeClassloader
-            to install this "windup-rules-java-ee" addon installed when executing Groovy rules like singleton-sessionbean-groovy-00001
-        -->
+        <!-- This dependency has to be added in order to have org.jboss.windup.ext.groovy.GroovyWindupRuleProviderLoader.getCompositeClassloader 
+            to install this "windup-rules-java-ee" addon installed when executing Groovy 
+            rules like singleton-sessionbean-groovy-00001 -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-groovy</artifactId>

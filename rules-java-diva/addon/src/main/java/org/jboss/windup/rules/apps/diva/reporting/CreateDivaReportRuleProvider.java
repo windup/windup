@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.diva.rules;
+package org.jboss.windup.rules.apps.diva.reporting;
 
 import java.util.logging.Logger;
 
@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import io.tackle.diva.windup.model.DivaAppModel;
+import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 
 /**
  * Creates a report of Diva transaction analysis.

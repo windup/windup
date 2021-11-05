@@ -32,22 +32,10 @@
             </pluginRepositories>
         </profile>
 
-        <profile>
-            <id>jitpack.io</id>
-            <repositories>
-                <repository>
-                    <id>jitpack.io</id>
-                    <name>Jitpack Repository</name>
-                    <url>https://jitpack.io/</url>
-                </repository>
-            </repositories>
-        </profile>
-
     </profiles>
 
     <activeProfiles>
         <activeProfile>jboss-default</activeProfile>
-        <activeProfile>jitpack.io</activeProfile>
     </activeProfiles>
 
 </settings>

@@ -16,19 +16,7 @@
     <dependencies>
 
         <!-- Addon Dependencies -->
-        <dependency>
-            <groupId>com.github.konveyor.tackle-diva</groupId>
-            <artifactId>diva-windup</artifactId>
-            <version>0.1.0</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>windup-rules-java</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-diva</artifactId>
@@ -36,6 +24,12 @@
             <version>5.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>        
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config</artifactId>

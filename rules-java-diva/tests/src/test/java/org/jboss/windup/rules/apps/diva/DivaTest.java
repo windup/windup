@@ -26,10 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.util.Assert;
 
-import io.tackle.diva.windup.DivaRuleProvider;
-import io.tackle.diva.windup.model.DivaAppModel;
-import io.tackle.diva.windup.model.DivaOpModel;
-import io.tackle.diva.windup.model.DivaTxModel;
+import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
+import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
+import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 
 @RunWith(Arquillian.class)
 public class DivaTest {
@@ -45,9 +44,6 @@ public class DivaTest {
 
     @Inject
     private GraphContextFactory factory;
-
-    @Inject
-    private DivaRuleProvider divaRuleProvider;
 
     @Test
     public void testSpring() throws IOException {
