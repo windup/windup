@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,14 +24,20 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
     public final TemporaryFolder tmp = new TemporaryFolder();
 
     @Before
-    public void cleanup()
-    {
-        try
-        {
+    public void setup() {
+        deleteTestDirs();
+    }
+    
+    @After
+    public void cleanup() {
+        deleteTestDirs();
+    }
+    
+    private void deleteTestDirs() {
+        try {
             FileUtils.deleteDirectory(TEST_FILE_OUTPUT_DIR);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ignored) {
+            
         }
     }
 
