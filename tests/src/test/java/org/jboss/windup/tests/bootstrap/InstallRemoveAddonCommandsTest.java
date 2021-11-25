@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.bootstrap;
 
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.testutil.rules.RetryRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -53,6 +54,9 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
 
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
+
+    @Rule
+    public final RetryRule retryRule = new RetryRule(3);
 
     private final String installOption;
     private final String installAddonId;
