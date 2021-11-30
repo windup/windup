@@ -6,6 +6,8 @@ import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.Set;
+
 /**
  * {@link AnnotationCondition} provides support for filtering type references based upon detailed annotation information.
  *
@@ -21,4 +23,10 @@ public abstract class AnnotationCondition
      * false otherwise.
      */
     public abstract boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value);
+
+    /**
+     * Called by the framework to obtain the list of parameters required by the condition.
+     * @return The parameter names used in the condition.
+     */
+    public abstract Set<String> getRequiredParameterNames();
 }
