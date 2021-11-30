@@ -193,10 +193,7 @@
         <profile>
             <id>surefire-jdk11</id>
             <activation>
-                <property>
-                    <name>jdk.version</name>
-                    <value>11</value>
-                </property>
+                <jdk>11</jdk>
             </activation>
             <build>
                 <plugins>
