@@ -24,52 +24,9 @@
         <dependency>
             <groupId>com.github.konveyor.tackle-diva</groupId>
             <artifactId>diva-core</artifactId>
-            <version>0.1.1</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.wala</groupId>
-            <artifactId>com.ibm.wala.util</artifactId>
-            <version>1.5.7</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.wala</groupId>
-            <artifactId>com.ibm.wala.core</artifactId>
-            <version>1.5.7</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.wala</groupId>
-            <artifactId>com.ibm.wala.cast</artifactId>
-            <version>1.5.7</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.wala</groupId>
-            <artifactId>com.ibm.wala.cast.java</artifactId>
-            <version>1.5.7</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.wala</groupId>
-            <artifactId>com.ibm.wala.cast.java.ecj</artifactId>
-            <version>1.5.7</version>
-            <optional>true</optional>
+            <version>0.1.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.13.0</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.8.0</version>
-            <optional>true</optional>
-        </dependency>
         <!-- Addon Dependencies -->
 
         <dependency>
