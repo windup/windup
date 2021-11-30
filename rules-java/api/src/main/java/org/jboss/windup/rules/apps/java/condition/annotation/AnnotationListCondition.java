@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.java.condition.annotation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
@@ -135,5 +137,19 @@ public class AnnotationListCondition extends AnnotationCondition
             }
         }
         return selectedValues;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>();
+        if (conditions != null) {
+            for (AnnotationCondition condition : conditions)
+            {
+                result.addAll(condition.getRequiredParameterNames());
+            }
+        }
+
+        return result;
     }
 }
