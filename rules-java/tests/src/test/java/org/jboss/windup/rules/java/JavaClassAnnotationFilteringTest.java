@@ -8,7 +8,6 @@ import java.util.Collections;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import net.bytebuddy.utility.JavaType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;

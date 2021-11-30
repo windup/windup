@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.condition.annotation;
 
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
