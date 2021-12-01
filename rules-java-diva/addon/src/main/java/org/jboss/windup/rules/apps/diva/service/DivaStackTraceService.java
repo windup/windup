@@ -6,6 +6,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
@@ -50,6 +51,9 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
             model.setLineNumber(lineNumber);
             model.setLength(length);
             model.setFile(fileModel);
+            if (fileModel instanceof SourceFileModel) {
+                ((SourceFileModel)fileModel).setGenerateSourceReport(true);
+            }
             if (parent != null) {
                 model.setParent(parent);
             }
