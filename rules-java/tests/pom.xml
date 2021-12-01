@@ -122,13 +122,13 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.3.3</version>
+            <version>3.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <version>2.2.2</version>
+            <version>3.1.3</version>
             <scope>test</scope>
             <type>pom</type>
         </dependency>

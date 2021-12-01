@@ -1,0 +1,97 @@
+name: Windup PR builder for JDK11
+
+on:
+  pull_request:
+    branches: 
+      - master
+    types:
+      - edited
+
+jobs:
+  windup-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          java-package: jdk
+      - name: Cache Maven packages
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build on JDK 11
+        run: mvn -B clean install -DskipTests
+
+  windup-rulesets-build:
+    runs-on: ubuntu-18.04
+    needs: [windup-build]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+        with:
+          repository: windup/windup-rulesets
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          java-package: jdk
+      - name: Cache Maven packages
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build
+        run: mvn clean install
+
+  windup-maven-plugin-build:
+    runs-on: ubuntu-18.04
+    needs: [windup-rulesets-build]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+        with:
+          repository: windup/windup-maven-plugin
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          java-package: jdk
+      - name: Cache Maven packages
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build
+        run: mvn clean install
+
+  windup-quickstarts-build:
+    runs-on: ubuntu-18.04
+    needs: [windup-build]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+        with:
+          repository: windup/windup-quickstarts
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          java-package: jdk
+      - name: Cache Maven packages
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build
+        run: mvn clean install -s settings.xml
