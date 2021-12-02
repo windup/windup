@@ -21,7 +21,6 @@
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-diva</artifactId>
             <classifier>forge-addon</classifier>
-            <version>5.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
