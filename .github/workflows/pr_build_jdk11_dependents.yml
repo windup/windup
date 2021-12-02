@@ -34,7 +34,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
-          repository: windup/winup-maven-plugin
+          repository: windup/windup-maven-plugin
       - name: Build
         run: mvn clean install
 
@@ -45,7 +45,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
-          repository: windup/winup-rulesets
+          repository: windup/windup-rulesets
       - name: Build
         run: mvn clean install
 
@@ -56,6 +56,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
-          repository: windup/winup-quickstarts
+          repository: windup/windup-quickstarts
       - name: Build
         run: mvn clean install
