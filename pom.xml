@@ -76,6 +76,26 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <!--
+                In windup-graph-impl artifact, the janusgraph-berkeleyje dependency defines the 'oracleReleases' repository in order to retrieve
+                artifact com.sleepycat:je:7.4.5 from Oracle Maven repo (http://download.oracle.com/maven/com/sleepycat/je/7.4.5/je-7.4.5.pom)
+                BUT Maven 3.8.1 "Block external HTTP repositories by default" (https://issues.apache.org/jira/browse/MNG-7118) so
+                here the HTTP*S* version of Oracle Maven repo is defined.
+            -->
+            <id>oracleReleases-mirror</id>
+            <name>oracleReleases-mirror</name>
+            <url>https://download.oracle.com/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <modules>
         <module>bom</module>
         <module>windup-test-harness</module>
