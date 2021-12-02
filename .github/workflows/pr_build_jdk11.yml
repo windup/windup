@@ -27,4 +27,4 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2  
     - name: Build on JDK 11
-      run: mvn -B clean package && cd rules-java/tests && mvn -Dtest=InstallRemoveAddonCommandsTest test
+      run: mvn -B clean install -DskipTests && cd rules-java/tests && mvn -Dtest=InstallRemoveAddonCommandsTest test
