@@ -31,28 +31,31 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [build-windup]
     steps:
-      - name: Build windup-maven-plugin
+      - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
           repository: windup/winup-maven-plugin
+      - name: Build
         run: mvn clean install
 
   windup-rulesets-build:
     runs-on: ubuntu-18.04
     needs: [build-windup]
     steps:
-      - name: Build windup-maven-plugin
+      - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
           repository: windup/winup-rulesets
+      - name: Build
         run: mvn clean install
 
   windup-quickstarts-build:
     runs-on: ubuntu-18.04
     needs: [build-windup]
     steps:
-      - name: Build windup-maven-plugin
+      - name: Checkout repo
         uses: actions/checkout@v2.3.4
         with:
           repository: windup/winup-quickstarts
+      - name: Build
         run: mvn clean install
