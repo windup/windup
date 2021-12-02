@@ -114,6 +114,7 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
 
