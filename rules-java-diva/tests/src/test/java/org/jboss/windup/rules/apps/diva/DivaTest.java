@@ -14,6 +14,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.WindupProcessor;
@@ -21,22 +22,28 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
+import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
+import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.util.Assert;
 
-import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
-import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
-import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
-
 @RunWith(Arquillian.class)
 public class DivaTest {
 
     @Deployment
-    @AddonDependencies
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-diva"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
     public static AddonArchive getDeployment() {
-        return ShrinkWrap.create(AddonArchive.class).addClass(DivaTest.class).addBeansXML();
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
