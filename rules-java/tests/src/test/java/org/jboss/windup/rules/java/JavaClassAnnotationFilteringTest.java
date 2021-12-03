@@ -67,6 +67,9 @@ public class JavaClassAnnotationFilteringTest
     ComplexAnnotationScanProvider complexProvider;
 
     @Inject
+    RegexAnnotationScanProvider regexProvider;
+
+    @Inject
     private WindupProcessor processor;
 
     @Inject
@@ -126,6 +129,35 @@ public class JavaClassAnnotationFilteringTest
             Assert.assertEquals(0, complexProvider.nestedAnnotationWrongNameHitCount);
             Assert.assertEquals(1, complexProvider.nestedAnnotationWithNullLiteralShouldMatch);
             Assert.assertEquals(0, complexProvider.nestedAnnotationWithNullLiteralShouldNotMatchNull);
+        }
+    }
+
+    @Test
+    public void testRegexAnnotationFiltering() throws Exception
+    {
+        Path outputPath = getDefaultPath();
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
+
+        try (GraphContext context = factory.create(outputPath, true))
+        {
+            final String inputDir = "src/test/resources/org/jboss/windup/rules/annotationtests/regex";
+
+            final WindupConfiguration processorConfig = new WindupConfiguration();
+            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(RegexAnnotationScanProvider.class));
+            processorConfig.setGraphContext(context);
+            processorConfig.addInputPath(Paths.get(inputDir));
+            processorConfig.setOutputDirectory(outputPath);
+            processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+
+            processor.execute(processorConfig);
+
+            Assert.assertEquals(3, regexProvider.baseRuleHitCount);
+            Assert.assertEquals(1, regexProvider.withValueFilterHitCount);
+            Assert.assertEquals(0, regexProvider.withIncorrectFilterCount);
+            Assert.assertEquals(1, regexProvider.baseValueRuleHitCount);
+            Assert.assertEquals(1, regexProvider.withRegexFilterHitCount);
         }
     }
 
@@ -294,6 +326,84 @@ public class JavaClassAnnotationFilteringTest
                             nestedAnnotationWithNullLiteralShouldNotMatchNull++;
                         }
                     });
+        }
+        // @formatter:on
+    }
+
+    @Singleton
+    public static class RegexAnnotationScanProvider extends AbstractRuleProvider
+    {
+        private int baseRuleHitCount = 0;
+        private int withValueFilterHitCount = 0;
+        private int withIncorrectFilterCount = 0;
+        private int baseValueRuleHitCount = 0;
+        private int withRegexFilterHitCount = 0;
+
+        public RegexAnnotationScanProvider()
+        {
+            super(MetadataBuilder.forProvider(RegexAnnotationScanProvider.class).setPhase(InitialAnalysisPhase.class)
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+        }
+
+        // @formatter:off
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
+        {
+            return ConfigurationBuilder.begin()
+                    .addRule().when(
+                            JavaClass.references("org.jboss.windup.rules.annotationtests.regex.SimpleTestAnnotation")
+                                    .at(TypeReferenceLocation.ANNOTATION)
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            baseRuleHitCount++;
+                        }
+                    })
+                    .addRule().when(
+                            JavaClass.references("org.jboss.windup.rules.annotationtests.regex.SimpleTestAnnotation")
+                                    .at(TypeReferenceLocation.ANNOTATION).annotationMatches("value2", new AnnotationLiteralCondition("value {accepted_value}"))
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            withValueFilterHitCount++;
+                        }
+                    }).where("accepted_value").matches("4")
+                    .addRule().when(
+                            JavaClass.references("org.jboss.windup.rules.annotationtests.regex.SimpleTestAnnotation")
+                                    .at(TypeReferenceLocation.ANNOTATION).annotationMatches("value2", new AnnotationLiteralCondition("wrongvalue"))
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            withIncorrectFilterCount++;
+                        }
+                    })
+                    .addRule().when(
+                            JavaClass.references("java.lang.String")
+                                    .at(TypeReferenceLocation.FIELD_DECLARATION).annotationMatches(new AnnotationTypeCondition("org.jboss.windup.rules.annotationtests.regex.SimpleTestAnnotation").addCondition("value2", new AnnotationLiteralCondition("member value 2")))
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                            baseValueRuleHitCount++;
+                        }
+                    })
+                    .addRule().when(
+                            JavaClass.references("java.lang.String")
+                                    .at(TypeReferenceLocation.FIELD_DECLARATION).annotationMatches(new AnnotationTypeCondition("{annotation_type}").addCondition("value2", new AnnotationLiteralCondition("{annotation_value_2}")))
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            withRegexFilterHitCount++;
+                        }
+                    }).where("annotation_type").matches("org.jboss.windup.rules.annotationtests.regex.SimpleTestAnnotation")
+                    .where("annotation_value_2").matches(".*2");
+
         }
         // @formatter:on
     }
