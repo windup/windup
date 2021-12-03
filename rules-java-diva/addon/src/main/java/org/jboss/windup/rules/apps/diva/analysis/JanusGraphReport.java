@@ -6,6 +6,15 @@ import java.util.function.Function;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
+import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
+import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
+import org.jboss.windup.rules.apps.diva.model.DivaRequestParamModel;
+import org.jboss.windup.rules.apps.diva.model.DivaRestCallOpModel;
+import org.jboss.windup.rules.apps.diva.model.DivaSqlOpModel;
+import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
+import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
+import org.jboss.windup.rules.apps.diva.service.DivaStackTraceService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -19,15 +28,6 @@ import com.ibm.wala.util.strings.StringStuff;
 
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
-import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
-import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
-import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
-import org.jboss.windup.rules.apps.diva.model.DivaRequestParamModel;
-import org.jboss.windup.rules.apps.diva.model.DivaRestCallOpModel;
-import org.jboss.windup.rules.apps.diva.model.DivaSqlOpModel;
-import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
-import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
-import org.jboss.windup.rules.apps.diva.service.DivaStackTraceService;
 
 public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
@@ -62,13 +62,11 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
     @Override
     public void add(Builder builder) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void add(String data) {
-        // TODO Auto-generated method stub
 
     }
 
@@ -92,20 +90,23 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
                 this.model = (T) m;
                 m.setSql((String) value);
 
-            } else if (model instanceof DivaRestCallOpModel && key.equals("http-method")) {
-                ((DivaRestCallOpModel) model).setHttpMethod((String) value);
-
-            } else if (model instanceof DivaRestCallOpModel && key.equals("url-path")) {
-                ((DivaRestCallOpModel) model).setUrlPath(DivaLauncher.stripBraces((String) value));
-
-            } else if (model instanceof DivaRestCallOpModel && key.equals("client-class")) {
-
             } else if (model instanceof DivaRestCallOpModel) {
-                DivaRequestParamModel param = new GraphService<DivaRequestParamModel>(gc, DivaRequestParamModel.class)
-                        .create();
-                param.setParamName(key);
-                param.setParamValue(value.toString());
-                ((DivaRestCallOpModel) model).addCallParam(param);
+                if (key.equals("http-method")) {
+                    ((DivaRestCallOpModel) model).setHttpMethod((String) value);
+
+                } else if (key.equals("url-path")) {
+                    ((DivaRestCallOpModel) model).setUrlPath(DivaLauncher.stripBraces((String) value));
+
+                } else if (!key.equals("client-class")) {
+                    return;
+
+                } else {
+                    DivaRequestParamModel param = new GraphService<DivaRequestParamModel>(gc,
+                            DivaRequestParamModel.class).create();
+                    param.setParamName(key);
+                    param.setParamValue(value.toString());
+                    ((DivaRestCallOpModel) model).addCallParam(param);
+                }
             }
         }
 

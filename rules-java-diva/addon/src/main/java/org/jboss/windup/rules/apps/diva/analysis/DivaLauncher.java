@@ -38,7 +38,6 @@ import org.jboss.windup.rules.apps.diva.model.DivaRequestParamModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestApiModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestCallOpModel;
 import org.jboss.windup.rules.apps.diva.service.DivaEntryMethodService;
-import org.jboss.windup.rules.apps.diva.service.GetOrCreateGraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
@@ -222,8 +221,7 @@ public class DivaLauncher extends GraphOperation {
         JanusGraphReport<DivaContextModel> report = new JanusGraphReport<>(gc, DivaContextModel.class);
 
         DivaEntryMethodService entryMethodService = new DivaEntryMethodService(gc);
-        GetOrCreateGraphService<DivaRequestParamModel> requestParamService = new GetOrCreateGraphService<>(gc,
-                DivaRequestParamModel.class);
+        GraphService<DivaRequestParamModel> requestParamService = new GraphService<>(gc, DivaRequestParamModel.class);
 
         for (Context cxt : contexts) {
 
