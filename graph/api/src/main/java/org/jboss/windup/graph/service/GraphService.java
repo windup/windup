@@ -288,8 +288,8 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         values[0] = value;
         for (int k = 0; k < kvs.length;)
         {
-            keys[k / 2] = kvs[k++];
-            values[k / 2] = kvs[k++];
+            keys[k / 2 + 1] = kvs[k++];
+            values[k / 2 + 1] = kvs[k++];
         }
         Iterator<T> iter = findAllByProperties(keys, values).iterator();
         if (iter.hasNext())

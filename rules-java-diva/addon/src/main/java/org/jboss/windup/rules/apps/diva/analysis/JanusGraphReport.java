@@ -31,6 +31,8 @@ import io.tackle.diva.Trace;
 
 public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
+    static final String CONSTRAINTS = "constraints";
+
     GraphService<T> service = null;
     GraphContext gc;
     Consumer<T> addEdge = null;
@@ -82,22 +84,22 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
         @Override
         public void putPrimitive(String key, Object value) {
-            if (model instanceof DivaTxModel && key.equals("txid")) {
+            if (model instanceof DivaTxModel && key.equals(TXID)) {
                 ((DivaTxModel) model).setTxid((int) value);
 
-            } else if (model instanceof DivaOpModel && key.equals("sql")) {
+            } else if (model instanceof DivaOpModel && key.equals(SQL)) {
                 DivaSqlOpModel m = GraphService.addTypeToModel(gc, model, DivaSqlOpModel.class);
                 this.model = (T) m;
                 m.setSql((String) value);
 
             } else if (model instanceof DivaRestCallOpModel) {
-                if (key.equals("http-method")) {
+                if (key.equals(HTTP_METHOD)) {
                     ((DivaRestCallOpModel) model).setHttpMethod((String) value);
 
-                } else if (key.equals("url-path")) {
+                } else if (key.equals(URL_PATH)) {
                     ((DivaRestCallOpModel) model).setUrlPath(DivaLauncher.stripBraces((String) value));
 
-                } else if (!key.equals("client-class")) {
+                } else if (!key.equals(CLIENT_CLASS)) {
                     return;
 
                 } else {
@@ -112,7 +114,7 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
         @Override
         public void put(String key, Builder builder) {
-            if (model instanceof DivaOpModel && key.equals("rest-call")) {
+            if (model instanceof DivaOpModel && key.equals(REST_CALL)) {
                 DivaRestCallOpModel m = GraphService.addTypeToModel(gc, model, DivaRestCallOpModel.class);
                 this.model = (T) m;
                 builder.build(new Named<DivaRestCallOpModel>(gc, m));
@@ -121,15 +123,15 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
         @Override
         public void put(String key, io.tackle.diva.Report.Builder builder) {
-            if (model instanceof DivaContextModel && key.equals("constraints")) {
+            if (model instanceof DivaContextModel && key.equals(CONSTRAINTS)) {
                 builder.build(new JanusGraphReport<>(gc, DivaConstraintModel.class,
                         ((DivaContextModel) model)::addConstraint));
 
-            } else if (model instanceof DivaContextModel && key.equals("transactions")) {
+            } else if (model instanceof DivaContextModel && key.equals(TRANSACTIONS)) {
                 builder.build(
                         new JanusGraphReport<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
 
-            } else if (model instanceof DivaTxModel && key.equals("transaction")) {
+            } else if (model instanceof DivaTxModel && key.equals(TRANSACTION)) {
                 int[] counter = new int[] { 0 };
                 builder.build(new JanusGraphReport<>(gc, DivaOpModel.class, op -> {
                     op.setOrdinal(counter[0]++);
@@ -140,7 +142,7 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
 
         @Override
         public <S> void put(String key, S data, Function<S, Report.Builder> fun) {
-            if (model instanceof DivaOpModel && key.equals("stacktrace")) {
+            if (model instanceof DivaOpModel && key.equals(STACKTRACE)) {
                 DivaStackTraceService service = new DivaStackTraceService(gc);
                 JavaClassService classService = new JavaClassService(gc);
                 JavaMethodService methodService = new JavaMethodService(gc);

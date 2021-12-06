@@ -243,10 +243,10 @@ public class DivaLauncher extends GraphOperation {
                         @Override
                         public void accept(Report.Builder txs) {
                             report.add((Report.Named map) -> {
-                                map.put("constraints", (Report r) -> {
+                                map.put(JanusGraphReport.CONSTRAINTS, (Report r) -> {
                                     JanusGraphReport<DivaConstraintModel> cs = (JanusGraphReport<DivaConstraintModel>) r;
                                     for (Context.Constraint c : cxt) {
-                                        if (c.category().equals("entry")) {
+                                        if (c.category().equals(Report.ENTRY)) {
                                             IMethod m = ((EntryConstraint) c).node().getMethod();
                                             DivaEntryMethodModel model = entryMethodService.getOrCreate(
                                                     StringStuff.jvmToBinaryName(
@@ -271,7 +271,7 @@ public class DivaLauncher extends GraphOperation {
                                             }
                                             cs.add(model);
 
-                                        } else if (c.category().equals("http-param")) {
+                                        } else if (c.category().equals(Report.HTTP_PARAM)) {
                                             DivaRequestParamModel model = requestParamService.getOrCreate(
                                                     DivaRequestParamModel.PARAM_NAME, c.type(),
                                                     DivaRequestParamModel.PARAM_VALUE, c.value());
@@ -280,7 +280,7 @@ public class DivaLauncher extends GraphOperation {
                                         }
                                     }
                                 });
-                                map.put("transactions", txs);
+                                map.put(Report.TRANSACTIONS, txs);
                             });
                         }
                     }, txAnalysis);
