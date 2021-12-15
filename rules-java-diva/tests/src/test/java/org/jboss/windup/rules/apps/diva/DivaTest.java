@@ -34,14 +34,12 @@ import org.locationtech.jts.util.Assert;
 public class DivaTest {
 
     @Deployment
-    @AddonDependencies({
-            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-diva"),
+    @AddonDependencies({ @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-diva"),
             @AddonDependency(name = "org.jboss.windup.config:windup-config"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
     public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
@@ -60,7 +58,9 @@ public class DivaTest {
                     .resolve(UUID.randomUUID().toString());
 
             WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(context)
-                    .setOptionValue(SourceModeOption.NAME, true).addInputPath(inputPath).setOutputDirectory(outputPath);
+                    .setOptionValue(SourceModeOption.NAME, true)
+                    .setOptionValue(EnableTransactionAnalysisOption.NAME, true).addInputPath(inputPath)
+                    .setOutputDirectory(outputPath);
 
             processor.execute(windupConfiguration);
 
@@ -83,7 +83,9 @@ public class DivaTest {
                     .resolve(UUID.randomUUID().toString());
 
             WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(context)
-                    .setOptionValue(SourceModeOption.NAME, true).addInputPath(inputPath).setOutputDirectory(outputPath);
+                    .setOptionValue(SourceModeOption.NAME, true)
+                    .setOptionValue(EnableTransactionAnalysisOption.NAME, true).addInputPath(inputPath)
+                    .setOutputDirectory(outputPath);
 
             processor.execute(windupConfiguration);
 

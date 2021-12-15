@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.jboss.windup.config.GraphRewrite;
@@ -28,6 +29,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.rules.apps.diva.EnableTransactionAnalysisOption;
 import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
 import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
@@ -81,8 +83,18 @@ import io.tackle.diva.irgen.DivaSourceLoaderImpl;
 import io.tackle.diva.irgen.ModularAnalysisScope;
 
 public class DivaLauncher extends GraphOperation {
+
+    private static final Logger LOG = Logger.getLogger(DivaLauncher.class.getName());
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context) {
+
+        Boolean enableDiva = (Boolean) event.getGraphContext().getOptionMap()
+                .getOrDefault(EnableTransactionAnalysisOption.NAME, Boolean.FALSE);
+        if (!enableDiva) {
+            LOG.info("Skipping Diva analysis as " + EnableTransactionAnalysisOption.NAME + " option isn't set.");
+            return;
+        }
         try {
             Util.injectedCall(DivaIRGen.advices(), new String[] { "org.jboss.windup.rules.apps.diva.analysis" },
                     new String[] {}, DivaLauncher.class.getName() + ".launch", event, context);
@@ -118,7 +130,7 @@ public class DivaLauncher extends GraphOperation {
             // redundantly defined both in cha and loader-impl.)
 
             for (ProjectModel p : projects) {
-                Util.LOGGER.info("Project: " + p.toPrettyString());
+                LOG.info("Project: " + p.toPrettyString());
 
                 Stack<ProjectModel> todo = new Stack<>();
                 todo.push(p);
@@ -158,7 +170,7 @@ public class DivaLauncher extends GraphOperation {
         } else {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(gc);
             List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
-            Util.LOGGER.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
+            LOG.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
             scope = new JavaSourceAnalysisScope() {
                 @Override
                 public boolean isApplicationLoader(IClassLoader loader) {
@@ -185,8 +197,8 @@ public class DivaLauncher extends GraphOperation {
 
         // build the class hierarchy
         IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope, clf);
-        Util.LOGGER.info(cha.getNumberOfClasses() + " classes");
-        Util.LOGGER.info(Warnings.asString());
+        LOG.info(cha.getNumberOfClasses() + " classes");
+        LOG.info(Warnings.asString());
 
         List<IMethod> entries = new ArrayList<>();
         entries.addAll(ServletAnalysis.getEntries(cha));
@@ -202,7 +214,7 @@ public class DivaLauncher extends GraphOperation {
         AnalysisOptions options = new AnalysisOptions();
         Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries);
 
-        Util.LOGGER.info("building call graph...");
+        LOG.info("building call graph...");
         CallGraph cg = builder.get();
 
         Framework fw = new Framework(cha, cg);
@@ -293,7 +305,7 @@ public class DivaLauncher extends GraphOperation {
 
         endpointResolution(gc, projects);
 
-        Util.LOGGER.info("DONE");
+        LOG.info("DONE");
     }
 
     public static String stripBraces(String s) {
