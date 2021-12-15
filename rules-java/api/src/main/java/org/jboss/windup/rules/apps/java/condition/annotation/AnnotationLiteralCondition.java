@@ -8,6 +8,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Matches a literal value on an annotation element. The value itself is a pattern match and the value is always treated as
  * a string.
@@ -61,5 +64,16 @@ public class AnnotationLiteralCondition extends AnnotationCondition
         }
 
         return true;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>();
+        if (pattern != null) {
+            result.addAll(pattern.getRequiredParameterNames());
+        }
+
+        return result;
     }
 }
