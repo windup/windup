@@ -3,42 +3,6 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
-<!--
-
-<#macro ejbRenderer ejb>
-    <tr>
-        <td>
-            <@render_link model=ejb.ejbDeploymentDescriptor project=reportModel.projectModel text=ejb.beanName/>
-        </td>
-        <td style="text-align:center">
-            <#if ejb.ejbHome??>
-                <@render_link model=ejb.ejbHome project=reportModel.projectModel text="Home" class="btn btn-xxs btn-success"/><#t>
-            <#else>
-                <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Local</a><#t>
-            </#if>
-            <#if ejb.ejbLocal??>
-                <@render_link model=ejb.ejbLocal project=reportModel.projectModel text="Local" class="btn btn-xxs btn-success"/><#t>
-            <#else>
-                <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Local</a><#t>
-            </#if>
-            <#if ejb.ejbRemote??>
-                <@render_link model=ejb.ejbRemote project=reportModel.projectModel text="Remote" class="btn btn-xxs btn-danger"/><#t>
-            <#else>
-                <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Remote</a><#t>
-            </#if>
-        </td>
-        <td>
-            <@render_link model=ejb.ejbClass project=reportModel.projectModel/>
-        </td>
-        <td>
-        	${(ejb.jndiReference.jndiLocation)!}
-        </td>
-    </tr>
-</#macro>
-
-
--->
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -49,9 +13,27 @@
     <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
+
+    <script>
+    function togglePanelSlide(event) {
+        var $panelHeading = $(this);
+        setPanelSlide($panelHeading, $panelHeading.hasClass("panel-collapsed"));
+    }
+
+    function setPanelSlide($panelHeading, expand) {
+        var projectGuid = $panelHeading.parent().data("windup-projectguid");
+        // $.sessionStorage.set(projectGuid, expand ? "true" : "false");
+        $panelHeading.parents(".panel").find(".panel-body")["slide" + (expand ? "Down" : "Up")]();
+        $panelHeading.parents(".panel").toggleClass("panel-boarding", expand);
+        $panelHeading.toggleClass("panel-collapsed", !expand);
+        $panelHeading.find("i").toggleClass("glyphicon-expand", !expand).toggleClass("glyphicon-collapse-up", expand);
+    }
+    $(document).on("click", ".panel-heading", function(event) {
+       togglePanelSlide.call(this, event);
+    });
+    </script>
 </head>
 <body role="document">
-
 
     <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
@@ -73,18 +55,37 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="container-fluid theme-showcase" role="main">
+        <#list reportModel.relatedResources.contexts as context>
 
-            <#list reportModel.relatedResources.tx0>
-            <#items as op>
+        <div class="row panel">
+
+            <div class="panel-heading panel-collapsed clickable">
+            <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
+            <table class="table">
+            <#list context.constraints as constraint>
+            <#if constraint.methodName??>
+            <tr><td>entry class</td><td>${constraint.javaClass.qualifiedName}</td></tr>
+            <tr><td>entry method</td><td>${constraint.methodName}</td></tr>
+            </#if>
+            </#list>
+            <#list context.constraints as constraint>
+            <#if constraint.paramName??>
+            <tr><td>${constraint.paramName}</td><td>${constraint.paramValue}</td></tr>
+            </#if>
+            </#list>
+            </table>
+            </div>
+
+            <div class="panel-body" style="display:none">
+            <#list context.transactions as tx>
+            <#list tx.ops as op>
 
             <#list stackTraceToList(op.stackTrace)>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">${op.sql}</h3>
                     </div>
-                    <table class="table table-striped table-bordered" id="stackTraceList">
+                    <table class="table table-striped table-bordered">
                         <#items as location>
                         <tr>
                            <td>
@@ -95,11 +96,13 @@
                     </table>
                 </div>
             </#list>
-            </#items>
             </#list>
+            </#list>
+            </div> <!-- panel-body -->
 
-        </div> <!-- /container -->
-    </div> <!-- /row-->
+        </div> <!-- row panel -->
+
+        </#list>
 
     <#include "include/timestamp.ftl">
 

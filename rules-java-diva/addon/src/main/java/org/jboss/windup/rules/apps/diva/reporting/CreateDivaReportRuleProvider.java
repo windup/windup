@@ -24,6 +24,7 @@ import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
+import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
 import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -69,10 +70,10 @@ public class CreateDivaReportRuleProvider extends AbstractRuleProvider {
 
     private void createDivaReport(GraphContext context, ProjectModel application) {
         GraphService<DivaAppModel> appModelService = new GraphService<>(context, DivaAppModel.class);
-        GraphService<DivaTxModel> txModelService = new GraphService<>(context, DivaTxModel.class);
+        GraphService<DivaContextModel> cxtModelService = new GraphService<>(context, DivaContextModel.class);
 
-        List<DivaTxModel> txs = txModelService.findAll();
-        if (txs.isEmpty()) {
+        List<DivaContextModel> cxts = cxtModelService.findAll();
+        if (cxts.isEmpty()) {
             return;
         }
 
@@ -89,7 +90,7 @@ public class CreateDivaReportRuleProvider extends AbstractRuleProvider {
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> data = new HashMap<>();
-        data.put("tx0", listService.create().addAll(txs.get(0).getOps()));
+        data.put("contexts", listService.create().addAll(cxts));
         applicationReportModel.setRelatedResource(data);
 
         ReportService reportService = new ReportService(context);

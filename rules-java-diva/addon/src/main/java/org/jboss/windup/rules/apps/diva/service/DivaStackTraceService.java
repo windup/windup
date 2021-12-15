@@ -9,6 +9,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 
@@ -53,6 +55,9 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
             model.setFile(fileModel);
             if (fileModel instanceof SourceFileModel) {
                 ((SourceFileModel)fileModel).setGenerateSourceReport(true);
+                InlineHintModel inlineHint = addTypeToModel(getGraphContext(), model, InlineHintModel.class);
+                inlineHint.setTitle("line = " + lineNumber + ", col = " + columnNumber);
+                inlineHint.setIssueDisplayMode(IssueDisplayMode.DETAIL_ONLY);
             }
             if (parent != null) {
                 model.setParent(parent);

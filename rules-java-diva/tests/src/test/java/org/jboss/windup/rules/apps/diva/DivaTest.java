@@ -26,6 +26,7 @@ import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
 import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.util.Assert;
@@ -94,6 +95,21 @@ public class DivaTest {
             List<?> ops = context.getQuery(DivaOpModel.class).getRawTraversal()
                     .has("sql", P.without("BEGIN", "COMMIT", "ROLLBACK")).toList();
             Assert.equals(ops.size(), 1);
+        }
+    }
+
+    @Ignore
+    @Test
+    public void testDayTrader() throws IOException {
+        try (GraphContext context = factory.create(true)) {
+            Path inputPath = Paths.get("../../../sample.daytrader7");
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup")
+                    .resolve(UUID.randomUUID().toString());
+
+            WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(context)
+                    .setOptionValue(SourceModeOption.NAME, true).addInputPath(inputPath).setOutputDirectory(outputPath);
+
+            processor.execute(windupConfiguration);
         }
     }
 

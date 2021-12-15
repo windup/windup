@@ -194,6 +194,10 @@
 
         </#list>
 
+            if (location.hash) {
+                var atag = $("a[name='" + location.hash.substr(1)  +  "']");
+                $('html,body').animate({scrollTop: atag.offset().top - 150},'slow');
+            }
 
             $('code[class]').each(function(){
                  var codeSyntax = ($(this).attr('class'));
