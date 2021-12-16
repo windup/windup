@@ -16,12 +16,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-      - name: Cache Maven packages
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       - name: Build on JDK 11
         run: mvn -B clean install -DskipTests
 
@@ -39,12 +34,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-      - name: Cache Maven packages
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       - name: Build
         run: mvn clean install
 
@@ -62,12 +52,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-      - name: Cache Maven packages
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       - name: Build
         run: mvn clean install
 
@@ -85,11 +70,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-      - name: Cache Maven packages
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       - name: Build
         run: mvn clean install -s settings.xml
