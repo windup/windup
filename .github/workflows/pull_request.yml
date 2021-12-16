@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: 
       - master
-    types:
-      - edited
 
 jobs:
   windup-pr-builder-build-11-test-8:
