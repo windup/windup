@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -14,6 +15,11 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.util.Logging;
+
+import static java.lang.String.format;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
@@ -158,5 +164,20 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
         }
 
         return false;
+    }
+
+
+    /**
+     * Checks whether the path is called "target" and has a pom.xml file hanging from its parent.
+     *
+     * @param file the {@link FileModel} to check
+     * @return true if it's a target directory
+     */
+    public boolean isTargetDir(final FileModel file) {
+        boolean hasName = file.getFileName().equals("target");
+        boolean hasPom  = stream(spliteratorUnknownSize(file.asFile().toPath().getParent().iterator(), ORDERED), false)
+                .anyMatch(p -> p.getFileName().toString().equals("pom.xml"));
+
+        return hasName && hasPom;
     }
 }
