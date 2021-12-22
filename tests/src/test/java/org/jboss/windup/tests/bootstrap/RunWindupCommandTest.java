@@ -21,9 +21,5 @@ public class RunWindupCommandTest extends AbstractBootstrapTestWithRules {
         assertTrue(capturedOutput().contains("jee-example-app-1.0.0.ear"));
         assertFalse(capturedOutput().contains("dummy.html"));
     }
-    
-    @Test
-    public void test() {
-        bootstrap( "--input", "../test-files/src_example_with_target/project-with-target", "--target", "--sourceMode", "eap7", "--overwrite");
-    }
+
 }
