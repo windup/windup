@@ -7,14 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 public class RunWindupCommandTest extends AbstractBootstrapTestWithRules {
 
-//    @Test
+    @Test
     public void checkFilePath() {
         bootstrap( "--input", "../test-files/jee-example-app-1.0.0.ear", "--target", "eap7", "--overwrite");
         assertTrue(capturedOutput().contains("Input Application"));
         assertTrue(capturedOutput().contains("jee-example-app-1.0.0.ear"));
     }
 
-//    @Test
+    @Test
     public void checkDirPath() {
         bootstrap( "--input", "../test-files/", "--target", "eap7", "--overwrite");
         assertTrue(capturedOutput().contains("Input Application"));
