@@ -6,6 +6,7 @@
 .metadata
 dependency-reduced-pom.xml
 target/
+!test-files/src_example_with_target/project-with-target/target
 *.iml
 *~
 *.ipr
