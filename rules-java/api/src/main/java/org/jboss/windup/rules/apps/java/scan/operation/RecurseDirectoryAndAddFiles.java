@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -59,10 +60,6 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     {
         if (javaConfigurationService.checkIfIgnored(event, file))
             return;
-        
-        // Check if the current dir is a maven target folder and ignore it if so (WINDUP-3234)
-        if (javaConfigurationService.isTargetDir(file))
-            return;
 
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
@@ -75,6 +72,9 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
             {
                 for (File reference : subFiles)
                 {
+                    // Check if the current dir is a maven target folder and ignore it if so (WINDUP-3234)
+                    if (javaConfigurationService.isTargetDir(file)) continue;
+                    
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     recurseAndAddFiles(event, fileService, javaConfigurationService, subFile);
                     if (subFile.isDirectory())

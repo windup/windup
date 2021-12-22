@@ -1,9 +1,14 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -16,6 +21,7 @@ import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.util.Logging;
 
+import static java.lang.String.*;
 import static java.lang.String.format;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -174,10 +180,9 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
      * @return true if it's a target directory
      */
     public boolean isTargetDir(final FileModel file) {
-        boolean hasName = file.getFileName().equals("target");
-        boolean hasPom  = stream(spliteratorUnknownSize(file.asFile().toPath().getParent().iterator(), ORDERED), false)
-                .anyMatch(p -> p.getFileName().toString().equals("pom.xml"));
+        if (!file.getFileName().equals("target")) return false;
 
-        return hasName && hasPom;
+        return Stream.of(Optional.ofNullable(file.asFile().getParentFile().listFiles()).orElse(new File[0]))
+                .anyMatch(f -> f.toPath().getFileName().toString().equals("pom.xml"));
     }
 }
