@@ -27,7 +27,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class TechnologyReferenceTransformerHandlerTest
+public class TechnologyReferenceAliasTranslatorHandlerTest
 {
     private static final String XML_FILE = "src/test/resources/testxml/testtransformers.windup.technologytransformer.xml";
 
@@ -58,23 +58,23 @@ public class TechnologyReferenceTransformerHandlerTest
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document firstXmlFile = dBuilder.parse(fXmlFile);
-        List<TechnologyReferenceTransformer> transformers = parser.processElement(firstXmlFile.getDocumentElement());
+        List<TechnologyReferenceAliasTranslator> transformers = parser.processElement(firstXmlFile.getDocumentElement());
 
         // verify xmlfile
         Assert.assertEquals(2, transformers.size());
-        Assert.assertEquals("sampleinput1", transformers.get(0).getOriginal().getId());
-        Assert.assertEquals("[1]", transformers.get(0).getOriginal().getVersionRange().toString());
-        Assert.assertEquals("sampleoutput2", transformers.get(0).getTarget().getId());
-        Assert.assertEquals("[2]", transformers.get(0).getTarget().getVersionRange().toString());
+        Assert.assertEquals("sampleinput1", transformers.get(0).getOriginalTechnology().getId());
+        Assert.assertEquals("[1]", transformers.get(0).getOriginalTechnology().getVersionRange().toString());
+        Assert.assertEquals("sampleoutput2", transformers.get(0).getTargetTechnology().getId());
+        Assert.assertEquals("[2]", transformers.get(0).getTargetTechnology().getVersionRange().toString());
 
         TechnologyReference input1 = new TechnologyReference("sampleinput1", Versions.parseVersionRange("[1]"));
-        TechnologyReference output2 = transformers.get(0).transform(input1);
+        TechnologyReference output2 = transformers.get(0).translate(input1);
         Assert.assertEquals("sampleoutput2", output2.getId());
         Assert.assertEquals("[2]", output2.getVersionRange().toString());
 
-        Assert.assertEquals("sampleinput3", transformers.get(1).getOriginal().getId());
-        Assert.assertEquals("[3]", transformers.get(1).getOriginal().getVersionRange().toString());
-        Assert.assertEquals("sampleoutput4", transformers.get(1).getTarget().getId());
-        Assert.assertEquals("[4]", transformers.get(1).getTarget().getVersionRange().toString());
+        Assert.assertEquals("sampleinput3", transformers.get(1).getOriginalTechnology().getId());
+        Assert.assertEquals("[3]", transformers.get(1).getOriginalTechnology().getVersionRange().toString());
+        Assert.assertEquals("sampleoutput4", transformers.get(1).getTargetTechnology().getId());
+        Assert.assertEquals("[4]", transformers.get(1).getTargetTechnology().getVersionRange().toString());
     }
 }

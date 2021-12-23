@@ -1,17 +1,11 @@
 package org.jboss.windup.config.loader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -36,9 +30,10 @@ import org.ocpsoft.rewrite.param.ConfigurableParameter;
 import org.ocpsoft.rewrite.param.DefaultParameter;
 import org.ocpsoft.rewrite.param.Parameter;
 import org.ocpsoft.rewrite.param.ParameterStore;
-import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class RuleLoaderImpl implements RuleLoader
 {
@@ -54,7 +49,7 @@ public class RuleLoaderImpl implements RuleLoader
     @Override
     public RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        return build(ruleLoaderContext);
+        return buildRegistry(ruleLoaderContext);
     }
 
     /**
@@ -110,17 +105,15 @@ public class RuleLoaderImpl implements RuleLoader
         }
     }
 
-    private List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
+    private List<RuleProvider> loadProviders(RuleLoaderContext ruleLoaderContext)
     {
         LOG.info("Starting provider load...");
-        List<RuleProvider> unsortedProviders = new ArrayList<>();
-        for (RuleProviderLoader loader : loaders)
-        {
-            if (ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())
-                continue;
 
-            unsortedProviders.addAll(loader.getProviders(ruleLoaderContext));
-        }
+        List<RuleProvider> unsortedProviders = new ArrayList<>();
+        StreamSupport.stream(loaders.spliterator(), false)
+                .filter((loader -> !(ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())))
+                .forEach(loader -> unsortedProviders.addAll(loader.getProviders(ruleLoaderContext)));
+
         LOG.info("Loaded, now sorting, etc");
 
         checkForDuplicateProviders(unsortedProviders);
@@ -134,26 +127,26 @@ public class RuleLoaderImpl implements RuleLoader
         return Collections.unmodifiableList(sortedProviders);
     }
 
-    private RuleProviderRegistry build(RuleLoaderContext ruleLoaderContext)
+    private RuleProviderRegistry buildRegistry(RuleLoaderContext ruleLoaderContext)
     {
-        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see
+        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see TODO: careful with this
 
-        List<RuleProvider> providers = getProviders(ruleLoaderContext);
+        List<RuleProvider> providers = loadProviders(ruleLoaderContext);
         RuleProviderRegistry registry = new RuleProviderRegistry();
         registry.setProviders(providers);
 
+        // Get override rules from override providers (if any)
         Map<RuleKey, Rule> overrideRules = new HashMap<>();
-        for (RuleProvider provider : providers)
-        {
-            if (!provider.getMetadata().isOverrideProvider())
-                continue;
+        providers.stream()
+                .filter(provider -> provider.getMetadata().isOverrideProvider())
+                .forEach(provider -> {
+                    provider.getConfiguration(null).getRules().forEach(rule -> {
+                        RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
+                        overrideRules.put(ruleKey, rule);
+                    });
+                });
 
-            Configuration cfg = provider.getConfiguration(null);
-            List<Rule> rules = cfg.getRules();
-            for (Rule rule : rules)
-                overrideRules.put(new RuleKey(provider.getMetadata().getID(), rule.getId()), rule);
-        }
-
+        // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
         for (RuleProvider provider : providers)
         {
             if (ruleLoaderContext.getRuleProviderFilter() != null)
@@ -169,81 +162,81 @@ public class RuleLoaderImpl implements RuleLoader
                 continue;
 
             Configuration cfg = provider.getConfiguration(ruleLoaderContext);
+            List<Rule> rules = replaceOverridingRules(cfg, overrideRules, provider);
+            registry.addRulesForProvider(provider, rules);
 
-            // copy it to allow for the option of modification
-            List<Rule> rules = new ArrayList<>(cfg.getRules());
-            ListIterator<Rule> ruleIterator = rules.listIterator();
-            while (ruleIterator.hasNext())
-            {
-                Rule rule = ruleIterator.next();
-                Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
-                if (overrideRule != null)
-                {
-                    LOG.info("Replacing rule " + rule.getId() + " with a user override!");
-                    ruleIterator.set(overrideRule);
-                }
-            }
-
-            registry.setRules(provider, rules);
-
-            int i = 0;
-            for (final Rule rule : rules)
-            {
-                i++;
+            for (int i = 0; i < rules.size(); i++) {
+                Rule rule = rules.get(i);
 
                 AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
 
-                if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
+                if (rule instanceof RuleBuilder && isBlank(rule.getId()))
                 {
-                    ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
+                    ((RuleBuilder) rule).withId(generatedRuleID(provider, i + 1));
                 }
 
                 allRules.add(rule);
 
-                if (rule instanceof ParameterizedRule)
-                {
-                    ParameterizedCallback callback = new ParameterizedCallback()
-                    {
-                        @Override
-                        public void call(Parameterized parameterized)
-                        {
-                            Set<String> names = parameterized.getRequiredParameterNames();
-                            ParameterStore store = ((ParameterizedRule) rule).getParameterStore();
-
-                            if (names != null)
-                                for (String name : names)
-                                {
-                                    Parameter<?> parameter = store.get(name, new DefaultParameter(name));
-                                    if (parameter instanceof ConfigurableParameter<?>)
-                                        ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
-                                }
-
-                            parameterized.setParameterStore(store);
-                        }
-                    };
-
-                    Visitor<Condition> conditionVisitor = new ParameterizedConditionVisitor(callback);
-                    new ConditionVisit(rule).accept(conditionVisitor);
-
-                    Visitor<Operation> operationVisitor = new ParameterizedOperationVisitor(callback);
-                    new OperationVisit(rule).accept(operationVisitor);
+                if (rule instanceof ParameterizedRule) {
+                    injectParametersIntoRule(rule);
                 }
             }
         }
 
-        ConfigurationBuilder result = ConfigurationBuilder.begin();
-        for (Rule rule : allRules)
-        {
-            result.addRule(rule);
-        }
-
-        registry.setConfiguration(result);
+        ConfigurationBuilder registryConfiguration = ConfigurationBuilder.begin();
+        allRules.forEach(rule -> registryConfiguration.addRule());
+        registry.setConfiguration(registryConfiguration);
+        
         return registry;
     }
 
-    private String generatedRuleID(RuleProvider provider, Rule rule, int idx)
+    /**
+     * Inject this rule's required parameters
+     */
+    private static void injectParametersIntoRule(Rule rule) {
+        ParameterizedCallback callback = parameterized -> {
+            Set<String> params = parameterized.getRequiredParameterNames();
+            ParameterStore store = ((ParameterizedRule) rule).getParameterStore();
+
+            if (params != null)
+                for (String param : params)
+                {
+                    Parameter<?> parameter = store.get(param, new DefaultParameter(param));
+                    if (parameter instanceof ConfigurableParameter<?>)
+                        ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(param));
+                }
+
+            parameterized.setParameterStore(store);
+        };
+
+        Visitor<Condition> conditionVisitor = new ParameterizedConditionVisitor(callback);
+        new ConditionVisit(rule).accept(conditionVisitor);
+
+        Visitor<Operation> operationVisitor = new ParameterizedOperationVisitor(callback);
+        new OperationVisit(rule).accept(operationVisitor);
+    }
+
+    /**
+     * Replace rules with overriding rules if present for a given provider
+     */
+    private List<Rule> replaceOverridingRules(Configuration cfg, Map<RuleKey, Rule> overrideRules, RuleProvider provider) {
+        List<Rule> rules = new ArrayList<>(cfg.getRules());
+        ListIterator<Rule> ruleIterator = rules.listIterator();
+        while (ruleIterator.hasNext())
+        {
+            Rule rule = ruleIterator.next();
+            Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
+            Optional.ofNullable(overrideRule)
+                    .ifPresent(r -> {
+                        LOG.info("Replacing rule " + rule.getId() + " with a user override!");
+                        ruleIterator.set(r);
+                    });
+        }
+        return rules;
+    }
+
+    private String generatedRuleID(RuleProvider provider, int idx)
     {
-        String provID = provider.getMetadata().getID();
-        return provID + "_" + idx;
+        return String.format("%s_%s", provider.getMetadata().getID(), idx);
     }
 }

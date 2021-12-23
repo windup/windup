@@ -17,6 +17,7 @@ import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
  * Holds the context of the whole Windup Execution.
+ * TODO: should be called "WindupExecutionContext" then?
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
