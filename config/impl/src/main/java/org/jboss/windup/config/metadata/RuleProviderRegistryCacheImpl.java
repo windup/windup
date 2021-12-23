@@ -39,7 +39,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private Set<Path> userRulesPaths = new LinkedHashSet<>();
 
-    private List<TechnologyReferenceTransformer> cachedTransformers;
+    private List<TechnologyReferenceAliasTranslator> cachedTransformers;
     private RuleProviderRegistry cachedRegistry;
     private long cacheRefreshTime;
 
@@ -116,7 +116,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
                 .filter(transformer -> {
                     for (TechnologyReference originalTech : techs)
                     {
-                        if (originalTech.matches(transformer.getTarget()))
+                        if (originalTech.matches(transformer.getTargetTechnology()))
                         {
                             return true;
                         }
@@ -124,7 +124,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
                     return false;
                 })
 
-                .map(TechnologyReferenceTransformer::getOriginal)
+                .map(TechnologyReferenceAliasTranslator::getOriginalTechnology)
                 .collect(Collectors.toList()));
     }
 
@@ -170,7 +170,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         return this.cachedRegistry;
     }
 
-    private List<TechnologyReferenceTransformer> getTechnologyTransformers()
+    private List<TechnologyReferenceAliasTranslator> getTechnologyTransformers()
     {
         return this.cachedTransformers;
     }
@@ -178,7 +178,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     private void initCaches(RuleLoaderContext ruleLoaderContext)
     {
         this.cachedRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
-        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
+        this.cachedTransformers = TechnologyReferenceAliasTranslator.getTranslators(ruleLoaderContext);
         this.cacheRefreshTime = System.currentTimeMillis();
     }
 

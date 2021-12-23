@@ -3,8 +3,8 @@ package org.jboss.windup.config.parser;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
-import org.jboss.windup.config.metadata.TechnologyReferenceTransformerLoader;
+import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator;
+import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslatorLoader;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
 
@@ -17,14 +17,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implements a {@link TechnologyReferenceTransformerLoader} using xml files. The XML files must end with the extension
+ * Implements a {@link TechnologyReferenceAliasTranslatorLoader} using xml files. The XML files must end with the extension
  * ".windup.technologytransformer.xml".
  *
  * The format of the file is defined by {@link TechnologyReferenceTransformerHandler}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class XMLTechnologyReferenceTransformerLoader implements TechnologyReferenceTransformerLoader
+public class XMLTechnologyReferenceAliasTranslatorLoader implements TechnologyReferenceAliasTranslatorLoader
 {
     private static final String XML_EXTENSION = ".windup.technologytransformer.xml";
 
@@ -32,9 +32,9 @@ public class XMLTechnologyReferenceTransformerLoader implements TechnologyRefere
     private Furnace furnace;
 
     @Override
-    public Collection<TechnologyReferenceTransformer> loadTransformers(RuleLoaderContext ruleLoaderContext)
+    public Collection<TechnologyReferenceAliasTranslator> loadTranslators(RuleLoaderContext ruleLoaderContext)
     {
-        List<TechnologyReferenceTransformer> transformers = new ArrayList<>();
+        List<TechnologyReferenceAliasTranslator> transformers = new ArrayList<>();
 
         for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
@@ -51,7 +51,7 @@ public class XMLTechnologyReferenceTransformerLoader implements TechnologyRefere
         return transformers;
     }
 
-    private List<TechnologyReferenceTransformer> loadTransformers(File file)
+    private List<TechnologyReferenceAliasTranslator> loadTransformers(File file)
     {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);

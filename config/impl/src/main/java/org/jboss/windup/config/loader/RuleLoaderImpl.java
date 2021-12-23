@@ -1,17 +1,11 @@
 package org.jboss.windup.config.loader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -36,9 +30,10 @@ import org.ocpsoft.rewrite.param.ConfigurableParameter;
 import org.ocpsoft.rewrite.param.DefaultParameter;
 import org.ocpsoft.rewrite.param.Parameter;
 import org.ocpsoft.rewrite.param.ParameterStore;
-import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class RuleLoaderImpl implements RuleLoader
 {
@@ -54,7 +49,125 @@ public class RuleLoaderImpl implements RuleLoader
     @Override
     public RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        return build(ruleLoaderContext);
+        return buildRegistry(ruleLoaderContext);
+    }
+
+    private RuleProviderRegistry buildRegistry(RuleLoaderContext ruleLoaderContext)
+    {
+        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see TODO: careful with this
+
+        List<RuleProvider> providers = loadProviders(ruleLoaderContext);
+        RuleProviderRegistry registry = new RuleProviderRegistry();
+        registry.setProviders(providers);
+
+        // Get override rules from override providers (if any)
+        Map<RuleKey, Rule> overrideRules = new HashMap<>();
+        providers.stream()
+                .filter(provider -> provider.getMetadata().isOverrideProvider())
+                .forEach(provider -> {
+                    provider.getConfiguration(null).getRules().forEach(rule -> {
+                        RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
+                        overrideRules.put(ruleKey, rule);
+                    });
+                });
+
+        // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
+        for (RuleProvider provider : providers)
+        {
+            if (ruleLoaderContext.getRuleProviderFilter() != null)
+            {
+                boolean accepted = ruleLoaderContext.getRuleProviderFilter().accept(provider);
+                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleLoaderContext.getRuleProviderFilter() + "]");
+                if (!accepted)
+                    continue;
+            }
+
+            // these are not used directly... they only override others
+            if (provider.getMetadata().isOverrideProvider())
+                continue;
+
+            Configuration cfg = provider.getConfiguration(ruleLoaderContext);
+            List<Rule> rules = overrideRules(cfg, overrideRules, provider);
+            registry.addRulesForProvider(provider, rules);
+
+            for (int i = 0; i < rules.size(); i++)
+            {
+                Rule rule = rules.get(i);
+                
+                AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
+
+                if (rule instanceof RuleBuilder && isBlank(rule.getId()))
+                {
+                    ((RuleBuilder) rule).withId(generatedRuleID(provider, i + 1));
+                }
+
+                allRules.add(rule);
+
+                if (rule instanceof ParameterizedRule) {
+                    injectParametersIntoRule(rule);
+                }
+            }
+        }
+
+        ConfigurationBuilder result = ConfigurationBuilder.begin();
+        for (Rule rule : allRules)
+        {
+            result.addRule(rule);
+        }
+
+        registry.setConfiguration(result);
+        return registry;
+    }
+
+
+    private List<RuleProvider> loadProviders(RuleLoaderContext ruleLoaderContext)
+    {
+        LOG.info("Starting provider load...");
+        List<RuleProvider> unsortedProviders = new ArrayList<>();
+        StreamSupport.stream(loaders.spliterator(), false)
+                .filter((loader -> !(ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())))
+                .forEach(loader -> unsortedProviders.addAll(loader.getProviders(ruleLoaderContext)));
+        LOG.info("Loaded, now sorting, etc");
+
+        checkForDuplicateProviders(unsortedProviders);
+
+        printRulePhases(unsortedProviders);
+
+        List<RuleProvider> sortedProviders = RuleProviderSorter.sort(unsortedProviders);
+        ServiceLogger.logLoadedServices(LOG, RuleProvider.class, sortedProviders);
+
+        LOG.info("Finished provider load");
+        return Collections.unmodifiableList(sortedProviders);
+    }
+
+    private void checkForDuplicateProviders(List<RuleProvider> providers)
+    {
+        /*
+         * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
+         */
+        Map<RuleProvider, RuleProvider> duplicates = new HashMap<>(providers.size());
+        for (RuleProvider provider : providers)
+        {
+            RuleProvider previousProvider = duplicates.get(provider);
+            if (previousProvider != null)
+            {
+                String typeMessage;
+                String currentProviderOrigin = provider.getMetadata().getOrigin();
+                String previousProviderOrigin = previousProvider.getMetadata().getOrigin();
+                if (previousProvider.getClass().equals(provider.getClass()))
+                {
+                    typeMessage = " (type: " + previousProviderOrigin + " and " + currentProviderOrigin + ")";
+                }
+                else
+                {
+                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
+                            + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
+                }
+
+                throw new WindupException("Found two providers with the same id: " + provider.getMetadata().getID() + typeMessage);
+            }
+            duplicates.put(provider, provider);
+        }
     }
 
     /**
@@ -80,170 +193,49 @@ public class RuleLoaderImpl implements RuleLoader
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
 
-    private void checkForDuplicateProviders(List<RuleProvider> providers)
-    {
-        /*
-         * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
-         */
-        Map<RuleProvider, RuleProvider> duplicates = new HashMap<>(providers.size());
-        for (RuleProvider provider : providers)
+    /**
+     * Given a set of overriding rules, replaces the original rules with the overriding ones if applicable.
+     */
+    private List<Rule> overrideRules(Configuration cfg, Map<RuleKey, Rule> overrideRules, RuleProvider provider) {
+        List<Rule> rules = new ArrayList<>(cfg.getRules());
+        ListIterator<Rule> ruleIterator = rules.listIterator();
+        while (ruleIterator.hasNext())
         {
-            RuleProvider previousProvider = duplicates.get(provider);
-            if (previousProvider != null)
-            {
-                String typeMessage;
-                String currentProviderOrigin = provider.getMetadata().getOrigin();
-                String previousProviderOrigin = previousProvider.getMetadata().getOrigin();
-                if (previousProvider.getClass().equals(provider.getClass()))
-                {
-                    typeMessage = " (type: " + previousProviderOrigin + " and " + currentProviderOrigin + ")";
-                }
-                else
-                {
-                    typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
-                                + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
-                }
-
-                throw new WindupException("Found two providers with the same id: " + provider.getMetadata().getID() + typeMessage);
-            }
-            duplicates.put(provider, provider);
+            Rule rule = ruleIterator.next();
+            Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
+            Optional.ofNullable(overrideRule)
+                    .ifPresent(r -> {
+                        LOG.info("Replacing rule " + rule.getId() + " with a user override!");
+                        ruleIterator.set(r);
+                    });
         }
+        return rules;
     }
 
-    private List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
-    {
-        LOG.info("Starting provider load...");
-        List<RuleProvider> unsortedProviders = new ArrayList<>();
-        for (RuleProviderLoader loader : loaders)
-        {
-            if (ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())
-                continue;
+    private void injectParametersIntoRule(Rule rule) {
+        ParameterizedCallback callback = parameterized -> {
+            Set<String> names = parameterized.getRequiredParameterNames();
+            ParameterStore store = ((ParameterizedRule) rule).getParameterStore();
 
-            unsortedProviders.addAll(loader.getProviders(ruleLoaderContext));
-        }
-        LOG.info("Loaded, now sorting, etc");
+            if (names != null)
+                for (String name : names)
+                {
+                    Parameter<?> parameter = store.get(name, new DefaultParameter(name));
+                    if (parameter instanceof ConfigurableParameter<?>)
+                        ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
+                }
 
-        checkForDuplicateProviders(unsortedProviders);
+            parameterized.setParameterStore(store);
+        };
 
-        printRulePhases(unsortedProviders);
+        Visitor<Condition> conditionVisitor = new ParameterizedConditionVisitor(callback);
+        new ConditionVisit(rule).accept(conditionVisitor);
 
-        List<RuleProvider> sortedProviders = RuleProviderSorter.sort(unsortedProviders);
-        ServiceLogger.logLoadedServices(LOG, RuleProvider.class, sortedProviders);
-
-        LOG.info("Finished provider load");
-        return Collections.unmodifiableList(sortedProviders);
+        Visitor<Operation> operationVisitor = new ParameterizedOperationVisitor(callback);
+        new OperationVisit(rule).accept(operationVisitor);
     }
 
-    private RuleProviderRegistry build(RuleLoaderContext ruleLoaderContext)
-    {
-        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see
-
-        List<RuleProvider> providers = getProviders(ruleLoaderContext);
-        RuleProviderRegistry registry = new RuleProviderRegistry();
-        registry.setProviders(providers);
-
-        Map<RuleKey, Rule> overrideRules = new HashMap<>();
-        for (RuleProvider provider : providers)
-        {
-            if (!provider.getMetadata().isOverrideProvider())
-                continue;
-
-            Configuration cfg = provider.getConfiguration(null);
-            List<Rule> rules = cfg.getRules();
-            for (Rule rule : rules)
-                overrideRules.put(new RuleKey(provider.getMetadata().getID(), rule.getId()), rule);
-        }
-
-        for (RuleProvider provider : providers)
-        {
-            if (ruleLoaderContext.getRuleProviderFilter() != null)
-            {
-                boolean accepted = ruleLoaderContext.getRuleProviderFilter().accept(provider);
-                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleLoaderContext.getRuleProviderFilter() + "]");
-                if (!accepted)
-                    continue;
-            }
-
-            // these are not used directly... they only override others
-            if (provider.getMetadata().isOverrideProvider())
-                continue;
-
-            Configuration cfg = provider.getConfiguration(ruleLoaderContext);
-
-            // copy it to allow for the option of modification
-            List<Rule> rules = new ArrayList<>(cfg.getRules());
-            ListIterator<Rule> ruleIterator = rules.listIterator();
-            while (ruleIterator.hasNext())
-            {
-                Rule rule = ruleIterator.next();
-                Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
-                if (overrideRule != null)
-                {
-                    LOG.info("Replacing rule " + rule.getId() + " with a user override!");
-                    ruleIterator.set(overrideRule);
-                }
-            }
-
-            registry.setRules(provider, rules);
-
-            int i = 0;
-            for (final Rule rule : rules)
-            {
-                i++;
-
-                AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
-
-                if (rule instanceof RuleBuilder && StringUtils.isBlank(rule.getId()))
-                {
-                    ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
-                }
-
-                allRules.add(rule);
-
-                if (rule instanceof ParameterizedRule)
-                {
-                    ParameterizedCallback callback = new ParameterizedCallback()
-                    {
-                        @Override
-                        public void call(Parameterized parameterized)
-                        {
-                            Set<String> names = parameterized.getRequiredParameterNames();
-                            ParameterStore store = ((ParameterizedRule) rule).getParameterStore();
-
-                            if (names != null)
-                                for (String name : names)
-                                {
-                                    Parameter<?> parameter = store.get(name, new DefaultParameter(name));
-                                    if (parameter instanceof ConfigurableParameter<?>)
-                                        ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
-                                }
-
-                            parameterized.setParameterStore(store);
-                        }
-                    };
-
-                    Visitor<Condition> conditionVisitor = new ParameterizedConditionVisitor(callback);
-                    new ConditionVisit(rule).accept(conditionVisitor);
-
-                    Visitor<Operation> operationVisitor = new ParameterizedOperationVisitor(callback);
-                    new OperationVisit(rule).accept(operationVisitor);
-                }
-            }
-        }
-
-        ConfigurationBuilder result = ConfigurationBuilder.begin();
-        for (Rule rule : allRules)
-        {
-            result.addRule(rule);
-        }
-
-        registry.setConfiguration(result);
-        return registry;
-    }
-
-    private String generatedRuleID(RuleProvider provider, Rule rule, int idx)
-    {
-        String provID = provider.getMetadata().getID();
-        return provID + "_" + idx;
+    private String generatedRuleID(RuleProvider provider, int idx) {
+        return String.format("%s_%s", provider.getMetadata().getID(), idx);
     }
 }

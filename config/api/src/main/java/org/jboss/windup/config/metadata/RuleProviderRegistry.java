@@ -26,8 +26,7 @@ public class RuleProviderRegistry
      */
     public static RuleProviderRegistry instance(GraphRewrite event)
     {
-        RuleProviderRegistry instance = (RuleProviderRegistry) event.getRewriteContext().get(RuleProviderRegistry.class);
-        return instance;
+        return (RuleProviderRegistry) event.getRewriteContext().get(RuleProviderRegistry.class);
     }
 
     /**
@@ -50,7 +49,7 @@ public class RuleProviderRegistry
     /**
      * Sets the {@link List} of {@link Rule}s that were loaded from the given {@link RuleProvider}.
      */
-    public void setRules(RuleProvider provider, List<Rule> rules)
+    public void addRulesForProvider(RuleProvider provider, List<Rule> rules)
     {
         providersToRules.put(provider, rules);
     }

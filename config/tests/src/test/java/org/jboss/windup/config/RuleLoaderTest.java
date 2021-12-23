@@ -56,14 +56,13 @@ public class RuleLoaderTest
     {
         try (GraphContext context = factory.create(true))
         {
-            Predicate<RuleProvider> predicate = (provider) -> {
-                    return provider.getMetadata().getPhase() == MigrationRulesPhase.class;
-            };
+            Predicate<RuleProvider> filter = (provider) -> provider.getMetadata().getPhase() == MigrationRulesPhase.class;
 
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), predicate);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), filter);
             Configuration configuration1 = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
+            configuration1.getRules().forEach(r -> System.out.println("jandepora " + r.getId()));       // empty
             for (Rule rule : configuration1.getRules())
             {
                 if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
