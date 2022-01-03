@@ -61,15 +61,7 @@ public class RuleLoaderImpl implements RuleLoader
         registry.setProviders(providers);
 
         // Get override rules from override providers (if any)
-        Map<RuleKey, Rule> overrideRules = new HashMap<>();
-        providers.stream()
-                .filter(provider -> provider.getMetadata().isOverrideProvider())
-                .forEach(provider -> {
-                    provider.getConfiguration(null).getRules().forEach(rule -> {
-                        RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
-                        overrideRules.put(ruleKey, rule);
-                    });
-                });
+        Map<RuleKey, Rule> overrideRules = extractOverrideRules(providers);
 
         // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
         for (RuleProvider provider : providers)
@@ -191,6 +183,19 @@ public class RuleLoaderImpl implements RuleLoader
             rulePhaseSB.append("\tPhase: ").append(unproxiedClass.getSimpleName()).append(System.lineSeparator());
         }
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
+    }
+
+    private Map<RuleKey, Rule> extractOverrideRules(List<RuleProvider> providers) {
+        Map<RuleKey, Rule> overrideRules = new HashMap<>();
+        providers.stream()
+                .filter(provider -> provider.getMetadata().isOverrideProvider())
+                .forEach(provider -> {
+                    provider.getConfiguration(null).getRules().forEach(rule -> {
+                        RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
+                        overrideRules.put(ruleKey, rule);
+                    });
+                });
+        return overrideRules;
     }
 
     /**
