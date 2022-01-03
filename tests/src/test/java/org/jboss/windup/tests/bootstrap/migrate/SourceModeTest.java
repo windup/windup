@@ -37,6 +37,7 @@ public class SourceModeTest extends AbstractBootstrapTestWithRules {
                 "--overwrite");
 
         String indexHtml = new String(Files.readAllBytes(tmp.getRoot().toPath().resolve("reports/migration_issues.html")), UTF_8);
+        // If target folder is analyzed then there will be 2 issues (incidents) found otherwise only 1
         assertTrue(indexHtml.contains("<td class=\"text-right\">1</td>"));
     }
 }
