@@ -20,7 +20,7 @@ import java.util.List;
  * Implements a {@link TechnologyReferenceAliasTranslatorLoader} using xml files. The XML files must end with the extension
  * ".windup.technologytransformer.xml".
  *
- * The format of the file is defined by {@link TechnologyReferenceTransformerHandler}.
+ * The format of the file is defined by {@link TechnologyReferenceAliasTranslatorHandler}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */

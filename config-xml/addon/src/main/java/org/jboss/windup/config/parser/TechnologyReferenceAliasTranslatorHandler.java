@@ -31,7 +31,7 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "technology-reference-transfomers", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class TechnologyReferenceTransformerHandler implements ElementHandler<List<TechnologyReferenceAliasTranslator>>
+public class TechnologyReferenceAliasTranslatorHandler implements ElementHandler<List<TechnologyReferenceAliasTranslator>>
 {
 
     public static final String TRANSFORM = "transform";
