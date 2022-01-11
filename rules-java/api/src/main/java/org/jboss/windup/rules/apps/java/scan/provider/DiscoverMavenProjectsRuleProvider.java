@@ -486,5 +486,5 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             return name;
         }
 
-}
+    }
 }
