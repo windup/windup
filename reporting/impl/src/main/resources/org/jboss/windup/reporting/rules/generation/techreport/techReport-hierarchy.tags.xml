@@ -103,7 +103,9 @@
                 <tag ref="jax-rs"/>
             </tag>
             <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown"></tag>
-
+            <tag name="techBox:streaming" title="Streaming" pseudo="true" parents="techRow:java-ee" icon="Streaming_ICON">
+                <tag ref="streaming"/>
+            </tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!--
@@ -122,6 +124,7 @@
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
             <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel"></tag>
+            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee" icon="NoSQL_ICON"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
@@ -129,6 +132,9 @@
             <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
             <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
             <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
+            <tag name="techBox:resource-management" title="Resource Management" pseudo="true" parents="techRow:embedded" icon="ResourceManagement_ICON"></tag>
+            <tag name="techBox:configuration-management" title="Configuration Management" pseudo="true" parents="techRow:embedded" icon="ConfigurationManagement_ICON"></tag>
+            <tag name="techBox:observability" title="Observability" pseudo="true" parents="techRow:embedded" icon="Observability_ICON"></tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
             <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
@@ -136,6 +142,8 @@
             <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
             <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
             <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Shopping_Cart"/>
+            <tag name="techBox:serveless-faas" title="Serveless / FAAS" pseudo="true" parents="techRow:embedded" icon="Shopping_Cart"/>
+            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:embedded" icon="Other_Cart"/>
         </tag>
     </tag>
 
