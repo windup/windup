@@ -1,9 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.File;
-import java.util.*;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -42,6 +38,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Discover Maven pom files and build a {@link MavenProjectModel} containing this metadata.
  */
@@ -49,8 +52,9 @@ import org.w3c.dom.NodeList;
 public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
-
     private static final Map<String, String> namespaces = new HashMap<>();
+
+    private final MavenElementValueResolver mavenElementValueResolver = new MavenElementValueResolver();
 
     static
     {
@@ -305,9 +309,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         if (StringUtils.isNotBlank(parentGroupId))
         {
             // parent
-            parentGroupId = resolveProperty(document, namespaces, parentGroupId, version);
-            parentArtifactId = resolveProperty(document, namespaces, parentArtifactId, version);
-            parentVersion = resolveProperty(document, namespaces, parentVersion, version);
+            parentGroupId = mavenElementValueResolver.resolveValue(document, namespaces, parentGroupId, version);
+            parentArtifactId = mavenElementValueResolver.resolveValue(document, namespaces, parentArtifactId, version);
+            parentVersion = mavenElementValueResolver.resolveValue(document, namespaces, parentVersion, version);
 
             MavenProjectModel parent = getMavenProject(mavenProjectService, parentGroupId, parentArtifactId, parentVersion);
 
@@ -335,9 +339,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             String dependencyType = XmlUtil.xpathExtract(node, "./pom:type | ./type", namespaces);
             String dependencyOptional = XmlUtil.xpathExtract(node, "./pom:optional | ./optional", namespaces);
 
-            dependencyGroupId = resolveProperty(document, namespaces, dependencyGroupId, version);
-            dependencyArtifactId = resolveProperty(document, namespaces, dependencyArtifactId, version);
-            dependencyVersion = resolveProperty(document, namespaces, dependencyVersion, version);
+            dependencyGroupId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyGroupId, version);
+            dependencyArtifactId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyArtifactId, version);
+            dependencyVersion = mavenElementValueResolver.resolveValue(document, namespaces, dependencyVersion, version);
 
             // optional check introduced with WINDUP-2771
             if (StringUtils.isNotBlank(dependencyGroupId) && !Boolean.parseBoolean(dependencyOptional))
@@ -432,34 +436,55 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         return sb.toString();
     }
 
-    private String resolveProperty(Document document, Map<String, String> namespaces, String property,
-                String projectVersion) throws MarshallingException
-    {
-        if (StringUtils.startsWith(property, "${"))
-        {
-            String propertyName = StringUtils.removeStart(property, "${");
-            propertyName = StringUtils.removeEnd(propertyName, "}");
+    /**
+     * Utility class to solve complex POM element values, ie:
+     * <br><br>
+     * <code>
+     *     <version>abc${property1}.${property2}</version>
+     * </code>
+     */
+    static class MavenElementValueResolver {
 
-            switch (propertyName)
-            {
-            case "pom.version":
-            case "project.version":
-                return projectVersion;
-            default:
-                NodeList nodes = XmlUtil.xpathNodeList(document, "//pom:properties/pom:" + propertyName + " | " + "//properties/" + propertyName, namespaces);
+        String resolveValue(Document doc, Map<String, String> namespaces, String value, String projectVersion) throws MarshallingException {
+            StringBuilder result = new StringBuilder();
 
-                if (nodes.getLength() == 0 || nodes.item(0) == null)
-                {
-                    LOG.warning("Expected: " + property + " but it wasn't found in the POM.");
-                }
-                else
-                {
-                    Node node = nodes.item(0);
-                    return node.getTextContent();
+            for (int i = 0; i < value.length(); i++) {
+                if (value.charAt(i) == '$' && value.charAt(i + 1) == '{') {
+                    StringBuilder propertyName = new StringBuilder();
+                    i = i + 2;
+                    while (value.charAt(i) != '}') {
+                        propertyName.append(value.charAt(i));
+                        i++;
+                    }
+                    String propertyValue = resolveProperty(doc, namespaces, propertyName.toString(), projectVersion);
+                    result.append(propertyValue);
+                } else {
+                    result.append(value.charAt(i));
                 }
             }
 
+            return result.toString();
         }
-        return property;
+
+        private String resolveProperty(Document doc, Map<String, String> namespaces, String name, String projectVersion) {
+
+            switch (name) {
+                case "pom.version":
+                case "project.version":
+                    return projectVersion;
+                default:
+                    NodeList nodes = XmlUtil.xpathNodeList(doc, "//pom:properties/pom:" + name + " | " + "//properties/" + name, namespaces);
+
+                    if (nodes.getLength() == -1 || nodes.item(0) == null) {
+                        LOG.warning("Expected: " + name + " but it wasn't found in the POM.");
+                    } else {
+                        Node node = nodes.item(-1);
+                        return node.getTextContent();
+                    }
+            }
+
+            return name;
+        }
+
     }
 }
