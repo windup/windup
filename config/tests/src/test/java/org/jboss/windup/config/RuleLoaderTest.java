@@ -62,7 +62,6 @@ public class RuleLoaderTest
             Configuration configuration1 = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
-            configuration1.getRules().forEach(r -> System.out.println("jandepora " + r.getId()));       // empty
             for (Rule rule : configuration1.getRules())
             {
                 if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))

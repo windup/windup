@@ -34,24 +34,24 @@ public class XMLTechnologyReferenceAliasTranslatorLoader implements TechnologyRe
     @Override
     public Collection<TechnologyReferenceAliasTranslator> loadTranslators(RuleLoaderContext ruleLoaderContext)
     {
-        List<TechnologyReferenceAliasTranslator> transformers = new ArrayList<>();
+        List<TechnologyReferenceAliasTranslator> translators = new ArrayList<>();
 
         for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
             Visitor<File> visitor = new Visitor<File>() {
                 @Override
                 public void visit(File file) {
-                    transformers.addAll(loadTransformers(file));
+                    translators.addAll(loadTranslators(file));
                 }
             };
 
             FileVisit.visit(userRulesPath.toFile(), new FileSuffixPredicate(XML_EXTENSION), visitor);
         }
 
-        return transformers;
+        return translators;
     }
 
-    private List<TechnologyReferenceAliasTranslator> loadTransformers(File file)
+    private List<TechnologyReferenceAliasTranslator> loadTranslators(File file)
     {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);

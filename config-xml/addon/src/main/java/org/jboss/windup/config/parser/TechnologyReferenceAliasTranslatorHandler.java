@@ -39,7 +39,7 @@ public class TechnologyReferenceAliasTranslatorHandler implements ElementHandler
     @Override
     public List<TechnologyReferenceAliasTranslator> processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
-        List<TechnologyReferenceAliasTranslator> transformers = new ArrayList<>();
+        List<TechnologyReferenceAliasTranslator> translators = new ArrayList<>();
 
         List<Element> children = $(element).children().get();
         for (Element child : children)
@@ -52,11 +52,11 @@ public class TechnologyReferenceAliasTranslatorHandler implements ElementHandler
                 Element targetElement = (Element)child.getElementsByTagName(MetadataTargetTechnologyHandler.METADATA_TARGET_TECHNOLOGY_ELEMENT).item(0);
                 TechnologyReference target = handlerManager.processElement(targetElement);
 
-                TechnologyReferenceAliasTranslator transformer = new TechnologyReferenceAliasTranslator(source, target);
-                transformers.add(transformer);
+                TechnologyReferenceAliasTranslator translator = new TechnologyReferenceAliasTranslator(source, target);
+                translators.add(translator);
             }
         }
 
-        return transformers;
+        return translators;
     }
 }

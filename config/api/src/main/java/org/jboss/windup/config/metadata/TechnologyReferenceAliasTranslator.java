@@ -28,7 +28,7 @@ public class TechnologyReferenceAliasTranslator
     /**
      * Gets the translators for the given graph context, or loads them if necessary.
      */
-    public static List<TechnologyReferenceAliasTranslator> getTranslators(RuleLoaderContext ruleLoaderContext)
+    public static List<TechnologyReferenceAliasTranslator> getAliasTranslators(RuleLoaderContext ruleLoaderContext)
     {
         List<TechnologyReferenceAliasTranslator> transformerList = new ArrayList<>();
         Iterable<TechnologyReferenceAliasTranslatorLoader> loaders = FurnaceHolder.getFurnace().getAddonRegistry()

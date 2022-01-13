@@ -331,7 +331,7 @@ public class WindupProcessorImpl implements WindupProcessor
     }
 
     private static Function<String, String> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
-        List<TechnologyReferenceAliasTranslator> translators = getTranslators(ruleLoaderContext);
+        List<TechnologyReferenceAliasTranslator> translators = getAliasTranslators(ruleLoaderContext);
 
         /*
          * Create a Map of (key:sourceTechId, value:translatorsForThatTech)
