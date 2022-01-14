@@ -15,15 +15,8 @@
  */
 package org.jboss.windup.config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -194,14 +187,11 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         /*
          * Highly optimized loop - for performance reasons. Think before you change this! (lincolnthree)
          */
-        GraphRewrite event = (GraphRewrite) rewrite;
+        GraphRewrite windupExecutionContext = (GraphRewrite) rewrite;
 
         List<Rule> rules = config.getRules();
 
-        for (RuleLifecycleListener listener : listeners)
-        {
-            listener.beforeExecution(event);
-        }
+        listeners.forEach(listener -> listener.beforeExecution(windupExecutionContext));
 
         EvaluationContextImpl subContext = new EvaluationContextImpl();
         rulesLoop:
@@ -223,94 +213,89 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
                 subContext = new EvaluationContextImpl();
 
-                ParameterStore parameterStore = (ParameterStore) context.get(ParameterStore.class);
-                if (parameterStore == null)
-                    parameterStore = new DefaultParameterStore();
+                // Set up rule parameters
+                ParameterStore parameterStore = Optional.ofNullable((ParameterStore) context.get(ParameterStore.class)).orElse(new DefaultParameterStore());
                 subContext.put(ParameterStore.class, parameterStore);
                 setParameterStore(parameterStore);
 
-                ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
-                if (values == null)
-                    values = new DefaultParameterValueStore();
+                ParameterValueStore values = Optional.ofNullable((ParameterValueStore) context.get(ParameterValueStore.class)).orElse(new DefaultParameterValueStore());
                 subContext.put(ParameterValueStore.class, values);
 
                 subContext.setState(RewriteState.EVALUATING);
                 subContext.put(Rule.class, rule);
 
-                Variables.instance(event).push();
+                Variables.instance(windupExecutionContext).push();
                 try
                 {
+                    // Run "before rule evaluation" listeners
                     for (RuleLifecycleListener listener : listeners)
                     {
-                        boolean windupStopRequested = listener.beforeRuleEvaluation(event, rule, subContext);
+                        boolean windupStopRequested = listener.beforeRuleEvaluation(windupExecutionContext, rule, subContext);
                         if (windupStopRequested)
                         {
                             String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
                             log.fine(msg);
-                            event.setWindupStopException(new WindupStopException(msg));
+                            windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                             break rulesLoop;
                         }
                     }
 
-                    if (rule.evaluate(event, subContext))
+                    // Check if this rule applies to the context
+                    if (rule.evaluate(windupExecutionContext, subContext))
                     {
+                        // Run "after rule condition evaluation" listeners
                         for (RuleLifecycleListener listener : listeners)
                         {
-                            listener.afterRuleConditionEvaluation(event, subContext, rule, true);
+                            listener.afterRuleConditionEvaluation(windupExecutionContext, subContext, rule, true);
                         }
 
-                        if (!handleBindings(event, subContext, values))
+                        // Binds values to the subContext?
+                        if (!handleBindings(windupExecutionContext, subContext, values))
                             continue;
 
+                        // Start executing rule
                         subContext.setState(RewriteState.PERFORMING);
                         final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadataType.RULE_PROVIDER);
                         log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
 
+                        // Run "before rule operations performed" listeners
                         for (RuleLifecycleListener listener : listeners)
                         {
-                            boolean windupStopRequested = listener.beforeRuleOperationsPerformed(event, subContext, rule);
+                            boolean windupStopRequested = listener.beforeRuleOperationsPerformed(windupExecutionContext, subContext, rule);
                             if (windupStopRequested)
                             {
                                 String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
                                 log.warning(msg);
-                                event.setWindupStopException(new WindupStopException(msg));
+                                windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                                 break rulesLoop;
                             }
                         }
 
+                        // Run preoperations if any
                         List<Operation> preOperations = subContext.getPreOperations();
                         for (Operation preOperation : preOperations)
                         {
-                            preOperation.perform(event, subContext);
+                            preOperation.perform(windupExecutionContext, subContext);
                         }
 
-                        if (event.getFlow().isHandled())
-                            break;
-
-                        rule.perform(event, subContext);
+                        rule.perform(windupExecutionContext, subContext);
 
                         for (RuleLifecycleListener listener : listeners)
                         {
-                            listener.afterRuleOperationsPerformed(event, subContext, rule);
+                            listener.afterRuleOperationsPerformed(windupExecutionContext, subContext, rule);
                         }
-
-                        if (event.getFlow().isHandled())
-                            break;
 
                         List<Operation> postOperations = subContext.getPostOperations();
                         for (Operation postOperation : postOperations)
                         {
-                            postOperation.perform(event, subContext);
+                            postOperation.perform(windupExecutionContext, subContext);
                         }
-
-                        if (event.getFlow().isHandled())
-                            break;
                     }
                     else
                     {
                         for (RuleLifecycleListener listener : listeners)
                         {
-                            listener.afterRuleConditionEvaluation(event, subContext, rule, false);
+                            listener.afterRuleConditionEvaluation(windupExecutionContext, subContext, rule, false);
                         }
                     }
                 }
@@ -318,9 +303,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 {
                     final String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
                     log.fine(msg);
-                    event.setWindupStopException(new WindupStopException(msg, ex));
-                    event.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
-                    break rulesLoop;
+                    windupExecutionContext.setWindupStopException(new WindupStopException(msg, ex));
+                    windupExecutionContext.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
+                    break;
                 }
                 finally
                 {
@@ -329,15 +314,15 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
 
                     if (autocommit)
-                        event.getGraphContext().commit();
+                        windupExecutionContext.getGraphContext().commit();
 
-                    Variables.instance(event).pop();
+                    Variables.instance(windupExecutionContext).pop();
 
                     long ruleTimeCompleted = System.currentTimeMillis();
                     if (ruleContext != null)
                     {
                         int timeTaken = (int) (ruleTimeCompleted - ruleTimeStarted);
-                        logTimeTakenByRuleProvider(event.getGraphContext(), ruleContext, i, timeTaken);
+                        logTimeTakenByRuleProvider(windupExecutionContext.getGraphContext(), ruleContext, i, timeTaken);
                     }
                 }
             }
@@ -345,7 +330,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             {
                 for (RuleLifecycleListener listener : listeners)
                 {
-                    listener.afterRuleExecutionFailed(event, subContext, rule, ex);
+                    listener.afterRuleExecutionFailed(windupExecutionContext, subContext, rule, ex);
                 }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
                 String logMsg = exMsg + System.lineSeparator() + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
@@ -373,13 +358,12 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
         }
 
-        if (event.getWindupStopException() == null)
+        if (windupExecutionContext.getWindupStopException() == null)
             for (RuleLifecycleListener listener : listeners)
-                listener.afterExecution(event);
+                listener.afterExecution(windupExecutionContext);
     }
 
-    private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context,
-                ParameterValueStore valueStore)
+    private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context, ParameterValueStore valueStore)
     {
         boolean result = true;
         ParameterStore store = (ParameterStore) context.get(ParameterStore.class);

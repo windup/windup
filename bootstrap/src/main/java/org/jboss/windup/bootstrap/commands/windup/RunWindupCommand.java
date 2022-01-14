@@ -232,7 +232,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
         if (optionValues.containsKey(SourceModeOption.NAME))
         {
-            isExplodedApp = (isExplodedApp == Boolean.TRUE ) ? Boolean.TRUE : (Boolean) optionValues.get(SourceModeOption.NAME); 
+            isExplodedApp = isExplodedApp || (Boolean) optionValues.get(SourceModeOption.NAME);
         }
 
         if (!isExplodedApp)
@@ -440,13 +440,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
         return furnace.getAddonRegistry().getServices(WindupProcessor.class).get();
     }
 
-// TODO: Not Used anymore, candidate to remove
-//
-//    private GraphContextFactory getGraphContextFactory()
-//    {
-//        return furnace.getAddonRegistry().getServices(GraphContextFactory.class).get();
-//    }
-
     private String getOptionName(String argument)
     {
         if (argument == null)
@@ -479,7 +472,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
 
     /**
-     * Expands the directories from the given list and and returns a list of subfiles.
+     * Expands the directories from the given list and returns a list of subfiles.
      * Files from the original list are kept as is.
      */
     private static List<Path> expandMultiAppInputDirs(List<Path> input)
@@ -520,7 +513,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
         return expanded;
     }
-
 
     private void setDefaultOptionsValues(Map<String, ConfigurationOption> options, Map<String, Object> optionValues)
     {
