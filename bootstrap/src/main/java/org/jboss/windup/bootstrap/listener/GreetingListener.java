@@ -36,7 +36,8 @@ public class GreetingListener implements ContainerLifecycleListener
         out.println("");
         out.print("Tackle Analysis CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ] - [ https://developers.redhat.com/products/mta/overview/ ]");
+        out.print(" ]");
+//        out.print(" ] - [ https://developers.redhat.com/products/mta/overview/ ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());
