@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.java.condition.annotation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
@@ -85,5 +87,22 @@ public class AnnotationTypeCondition extends AnnotationCondition
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>();
+        if (pattern != null) {
+            result.addAll(pattern.getRequiredParameterNames());
+        }
+        if (conditions != null) {
+            for (AnnotationCondition condition : conditions.values())
+            {
+                result.addAll(condition.getRequiredParameterNames());
+            }
+        }
+
+        return result;
     }
 }

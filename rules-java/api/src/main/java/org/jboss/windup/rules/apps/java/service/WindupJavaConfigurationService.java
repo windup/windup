@@ -1,8 +1,14 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -14,6 +20,12 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.util.Logging;
+
+import static java.lang.String.*;
+import static java.lang.String.format;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
@@ -158,5 +170,19 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
         }
 
         return false;
+    }
+
+
+    /**
+     * Checks whether the path is called "target" and has a pom.xml file hanging from its parent.
+     *
+     * @param file the {@link FileModel} to check
+     * @return true if it's a target directory
+     */
+    public boolean isTargetDir(final FileModel file) {
+        if (!file.getFileName().equals("target")) return false;
+
+        return Stream.of(Optional.ofNullable(file.asFile().getParentFile().listFiles()).orElse(new File[0]))
+                .anyMatch(f -> f.toPath().getFileName().toString().equals("pom.xml"));
     }
 }

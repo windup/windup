@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.TechnologyReferenceModel;
 
 /**
  * Represents a technology with a name (id) and {@link VersionRange}.
+ * An example of this would be "eap:7", where "eap" is the id and "7" the version.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
