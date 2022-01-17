@@ -1,4 +1,4 @@
-name: Windup PR builder for JDK11
+name: Windup dependent projects' PR builder for JDK11
 
 on:
   pull_request:

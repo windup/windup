@@ -20,4 +20,4 @@ jobs:
         java-package: jdk
         cache: 'maven'
     - name: Build on JDK 11
-      run: mvn -B clean install -DskipTests && cd tests && mvn test
+      run: mvn -B clean install -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}
