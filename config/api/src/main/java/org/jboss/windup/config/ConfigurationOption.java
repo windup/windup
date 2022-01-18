@@ -38,7 +38,7 @@ public interface ConfigurationOption
     InputType getUIType();
 
     /**
-     * Indicates whether or not this option must be specified.
+     * Indicates whether this option must be specified.
      */
     boolean isRequired();
 
@@ -62,4 +62,17 @@ public interface ConfigurationOption
      * earlier than items with a lower priority value.
      */
     int getPriority();
+
+    /**
+     * Indicates whether an option has a dependency on other options so that it can be evaluated accordingly.
+     */
+    boolean hasDependencies();
+
+    /**
+     * Validates this option against the rest of the options. This is for cases when the option has a dependency on
+     * some other option(s).
+     * @param allOptionsPresent the rest of the options passed
+     * @return the result of the validation
+     */
+    ValidationResult validateAgainst(Collection<ConfigurationOption> allOptionsPresent);
 }

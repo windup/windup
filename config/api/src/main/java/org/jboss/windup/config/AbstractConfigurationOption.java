@@ -25,11 +25,6 @@ public abstract class AbstractConfigurationOption implements ConfigurationOption
         return availableValues;
     }
 
-    protected void setAvailableValues(Collection<?> availableValues)
-    {
-        this.availableValues = availableValues;
-    }
-
     @Override
     public Object getDefaultValue()
     {
@@ -39,5 +34,15 @@ public abstract class AbstractConfigurationOption implements ConfigurationOption
         }
         else
             return null;
+    }
+
+    @Override
+    public ValidationResult validateAgainst(Collection<ConfigurationOption> allOptionsPresent) {
+        return ValidationResult.SUCCESS;
+    }
+
+    @Override
+    public boolean hasDependencies() {
+        return false;
     }
 }

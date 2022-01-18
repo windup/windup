@@ -42,6 +42,10 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 
+import static java.util.stream.Collectors.*;
+import static java.util.stream.StreamSupport.*;
+import static org.jboss.windup.exec.configuration.WindupConfiguration.*;
+
 
 /**
  * This is the interactive command-line user interface of Windup
@@ -83,84 +87,10 @@ public class RunWindupCommand implements Command, FurnaceDependent
     @SuppressWarnings("unchecked")
     private void runWindup(List<String> arguments)
     {
-        Iterable<ConfigurationOption> optionIterable = WindupConfiguration.getWindupConfigurationOptions(furnace);
-        Map<String, ConfigurationOption> options = new HashMap<>();
-        for (ConfigurationOption option : optionIterable)
-            options.put(option.getName().toUpperCase(), option);
+        Map<String, ConfigurationOption> options = stream(getWindupConfigurationOptions(furnace).spliterator(), false)
+                .collect(toMap(option -> option.getName().toUpperCase(), option -> option));
 
-        Map<String, Object> optionValues = new HashMap<>();
-        for (int i = 0; i < arguments.size(); i++)
-        {
-            String argument = arguments.get(i);
-            String optionName = getOptionName(argument);
-            if (optionName == null)
-            {
-                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
-                continue;
-            }
-
-            ConfigurationOption option = options.get(optionName.toUpperCase());
-            if (option == null)
-            {
-                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
-                if (options.size() == 0)
-                {
-                    System.err.println("FATAL: Furnace Addon repository path: " + System.lineSeparator() + furnace.getAddonRegistry().toString());
-                }
-                continue;
-            }
-
-            // For MANY InputType, take the following arguments as values.
-            if (option.getUIType() == InputType.MANY || option.getUIType() == InputType.SELECT_MANY)
-            {
-                List<Object> values = new ArrayList<>();
-                i++;
-                while (i < arguments.size())
-                {
-                    final String arg = arguments.get(i);
-                    final String name = getOptionName(arg);
-                    if (name != null)
-                    {
-                        // This is the next parameter... back up one and break the loop.
-                        i--;
-                        break;
-                    }
-
-                    String valueString = arguments.get(i);
-                    // Lists are space delimited. split them here.
-                    for (String value : StringUtils.split(valueString, ' '))
-                        values.add(convertType(option.getType(), value));
-
-                    i++;
-                }
-
-                /*
-                 * This allows us to support specifying a parameter multiple times. For example: `windup --packages foo --packages bar --packages baz`
-                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if someone does it this way.
-                 */
-                if (optionValues.containsKey(option.getName()))
-                    ((List<Object>) optionValues.get(option.getName())).addAll(values);
-                else
-                    optionValues.put(option.getName(), values);
-            }
-            else if (Boolean.class.isAssignableFrom(option.getType()))
-            {
-                optionValues.put(option.getName(), true);
-            }
-            else
-            {
-                String valueString = arguments.size() > (i+1) ? arguments.get(++i) : null;
-
-                if (getOptionName(valueString) != null)
-                {
-                    i--;
-                    valueString = "";
-                }
-
-                Object value = convertType(option.getType(), valueString);
-                optionValues.put(option.getName(), value);
-            }
-        }
+        Map<String, Object> optionValues = extractOptionValuesFromArgs(arguments, options);
 
         setDefaultOutputPath(optionValues);
         setDefaultOptionsValues(options, optionValues);
@@ -183,7 +113,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             return;
         }
 
-        if ((targets == null || targets.isEmpty()) && !batchMode.get())
+        if ((targets == null || targets.isEmpty()) && !batchMode.get() && userProvidedPaths == null)
         {
             String target = Bootstrap.promptForListItem("Please select a target:", ruleProviderRegistryCache.getAvailableTargetTechnologies(), "eap7");
             targets = Collections.singleton(target);
@@ -331,6 +261,83 @@ public class RunWindupCommand implements Command, FurnaceDependent
         deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
 
+    private Map<String, Object> extractOptionValuesFromArgs(List<String> arguments, Map<String, ConfigurationOption> options) {
+        Map<String, Object> optionValues = new HashMap<>();
+        for (int i = 0; i < arguments.size(); i++)
+        {
+            String argument = arguments.get(i);
+            String optionName = getOptionName(argument);
+            if (optionName == null)
+            {
+                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
+                continue;
+            }
+
+            ConfigurationOption option = options.get(optionName.toUpperCase());
+            if (option == null)
+            {
+                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
+                if (options.size() == 0)
+                {
+                    System.err.println("FATAL: Furnace Addon repository path: " + System.lineSeparator() + furnace.getAddonRegistry().toString());
+                }
+                continue;
+            }
+
+            // For MANY InputType, take the following arguments as values.
+            if (option.getUIType() == InputType.MANY || option.getUIType() == InputType.SELECT_MANY)
+            {
+                List<Object> values = new ArrayList<>();
+                i++;
+                while (i < arguments.size())
+                {
+                    final String arg = arguments.get(i);
+                    final String name = getOptionName(arg);
+                    if (name != null)
+                    {
+                        // This is the next parameter... back up one and break the loop.
+                        i--;
+                        break;
+                    }
+
+                    String valueString = arguments.get(i);
+                    // Lists are space delimited. split them here.
+                    for (String value : StringUtils.split(valueString, ' '))
+                        values.add(convertType(option.getType(), value));
+
+                    i++;
+                }
+
+                /*
+                 * This allows us to support specifying a parameter multiple times. For example: `windup --packages foo --packages bar --packages baz`
+                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if someone does it this way.
+                 */
+                if (optionValues.containsKey(option.getName()))
+                    ((List<Object>) optionValues.get(option.getName())).addAll(values);
+                else
+                    optionValues.put(option.getName(), values);
+            }
+            else if (Boolean.class.isAssignableFrom(option.getType()))
+            {
+                optionValues.put(option.getName(), true);
+            }
+            else
+            {
+                String valueString = arguments.size() > (i+1) ? arguments.get(++i) : null;
+
+                if (getOptionName(valueString) != null)
+                {
+                    i--;
+                    valueString = "";
+                }
+
+                Object value = convertType(option.getType(), valueString);
+                optionValues.put(option.getName(), value);
+            }
+        }
+        return optionValues;
+    }
+
 
     private boolean validateInputAndOutputPath(Collection<Path> inputPaths, Path outputPath)
     {
@@ -354,25 +361,37 @@ public class RunWindupCommand implements Command, FurnaceDependent
             ConfigurationOption option = optionEntry.getValue();
             ValidationResult result = option.validate(optionValues.get(option.getName()));
 
-            switch (result.getLevel())
-            {
+            boolean isValid = evaluateValidationResult(result);
+
+            if (isValid && option.hasDependencies()) {
+                result = option.validateAgainst(options.values());
+                isValid = evaluateValidationResult(result);
+            }
+
+            return isValid;
+        }
+        return true;
+    }
+
+    private boolean evaluateValidationResult(ValidationResult result) {
+        switch (result.getLevel())
+        {
             case ERROR:
                 System.err.println("ERROR: " + result.getMessage());
                 return false;
             case PROMPT_TO_CONTINUE:
                 if (!Bootstrap.prompt(result.getMessage(), result.getPromptDefault(), batchMode.get()))
                     return false;
-                break;
+                return true;
             case WARNING:
                 System.err.println("WARNING: " + result.getMessage());
-                break;
+                return true;
             case SUCCESS:
-                break;
-            }
+                return true;
         }
         return true;
     }
-
+    
     private void setDefaultOutputPath(Map<String, Object> optionValues)
     {
         Object obj = optionValues.getOrDefault(OutputPathOption.NAME, null);

@@ -1,11 +1,13 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractConfigurationOption;
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
@@ -19,7 +21,7 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public class TargetOption extends AbstractConfigurationOption
+public class TargetOption extends AbstractConfigurationOption implements ConfigurationOption
 {
     public static final String NAME = "target";
 
@@ -71,9 +73,10 @@ public class TargetOption extends AbstractConfigurationOption
     @Override
     public ValidationResult validate(Object values)
     {
+        // Target can be null if the user specified a custom rules directory - will be checked in validateAgainst
         if (values == null)
         {
-            return new ValidationResult(ValidationResult.Level.ERROR, NAME + " parameter is required!");
+            return ValidationResult.SUCCESS;
         }
 
         for (Object value : (Iterable<?>) values)
@@ -89,4 +92,14 @@ public class TargetOption extends AbstractConfigurationOption
         return ValidationResult.SUCCESS;
     }
 
+    @Override
+    public boolean hasDependencies() {
+        return true;
+    }
+
+    @Override
+    public ValidationResult validateAgainst(Collection<ConfigurationOption> allOptionsPresent) {
+        return allOptionsPresent.stream()
+                .anyMatch(option -> option instanceof UserRulesDirectoryOption) ? ValidationResult.SUCCESS : new ValidationResult(ValidationResult.Level.ERROR, NAME + " parameter is required!");
+    }
 }
