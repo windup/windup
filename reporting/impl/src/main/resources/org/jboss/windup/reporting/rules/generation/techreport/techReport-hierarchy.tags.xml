@@ -123,7 +123,7 @@
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
             <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel"></tag>
-            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Nosql_Database"></tag>
+            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="NoSQL_Database"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
