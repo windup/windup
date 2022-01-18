@@ -16,7 +16,7 @@ public interface RuleLoader
      * Loads all known {@link AbstractRuleProvider} instances that are accepted by the provided {@link Predicate} and
      * returns the result.
      * 
-     * @param ruleProviderFilter Must accept null.
+     * @param ruleLoaderContext
      */
     RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext);
 }

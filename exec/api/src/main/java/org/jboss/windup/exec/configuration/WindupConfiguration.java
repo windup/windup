@@ -190,55 +190,24 @@ public class WindupConfiguration
         {
             results.add(option);
         }
-        Collections.sort(results, new Comparator<ConfigurationOption>()
-        {
-            @Override
-            public int compare(ConfigurationOption o1, ConfigurationOption o2)
+        Collections.sort(results, (o1, o2) -> {
+            // if the 1st is required and...
+            if (o1.isRequired())
             {
-                // if the 1st is required and...
-                if (o1.isRequired())
-                {
-                    // the 2nd isn't, the 1st is "before" than the 2nd
-                    if (!o2.isRequired()) return -1;
-                    // otherwise if also the 2nd is required, then order is priority-based
-                    else return o2.getPriority() - o1.getPriority();
-                }
-                // if the 1st is not required and...
-                else
-                {
-                    // the 2nd is, the 1st is "after" than the 2nd
-                    if (o2.isRequired()) return 1;
-                    // otherwise also the 2nd isn't and order is priority-based
-                    else return o2.getPriority() - o1.getPriority();
-                }
+                // the 2nd isn't, the 1st is "before" than the 2nd
+                if (!o2.isRequired()) return -1;
+                // otherwise if also the 2nd is required, then order is priority-based
+                else return o2.getPriority() - o1.getPriority();
+            }
+            // if the 1st is not required and...
+            else
+            {
+                // the 2nd is, the 1st is "after" than the 2nd
+                if (o2.isRequired()) return 1;
+                // otherwise also the 2nd isn't and order is priority-based
+                else return o2.getPriority() - o1.getPriority();
             }
         });
-        return results;
-    }
-
-    /**
-     * Returns all of the {@link ConfigurationOption} in the specified {@link Addon}.
-     */
-    public static Iterable<ConfigurationOption> getWindupConfigurationOptions(Addon addon)
-    {
-        IdentityHashMap<ClassLoader, Addon> classLoaderToAddon = new IdentityHashMap<>();
-        for (Addon loadedAddon : FurnaceHolder.getAddonRegistry().getAddons())
-        {
-            classLoaderToAddon.put(loadedAddon.getClassLoader(), loadedAddon);
-        }
-
-        List<ConfigurationOption> results = new ArrayList<>();
-        Imported<ConfigurationOption> options = FurnaceHolder.getAddonRegistry()
-                    .getServices(ConfigurationOption.class);
-        for (ConfigurationOption option : options)
-        {
-            ClassLoader optionClassLoader = option.getClass().getClassLoader();
-            Addon optionAddon = classLoaderToAddon.get(optionClassLoader);
-            if (optionAddon.equals(addon))
-            {
-                results.add(option);
-            }
-        }
         return results;
     }
 
@@ -313,7 +282,7 @@ public class WindupConfiguration
         Collection<File> userSpecifiedFiles = getOptionValue(UserRulesDirectoryOption.NAME);
         if (userSpecifiedFiles != null && !userSpecifiedFiles.isEmpty())
         {
-            userSpecifiedFiles.stream().forEach(file -> {
+            userSpecifiedFiles.forEach(file -> {
                 results.add(file.toPath());
             });
         }
