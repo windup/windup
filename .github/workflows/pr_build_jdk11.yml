@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  windup-pr-builder-jdk11:
+  windup-build:
 
     runs-on: ubuntu-latest
 
@@ -19,5 +19,8 @@ jobs:
         distribution: 'adopt'
         java-package: jdk
         cache: 'maven'
+    - name: Set up chromedriver variable
+      run: |
+        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Build on JDK 11
-      run: mvn -B clean install -DskipTests && cd tests && mvn test
+      run: mvn -B clean install -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
