@@ -280,7 +280,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return frame((Vertex)resultObj);
     }
 
-    public T getOrCreate(String key, String value, String... kvs)
+    public T getOrCreateByProperties(String key, String value, String... kvs)
     {
         String[] keys = new String[kvs.length / 2 + 1];
         String[] values = new String[kvs.length / 2 + 1];

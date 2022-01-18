@@ -282,7 +282,7 @@ public class DivaLauncher extends GraphOperation {
                                             cs.add(model);
 
                                         } else if (c.category().equals(Report.HTTP_PARAM)) {
-                                            DivaRequestParamModel model = requestParamService.getOrCreate(
+                                            DivaRequestParamModel model = requestParamService.getOrCreateByProperties(
                                                     DivaRequestParamModel.PARAM_NAME, c.type(),
                                                     DivaRequestParamModel.PARAM_VALUE, c.value());
                                             cs.add(GraphService.addTypeToModel(gc, model,
