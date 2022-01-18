@@ -103,9 +103,7 @@ public class DivaLauncher extends GraphOperation {
         }
     }
 
-    public static void launch(Object arg0, Object arg1) throws Exception {
-        GraphRewrite event = (GraphRewrite) arg0;
-        EvaluationContext context = (EvaluationContext) arg1;
+    public static void launch(GraphRewrite event, EvaluationContext context) throws Exception {
         GraphContext gc = event.getGraphContext();
 
         List<? extends ProjectModel> projects = gc.getQuery(ProjectModel.class)
