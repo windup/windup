@@ -219,9 +219,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.2</version>
                     <configuration>
-                        <compilerVersion>1.8</compilerVersion>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <compilerVersion>11</compilerVersion>
+                        <source>11</source>
+                        <target>11</target>
                         <encoding>UTF-8</encoding>
                         <meminitial>128m</meminitial>
                         <maxmem>512m</maxmem>

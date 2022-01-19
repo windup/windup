@@ -1,8 +1,9 @@
 package org.jboss.windup.rules.apps.java.condition;
 
+import org.apache.maven.artifact.versioning.ComparableVersion;
+
 /**
  * Object used to specify the version range
- *
  */
 public class Version
 {
@@ -65,27 +66,10 @@ public class Version
 
     private boolean firstVersionLesser(String first, String second)
     {
-        boolean firstLesser = false;
-        for (int i = 0; i < second.length(); i++)
-        {
-            if (Character.isDigit(second.charAt(i)))
-            {
-                int numericValue = Character.getNumericValue(second.charAt(i));
-                if (!firstLesser && first != null && Character.isDigit(first.charAt(i)))
-                {
-                    int firstInt = Character.getNumericValue(first.charAt(i));
-                    if (firstInt < numericValue)
-                    {
-                        firstLesser = true;
-                    }
-                    if (!firstLesser && (firstInt > numericValue))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        ComparableVersion firstVersion  = new ComparableVersion(first);
+        ComparableVersion secondVersion = new ComparableVersion(second);
+
+        return firstVersion.compareTo(secondVersion) <= 0;
     }
 
     public String toString()

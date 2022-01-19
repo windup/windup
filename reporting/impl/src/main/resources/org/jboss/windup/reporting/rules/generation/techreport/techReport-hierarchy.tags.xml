@@ -30,7 +30,9 @@
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
         <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
+            <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
             <tag ref="techBox:web"/>
+            -->
         </tag>
         <tag name="techRow:embedded" title="Embedded"  pseudo="true">
             <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
@@ -60,7 +62,7 @@
         <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
             <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
                  If not, define a techBox:... tag, and include whichever tags it should contain. -->
-            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee" icon="Misc_Network-Technical">
+            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Misc_Network-Technical">
                 <tag ref="web"/>
             </tag>
             <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee, techRow:embedded"  icon="Hardware_Monitor-Webinar">

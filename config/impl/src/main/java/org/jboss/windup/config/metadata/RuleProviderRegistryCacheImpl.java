@@ -39,7 +39,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private Set<Path> userRulesPaths = new LinkedHashSet<>();
 
-    private List<TechnologyReferenceTransformer> cachedTransformers;
+    private List<TechnologyReferenceAliasTranslator> cachedTranslators;
     private RuleProviderRegistry cachedRegistry;
     private long cacheRefreshTime;
 
@@ -47,7 +47,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     public void addUserRulesPath(Path path)
     {
         this.cachedRegistry = null;
-        this.cachedTransformers = null;
+        this.cachedTranslators = null;
         userRulesPaths.add(path);
     }
 
@@ -108,7 +108,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private void addTransformers(Set<TechnologyReference> techs)
     {
-        techs.addAll(getTechnologyTransformers()
+        techs.addAll(getTechnologyAliasTranslators()
                 .stream()
 
                 // Only include it if the target of the transformation will match one of the items
@@ -116,7 +116,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
                 .filter(transformer -> {
                     for (TechnologyReference originalTech : techs)
                     {
-                        if (originalTech.matches(transformer.getTarget()))
+                        if (originalTech.matches(transformer.getTargetTechnology()))
                         {
                             return true;
                         }
@@ -124,7 +124,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
                     return false;
                 })
 
-                .map(TechnologyReferenceTransformer::getOriginal)
+                .map(TechnologyReferenceAliasTranslator::getOriginalTechnology)
                 .collect(Collectors.toList()));
     }
 
@@ -170,15 +170,15 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         return this.cachedRegistry;
     }
 
-    private List<TechnologyReferenceTransformer> getTechnologyTransformers()
+    private List<TechnologyReferenceAliasTranslator> getTechnologyAliasTranslators()
     {
-        return this.cachedTransformers;
+        return this.cachedTranslators;
     }
 
     private void initCaches(RuleLoaderContext ruleLoaderContext)
     {
         this.cachedRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
-        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
+        this.cachedTranslators = TechnologyReferenceAliasTranslator.getAliasTranslators(ruleLoaderContext);
         this.cacheRefreshTime = System.currentTimeMillis();
     }
 

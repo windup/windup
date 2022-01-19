@@ -12,12 +12,19 @@ public class VersionTest {
         Assert.assertTrue(version.validate("2.2.2.Final"));
         Assert.assertTrue(version.validate("1.2.3"));
         Assert.assertTrue(version.validate("3.2.1.Final"));
+
         version = Version.fromVersion("1.0.0.RELEASE").to("2.1.1.RELEASE");
         Assert.assertTrue(version.validate("1.2.7.RELEASE"));
         Assert.assertFalse(version.validate("2.2.7.RELEASE"));
         Assert.assertTrue(version.validate("1.0.0.RELEASE"));
-        Assert.assertTrue(version.validate("1.0.0.Final"));
+
+        // This case must fail due to https://semver.org/#spec-item-11 (lexical ordering of the suffix)
+        Assert.assertFalse(version.validate("1.0.0.Final"));
+
         Assert.assertTrue(version.validate("2.1.1.RELEASE"));
         Assert.assertTrue(version.validate("2.1.1"));
+
+        version = Version.fromVersion("2.0-beta9").to("2.14.1");
+        Assert.assertTrue(version.validate("2.1"));
     }
 }
