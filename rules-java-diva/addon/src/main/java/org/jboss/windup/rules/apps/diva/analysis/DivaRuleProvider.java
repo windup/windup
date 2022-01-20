@@ -20,14 +20,7 @@ public class DivaRuleProvider extends AbstractRuleProvider {
        ConfigurationRuleBuilderPerform conf = ConfigurationBuilder.begin()
            .addRule()
            .perform(new DivaLauncher());
-
-       String backupFile = System.getenv(BackupJanusGraph.JANUSGRAPH_BACKUP_DIR);
-       if (backupFile == null || backupFile.isEmpty()) {
-           return conf;
-       } else {
-           return conf.addRule()
-           .perform(new BackupJanusGraph());
-       }
+       return conf;
    }
    // @formatter:on
 }
