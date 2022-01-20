@@ -23,11 +23,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Cache configuration
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: windup-build-cache
       - name: Build on JDK 11
         run: mvn -B clean install -DskipTests
 
