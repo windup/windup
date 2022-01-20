@@ -259,4 +259,36 @@ public class GraphServiceTest
         Assert.assertTrue(types.contains(TestFooSubModel.class.getAnnotation(TypeValue.class).value()));
     }
 
+    @Test
+    public void testGetOrCreateByProperties() throws Exception {
+        try (GraphContext context = factory.create(true)) {
+            Assert.assertNotNull(context);
+
+            TestFooModel[] foos = new TestFooModel[4];
+            for (int k = 0; k < 4; k++) {
+                TestFooModel foo = context.getFramed().addFramedVertex(TestFooModel.class);
+                foo.setProp1("" + k);
+                foo.setProp2("" + (k / 2));
+                foo.setProp3("" + (k % 2));
+                foos[k] = foo;
+            }
+
+            try {
+                GraphService<TestFooModel> service = new GraphService<>(context, TestFooModel.class);
+
+                TestFooModel foo = service.getOrCreateByProperties("prop2", "1", "prop3", "1");
+                Assert.assertNotNull(foo);
+                Assert.assertEquals("3", foo.getProp1());
+
+                foo = service.getOrCreateByProperties("prop2", "2", "prop3", "0");
+                Assert.assertNotNull(foo);
+                Assert.assertNull(foo.getProp1());
+            } finally {
+                for (TestFooModel foo: foos) {
+                    foo.remove();
+                }
+            }
+        }
+    }
+
 }
