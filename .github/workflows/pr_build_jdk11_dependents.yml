@@ -16,7 +16,18 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-          cache: 'maven'
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ GITHUB_SHA }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Cache configuration
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: windup-build-cache
       - name: Build on JDK 11
         run: mvn -B clean install -DskipTests
 
@@ -34,7 +45,13 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-          cache: 'maven'
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ GITHUB_SHA }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build
         run: mvn clean install -nsu
 
@@ -52,7 +69,13 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-          cache: 'maven'
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ GITHUB_SHA }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build
         run: mvn clean install -nsu
 
@@ -70,6 +93,12 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           java-package: jdk
-          cache: 'maven'
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ GITHUB_SHA }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build
         run: mvn clean install -s settings.xml -nsu
