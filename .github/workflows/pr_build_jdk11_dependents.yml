@@ -36,7 +36,7 @@ jobs:
           java-package: jdk
           cache: 'maven'
       - name: Build
-        run: mvn clean install
+        run: mvn clean install -nsu
 
   windup-maven-plugin-build:
     runs-on: ubuntu-18.04
@@ -54,7 +54,7 @@ jobs:
           java-package: jdk
           cache: 'maven'
       - name: Build
-        run: mvn clean install
+        run: mvn clean install -nsu
 
   windup-quickstarts-build:
     runs-on: ubuntu-18.04
@@ -72,4 +72,4 @@ jobs:
           java-package: jdk
           cache: 'maven'
       - name: Build
-        run: mvn clean install -s settings.xml
+        run: mvn clean install -s settings.xml -nsu
