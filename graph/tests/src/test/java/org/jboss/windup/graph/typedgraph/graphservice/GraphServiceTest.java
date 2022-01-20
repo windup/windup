@@ -264,7 +264,7 @@ public class GraphServiceTest
         try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
-            TestFooModel[] foos = new TestFooModel[4];
+            TestFooModel[] foos = new TestFooModel[5];
             for (int k = 0; k < 4; k++) {
                 TestFooModel foo = context.getFramed().addFramedVertex(TestFooModel.class);
                 foo.setProp1("" + k);
@@ -280,12 +280,14 @@ public class GraphServiceTest
                 Assert.assertNotNull(foo);
                 Assert.assertEquals("3", foo.getProp1());
 
-                foo = service.getOrCreateByProperties("prop2", "2", "prop3", "0");
-                Assert.assertNotNull(foo);
-                Assert.assertNull(foo.getProp1());
+                foos[4] = service.getOrCreateByProperties("prop2", "2", "prop3", "0");
+                Assert.assertNotNull(foos[4]);
+                Assert.assertNull(foos[4].getProp1());
+                Assert.assertEquals("2", foos[4].getProp2());
             } finally {
                 for (TestFooModel foo: foos) {
-                    foo.remove();
+                    if (foo != null)
+                        foo.remove();
                 }
             }
         }
