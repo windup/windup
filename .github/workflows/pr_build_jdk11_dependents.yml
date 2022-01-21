@@ -20,7 +20,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-build-${{ github.sha }}
           restore-keys:
             ${{ runner.os }}-maven-windup-build
       - name: Build on JDK 11
@@ -44,9 +44,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-rulesets-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-maven-${{ github.sha }}
+            ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -nsu
 
@@ -68,7 +68,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-rulesets-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -nsu
 
@@ -90,6 +90,6 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -s settings.xml -nsu
