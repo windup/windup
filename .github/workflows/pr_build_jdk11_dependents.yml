@@ -21,6 +21,8 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ github.sha }}
+          restore-keys:
+            ${{ runner.os }}-maven-windup
       - name: Build on JDK 11
         run: mvn -B clean install -DskipTests
 
