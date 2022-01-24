@@ -27,7 +27,7 @@ jobs:
         run: mvn -B clean install -DskipTests
 
   windup-rulesets-build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [windup-build]
     steps:
       - name: Checkout repo
@@ -51,7 +51,7 @@ jobs:
         run: mvn clean install -nsu
 
   windup-maven-plugin-build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [windup-rulesets-build]
     steps:
       - name: Checkout repo
@@ -73,7 +73,7 @@ jobs:
         run: mvn clean install -nsu
 
   windup-quickstarts-build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [windup-build]
     steps:
       - name: Checkout repo
