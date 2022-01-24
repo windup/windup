@@ -86,7 +86,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
      * Indicates that all of the packages within an archive are "known" by the package mapper. Generally
      * this indicates that the archive does not contain customer code.
      */
-    public static boolean isExclusivelyKnownArchive(GraphRewrite event, String filePath)
+    public static boolean areAllPackagesKnown(GraphRewrite event, String filePath)
     {
         String extension = StringUtils.substringAfterLast(filePath, ".");
 
@@ -137,7 +137,6 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
                 } else
                 {
                     // we couldn't find a package definitively, so ignore the archive
-                    exclusivelyKnown = false;
                     break;
                 }
             }

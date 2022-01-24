@@ -22,6 +22,7 @@ import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationS
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.rules.apps.java.archives.option.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -65,30 +66,8 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphLis
             Coordinate coordinate = identifier.getCoordinate(archive.getSHA1Hash());
             if (coordinate != null)
             {
-                // If this is not a jar file, do not ignore it
-                if (!StringUtils.endsWithIgnoreCase(archive.getFileName(), ".jar"))
-                    return;
-
-                // Never ignore the input application
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(this.context);
-                for (FileModel inputPath : configurationModel.getInputPaths())
-                {
-                    if (inputPath.equals(archive))
-                        return;
-                }
-
-                IdentifiedArchiveModel identifiedArchive = GraphService.addTypeToModel(context, archive, IdentifiedArchiveModel.class);
-                ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();
-
-                coordinateModel.setArtifactId(coordinate.getArtifactId());
-                coordinateModel.setGroupId(coordinate.getGroupId());
-                coordinateModel.setVersion(coordinate.getVersion());
-                coordinateModel.setClassifier(coordinate.getClassifier());
-                identifiedArchive.setCoordinate(coordinateModel);
-
-                LOG.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
-                IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(context, archive, IgnoredArchiveModel.class);
-                ignoredArchive.setIgnoredRegex("Known open-source library");
+                if (shouldBeIgnored(archive))
+                    identifyAndIgnore(archive, coordinate);
             }
             else
             {
@@ -124,6 +103,42 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphLis
                 throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
             }
         }
+    }
+
+    private boolean shouldBeIgnored(ArchiveModel archive) {
+        // If this is not a jar file, do not ignore it
+        if (!StringUtils.endsWithIgnoreCase(archive.getFileName(), ".jar"))
+            return true;
+
+        // If the forceAnalysisOfKnownLibraries option is enabled, do not ignore it
+        boolean forceAnalysisOfKnownLibraries = (Boolean) context.getOptionMap().get(AnalyzeKnownLibrariesOption.NAME);
+        if (forceAnalysisOfKnownLibraries)
+            return false;
+
+        // Never ignore the input application
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(this.context);
+        for (FileModel inputPath : configurationModel.getInputPaths())
+        {
+            if (inputPath.equals(archive))
+                return true;
+        }
+        
+        return false;
+    }
+
+    private void identifyAndIgnore(ArchiveModel archive, Coordinate coordinate) {
+        IdentifiedArchiveModel identifiedArchive = GraphService.addTypeToModel(context, archive, IdentifiedArchiveModel.class);
+        ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();
+
+        coordinateModel.setArtifactId(coordinate.getArtifactId());
+        coordinateModel.setGroupId(coordinate.getGroupId());
+        coordinateModel.setVersion(coordinate.getVersion());
+        coordinateModel.setClassifier(coordinate.getClassifier());
+        identifiedArchive.setCoordinate(coordinateModel);
+
+        LOG.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
+        IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(context, archive, IgnoredArchiveModel.class);
+        ignoredArchive.setIgnoredRegex("Known open-source library");
     }
 
     @Override
