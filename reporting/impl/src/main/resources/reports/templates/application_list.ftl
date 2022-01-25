@@ -111,7 +111,10 @@
     <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
-    <link href="reports/resources/img/tackle-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <#assign basePath="reports/resources">
+    <#include "include/favicon.ftl">
+
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
 

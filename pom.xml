@@ -537,6 +537,19 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
 
+        <profile>
+            <id>konveyor</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-konveyor</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 </project>

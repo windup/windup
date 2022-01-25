@@ -30,7 +30,9 @@
         <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
         <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen"/>
-        <link href="resources/img/tackle-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+        <#assign basePath="resources">
+        <#include "include/favicon.ftl">
     </head>
     <body role="document" class="application-graph" ng-app="appDependencies">
         <!-- Navbar -->

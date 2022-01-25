@@ -17,7 +17,10 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/flot/plot.css" />
-    <link href="resources/img/tackle-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <#assign basePath="resources">
+    <#include "include/favicon.ftl">
+
     <style>
 .report-index-row {
     margin: 10px -32px 0px 5px;

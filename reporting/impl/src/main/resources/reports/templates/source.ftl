@@ -11,7 +11,9 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
-    <link rel="shortcut icon" href="resources/img/tackle-icon.png" type="image/x-icon"/>
+
+    <#assign basePath="resources">
+    <#include "include/favicon.ftl">
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
