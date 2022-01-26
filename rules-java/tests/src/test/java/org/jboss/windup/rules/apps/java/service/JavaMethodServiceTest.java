@@ -79,8 +79,10 @@ public class JavaMethodServiceTest {
 
             JavaMethodService methodService = new JavaMethodService(context);
             JavaMethodModel foundMethod = methodService.createJavaMethod(classModel1, "foo", classModel2);
-
             Assert.assertEquals((Object)methodModelSomeMethod.getId(), (Object)foundMethod.getId());
+
+            methodService.createJavaMethod(classModel1, "bar");
+            Assert.assertEquals(2, classModel1.getJavaMethods().size());
         }
     }
 
