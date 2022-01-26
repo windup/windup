@@ -20,20 +20,13 @@ public class DivaEntryMethodService extends GraphService<DivaEntryMethodModel> {
     }
 
     public DivaEntryMethodModel getOrCreate(String className, String methodName) {
-        JavaClassModel classModel = classService.create(className);
-        for (JavaMethodModel methodModel : classModel.getJavaMethods()) {
-            if (methodModel.getMethodName().equals(methodName)) {
-                if (methodModel instanceof DivaEntryMethodModel) {
-                    return (DivaEntryMethodModel) methodModel;
-                } else {
-                    return addTypeToModel(methodModel);
-                }
-            }
+        JavaClassModel classModel = classService.getByName(className);
+        JavaMethodModel methodModel = methodService.createJavaMethod(classModel, methodName);
+        if (methodModel instanceof DivaEntryMethodModel) {
+            return (DivaEntryMethodModel) methodModel;
+        } else {
+            return addTypeToModel(methodModel);
         }
-        DivaEntryMethodModel model = addTypeToModel(
-                methodService.createJavaMethod(classModel, methodName, new JavaClassModel[] {}));
-        classModel.addJavaMethod(model);
-        return model;
     }
 
 }

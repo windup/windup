@@ -228,7 +228,7 @@ public class DivaLauncher extends GraphOperation {
         // List<Context> contexts = Context.loadContexts(fw,
         // "/Users/aki/git/tackle-diva/dt-contexts.yml");
 
-        JanusGraphReport<DivaContextModel> report = new JanusGraphReport<>(gc, DivaContextModel.class);
+        DivaToWindup<DivaContextModel> report = new DivaToWindup<>(gc, DivaContextModel.class);
 
         DivaEntryMethodService entryMethodService = new DivaEntryMethodService(gc);
         GraphService<DivaRequestParamModel> requestParamService = new GraphService<>(gc, DivaRequestParamModel.class);
@@ -253,8 +253,8 @@ public class DivaLauncher extends GraphOperation {
                         @Override
                         public void accept(Report.Builder txs) {
                             report.add((Report.Named map) -> {
-                                map.put(JanusGraphReport.CONSTRAINTS, (Report r) -> {
-                                    JanusGraphReport<DivaConstraintModel> cs = (JanusGraphReport<DivaConstraintModel>) r;
+                                map.put(DivaToWindup.CONSTRAINTS, (Report r) -> {
+                                    DivaToWindup<DivaConstraintModel> cs = (DivaToWindup<DivaConstraintModel>) r;
                                     for (Context.Constraint c : cxt) {
                                         if (c.category().equals(Report.ENTRY)) {
                                             IMethod m = ((EntryConstraint) c).node().getMethod();
