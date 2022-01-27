@@ -16,7 +16,6 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.scan.operation.DeleteWorkDirsOperation;
-import org.jboss.windup.util.Util;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Not;
@@ -31,7 +30,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(
     afterIDs = "CreateRuleProviderReportRuleProvider",
     // I don't want to create a dependency: before = {ExecutionTimeReportRuleProvider.class},
-    description = "Deletes the temporary data " + Util.WINDUP_BRAND_NAME_ACRONYM + " analyzes: the unzipped archives, and the graph data."
+    description = "Deletes the temporary data the CLI analyzes: the unzipped archives, and the graph data."
             + " Use --" + KeepWorkDirsOption.NAME + " to keep them.",
     phase = PostFinalizePhase.class
 )

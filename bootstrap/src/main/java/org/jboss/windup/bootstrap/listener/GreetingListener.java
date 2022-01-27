@@ -7,8 +7,11 @@
 
 package org.jboss.windup.bootstrap.listener;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
@@ -23,8 +26,25 @@ public class GreetingListener implements ContainerLifecycleListener
 {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
+    private static String WINDUP_BRAND_NAME_LONG = "";
+    private static String WINDUP_BRAND_DOCUMENTATION_URL = "";
+
     public GreetingListener()
     {
+    }
+
+    // We need to have this file here as a Workaround for not being able
+    // to consume org.jboss.windup.util.Util because of NotClassFoundException in windup-distribution
+    static {
+        try (InputStream input = GreetingListener.class.getClassLoader().getResourceAsStream("windup-config.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+
+            WINDUP_BRAND_NAME_LONG = prop.getProperty("distributionBrandName");
+            WINDUP_BRAND_DOCUMENTATION_URL = prop.getProperty("distributionBrandDocumentationUrl");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -34,10 +54,9 @@ public class GreetingListener implements ContainerLifecycleListener
         PrintWriter out = new PrintWriter(sw, true);
         out.println();
         out.println("");
-        out.print("Tackle Analysis CLI, version [ ");
+        out.print(WINDUP_BRAND_NAME_LONG + " CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ]");
-//        out.print(" ] - [ https://developers.redhat.com/products/mta/overview/ ]");
+        out.print(" ] - [ " + WINDUP_BRAND_DOCUMENTATION_URL + " ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());

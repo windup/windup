@@ -235,7 +235,7 @@ public class Bootstrap
 
     public static String getVersionString()
     {
-        return "> Tackle Analysis CLI, version " + getRuntimeAPIVersion() + ".";
+        return "> " + Util.WINDUP_CLI_NAME + " CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
     public static Version getRuntimeAPIVersion()

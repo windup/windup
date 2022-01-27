@@ -9,5 +9,5 @@
                 <span class="icon-bar"></span>
             </button>
             <span class="wu-navbar-header">
-                <#include "navbar_left_brand.ftl">
+              <#include "navbar_left_brand.ftl">
             </span>
