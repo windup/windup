@@ -105,7 +105,7 @@
                 <tag ref="jax-rs"/>
             </tag>
             <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown"></tag>
-            <tag name="techBox:streaming" title="Streaming" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Data_Transfer"></tag>
+            <tag name="techBox:streaming" title="Streaming" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Multiply-A-White-RGB"></tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!--
@@ -124,7 +124,7 @@
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
             <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel"></tag>
-            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="NoSQL_Database"></tag>
+            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Storage-A-White-RGB"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
@@ -132,9 +132,9 @@
             <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
             <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
             <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
-            <tag name="techBox:resource-management" title="Resource Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Resource_Management"></tag>
-            <tag name="techBox:configuration-management" title="Configuration Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Configuration_Management"></tag>
-            <tag name="techBox:observability" title="Observability" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Observability"></tag>
+            <tag name="techBox:resource-management" title="Resource Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Apps_multiple-A-White-RGB"></tag>
+            <tag name="techBox:configuration-management" title="Configuration Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Gear_group-A-White-RGB"></tag>
+            <tag name="techBox:observability" title="Observability" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Heart_monitor-A-White-RGB"></tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
             <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
@@ -142,8 +142,8 @@
             <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
             <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
             <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Shopping_Cart"/>
-            <tag name="techBox:serverless-faas" title="Serverless / FAAS" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Serverless_FAAS"/>
-            <tag name="techBox:utilities" title="Utilities" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Execute_Utilities"/>
+            <tag name="techBox:serverless-faas" title="Serverless / FAAS" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Cloud_Automation-A-White-RGB"/>
+            <tag name="techBox:utilities" title="Utilities" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Wrench-A-White-RGB"/>
         </tag>
     </tag>
 
