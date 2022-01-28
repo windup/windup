@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.graph.GraphContext;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest
 {
     @Test
+    @Ignore
     public void testRunWindupMediumWithProcyon() throws Exception
     {
         final String path = "../test-files/Windup1x-javaee-example.war";
