@@ -105,7 +105,7 @@
                 <tag ref="jax-rs"/>
             </tag>
             <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Link_broken-A-White-RGB"></tag>
-
+            <tag name="techBox:streaming" title="Streaming" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Multiply-A-White-RGB"></tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!--
@@ -124,6 +124,7 @@
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Save-A-White-RGB"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car-A-White-RGB"></tag>
             <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Clipboard_Checklist-A-White-RGB"></tag>
+            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Storage-A-White-RGB"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Game_Plan-A-White-RGB"></tag>
@@ -131,6 +132,9 @@
             <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Shield-A-White-RGB"></tag>
             <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Notepad-A-White-RGB"></tag>
             <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Progression_linear-A-White-RGB"></tag>
+            <tag name="techBox:resource-management" title="Resource Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Apps_multiple-A-White-RGB"></tag>
+            <tag name="techBox:configuration-management" title="Configuration Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Gear_group-A-White-RGB"></tag>
+            <tag name="techBox:observability" title="Observability" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Heart_monitor-A-White-RGB"></tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
             <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="GPU-A-White-RGB"/>
@@ -138,6 +142,8 @@
             <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Flowchart-A-White-RGB"/>
             <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Interoperability-A-White-RGB"/>
             <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Pricetag-A-White-RGB"/>
+            <tag name="techBox:serverless-faas" title="Serverless / FAAS" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Cloud_Automation-A-White-RGB"/>
+            <tag name="techBox:utilities" title="Utilities" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Wrench-A-White-RGB"/>
         </tag>
     </tag>
 
@@ -195,6 +201,13 @@
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
             <tag pseudo="true" name="place:Binding" title="Binding" parents="techBox:binding"/>
             <tag pseudo="true" name="place:Validation" title="Validation" parents="techBox:validation"/>
+            <tag pseudo="true" name="place:Streaming" title="Streaming" parents="techBox:streaming"/>
+            <tag pseudo="true" name="place:No SQL Database" title="No SQL Database" parents="techBox:no-sql-database"/>
+            <tag pseudo="true" name="place:Resource Management" title="Resource Management" parents="techBox:resource-management"/>
+            <tag pseudo="true" name="place:Configuration Management" title="Configuration Management" parents="techBox:configuration-management"/>
+            <tag pseudo="true" name="place:Observability" title="Observability" parents="techBox:observability"/>
+            <tag pseudo="true" name="place:Serverless / FAAS" title="Serverless / FAAS" parents="techBox:serverless-faas"/>
+            <tag pseudo="true" name="place:Utilities" title="Utilities" parents="techBox:utilities"/>
         </tag>
     </tag>
 </tags>
