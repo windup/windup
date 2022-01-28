@@ -202,7 +202,7 @@
             <tag pseudo="true" name="place:Validation" title="Validation" parents="techBox:validation"/>
             <tag pseudo="true" name="place:No SQL Database" title="No SQL Database" parents="techBox:no-sql-database"/>
             <tag pseudo="true" name="place:Resource Management" title="Resource Management" parents="techBox:resource-management"/>
-            <tag pseudo="true" name="place:Configuration Management" title="Observability" parents="techBox:configuration-management"/>
+            <tag pseudo="true" name="place:Configuration Management" title="Configuration Management" parents="techBox:configuration-management"/>
             <tag pseudo="true" name="place:Observability" title="Observability" parents="techBox:observability"/>
             <tag pseudo="true" name="place:Serverless / FAAS" title="Serverless / FAAS" parents="techBox:serverless-faas"/>
             <tag pseudo="true" name="place:Utilities" title="Utilities" parents="techBox:utilities"/>
