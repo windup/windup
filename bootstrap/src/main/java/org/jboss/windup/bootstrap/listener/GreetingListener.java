@@ -7,17 +7,16 @@
 
 package org.jboss.windup.bootstrap.listener;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.bootstrap.Theme;
+import org.jboss.windup.bootstrap.ThemeProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -26,37 +25,22 @@ public class GreetingListener implements ContainerLifecycleListener
 {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    private static String WINDUP_BRAND_NAME_LONG = "";
-    private static String WINDUP_BRAND_DOCUMENTATION_URL = "";
-
     public GreetingListener()
     {
-    }
-
-    // We need to have this file here as a Workaround for not being able
-    // to consume org.jboss.windup.util.Util because of NotClassFoundException in windup-distribution
-    static {
-        try (InputStream input = GreetingListener.class.getClassLoader().getResourceAsStream("windup-config.properties")) {
-            Properties prop = new Properties();
-            prop.load(input);
-
-            WINDUP_BRAND_NAME_LONG = prop.getProperty("distributionBrandName");
-            WINDUP_BRAND_DOCUMENTATION_URL = prop.getProperty("distributionBrandDocumentationUrl");
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     @Override
     public void beforeStart(Furnace furnace) throws ContainerException
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw, true);
         out.println();
         out.println("");
-        out.print(WINDUP_BRAND_NAME_LONG + " CLI, version [ ");
+        out.print(theme.getBrandNameLong() + " CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ] - [ " + WINDUP_BRAND_DOCUMENTATION_URL + " ]");
+        out.print(" ] - [ " + theme.getBrandDocumentationUrl() + " ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());

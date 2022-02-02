@@ -39,7 +39,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.PathUtil;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -316,7 +316,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             }
             catch (IOException e)
             {
-                System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM+" was not able to create a CSV file " + path + ". CSV Export will not be generated.");
+                System.err.println(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " was not able to create a CSV file " + path + ". CSV Export will not be generated.");
                 throw new WindupException("Unable to create file " + path, e);
             }
         }

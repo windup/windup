@@ -4,7 +4,7 @@ package org.jboss.windup.rules.apps.mavenize;
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * Gives the user the option to skip class not found analysis.
@@ -32,7 +32,7 @@ public class MavenizeGroupIdOption extends AbstractConfigurationOption
     public String getDescription()
     {
         return "All pom.xml files will use this value as their <groupId>. If the parameter"
-            + " is omitted, " + Util.WINDUP_BRAND_NAME_ACRONYM + " tries to guess some value based on the application,"
+            + " is omitted, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " tries to guess some value based on the application,"
             + " but this guess may be wrong. Last resort default value is '"+ModuleAnalysisHelper.LAST_RESORT_DEFAULT_GROUP_ID+"'.";
     }
 

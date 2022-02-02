@@ -30,7 +30,8 @@ import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsMode
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.common.util.Assert;
@@ -181,6 +182,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     @Override
     public void perform(Rewrite rewrite, EvaluationContext context)
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         if (!(rewrite instanceof GraphRewrite))
             throw new IllegalArgumentException("Rewrite must be an instanceof GraphRewrite");
 
@@ -233,7 +236,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         boolean windupStopRequested = listener.beforeRuleEvaluation(windupExecutionContext, rule, subContext);
                         if (windupStopRequested)
                         {
-                            String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
+                            String msg = theme.getBrandNameAcronym() + " was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
                             log.fine(msg);
                             windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                             break rulesLoop;
@@ -264,7 +267,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             boolean windupStopRequested = listener.beforeRuleOperationsPerformed(windupExecutionContext, subContext, rule);
                             if (windupStopRequested)
                             {
-                                String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
+                                String msg = theme.getBrandNameAcronym() + " was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
                                 log.warning(msg);
                                 windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                                 break rulesLoop;
@@ -301,7 +304,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 }
                 catch (WindupStopException ex)
                 {
-                    final String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
+                    final String msg = theme.getBrandNameAcronym() + " was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
                     log.fine(msg);
                     windupExecutionContext.setWindupStopException(new WindupStopException(msg, ex));
                     windupExecutionContext.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
