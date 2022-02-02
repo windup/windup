@@ -121,7 +121,7 @@
                 <tag ref="cache"/>
             </tag>
             <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Gateway-A-White-RGB"></tag>
-            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Save-A-White-RGB"></tag>
+            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Save-A-White-RGB"></tag>
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car-A-White-RGB"></tag>
             <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Clipboard_Checklist-A-White-RGB"></tag>
             <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Storage-A-White-RGB"></tag>
