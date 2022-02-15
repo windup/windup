@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-java-parent</artifactId>
-        <version>5.2.1-SNAPSHOT</version>
+        <version>5.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-rules-java-api</artifactId>
@@ -48,6 +48,11 @@
             <version>7.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>3.3.9</version>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
@@ -59,7 +64,7 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-fernflower</artifactId>
-            <version>5.2.1-SNAPSHOT</version>
+            <version>5.2.2-SNAPSHOT</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>

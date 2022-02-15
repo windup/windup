@@ -29,7 +29,7 @@ import com.ibm.wala.util.strings.StringStuff;
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
 
-public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
+public class DivaToWindup<T extends WindupVertexFrame> implements Report {
 
     static final String CONSTRAINTS = "constraints";
 
@@ -37,11 +37,11 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
     GraphContext gc;
     Consumer<T> addEdge = null;
 
-    public JanusGraphReport(GraphContext context, Class<T> model) {
+    public DivaToWindup(GraphContext context, Class<T> model) {
         this(context, model, null);
     }
 
-    public JanusGraphReport(GraphContext context, Class<T> model, Consumer<T> addEdge) {
+    public DivaToWindup(GraphContext context, Class<T> model, Consumer<T> addEdge) {
         this.gc = context;
         this.service = new GraphService<T>(context, model);
         this.addEdge = addEdge;
@@ -124,16 +124,16 @@ public class JanusGraphReport<T extends WindupVertexFrame> implements Report {
         @Override
         public void put(String key, io.tackle.diva.Report.Builder builder) {
             if (model instanceof DivaContextModel && key.equals(CONSTRAINTS)) {
-                builder.build(new JanusGraphReport<>(gc, DivaConstraintModel.class,
+                builder.build(new DivaToWindup<>(gc, DivaConstraintModel.class,
                         ((DivaContextModel) model)::addConstraint));
 
             } else if (model instanceof DivaContextModel && key.equals(TRANSACTIONS)) {
                 builder.build(
-                        new JanusGraphReport<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
+                        new DivaToWindup<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
 
             } else if (model instanceof DivaTxModel && key.equals(TRANSACTION)) {
                 int[] counter = new int[] { 0 };
-                builder.build(new JanusGraphReport<>(gc, DivaOpModel.class, op -> {
+                builder.build(new DivaToWindup<>(gc, DivaOpModel.class, op -> {
                     op.setOrdinal(counter[0]++);
                     ((DivaTxModel) model).addOp(op);
                 }));

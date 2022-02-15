@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>5.2.1-SNAPSHOT</version>
+        <version>5.2.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.utils</groupId>
@@ -36,6 +36,11 @@
             <artifactId>guava</artifactId>
             <version>18.0</version>
         </dependency>
+       <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency> 
 
         <!-- JTar - Java Tar file support -->
         <dependency>

@@ -1,17 +1,7 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +9,6 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExportCSVOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -41,8 +30,12 @@ import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesRep
 import org.jboss.windup.rules.apps.tattletale.DisableTattletaleReportOption;
 import org.junit.Assert;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Base class for Windup end-to-end tests.
@@ -297,7 +290,7 @@ public abstract class WindupArchitectureTest
         GraphService<JavaClassFileModel> classModels = new GraphService<>(context, JavaClassFileModel.class);
         for (JavaClassFileModel javaClassFileModel : classModels.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true))
         {
-            Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
+            Assert.assertNotNull(String.format("%s not found", javaClassFileModel.getJavaClass().getClassName()), javaClassFileModel.getJavaClass().getDecompiledSource());
         }
 
     }

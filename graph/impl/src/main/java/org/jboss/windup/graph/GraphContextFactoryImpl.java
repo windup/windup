@@ -2,7 +2,8 @@ package org.jboss.windup.graph;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.WeakHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +22,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     private Furnace furnace;
     private GraphTypeManager graphTypeManager;
 
-    private WeakHashMap<String, GraphContext> graphMap = new WeakHashMap();
+    private final Map<String, GraphContext> graphMap = new HashMap<>();
 
     private Furnace getFurnace()
     {
@@ -107,6 +108,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
                 graphContext.close();
                 LOG.info("Closed graph: " + graphName);
             }
+            graphMap.clear();
         }
         catch (Throwable t)
         {

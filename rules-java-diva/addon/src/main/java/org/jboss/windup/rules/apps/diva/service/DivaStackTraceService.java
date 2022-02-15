@@ -41,11 +41,7 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
         } else {
             traversal = traversal.filter(__.out(DivaStackTraceModel.PARENT).is(parent.getElement()));
         }
-//        long nanos = System.nanoTime();
-        DivaStackTraceModel model = getUnique(traversal);
-//        total += System.nanoTime() - nanos;
-//        if (++count % 100 == 0) {
-//            Util.LOGGER.info("count = " + count + ", time = " + (total / 1000000) + "ms");
+       DivaStackTraceModel model = getUnique(traversal);
 //        }
         if (model == null) {
             model = create();

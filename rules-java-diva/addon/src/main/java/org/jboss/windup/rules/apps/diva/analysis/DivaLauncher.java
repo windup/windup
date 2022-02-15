@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.jboss.windup.config.GraphRewrite;
@@ -28,6 +29,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.rules.apps.diva.EnableTransactionAnalysisOption;
 import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
 import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
@@ -81,8 +83,18 @@ import io.tackle.diva.irgen.DivaSourceLoaderImpl;
 import io.tackle.diva.irgen.ModularAnalysisScope;
 
 public class DivaLauncher extends GraphOperation {
+
+    private static final Logger LOG = Logger.getLogger(DivaLauncher.class.getName());
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context) {
+
+        Boolean enableDiva = (Boolean) event.getGraphContext().getOptionMap()
+                .getOrDefault(EnableTransactionAnalysisOption.NAME, Boolean.FALSE);
+        if (!enableDiva) {
+            LOG.info("Skipping Diva analysis as " + EnableTransactionAnalysisOption.NAME + " option isn't set.");
+            return;
+        }
         try {
             Util.injectedCall(DivaIRGen.advices(), new String[] { "org.jboss.windup.rules.apps.diva.analysis" },
                     new String[] {}, DivaLauncher.class.getName() + ".launch", event, context);
@@ -91,9 +103,7 @@ public class DivaLauncher extends GraphOperation {
         }
     }
 
-    public static void launch(Object arg0, Object arg1) throws Exception {
-        GraphRewrite event = (GraphRewrite) arg0;
-        EvaluationContext context = (EvaluationContext) arg1;
+    public static void launch(GraphRewrite event, EvaluationContext context) throws Exception {
         GraphContext gc = event.getGraphContext();
 
         List<? extends ProjectModel> projects = gc.getQuery(ProjectModel.class)
@@ -118,7 +128,7 @@ public class DivaLauncher extends GraphOperation {
             // redundantly defined both in cha and loader-impl.)
 
             for (ProjectModel p : projects) {
-                Util.LOGGER.info("Project: " + p.toPrettyString());
+                LOG.info("Project: " + p.toPrettyString());
 
                 Stack<ProjectModel> todo = new Stack<>();
                 todo.push(p);
@@ -158,7 +168,7 @@ public class DivaLauncher extends GraphOperation {
         } else {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(gc);
             List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
-            Util.LOGGER.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
+            LOG.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
             scope = new JavaSourceAnalysisScope() {
                 @Override
                 public boolean isApplicationLoader(IClassLoader loader) {
@@ -185,8 +195,8 @@ public class DivaLauncher extends GraphOperation {
 
         // build the class hierarchy
         IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope, clf);
-        Util.LOGGER.info(cha.getNumberOfClasses() + " classes");
-        Util.LOGGER.info(Warnings.asString());
+        LOG.info(cha.getNumberOfClasses() + " classes");
+        LOG.info(Warnings.asString());
 
         List<IMethod> entries = new ArrayList<>();
         entries.addAll(ServletAnalysis.getEntries(cha));
@@ -202,7 +212,7 @@ public class DivaLauncher extends GraphOperation {
         AnalysisOptions options = new AnalysisOptions();
         Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries);
 
-        Util.LOGGER.info("building call graph...");
+        LOG.info("building call graph...");
         CallGraph cg = builder.get();
 
         Framework fw = new Framework(cha, cg);
@@ -218,7 +228,7 @@ public class DivaLauncher extends GraphOperation {
         // List<Context> contexts = Context.loadContexts(fw,
         // "/Users/aki/git/tackle-diva/dt-contexts.yml");
 
-        JanusGraphReport<DivaContextModel> report = new JanusGraphReport<>(gc, DivaContextModel.class);
+        DivaToWindup<DivaContextModel> report = new DivaToWindup<>(gc, DivaContextModel.class);
 
         DivaEntryMethodService entryMethodService = new DivaEntryMethodService(gc);
         GraphService<DivaRequestParamModel> requestParamService = new GraphService<>(gc, DivaRequestParamModel.class);
@@ -243,8 +253,8 @@ public class DivaLauncher extends GraphOperation {
                         @Override
                         public void accept(Report.Builder txs) {
                             report.add((Report.Named map) -> {
-                                map.put(JanusGraphReport.CONSTRAINTS, (Report r) -> {
-                                    JanusGraphReport<DivaConstraintModel> cs = (JanusGraphReport<DivaConstraintModel>) r;
+                                map.put(DivaToWindup.CONSTRAINTS, (Report r) -> {
+                                    DivaToWindup<DivaConstraintModel> cs = (DivaToWindup<DivaConstraintModel>) r;
                                     for (Context.Constraint c : cxt) {
                                         if (c.category().equals(Report.ENTRY)) {
                                             IMethod m = ((EntryConstraint) c).node().getMethod();
@@ -272,7 +282,7 @@ public class DivaLauncher extends GraphOperation {
                                             cs.add(model);
 
                                         } else if (c.category().equals(Report.HTTP_PARAM)) {
-                                            DivaRequestParamModel model = requestParamService.getOrCreate(
+                                            DivaRequestParamModel model = requestParamService.getOrCreateByProperties(
                                                     DivaRequestParamModel.PARAM_NAME, c.type(),
                                                     DivaRequestParamModel.PARAM_VALUE, c.value());
                                             cs.add(GraphService.addTypeToModel(gc, model,
@@ -293,7 +303,7 @@ public class DivaLauncher extends GraphOperation {
 
         endpointResolution(gc, projects);
 
-        Util.LOGGER.info("DONE");
+        LOG.info("DONE");
     }
 
     public static String stripBraces(String s) {
