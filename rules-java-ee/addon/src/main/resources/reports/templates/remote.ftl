@@ -44,7 +44,7 @@
             <#list reportModel.relatedResources.jaxRsServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title">JAX-RS Services (REST)</h3>
+                        <h3 class="panel-title">REST Services</h3>
                     </div>
                     <table class="table table-striped table-bordered" id="jpaEntityTable">
                         <tr>
@@ -112,6 +112,94 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">RMI Services</h3>
+                    </div>
+                    <table class="table table-striped table-bordered" id="jpaEntityTable">
+                        <tr>
+                            <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
+                        </tr>
+                        <#items as service>
+                            <tr>
+                                <td>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
+                                </td>
+                                <td>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
+                                </td>
+                            </tr>
+                        </#items>
+                    </table>
+                </div>
+            </#list>
+           <#list reportModel.relatedResources.amqpServices>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">AMQP Services</h3>
+                    </div>
+                    <table class="table table-striped table-bordered" id="jpaEntityTable">
+                        <tr>
+                            <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
+                        </tr>
+                        <#items as service>
+                            <tr>
+                                <td>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
+                                </td>
+                                <td>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
+                                </td>
+                            </tr>
+                        </#items>
+                    </table>
+                </div>
+            </#list>
+            <#list reportModel.relatedResources.jmsServices>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">JMS Services</h3>
+                    </div>
+                    <table class="table table-striped table-bordered" id="jpaEntityTable">
+                        <tr>
+                            <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
+                        </tr>
+                        <#items as service>
+                            <tr>
+                                <td>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
+                                </td>
+                                <td>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
+                                </td>
+                            </tr>
+                        </#items>
+                    </table>
+                </div>
+            </#list>
+            <#list reportModel.relatedResources.hessianServices>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Hessian Services</h3>
+                    </div>
+                    <table class="table table-striped table-bordered" id="jpaEntityTable">
+                        <tr>
+                            <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
+                        </tr>
+                        <#items as service>
+                            <tr>
+                                <td>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
+                                </td>
+                                <td>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
+                                </td>
+                            </tr>
+                        </#items>
+                    </table>
+                </div>
+            </#list>
+            <#list reportModel.relatedResources.httpinvokerServices>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Http Invoker Services</h3>
                     </div>
                     <table class="table table-striped table-bordered" id="jpaEntityTable">
                         <tr>

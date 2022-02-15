@@ -212,11 +212,11 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     }
 
     private ClassReference processMethod(MethodType interest, ResolutionStatus resolutionStatus, TypeReferenceLocation location, int lineNumber,
-                int columnNumber, int length, String line)
+                int columnNumber, int length, String line, String returnType)
     {
         String text = interest.toString();
         ClassReference reference = new ClassReference(text, interest.packageName, interest.className, interest.methodName, resolutionStatus, location,
-                lineNumber, columnNumber, length, line);
+                lineNumber, columnNumber, length, line, returnType);
         this.classReferences.add(reference);
         return reference;
     }
@@ -403,7 +403,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     qualifiedArguments);
         ClassReference methodReference = processMethod(methodCall, resolutionStatus, TypeReferenceLocation.METHOD, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                     compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                    extractDefinitionLine(node.toString()));
+                    extractDefinitionLine(node.toString()), (returnType != null) ? returnType.getQualifiedName() : null);
         processModifiers(methodReference, node.modifiers());
         return super.visit(node);
     }
@@ -1097,7 +1097,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         node.getName().toString(), argumentsQualified);
             processMethod(methodCall, resolutionStatus, TypeReferenceLocation.METHOD_CALL,
                         compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        columnNumber, length, node.toString());
+                        columnNumber, length, node.toString(), null);
         }
 
         return super.visit(node);

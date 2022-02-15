@@ -1,12 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 /**
  * JaxRS REST Web Service.
@@ -21,7 +20,7 @@ public interface JaxRSWebServiceModel extends WebServiceModel
     String JAXRS_INTERFACE = "jaxrsInterface";
     
     String PATH = "jaxrsPath";
-    
+
 
     /**
      * Contains the URL path to the JaxRS service.

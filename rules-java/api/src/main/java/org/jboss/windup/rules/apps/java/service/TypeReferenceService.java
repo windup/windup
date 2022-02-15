@@ -175,7 +175,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
-                ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line)
+                ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line, String returnType)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         JavaTypeReferenceModel model = create();
@@ -188,9 +188,16 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         model.setSourceSnippit(line);
         model.setReferenceLocation(location);
         model.setResolutionStatus(resolutionStatus);
+        model.setReturnType(returnType);
 
         ExecutionStatistics.get().end("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         return model;
+    }    
+    
+    public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
+                ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line)
+    {
+        return createTypeReference(fileModel, location, resolutionStatus, lineNumber, columnNumber, length, resolvedSource, line, null);
     }
 
 }

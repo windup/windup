@@ -15,6 +15,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 /**
@@ -233,6 +234,28 @@ public class JavaClassService extends GraphService<JavaClassModel>
             }
         }
         return sources;
+    }
+
+    public JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
+    {
+        JavaClassModel result = null;
+        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        {
+            // there can be only one public one, and the annotated class should be public
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+            {
+                result = javaClassModel;
+                break;
+            }
+        }
+
+        if (result == null)
+        {
+            // no public classes found, so try to find any class (even non-public ones)
+            result = javaSource.getJavaClasses().iterator().next();
+        }
+        return result;
     }
     
     

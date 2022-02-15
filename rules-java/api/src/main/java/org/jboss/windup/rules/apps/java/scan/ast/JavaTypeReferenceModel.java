@@ -79,7 +79,17 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      */
     @Property(RESOLUTION_STATUS)
     @Indexed
-    void setResolutionStatus(ResolutionStatus status);
+    void setResolutionStatus(ResolutionStatus status);    
+    
+    @Property("returnType")
+    @Indexed
+    String getReturnType();    
+    
+    @Property("returnType")
+    @Indexed
+    String setReturnType(String returnType);
+    
+    
 
     /**
      * Gets a human readable description of the location in the file

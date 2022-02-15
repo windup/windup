@@ -23,6 +23,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiter
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
@@ -36,7 +37,7 @@ import java.util.Set;
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverEjbAnnotationsRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -68,27 +69,13 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                     .withId(ruleIDPrefix + "_MessageDrivenRule");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
-        JavaClassModel ejbClass = getJavaClass(javaTypeReference);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        JavaClassModel ejbClass = javaClassService.getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
         if (Strings.isNullOrEmpty(ejbName))
@@ -114,7 +101,8 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
-        JavaClassModel ejbClass = getJavaClass(javaTypeReference);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+        JavaClassModel ejbClass = javaClassService.getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
         if (Strings.isNullOrEmpty(ejbName))
@@ -203,28 +191,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         {
             return null;
         }
-    }
-
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
-        JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
-                result = javaClassModel;
-                break;
-            }
-        }
-
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
-        return result;
     }
 
     @Override

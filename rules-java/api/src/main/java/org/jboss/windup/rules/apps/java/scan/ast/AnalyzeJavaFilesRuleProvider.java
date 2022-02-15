@@ -392,9 +392,12 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
 
                 // we are always interested in types + anything that the TypeInterestFactory has registered
-                if (shouldKeep)
-                {
+                if (shouldKeep) {
                     results.add(reference);
+                    // We add the container element linked to that annotation to the reference list
+                    if (reference instanceof AnnotationClassReference) {
+                        results.add(((AnnotationClassReference) reference).getOriginalReference());
+                    }                
                 }
             }
             return results;
@@ -446,7 +449,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             reference.getResolutionStatus(),
                             reference.getLineNumber(), reference.getColumn(), reference.getLength(),
                             reference.getQualifiedName(),
-                            reference.getLine());
+                            reference.getLine(),
+                            reference.getReturnType());
                 added.put(reference, typeReference);
                 if (reference instanceof AnnotationClassReference)
                 {
@@ -470,7 +474,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                     originalReference.getResolutionStatus(),
                                     originalReference.getLineNumber(), originalReference.getColumn(), originalReference.getLength(),
                                     originalReference.getQualifiedName(),
-                                    originalReference.getLine());
+                                    originalReference.getLine(),
+                                    originalReference.getReturnType());
                             added.put(originalReference, originalReferenceModel);
                         }
                         annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);

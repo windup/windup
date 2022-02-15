@@ -1,10 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -14,11 +11,9 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.service.JaxWSWebServiceModelService;
 import org.jboss.windup.util.Logging;
@@ -26,13 +21,15 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.logging.Logger;
+
 /**
  * Scans for classes with JAX-WS related annotations, and adds JAX-WS related metadata for these.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
+public class DiscoverJaxWSAnnotationsRuleProvider extends DiscoverAnnotatedClassRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverJaxWSAnnotationsRuleProvider.class);
 
@@ -64,7 +61,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
     {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
-        JavaClassModel implementationClass = getJavaClass(typeReference);
+        JavaClassModel implementationClass = javaClassService.getJavaClass(typeReference);
 
         // first, find out if it implements an interface.
         // TODO: handle the interface only case, where clients exist but no implementation
@@ -91,42 +88,6 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
         service.getOrCreate(typeReference.getFile().getApplication(), endpointInterface, implementationClass);
     }
 
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
-        JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
-                result = javaClassModel;
-                break;
-            }
-        }
-
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
-
-        return result;
-    }
-
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
-        JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
-            JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
-            return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     @Override
     public String toString()
