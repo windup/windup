@@ -1,8 +1,10 @@
 package org.jboss.windup.rules.apps.xml.condition.validators;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileEvaluateXPathFunction;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileFunctionResolver;
@@ -234,33 +236,32 @@ public class XmlFileXpathValidator implements XmlFileValidator
             for (int i = 0; i < arg1.getLength(); i++)
             {
                 Node node = arg1.item(i);
-                if (xpathResultMatch != null)
-                {
-                    if (!node.toString().matches(xpathResultMatch))
-                    {
-                        continue;
-                    }
-                }
+                if (xpathResultMatch != null && !node.toString().matches(xpathResultMatch))
+                    continue;
+
                 // Everything passed for this Node. Start creating XmlTypeReferenceModel for it.
                 int lineNumber = (int) node.getUserData(
                             LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
                 int columnNumber = (int) node.getUserData(
                             LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
-                GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<>(
-                            event.getGraphContext(),
-                            XmlTypeReferenceModel.class);
+                Service<XmlTypeReferenceModel> fileLocationService = event.getGraphContext().service(XmlTypeReferenceModel.class);
+
                 XmlTypeReferenceModel fileLocation = fileLocationService.create();
-                String sourceSnippit = XmlUtil.nodeToString(node);
+                // Maybe it would be better to get that part of the file?
+                Node nodeShallow = node.cloneNode(false);
+                String sourceSnippit = XmlUtil.nodeToString(nodeShallow);
+                sourceSnippit = StringUtils.substringBefore(sourceSnippit, "\n").trim();
+                //String sourceSnippit = node.toString(); // Produces "[weblogic-ejb-jar: null]"
                 fileLocation.setSourceSnippit(sourceSnippit);
+                fileLocation.setLength(sourceSnippit.length());
                 fileLocation.setLineNumber(lineNumber);
                 fileLocation.setColumnNumber(columnNumber);
-                fileLocation.setLength(node.toString().length());
                 fileLocation.setFile(xml);
                 fileLocation.setXpath(xpathString);
-                GraphService<NamespaceMetaModel> metaModelService = new GraphService<>(
-                            event.getGraphContext(),
-                            NamespaceMetaModel.class);
+
+                //GraphService<NamespaceMetaModel> metaModelService = new GraphService<>(event.getGraphContext(), NamespaceMetaModel.class);
+                Service<NamespaceMetaModel> metaModelService = event.getGraphContext().service(NamespaceMetaModel.class);
                 for (Map.Entry<String, String> namespace : namespaces.entrySet())
                 {
                     NamespaceMetaModel metaModel = metaModelService.create();
