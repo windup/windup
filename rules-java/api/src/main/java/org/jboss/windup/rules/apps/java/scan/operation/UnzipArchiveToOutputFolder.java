@@ -19,12 +19,13 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -43,21 +44,22 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     public static final String ARCHIVES = "archives";
     private static final String KEY_BAD_ARCHIVES = "unparsableArchives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
+    
+    private final ArchiveIdentificationService archiveIdentificationService;
 
-    public UnzipArchiveToOutputFolder()
+    public UnzipArchiveToOutputFolder(ArchiveIdentificationService archiveIdentificationService)
     {
         super();
-    }
-
-    public static UnzipArchiveToOutputFolder unzip()
-    {
-        return new UnzipArchiveToOutputFolder();
+        
+        this.archiveIdentificationService = archiveIdentificationService;
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        if (new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, payload))
+        final GraphContext graphContext = event.getGraphContext();
+
+        if (new WindupJavaConfigurationService(graphContext).checkRegexAndIgnore(event, payload))
             return;
 
         LOG.info("Unzipping archive: " + payload.toPrettyString());
@@ -67,7 +69,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         {
             throw new WindupException("Input path doesn't point to a file: " + (zipFile == null ? "null" : zipFile.getAbsolutePath()));
         }
-        final GraphContext graphContext = event.getGraphContext();
         checkCancelled(event);
 
         // Create a folder for all archive contents.
@@ -153,7 +154,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
      * Recurses the given folder and adds references to these files to the graph as FileModels.
      *
      * We don't set the parent file model in the case of the initial children, as the direct parent is really the archive itself. For example for file
-     * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
+     * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
                 Path tempFolder,
@@ -163,6 +164,21 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         checkCancelled(event);
 
         int numberAdded = 0;
+
+        WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+
+        // Do not include libraries found within the artifacts if they are known
+        boolean isKnownLibrary = archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash()) != null;
+        boolean analyseKnownLibraries = cfg.isAnalyzeKnownLibraries();
+        if (isKnownLibrary && !analyseKnownLibraries) {
+            LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
+            
+            GraphService.addTypeToModel(event.getGraphContext(), archiveModel, IgnoredArchiveModel.class);
+            return;
+        } else {
+            LOG.info(String.format("Library will be analyzed: \"%s, %s\"", archiveModel.getSHA1Hash(), archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash())));
+        }
 
         FileFilter filter = TrueFileFilter.TRUE;
         if (archiveModel instanceof IdentifiedArchiveModel)
@@ -176,7 +192,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         else
             fileReference = parentFileModel.asFile();
 
-        WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
         File[] subFiles = fileReference.listFiles();
         if (subFiles == null)
             return;
@@ -192,7 +207,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
 
             // check if this file should be ignored
-            if (windupJavaConfigurationService.checkIfIgnored(event, subFileModel))
+            if (windupJavaConfigurationService.checkRegexAndIgnore(event, subFileModel))
                 continue;
 
             numberAdded++;
