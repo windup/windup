@@ -56,6 +56,10 @@ public class SkippedArchives
         }
     }
 
+    public static void unload() {
+        map.clear();
+    }
+
     public static void add(String line)
     {
         Assert.notNull(line, "Archive coordinate pattern must not be null.");
