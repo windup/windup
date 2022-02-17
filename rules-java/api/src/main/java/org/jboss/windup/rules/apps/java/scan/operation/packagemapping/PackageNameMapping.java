@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
 import org.jboss.windup.config.PreRulesetEvaluation;
@@ -188,23 +189,19 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     }
 
     /**
-     * Tries to extract the organization of the given package using the existing mappings
+     * Gets the organization for the given package (or Maven group id).
      */
     public static String getOrganizationFromMappings(GraphRewrite event, String pkg)
     {
-        final String fullPkg = pkg + ".";
+        final String pkgComparison = pkg + ".";
         String organization = null;
-        // For all the mappings, see if this package matches any of them
-        for (String knownPkg : new ArrayList<>(getMappings(event).keySet()))
+        for (Map.Entry<String, String> entry : getMappings(event).entrySet())
         {
-            final String knownPkgPrefix = knownPkg + ".";
-            if (startsWith(fullPkg, knownPkgPrefix))
+            final String pkgPattern = entry.getKey() + ".";
+            if (StringUtils.startsWith(pkgComparison, pkgPattern))
             {
-                organization = knownPkg;
-                if (LOG.isLoggable(Level.FINE))
-                {
-                    LOG.fine(format(" -- Found organization for package %s: %s", pkg, organization));
-                }
+                organization = entry.getValue();
+                LOG.info(" -- Found organization: " + organization);
                 break;
             }
         }
