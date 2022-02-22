@@ -2,6 +2,7 @@ package org.jboss.windup.bootstrap;
 
 // We need duplicate this file and have it here as a Workaround for not being able
 // to consume org.jboss.windup.util.* because of java.lang.NoClassDefFoundError in windup-distribution
+// TODO: Fix this issue in https://issues.redhat.com/browse/WINDUP-3283 and then remove this block of code
 public class Theme {
 
     private final String brandNameLong;
