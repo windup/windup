@@ -358,6 +358,16 @@
                 <version>3.14.100</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.74.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.0.1-jre</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
