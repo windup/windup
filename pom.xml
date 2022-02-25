@@ -101,6 +101,7 @@
         <module>windup-test-harness</module>
         <module>module-spec</module>
         <module>forks/jdt</module>
+        <module>forks/gremlin-shaded</module>
         <module>graph</module>
 
         <module>config</module>
