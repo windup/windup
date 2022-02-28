@@ -1,15 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -17,15 +7,17 @@ import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.util.Logging;
 
-import static java.lang.String.*;
-import static java.lang.String.format;
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-import static java.util.stream.StreamSupport.stream;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
@@ -57,9 +49,10 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
     }
 
     /**
-     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the specified regular expressions.
+     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any
+     * of the specified regular expressions and marks it as ignored if so.
      */
-    public boolean checkIfIgnored(final GraphRewrite event, FileModel file)
+    public boolean checkRegexAndIgnore(final GraphRewrite event, FileModel file)
     {
         List<String> patterns = getIgnoredFileRegexes();
         boolean ignored = false;
@@ -140,34 +133,20 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
     public boolean shouldScanPackage(String pkg)
     {
         // assume an empty string if it wasn't specified
-        if (pkg == null)
-        {
-            pkg = "";
-        }
+        String pkgToCheck = pkg == null ? "" : pkg;
+
         WindupJavaConfigurationModel configuration = getJavaConfigurationModel(getGraphContext());
-        for (PackageModel pkgModel : configuration.getExcludeJavaPackages())
-        {
-            String excludePkg = pkgModel.getPackageName();
-            if (pkg.startsWith(excludePkg))
-            {
-                return false;
-            }
-        }
+        // if the package is in the list of excluded packages, it should not be scanned
+        if (configuration.getExcludeJavaPackages().stream().map(PackageModel::getPackageName).anyMatch(pkgToCheck::startsWith))
+            return false;
 
         // if the list is empty, assume it is intended to just accept all packages
-        if (!configuration.getScanJavaPackages().iterator().hasNext())
-        {
+        if (configuration.getScanJavaPackages().isEmpty())
             return true;
-        }
 
-        for (PackageModel pkgModel : configuration.getScanJavaPackages())
-        {
-            String includePkg = pkgModel.getPackageName();
-            if (pkg.startsWith(includePkg))
-            {
-                return true;
-            }
-        }
+        // if the package is in the list of packages to scan explicitly, do scan it
+        if (configuration.getScanJavaPackages().stream().map(PackageModel::getPackageName).anyMatch(pkgToCheck::startsWith))
+            return true;
 
         return false;
     }

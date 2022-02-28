@@ -13,11 +13,14 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import javax.inject.Inject;
 
 /**
  * Unzip archives from the input application.
@@ -27,14 +30,19 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = ArchiveExtractionPhase.class)
 public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
 {
+    @Inject
+    private CompositeArchiveIdentificationService identificationService;
+
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
+        UnzipArchiveToOutputFolder unzipArchives = new UnzipArchiveToOutputFolder(identificationService);
+
         return ConfigurationBuilder.begin()
             .addRule()
             .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class))
             .perform(
-                UnzipArchiveToOutputFolder.unzip(),
+                unzipArchives,
                 IterationProgress.monitoring("Unzipped archive", 1),
                 Commit.every(1)
             )

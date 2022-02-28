@@ -142,6 +142,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         sourceRoots.add(rootSourceFolder.getFilePath());
                     }
 
+                    // TODO: why are we checking this here? It should have already been checked before for all artifacts
                     if (windupJavaConfigurationService.shouldScanPackage(javaFile.getPackageName()))
                     {
                         ProjectModel application = javaFile.getApplication();

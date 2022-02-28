@@ -39,7 +39,7 @@ public class PackageNameMappingRegistry
 
     public String getOrganizationForPackage(String packageName)
     {
-        return PackageNameMapping.getOrganizationForPackage(this.event, packageName);
+        return PackageNameMapping.getOrganizationFromMappings(this.event, packageName);
     }
 
     public void loadPackageMappings()

@@ -14,10 +14,6 @@ import java.io.File;
      */
 public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
 {
-    private RecurseDirectoryAndAddFiles(String variableName)
-    {
-        super(variableName);
-    }
 
     /**
      * Let the variable name to be set by the current Iteration.
@@ -25,11 +21,6 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     public RecurseDirectoryAndAddFiles()
     {
         super();
-    }
-
-    public static RecurseDirectoryAndAddFiles startingAt(String variableName)
-    {
-        return new RecurseDirectoryAndAddFiles(variableName);
     }
 
     @Override
@@ -51,7 +42,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
      */
     private void recurseAndAddFiles(GraphRewrite event, FileService fileService, WindupJavaConfigurationService javaConfigurationService, FileModel file)
     {
-        if (javaConfigurationService.checkIfIgnored(event, file))
+        if (javaConfigurationService.checkRegexAndIgnore(event, file))
             return;
 
         String filePath = file.getFilePath();

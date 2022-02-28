@@ -19,12 +19,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public final class RuleProviderBuilder extends AbstractRuleProvider implements
-            RuleProviderBuilderSetPhase,
-            RuleProviderBuilderMetadataSetPhase,
-            RuleProviderBuilderAddDependencies,
-            RuleProviderBuilderMetadataAddSourceTechnology,
-            RuleProviderBuilderMetadataAddTargetTechnology
+public final class RuleProviderBuilder extends AbstractRuleProvider implements RuleProviderBuilderAddDependencies
 {
     private final ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
@@ -55,21 +50,18 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
         metadata.setOrigin(origin);
     }
 
-    @Override
     public RuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
     {
         metadata.setPhase(phase);
         return this;
     }
 
-    @Override
     public RuleProviderBuilderAddDependencies addSourceTechnology(TechnologyReference technologyReference)
     {
         metadata.addSourceTechnology(technologyReference);
         return this;
     }
 
-    @Override
     public RuleProviderBuilderAddDependencies addTargetTechnology(TechnologyReference technologyReference)
     {
         metadata.addTargetTechnology(technologyReference);
