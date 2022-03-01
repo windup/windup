@@ -563,6 +563,45 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>mta</id>
+            <activation>
+                <property>
+                    <name>!community</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windup</id>
+            <activation>
+                <property>
+                    <name>community</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Tackle Analysis</distribution.brand.name>
+                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-windup</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 
 </project>

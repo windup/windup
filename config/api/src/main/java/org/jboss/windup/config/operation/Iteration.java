@@ -32,7 +32,7 @@ import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.config.And;
@@ -332,7 +332,7 @@ public class Iteration extends DefaultOperationBuilder
             }
             catch (WindupStopException ex)
             {
-                throw new WindupStopException(Util.WINDUP_BRAND_NAME_ACRONYM+" stop requested in " + this.toString(), ex);
+                throw new WindupStopException(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " stop requested in " + this.toString(), ex);
             }
             catch (Exception e)
             {
