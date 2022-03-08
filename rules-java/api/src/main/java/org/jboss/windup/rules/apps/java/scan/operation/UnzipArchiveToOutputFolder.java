@@ -168,10 +168,13 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
+        List<FileModel> inputPaths = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths();
+        boolean isInputApp = inputPaths.stream().anyMatch(inputPath -> inputPath.getFilePath().equals(archiveModel.getFilePath()));
+
         // Do not include libraries found within the artifacts if they are known
         boolean isKnownLibrary = archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash()) != null;
         boolean analyseKnownLibraries = cfg.isAnalyzeKnownLibraries();
-        if (isKnownLibrary && !analyseKnownLibraries) {
+        if (isKnownLibrary && !analyseKnownLibraries && !isInputApp) {
             LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
             
             GraphService.addTypeToModel(event.getGraphContext(), archiveModel, IgnoredArchiveModel.class);
