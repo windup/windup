@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.eclipse.jdt.internal.compiler.batch.FileSystem;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.jboss.windup.util.threading.WindupExecutors;
 
@@ -92,10 +93,13 @@ public class BatchASTProcessor
                     options.put(JavaCore.CORE_JAVA_BUILD_DUPLICATE_RESOURCE, "warning");
 
                     parser.setCompilerOptions(options);
+                    List<FileSystem.Classpath> bootclasspaths = new ArrayList<>();
+                    org.eclipse.jdt.internal.compiler.util.Util.collectRunningVMBootclasspath(bootclasspaths);
+                    bootclasspaths.forEach(classpath -> libraryPaths.add(classpath.getPath()));
                     parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]),
                                 sourcePaths.toArray(new String[sourcePaths.size()]),
                                 null,
-                                true);
+                                false);
 
                     parser.createASTs(batch.toArray(new String[batch.size()]), encodings, bindingKeys, requestor, null);
                     return null;
