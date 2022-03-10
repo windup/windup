@@ -14,11 +14,14 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -38,6 +41,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,6 +109,8 @@ public class DeprecatedJavaClassTest
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(TargetOption.NAME, Collections.singletonList("jdk"));
+            processorConfig.setOptionValue(UserRulesDirectoryOption.NAME, Collections.singletonList(new File("src/test/resources/org/jboss/windup/rules/technologyMetadata")));
 
             processor.execute(processorConfig);
 
@@ -112,7 +118,7 @@ public class DeprecatedJavaClassTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             assertTrue(typeReferences.iterator().hasNext());
 
-            assertEquals(1, provider.getFirstRuleMatchCount());
+            assertEquals(2, provider.getFirstRuleMatchCount());
         }
     }
 
@@ -126,7 +132,8 @@ public class DeprecatedJavaClassTest
         public JavaClassTestRuleProvider()
         {
             super(MetadataBuilder.forProvider(JavaClassTestRuleProvider.class)
-                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class)
+                    .addTargetTechnology(new TechnologyReference("jdk")));
         }
 
         // @formatter:off
