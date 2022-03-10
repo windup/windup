@@ -36,11 +36,10 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
 
         archiveModel.setArchiveName(file.getName());
 
-        ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
+        GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
 
         // This line will cause the file to be marked if it is to be ignored
-        new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, fileModel);
-        ///appArchiveModel.setApplicationName(file.getName()); // Removed because not used.
+        new WindupJavaConfigurationService(event.getGraphContext()).checkRegexAndIgnore(event, fileModel);
     }
 
     @Override

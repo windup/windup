@@ -16,7 +16,8 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.template.SimpleScalar;
@@ -82,6 +83,8 @@ public class FreeMarkerUtil
      */
     public static Map<String, Object> findFreeMarkerExtensions(Furnace furnace, GraphRewrite event)
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         Imported<WindupFreeMarkerMethod> freeMarkerMethods = furnace.getAddonRegistry().getServices(
                     WindupFreeMarkerMethod.class);
         Map<String, Object> results = new HashMap<>();
@@ -91,7 +94,7 @@ public class FreeMarkerUtil
             freeMarkerMethod.setContext(event);
             if (results.containsKey(freeMarkerMethod.getMethodName()))
             {
-                throw new WindupException(Util.WINDUP_BRAND_NAME_ACRONYM+" contains two freemarker extension providing the same name: "
+                throw new WindupException(theme.getBrandNameAcronym() + " contains two freemarker extension providing the same name: "
                             + freeMarkerMethod.getMethodName());
             }
             results.put(freeMarkerMethod.getMethodName(), freeMarkerMethod);
@@ -104,7 +107,7 @@ public class FreeMarkerUtil
             freeMarkerDirective.setContext(event);
             if (results.containsKey(freeMarkerDirective.getDirectiveName()))
             {
-                throw new WindupException(Util.WINDUP_BRAND_NAME_ACRONYM+" contains two freemarker extension providing the same name: "
+                throw new WindupException(theme.getBrandNameAcronym() + " contains two freemarker extension providing the same name: "
                             + freeMarkerDirective.getDirectiveName());
             }
             results.put(freeMarkerDirective.getDirectiveName(), freeMarkerDirective);

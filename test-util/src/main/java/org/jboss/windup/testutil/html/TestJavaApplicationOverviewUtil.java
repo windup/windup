@@ -2,6 +2,7 @@ package org.jboss.windup.testutil.html;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class TestJavaApplicationOverviewUtil extends TestChromeDriverReportUtil
         try
         {
             Path modifiedPath = filePath.getParent().resolve(filePath.getFileName().toString() + "_modified.html");
-            String contents = FileUtils.readFileToString(filePath.toFile());
+            String contents = FileUtils.readFileToString(filePath.toFile(), Charset.defaultCharset());
 
             // remove some libraries that htmlunit has issues with... we don't really test these through htmlunit anyway
             contents = contents.replace("$.plot", "");

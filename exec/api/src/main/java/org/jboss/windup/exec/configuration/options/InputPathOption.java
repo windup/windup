@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * Specifies the Input path for Windup.
@@ -97,7 +97,7 @@ public class InputPathOption extends AbstractPathConfigurationOption
                                     + StringUtils.join(largeApps, System.lineSeparator()+ "\t") 
                                     + System.lineSeparator()
                                     + " Processing may take a very long time."
-                                    + " Please consult the "+Util.WINDUP_BRAND_NAME_ACRONYM+" User Guide for performance tips."
+                                    + " Please consult the " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " User Guide for performance tips."
                                     + " Would you like to continue?",
                         true);
 

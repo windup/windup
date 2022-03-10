@@ -136,6 +136,12 @@
             <artifactId>windup-module-spec</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-archives</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -163,6 +169,7 @@
                                 <addonId>org.jboss.forge.furnace.container:simple,${version.furnace}</addonId>
                                 <addonId>org.jboss.windup.ui:windup-ui,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rules.apps:windup-rules-java,${project.version}</addonId>
+                                <addonId>org.jboss.windup.rules.apps:windup-rules-java-archives,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rules.apps:windup-rules-java-project,${project.version}</addonId>
                                 <addonId>org.jboss.windup.rules.apps:windup-rules-java-ee,${project.version}</addonId>
                                 <addonId>org.jboss.windup:windup-tooling,${project.version}</addonId>

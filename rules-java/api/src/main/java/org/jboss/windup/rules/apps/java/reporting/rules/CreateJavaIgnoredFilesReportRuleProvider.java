@@ -24,6 +24,7 @@ import org.jboss.windup.rules.apps.java.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.Util;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -40,7 +41,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
     public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the " +
-        Util.WINDUP_BRAND_NAME_LONG + 
+            ThemeProvider.getInstance().getTheme().getBrandNameLong() +
         " configuration. See the '--userIgnorePath' option in the User Guide.";
 
     // @formatter:off

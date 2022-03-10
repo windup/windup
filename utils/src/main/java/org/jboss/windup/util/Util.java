@@ -1,6 +1,9 @@
 package org.jboss.windup.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Properties;
 
 
 /**
@@ -9,9 +12,6 @@ import java.util.Iterator;
  */
 public class Util
 {
-    public static final String WINDUP_BRAND_NAME_LONG = "Migration Toolkit for Applications by Red Hat";
-    public static final String WINDUP_BRAND_NAME_ACRONYM = "MTA";
-    public static final String WINDUP_CLI_NAME = "mta-cli";
     public static final String NL = System.lineSeparator();
 
     /**

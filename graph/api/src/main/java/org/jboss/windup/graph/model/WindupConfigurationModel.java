@@ -27,6 +27,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String CSV_MODE = "csv";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
     String SKIP_REPORTS_RENDERING = "skipReports";
+    String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
 
     /**
      * The input path to scan
@@ -168,4 +169,10 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
+    
+    @Property(ANALYZE_KNOWN_LIBRARIES)
+    Boolean isAnalyzeKnownLibraries();
+
+    @Property(ANALYZE_KNOWN_LIBRARIES)
+    void setAnalyzeKnownLibraries(Boolean analyzeKnownLibraries);
 }

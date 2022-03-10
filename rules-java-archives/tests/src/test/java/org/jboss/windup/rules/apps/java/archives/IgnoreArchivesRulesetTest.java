@@ -1,11 +1,5 @@
 package org.jboss.windup.rules.apps.java.archives;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -33,9 +27,16 @@ import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
@@ -45,7 +46,7 @@ import org.junit.runner.RunWith;
 public class IgnoreArchivesRulesetTest
 {
     private static final Path INPUT_PATH = new File("").getAbsoluteFile().toPath().getParent().getParent()
-                .resolve("test-files/jee-example-app-1.0.0.ear");
+            .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
     public static final String LOG4J_COORDINATE = "log4j:log4j:::1.2.6";
 
@@ -62,7 +63,7 @@ public class IgnoreArchivesRulesetTest
     public static AddonArchive getDeployment()
     {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
     }
 
     @Inject
@@ -73,6 +74,11 @@ public class IgnoreArchivesRulesetTest
 
     @Inject
     private CompositeArchiveIdentificationService identifier;
+
+    @After
+    public void tearDown() {
+        SkippedArchives.unload();
+    }
 
     @Test
     public void testSkippedArchivesFound() throws Exception
@@ -112,7 +118,7 @@ public class IgnoreArchivesRulesetTest
                 if (archive.isDirectory())
                     continue;
                 Assert.assertNotNull(archive);
-                Assert.assertTrue(archive instanceof IdentifiedArchiveModel);
+                Assert.assertTrue(String.format("%s not instance of IdentifiedArchiveModel", archive), archive instanceof IdentifiedArchiveModel);
                 ArchiveCoordinateModel archiveCoordinate = ((IdentifiedArchiveModel) archive).getCoordinate();
                 Assert.assertNotNull(archiveCoordinate);
 
@@ -129,4 +135,27 @@ public class IgnoreArchivesRulesetTest
         }
     }
 
+    @Test
+    public void testForceAnalysisOfKnownLibrariesScansAllLibraries() throws Exception {
+        try (GraphContext graphContext = contextFactory.create(true)) {
+            FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
+
+            WindupConfiguration config = new WindupConfiguration();
+            config.setGraphContext(graphContext);
+            config.addInputPath(INPUT_PATH);
+            config.setOutputDirectory(OUTPUT_PATH);
+            config.setOptionValue(OverwriteOption.NAME, true);
+            config.setOptionValue(AnalyzeKnownLibrariesOption.NAME, true);
+            config.setRuleProviderFilter(new NotPredicate(
+                    new RuleProviderPhasePredicate(DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class,
+                            ReportRenderingPhase.class)
+            ));
+
+            processor.execute(config);
+
+            GraphService<IgnoredArchiveModel> archiveService = new GraphService<>(graphContext, IgnoredArchiveModel.class);
+            Iterable<IgnoredArchiveModel> archives = archiveService.findAllByProperty(IgnoredArchiveModel.FILE_NAME, "log4j-1.2.6.jar", true);
+            Assert.assertFalse(archives.iterator().hasNext());
+        }
+    }
 }

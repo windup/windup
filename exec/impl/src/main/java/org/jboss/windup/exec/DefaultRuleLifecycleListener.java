@@ -8,7 +8,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadataType;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
@@ -49,7 +49,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
             if (ruleProvider.getMetadata().isDisabled())
             count.decrement();
         }
-        progressMonitor.beginTask("Executing "+Util.WINDUP_BRAND_NAME_ACRONYM, count.intValue());
+        progressMonitor.beginTask("Executing " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym(), count.intValue());
         progressMonitor.worked(1);
     }
 

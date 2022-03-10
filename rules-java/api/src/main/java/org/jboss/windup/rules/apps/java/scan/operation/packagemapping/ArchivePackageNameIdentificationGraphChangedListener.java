@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
@@ -7,6 +8,7 @@ import org.apache.tinkerpop.gremlin.structure.Property;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphListener;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.ArchiveService;
@@ -17,6 +19,8 @@ import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.util.Logging;
+
+import static org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping.*;
 
 /**
  * {@link MutationListener} responsible for identifying {@link ArchiveModel} instances based upon their contained package names.
@@ -48,17 +52,12 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
                 if (archive instanceof IgnoredArchiveModel || archive instanceof IdentifiedArchiveModel)
                     return;
 
-                // check if it can be ignored as a vendor archive
-                boolean exclusivelyKnown = PackageNameMapping.isExclusivelyKnownArchive(event, archive.getFilePath());
+                WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                // If the forceKnownLibrariesAnalysis option is enabled, do not ignore it
+                if (cfg.isAnalyzeKnownLibraries())
+                    return;
 
-                // If this is a file that the user specified as the input application, do not ignore it
-                for (FileModel inputFile : WindupConfigurationService.getConfigurationModel(this.event.getGraphContext()).getInputPaths())
-                {
-                    if (inputFile.equals(archive))
-                        exclusivelyKnown = false;
-                }
-
-                if (exclusivelyKnown)
+                if (allPackagesAreKnown(archive))
                 {
                     IgnoredFileModel ignoredFileModel = new GraphService<>(event.getGraphContext(), IgnoredFileModel.class).addTypeToModel(archive);
                     ignoredFileModel.setIgnoredRegex("3rd Party Archive");
@@ -70,6 +69,17 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
         {
             LOG.warning("Failed to check package name mapping due to: " + t.getMessage());
         }
+    }
+
+    private boolean allPackagesAreKnown(ArchiveModel archive) {
+        // check if it can be ignored as a vendor archive
+        boolean allPackagesAreKnown = areAllPackagesKnown(event, archive.getFilePath());
+
+        // If this is a file that the user specified as the input application, do not ignore it
+        List<FileModel> inputPaths = WindupConfigurationService.getConfigurationModel(this.event.getGraphContext()).getInputPaths();
+        allPackagesAreKnown = allPackagesAreKnown && inputPaths.stream().noneMatch(inputPath -> inputPath.equals(archive));
+
+        return allPackagesAreKnown;
     }
 
     @Override

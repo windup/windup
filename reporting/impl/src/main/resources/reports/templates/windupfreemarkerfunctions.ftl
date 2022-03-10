@@ -4,12 +4,14 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Migration Toolkit for Applications by Red Hat FreeMarker Functions and Directives</title>
+    <title>FreeMarker Functions and Directives</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
-    <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <#assign basePath="resources">
+    <#include "include/favicon.ftl">
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
@@ -34,7 +36,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Used FreeMarker Functions and Directives
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report shows the custom Freemarker extensions created for and used by Migration Toolkit for Applications by Red Hat ."></i></div>
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report shows the custom Freemarker extensions created for and used by Tackle Analysis."></i></div>
                 </h1>
             </div>
         </div>

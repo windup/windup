@@ -58,7 +58,8 @@ import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
 import org.jboss.windup.server.WindupServerProvider;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * A class with a main method to bootstrap Windup.
@@ -235,7 +236,7 @@ public class Bootstrap
 
     public static String getVersionString()
     {
-        return "> Migration Toolkit for Applications by Red Hat (MTA) CLI, version " + getRuntimeAPIVersion() + ".";
+        return "> " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
     public static Version getRuntimeAPIVersion()
@@ -287,6 +288,8 @@ public class Bootstrap
 
     private void run(List<String> args)
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         try
         {
             furnace = FurnaceFactory.getInstance();
@@ -322,7 +325,7 @@ public class Bootstrap
             }
             catch (Exception e)
             {
-                System.out.println("Failed to start "+ Util.WINDUP_BRAND_NAME_ACRONYM+"!");
+                System.out.println("Failed to start "+ theme.getBrandNameAcronym() + "!");
                 if (e.getMessage() != null)
                     System.out.println("Failure reason: " + e.getMessage());
                 e.printStackTrace();
@@ -358,7 +361,7 @@ public class Bootstrap
         }
         catch (Throwable t)
         {
-            System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM +" execution failed due to: " + t.getMessage());
+            System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
     }

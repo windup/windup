@@ -68,7 +68,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     .fromType(XmlFileModel.class)
                     .withProperty(FileModel.FILE_NAME, "pom.xml");
 
-        AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
+        AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
@@ -217,9 +217,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             return null;
         }
 
-        File xmlFile = xmlFileModel.asFile();
-
-        // modelVersion
         String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion | /project/modelVersion", namespaces);
         String name = XmlUtil.xpathExtract(document, "/pom:project/pom:name | /project/name", namespaces);
         String organization = XmlUtil.xpathExtract(document, "/pom:project/pom:organization | /project/organization", namespaces);
@@ -245,7 +242,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
         if (StringUtils.isBlank(organization))
         {
-            organization = PackageNameMapping.getOrganizationForPackage(event, groupId);
+            organization = PackageNameMapping.getOrganizationFromMappings(event, groupId);
         }
 
         MavenProjectService mavenProjectService = new MavenProjectService(event.getGraphContext());
@@ -268,7 +265,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             for (XmlFileModel foundPom : mavenProjectModel.getMavenPom())
             {
                 File foundPomFile = foundPom.asFile();
-                if (foundPomFile.getAbsoluteFile().equals(xmlFile))
+                File pomXmlFile = xmlFileModel.asFile();
+                if (foundPomFile.getAbsoluteFile().equals(pomXmlFile))
                 {
                     // this one is already there
                     found = true;

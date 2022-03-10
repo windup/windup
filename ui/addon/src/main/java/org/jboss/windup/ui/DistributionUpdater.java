@@ -17,7 +17,8 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.util.PathUtil;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
@@ -35,11 +36,13 @@ public class DistributionUpdater
 
     public void replaceWindupDirectoryWithLatestDistribution()
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         Coordinate coord = updater.queryLatestWindupRelease();
         if(coord == null)
-            throw new WindupException("No "+ Util.WINDUP_BRAND_NAME_ACRONYM +" release found.");
-        log.info("Latest "+ Util.WINDUP_BRAND_NAME_ACRONYM +" version available: " + coord.getVersion());
-        log.fine("Latest "+ Util.WINDUP_BRAND_NAME_ACRONYM +" version available: " + coord);
+            throw new WindupException("No "+ theme.getBrandNameAcronym() +" release found.");
+        log.info("Latest "+ theme.getBrandNameAcronym() +" version available: " + coord.getVersion());
+        log.fine("Latest "+ theme.getBrandNameAcronym() +" version available: " + coord);
 
         replaceWindupDirectoryWithDistribution(coord);
     }
