@@ -30,9 +30,9 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
 //    static int count = 0;
 //    static long total = 0;
 
-    public DivaStackTraceModel getOrCreate(String filePath, int lineNumber, int columnNumber, int length,
+    public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
-        FileModel fileModel = fileService.createByFilePath(filePath);
+        // FileModel fileModel = fileService.createByFilePath(filePath);
         GraphTraversal<?, ?> traversal = getQuery().getRawTraversal().has(FileLocationModel.COLUMN_NUMBER, columnNumber)
                 .has(FileLocationModel.LINE_NUMBER, lineNumber).has(FileLocationModel.LENGTH, length)
                 .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
