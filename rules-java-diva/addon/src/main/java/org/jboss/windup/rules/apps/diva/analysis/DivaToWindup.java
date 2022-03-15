@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
 import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
@@ -124,12 +125,11 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
         @Override
         public void put(String key, io.tackle.diva.Report.Builder builder) {
             if (model instanceof DivaContextModel && key.equals(CONSTRAINTS)) {
-                builder.build(new DivaToWindup<>(gc, DivaConstraintModel.class,
-                        ((DivaContextModel) model)::addConstraint));
+                builder.build(
+                        new DivaToWindup<>(gc, DivaConstraintModel.class, ((DivaContextModel) model)::addConstraint));
 
             } else if (model instanceof DivaContextModel && key.equals(TRANSACTIONS)) {
-                builder.build(
-                        new DivaToWindup<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
+                builder.build(new DivaToWindup<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
 
             } else if (model instanceof DivaTxModel && key.equals(TRANSACTION)) {
                 int[] counter = new int[] { 0 };
@@ -160,13 +160,17 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                             .create(StringStuff.jvmToBinaryName(m.getDeclaringClass().getName().toString()));
                     JavaMethodModel methodModel = methodService.createJavaMethod(classModel, m.getName().toString());
                     classModel.addJavaMethod(methodModel);
+                    FileModel sourceFile = classModel.getOriginalSource();
+                    if (sourceFile == null) {
+                        sourceFile = classModel.getDecompiledSource();
+                    }
                     if (p != null) {
-                        current = service.getOrCreate(m.getDeclaringClass().getSourceFileName(), p.getFirstLine(),
-                                p.getFirstCol(), p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
+                        current = service.getOrCreate(sourceFile, p.getFirstLine(), p.getFirstCol(),
+                                p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
 
                     } else {
                         current = service.create();
-                        service.setFilePath(current, m.getDeclaringClass().getSourceFileName());
+                        current.setFile(sourceFile);
                         current.setMethod(methodModel);
                         if (parent != null) {
                             current.setParent(parent);

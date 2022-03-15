@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.github.konveyor.tackle-diva</groupId>
             <artifactId>diva-core</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
         </dependency>
 
         <!-- Addon Dependencies -->
@@ -26,6 +26,12 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-archives</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>

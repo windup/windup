@@ -4,18 +4,24 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -40,19 +46,28 @@ import org.jboss.windup.rules.apps.diva.model.DivaRequestParamModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestApiModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestCallOpModel;
 import org.jboss.windup.rules.apps.diva.service.DivaEntryMethodService;
+import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
+import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
 import com.ibm.wala.cast.java.loader.JavaSourceLoaderImpl;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
+import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.ClassLoaderFactory;
 import com.ibm.wala.classLoader.ClassLoaderFactoryImpl;
+import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IClassLoader;
 import com.ibm.wala.classLoader.IMethod;
+import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.classLoader.SourceDirectoryTreeModule;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
@@ -80,6 +95,7 @@ import io.tackle.diva.analysis.ServletAnalysis;
 import io.tackle.diva.analysis.SpringBootAnalysis;
 import io.tackle.diva.irgen.DivaIRGen;
 import io.tackle.diva.irgen.DivaSourceLoaderImpl;
+import io.tackle.diva.irgen.FilteredClassHierarchy;
 import io.tackle.diva.irgen.ModularAnalysisScope;
 
 public class DivaLauncher extends GraphOperation {
@@ -106,6 +122,12 @@ public class DivaLauncher extends GraphOperation {
     public static void launch(GraphRewrite event, EvaluationContext context) throws Exception {
         GraphContext gc = event.getGraphContext();
 
+        Boolean sourceMode = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(SourceModeOption.NAME,
+                Boolean.FALSE);
+
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(gc);
+        WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(gc);
+
         List<? extends ProjectModel> projects = gc.getQuery(ProjectModel.class)
                 .traverse(g -> g.filter(
                         __.out(ProjectModel.PROJECT_MODEL_TO_FILE).has(WindupFrame.TYPE_PROP, SourceFileModel.TYPE)))
@@ -117,11 +139,15 @@ public class DivaLauncher extends GraphOperation {
         String[] stdlibs;
         ClassLoaderFactory clf;
 
-        if (!projects.isEmpty() && notMaven.isEmpty()) {
+        Path temp = Files.createTempDirectory("diva-temp");
+        Util.LOGGER.info("tempdir=" + temp);
+
+        if (sourceMode && !projects.isEmpty() && notMaven.isEmpty()) {
 
             ModularAnalysisScope mods = new ModularAnalysisScope();
             scope = mods;
-            stdlibs = Framework.loadStandardLib(mods);
+            stdlibs = Framework.loadStandardLib(mods, temp);
+            FileUtils.forceDeleteOnExit(temp.toFile());
 
             // For now, assume each p in projects has at-most-1 depending
             // p'. Partly due to wala's tree-not-dag class loaders (and class lookup
@@ -165,23 +191,59 @@ public class DivaLauncher extends GraphOperation {
                     }
                 }
             };
+
         } else {
-            WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(gc);
-            List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
-            LOG.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
             scope = new JavaSourceAnalysisScope() {
                 @Override
                 public boolean isApplicationLoader(IClassLoader loader) {
-                    return loader.getReference() == ClassLoaderReference.Application
-                            || loader.getReference() == JavaSourceAnalysisScope.SOURCE;
+                    return loader.getReference().equals(ClassLoaderReference.Application)
+                            || loader.getReference().equals(JavaSourceAnalysisScope.SOURCE);
                 }
             };
             // add standard libraries to scope
-            stdlibs = Framework.loadStandardLib(scope);
+            stdlibs = Framework.loadStandardLib(scope, temp);
+            FileUtils.forceDeleteOnExit(temp.toFile());
 
-            for (String sourceDir : sourceDirs) {
-                scope.addToScope(JavaSourceAnalysisScope.SOURCE, new SourceDirectoryTreeModule(new File(sourceDir)));
+            if (sourceMode) {
+                List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
+                LOG.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
+
+                for (String sourceDir : sourceDirs) {
+                    scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                            new SourceDirectoryTreeModule(new File(sourceDir)));
+                }
+
+            } else {
+                for (ProjectModel p : projects) {
+                    LOG.info("Project: " + p.toPrettyString());
+
+                    FileModel rootFileModel = p.getRootFileModel();
+                    if (rootFileModel instanceof WarArchiveModel) {
+                        // use WEB-INF/classes and lib?
+                        Path unzippedPath = Paths.get(((WarArchiveModel) rootFileModel).getUnzippedDirectory());
+                        Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
+                        if (classRoot.toFile().isDirectory()) {
+                            scope.addToScope(ClassLoaderReference.Application,
+                                    new BinaryDirectoryTreeModule(classRoot.toFile()));
+                        }
+
+                    } else if (rootFileModel instanceof JarArchiveModel) {
+                        LOG.info("JAR: " + rootFileModel);
+                        if (p instanceof MavenProjectModel) {
+                            LOG.info(rootFileModel.getSHA1Hash() + " " + ((MavenProjectModel) p).getMavenIdentifier());
+                        } else {
+                            LOG.info(rootFileModel.getSHA1Hash() + " "
+                                    + ((JarArchiveModel) rootFileModel).getArchiveName());
+                        }
+                        if (rootFileModel instanceof IgnoredArchiveModel)
+                            continue;
+                        scope.addToScope(ClassLoaderReference.Application,
+                                new JarFileModule(new JarFile(rootFileModel.getFilePath())));
+                    }
+                }
+
             }
+
             clf = new ECJClassLoaderFactory(scope.getExclusions()) {
                 @Override
                 protected JavaSourceLoaderImpl makeSourceLoader(ClassLoaderReference classLoaderReference,
@@ -198,19 +260,33 @@ public class DivaLauncher extends GraphOperation {
         LOG.info(cha.getNumberOfClasses() + " classes");
         LOG.info(Warnings.asString());
 
+        Set<IClass> relevantClasses = new HashSet<>();
+        Set<IClass> appClasses = new HashSet<>();
+        Framework.relevantJarsAnalysis(cha, relevantClasses, appClasses,
+                c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c));
+
+        IClassHierarchy filteredCha = new FilteredClassHierarchy(cha, appClasses::contains);
+        IClassHierarchy relevantCha = new FilteredClassHierarchy(cha, relevantClasses::contains);
+
         List<IMethod> entries = new ArrayList<>();
-        entries.addAll(ServletAnalysis.getEntries(cha));
-        entries.addAll(SpringBootAnalysis.getEntries(cha));
-        entries.addAll(QuarkusAnalysis.getEntries(cha));
+        entries.addAll(ServletAnalysis.getEntries(filteredCha));
+        entries.addAll(SpringBootAnalysis.getEntries(filteredCha));
+        entries.addAll(QuarkusAnalysis.getEntries(filteredCha));
+
+        if (entries.isEmpty()) {
+            LOG.info("Diva: found no entry methods for anlaysis");
+            return;
+        }
 
         List<IMethod> cgEntries = new ArrayList<>();
         cgEntries.addAll(entries);
-        cgEntries.addAll(SpringBootAnalysis.getInits(cha));
+        cgEntries.addAll(SpringBootAnalysis.getInits(relevantCha));
 
-        JPAAnalysis.getEntities(cha);
+        JPAAnalysis.getEntities(relevantCha);
 
         AnalysisOptions options = new AnalysisOptions();
-        Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries);
+        Supplier<CallGraph> builder = Framework.chaCgBuilder(relevantCha, options, cgEntries,
+                m -> relevantClasses.contains(m.getDeclaringClass()));
 
         LOG.info("building call graph...");
         CallGraph cg = builder.get();
@@ -303,7 +379,7 @@ public class DivaLauncher extends GraphOperation {
 
         endpointResolution(gc, projects);
 
-        LOG.info("DONE");
+        LOG.info("Diva: DONE");
     }
 
     public static String stripBraces(String s) {
@@ -390,10 +466,9 @@ public class DivaLauncher extends GraphOperation {
         // 3) Attaching list of contexts to each app-model
 
         for (DivaContextModel cxt : gc.findAll(DivaContextModel.class)) {
-            ProjectModel p = cxt
-                    .traverse(g -> g.out(DivaContextModel.CONSTRAINTS).in(JavaClassModel.JAVA_METHOD)
-                            .out(JavaClassModel.ORIGINAL_SOURCE).in(ProjectModel.PROJECT_MODEL_TO_FILE))
-                    .next(ProjectModel.class);
+            ProjectModel p = cxt.traverse(g -> g.out(DivaContextModel.CONSTRAINTS).in(JavaClassModel.JAVA_METHOD)
+                    .out(JavaClassModel.CLASS_FILE, JavaClassModel.ORIGINAL_SOURCE)
+                    .in(ProjectModel.PROJECT_MODEL_TO_FILE)).next(ProjectModel.class);
             if (p != null) {
                 DivaAppModel app = toApp.apply(p);
                 app.addContext(cxt);
