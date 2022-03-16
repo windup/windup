@@ -65,82 +65,86 @@
     </#list>
     <#assign width = keys?size + 2/>
 
-    <div class="row panel">
-
-      <table class="table">
-        <tr style="display:table-row" >
-          <th>entry class</th>
-          <th>entry method</th>
-          <#list keys as key>
-            <th>${key}</th>
-          </#list>
-          <th></th>
-        </tr>
-
-        <#list reportModel.relatedResources.contexts as context>
-
-          <#assign cs = {} />
-          <#list context.constraints as constraint>
-            <#if constraint.methodName?? >
-              <#assign cs += {
-                       "k0": constraint.javaClass.qualifiedName,
-                       "k1": constraint.methodName } />
-            </#if>
-            <#if constraint.paramName?? && keys?seq_contains(constraint.paramName) >
-              <#assign cs += {
-                       "k" + (keys?seq_index_of(constraint.paramName) + 2): constraint.paramValue } />
-            </#if>
-          </#list>
-
-          <div class="panel-heading">
-            <tr style="display:table-row" >
-              <#list 0..(width - 1) as i >
-                <td>
-                  <#if i == 0>
-                    <a data-toggle="collapse" href="#entry_${context?index}" aria-expanded="false" aria-controls="entry_${context?index}"> &gt; </a>
-                  </#if>
-                  ${ cs["k" + i]! }
-                </td>
-              </#list>
-            </tr>
-          </div>
-
-          <div class="panel-body">
-            <tr class="collapse" id="entry_${context?index}" style="display:table-row" >
-              <td colspan="${width + 2}">
-
-                <#list context.transactions as tx>
-                  <#list tx.ops as op>
-
-                    <div class="panel panel-primary">
-                      <table class="table table-striped table-bordered">
-                        <thead>
-                          <tr>
-                            <th>
-                              <a data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"> &gt; </a>
-                              ${op.sql}
-                            </th>
+      <div class="row">
+          <div class="container-fluid">
+              <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">Transaction details</h3>
+                  </div>
+                  <div class="panel-body">
+                      <table class="table">
+                          <thead>
+                          <tr style="display:table-row" >
+                              <th>entry class</th>
+                              <th>entry method</th>
+                              <#list keys as key>
+                                  <th>${key}</th>
+                              </#list>
                           </tr>
-                        </thead>
-                        <tbody class="collapse" id="op_${context?index}_${tx?index}_${op?index}">
-                          <#list stackTraceToList(op.stackTrace) as location>
-                            <tr>
-                              <td>
-                                <@render_link model=location project=reportModel.projectModel/>
-                              </td>
-                            </tr>
+                          </thead>
+                          <tbody>
+
+                          <#list reportModel.relatedResources.contexts as context>
+                              <#assign cs = {} />
+                              <#list context.constraints as constraint>
+                                  <#if constraint.methodName?? >
+                                      <#assign cs += {
+                                      "k0": constraint.javaClass.qualifiedName,
+                                      "k1": constraint.methodName } />
+                                  </#if>
+                                  <#if constraint.paramName?? && keys?seq_contains(constraint.paramName) >
+                                      <#assign cs += {
+                                      "k" + (keys?seq_index_of(constraint.paramName) + 2): constraint.paramValue } />
+                                  </#if>
+                              </#list>
+
+                              <tr style="display:table-row" >
+                                  <#list 0..(width - 1) as i >
+                                      <td>
+                                          <#if i == 0>
+                                              <a data-toggle="collapse" href="#entry_${context?index}" aria-expanded="false" aria-controls="entry_${context?index}"> &gt; </a>
+                                          </#if>
+                                          ${ cs["k" + i]! }
+                                      </td>
+                                  </#list>
+                              </tr>
+                              <tr class="collapse" id="entry_${context?index}">
+                                  <td colspan="${width + 2}" style="padding-left: 20px;">
+                                      <#list context.transactions as tx>
+                                          <#list tx.ops as op>
+                                              <div>
+                                                  <table class="table table-striped">
+                                                      <thead>
+                                                      <tr>
+                                                          <th style="font-weight: normal;">
+                                                              <a data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"> &gt; </a>
+                                                              ${op.sql}
+                                                          </th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody class="collapse" id="op_${context?index}_${tx?index}_${op?index}">
+                                                      <#list stackTraceToList(op.stackTrace) as location>
+                                                          <tr>
+                                                              <td style="padding-left: 20px;">
+                                                                  <@render_link model=location project=reportModel.projectModel/>
+                                                              </td>
+                                                          </tr>
+                                                      </#list>
+                                                      </tbody>
+                                                  </table>
+                                              </div>
+                                          </#list>
+                                      </#list>
+                                  </td>
+                              </tr>
                           </#list>
-                        </tbody>
+
+                          </tbody>
                       </table>
-                    </div>
-                  </#list>
-                </#list>
-              </td>
-            </tr>
-          </div> <!-- panel-body -->
-        </#list>
-      </table>
-    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
 
     <#include "include/timestamp.ftl" />
 
