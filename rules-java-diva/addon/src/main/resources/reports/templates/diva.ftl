@@ -35,80 +35,118 @@
 </head>
 <body role="document">
 
-    <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
-        <div class="wu-navbar-header navbar-header">
-            <#include "include/navheader.ftl">
-        </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <#include "include/navbar.ftl">
-        </div><!-- /.nav-collapse -->
+  <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="wu-navbar-header navbar-header">
+      <#include "include/navheader.ftl">
+    </div>
+    <div class="navbar-collapse collapse navbar-responsive-collapse">
+      <#include "include/navbar.ftl">
+    </div><!-- /.nav-collapse -->
+  </div>
+
+  <div class="container-fluid" role="main">
+    <div class="row">
+      <div class="page-header page-header-no-border">
+        <h1>
+          <div class="main">Transactions Report
+            <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists the code analysis results for JDBC or JPA transactions."></i></div>
+          <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
+        </h1>
+      </div>
     </div>
 
-    <div class="container-fluid" role="main">
-        <div class="row">
-            <div class="page-header page-header-no-border">
-                <h1>
-                    <div class="main">Transactions Report
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists the Java EE EJB beans with their JNDI address - stateless and statefull beans, message driven beans, and entity beans."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
-                </h1>
-            </div>
-        </div>
+    <#assign keys = [] />
+    <#list reportModel.relatedResources.contexts as context >
+      <#list context.constraints as constraint >
+        <#if constraint.paramName?? && !keys?seq_contains(constraint.paramName)>
+          <#assign keys += [ constraint.paramName ] />
+        </#if>
+      </#list>
+    </#list>
+    <#assign width = keys?size + 2/>
+
+    <div class="row panel">
+
+      <table class="table">
+        <tr style="display:table-row" >
+          <th>entry class</th>
+          <th>entry method</th>
+          <#list keys as key>
+            <th>${key}</th>
+          </#list>
+          <th></th>
+        </tr>
 
         <#list reportModel.relatedResources.contexts as context>
 
-        <div class="row panel">
-
-            <div class="panel-heading panel-collapsed clickable">
-            <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
-            <table class="table">
-            <#list context.constraints as constraint>
-            <#if constraint.methodName??>
-            <tr><td>entry class</td><td>${constraint.javaClass.qualifiedName}</td></tr>
-            <tr><td>entry method</td><td>${constraint.methodName}</td></tr>
+          <#assign cs = {} />
+          <#list context.constraints as constraint>
+            <#if constraint.methodName?? >
+              <#assign cs += {
+                       "k0": constraint.javaClass.qualifiedName,
+                       "k1": constraint.methodName } />
             </#if>
-            </#list>
-            <#list context.constraints as constraint>
-            <#if constraint.paramName??>
-            <tr><td>${constraint.paramName}</td><td>${constraint.paramValue}</td></tr>
+            <#if constraint.paramName?? && keys?seq_contains(constraint.paramName) >
+              <#assign cs += {
+                       "k" + (keys?seq_index_of(constraint.paramName) + 2): constraint.paramValue } />
             </#if>
-            </#list>
-            </table>
-            </div>
+          </#list>
 
-            <div class="panel-body" style="display:none">
-            <#list context.transactions as tx>
-            <#list tx.ops as op>
+          <div class="panel-heading">
+            <tr style="display:table-row" >
+              <#list 0..(width - 1) as i >
+                <td>
+                  <#if i == 0>
+                    <a data-toggle="collapse" href="#entry_${context?index}" aria-expanded="false" aria-controls="entry_${context?index}"> &gt; </a>
+                  </#if>
+                  ${ cs["k" + i]! }
+                </td>
+              </#list>
+            </tr>
+          </div>
 
-            <#list stackTraceToList(op.stackTrace)>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">${op.sql}</h3>
+          <div class="panel-body">
+            <tr class="collapse" id="entry_${context?index}" style="display:table-row" >
+              <td colspan="${width + 2}">
+
+                <#list context.transactions as tx>
+                  <#list tx.ops as op>
+
+                    <div class="panel panel-primary">
+                      <table class="table table-striped table-bordered">
+                        <thead>
+                          <tr>
+                            <th>
+                              <a data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"> &gt; </a>
+                              ${op.sql}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="collapse" id="op_${context?index}_${tx?index}_${op?index}">
+                          <#list stackTraceToList(op.stackTrace) as location>
+                            <tr>
+                              <td>
+                                <@render_link model=location project=reportModel.projectModel/>
+                              </td>
+                            </tr>
+                          </#list>
+                        </tbody>
+                      </table>
                     </div>
-                    <table class="table table-striped table-bordered">
-                        <#items as location>
-                        <tr>
-                           <td>
-                               <@render_link model=location project=reportModel.projectModel/>
-                           </td>
-                        </tr>
-                        </#items>
-                    </table>
-                </div>
-            </#list>
-            </#list>
-            </#list>
-            </div> <!-- panel-body -->
-
-        </div> <!-- row panel -->
-
+                  </#list>
+                </#list>
+              </td>
+            </tr>
+          </div> <!-- panel-body -->
         </#list>
+      </table>
+    </div>
 
-    <#include "include/timestamp.ftl">
+    <#include "include/timestamp.ftl" />
 
-    </div><!-- /container main-->
+  </div><!-- /container main-->
 
-    <script src="resources/js/bootstrap.min.js"></script>
-    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
+  <script src="resources/js/bootstrap.min.js"></script>
+  <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

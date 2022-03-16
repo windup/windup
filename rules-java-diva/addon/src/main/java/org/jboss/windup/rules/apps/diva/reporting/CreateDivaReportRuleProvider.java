@@ -25,7 +25,6 @@ import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
-import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
