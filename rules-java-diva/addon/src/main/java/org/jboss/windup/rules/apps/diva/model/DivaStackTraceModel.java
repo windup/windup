@@ -7,31 +7,17 @@ import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 
 @TypeValue(DivaStackTraceModel.TYPE)
 
-public interface DivaStackTraceModel extends FileLocationModel {
+public interface DivaStackTraceModel extends WindupVertexFrame {
     String TYPE = "DivaStackTraceModel";
 
     String METHOD = "method";
     String PARENT = "parent";
-    String LOCATION = "parent";
-
-    @Override
-    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
-    @Property(LINE_NUMBER)
-    int getLineNumber();
-
-    @Override
-    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
-    @Property(COLUMN_NUMBER)
-    int getColumnNumber();
-
-    @Override
-    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
-    @Property(LENGTH)
-    int getLength();
+    String LOCATION = "location";
 
     @Adjacency(label = METHOD, direction = Direction.OUT)
     JavaMethodModel getMethod();
@@ -44,5 +30,11 @@ public interface DivaStackTraceModel extends FileLocationModel {
 
     @Adjacency(label = PARENT, direction = Direction.OUT)
     void setParent(DivaStackTraceModel parent);
+
+    @Adjacency(label = LOCATION, direction = Direction.OUT)
+    FileLocationModel getLocation();
+
+    @Adjacency(label = LOCATION, direction = Direction.OUT)
+    void setLocation(FileLocationModel location);
 
 }
