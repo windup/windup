@@ -156,27 +156,28 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                     } catch (InvalidClassFileException | NullPointerException e) {
                         // No source position, e.g., JPA's commit at method exit
                     }
-                    JavaClassModel classModel = classService
-                            .create(StringStuff.jvmToBinaryName(m.getDeclaringClass().getName().toString()));
-                    JavaMethodModel methodModel = methodService.createJavaMethod(classModel, m.getName().toString());
-                    classModel.addJavaMethod(methodModel);
-                    FileModel sourceFile = classModel.getOriginalSource();
-                    if (sourceFile == null) {
-                        sourceFile = classModel.getDecompiledSource();
-                    }
                     if (p != null) {
+                        JavaClassModel classModel = classService
+                                .create(StringStuff.jvmToBinaryName(m.getDeclaringClass().getName().toString()));
+                        JavaMethodModel methodModel = methodService.createJavaMethod(classModel,
+                                m.getName().toString());
+
+                        FileModel sourceFile = classModel.getOriginalSource();
+                        if (sourceFile == null) {
+                            sourceFile = classModel.getDecompiledSource();
+                        }
                         current = service.getOrCreate(sourceFile, p.getFirstLine(), p.getFirstCol(),
                                 p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
                         parent = current;
                     }
                 }
                 ((DivaOpModel) model).setStackTrace(current);
+
                 if (((Trace) data).site() != null) {
                     MethodReference mref = ((Trace) data).site().getDeclaredTarget();
                     JavaClassModel classModel = classService
                             .create(StringStuff.jvmToBinaryName(mref.getDeclaringClass().getName().toString()));
                     JavaMethodModel methodModel = methodService.createJavaMethod(classModel, mref.getName().toString());
-                    classModel.addJavaMethod(methodModel);
                     ((DivaOpModel) model).setMethod(methodModel);
 
                 }

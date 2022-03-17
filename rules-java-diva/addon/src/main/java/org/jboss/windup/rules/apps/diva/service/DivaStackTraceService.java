@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
@@ -27,8 +28,12 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
         fileLocationService = new FileLocationService(context);
     }
 
-//    static int count = 0;
-//    static long total = 0;
+    // public static int count0 = 0;
+    // public static long total0 = 0;
+    // public static int count1 = 0;
+    // public static long total1 = 0;
+    // public static int count2 = 0;
+    // public static long total2 = 0;
 
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
@@ -39,6 +44,12 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
                 .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
 
         List<?> locs = traversal.toList();
+
+        // if (count0++ % 100 == 0) {
+        // System.out.println(count0 + ", " + (total0 / 1000000D) + "ms, " + count1 + ",
+        // " + (total1 / 1000000D)
+        // + "ms, " + count2 + ", " + (total2 / 1000000D) + "ms");
+        // }
 
         FileLocationModel location;
         DivaStackTraceModel model = null;
@@ -55,8 +66,9 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
                 inlineHint.setIssueDisplayMode(IssueDisplayMode.DETAIL_ONLY);
             }
         } else {
-            location = (FileLocationModel) locs.get(0);
-            traversal = getQuery().getRawTraversal().has(DivaStackTraceModel.LOCATION, location.getElement());
+            location = fileLocationService.frame((Vertex) locs.get(0));
+            traversal = getQuery().getRawTraversal()
+                    .filter(__.out(DivaStackTraceModel.LOCATION).is(location.getElement()));
             if (parent == null) {
                 traversal = traversal.not(__.out(DivaStackTraceModel.PARENT));
             } else {
