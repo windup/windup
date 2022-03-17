@@ -120,10 +120,10 @@
                                                       </tr>
                                                       </thead>
                                                       <tbody class="collapse" id="op_${context?index}_${tx?index}_${op?index}">
-                                                      <#list stackTraceToList(op.stackTrace) as location>
+                                                      <#list stackTraceToList(op.stackTrace) as trace>
                                                           <tr>
                                                               <td style="padding-left: 20px;">
-                                                                  <@render_link model=location project=reportModel.projectModel/>
+                                                                  <@render_link model=trace.location project=reportModel.projectModel/>
                                                               </td>
                                                           </tr>
                                                       </#list>
