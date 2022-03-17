@@ -1,7 +1,8 @@
 package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
-
+import org.jboss.windup.graph.IndexType;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     /**
      * Get the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
+    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
     @Property(LINE_NUMBER)
     int getLineNumber();
 
@@ -44,6 +46,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     /**
      * Get the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
+    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
     @Property(COLUMN_NUMBER)
     int getColumnNumber();
 
@@ -56,6 +59,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     /**
      * Get the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
      */
+    @Indexed(value = IndexType.DEFAULT, dataType = Integer.class)
     @Property(LENGTH)
     int getLength();
 

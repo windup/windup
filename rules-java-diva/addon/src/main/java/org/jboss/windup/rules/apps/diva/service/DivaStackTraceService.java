@@ -16,8 +16,6 @@ import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 
 public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
 
-    private static final String VERTEX_LABEL = "fileLocations";
-
     FileLocationService fileLocationService;
 
     public DivaStackTraceService(GraphContext context) {
@@ -25,8 +23,12 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
         fileLocationService = new FileLocationService(context);
     }
 
-    // static int count = 0;
-    // static long total = 0;
+    // public static int count0 = 0;
+    // public static long total0 = 0;
+    // public static int count1 = 0;
+    // public static long total1 = 0;
+    // public static int count2 = 0;
+    // public static long total2 = 0;
 
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
@@ -37,6 +39,12 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
                 .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
 
         List<?> locs = traversal.toList();
+
+        // if (count0++ % 100 == 0) {
+        // System.out.println(count0 + ", " + (total0 / 1000000D) + "ms, " + count1 + ",
+        // " + (total1 / 1000000D)
+        // + "ms, " + count2 + ", " + (total2 / 1000000D) + "ms");
+        // }
 
         FileLocationModel location;
         DivaStackTraceModel model = null;
