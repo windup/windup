@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
@@ -15,6 +16,8 @@ import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 
 public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
 
+    private static final String VERTEX_LABEL = "fileLocations";
+
     FileLocationService fileLocationService;
 
     public DivaStackTraceService(GraphContext context) {
@@ -22,8 +25,8 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
         fileLocationService = new FileLocationService(context);
     }
 
-//    static int count = 0;
-//    static long total = 0;
+    // static int count = 0;
+    // static long total = 0;
 
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
@@ -45,8 +48,9 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
             location.setFile(fileModel);
 
         } else {
-            location = (FileLocationModel) locs.get(0);
-            traversal = getQuery().getRawTraversal().has(DivaStackTraceModel.LOCATION, location.getElement());
+            location = fileLocationService.frame((Vertex) locs.get(0));
+            traversal = getQuery().getRawTraversal()
+                    .filter(__.out(DivaStackTraceModel.LOCATION).is(location.getElement()));
             if (parent == null) {
                 traversal = traversal.not(__.out(DivaStackTraceModel.PARENT));
             } else {
