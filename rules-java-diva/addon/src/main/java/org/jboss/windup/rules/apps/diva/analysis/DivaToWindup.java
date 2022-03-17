@@ -153,8 +153,8 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                     SourcePosition p = null;
                     try {
                         p = m.getSourcePosition(t.site().getProgramCounter());
-
                     } catch (InvalidClassFileException | NullPointerException e) {
+                        // No source position, e.g., JPA's commit at method exit
                     }
                     JavaClassModel classModel = classService
                             .create(StringStuff.jvmToBinaryName(m.getDeclaringClass().getName().toString()));
@@ -167,16 +167,8 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                     if (p != null) {
                         current = service.getOrCreate(sourceFile, p.getFirstLine(), p.getFirstCol(),
                                 p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
-
-                    } else {
-                        current = service.create();
-                        current.setFile(sourceFile);
-                        current.setMethod(methodModel);
-                        if (parent != null) {
-                            current.setParent(parent);
-                        }
+                        parent = current;
                     }
-                    parent = current;
                 }
                 ((DivaOpModel) model).setStackTrace(current);
                 if (((Trace) data).site() != null) {
