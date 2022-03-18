@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.diva.service;
 import java.util.List;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.GraphContext;
@@ -57,8 +58,7 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
 
         } else {
             location = fileLocationService.frame((Vertex) locs.get(0));
-            traversal = getQuery().getRawTraversal()
-                    .filter(__.out(DivaStackTraceModel.LOCATION).is(location.getElement()));
+            traversal = new GraphTraversalSource(getGraphContext().getGraph()).V(location.getElement()).in(DivaStackTraceModel.LOCATION);
             if (parent == null) {
                 traversal = traversal.not(__.out(DivaStackTraceModel.PARENT));
             } else {
