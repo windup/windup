@@ -73,6 +73,7 @@ import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
+import com.ibm.wala.ipa.callgraph.CallGraphStats;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.AnnotationsReader.ConstantElementValue;
@@ -142,7 +143,24 @@ public class DivaLauncher extends GraphOperation {
         Path temp = Files.createTempDirectory("diva-temp");
         Util.LOGGER.info("tempdir=" + temp);
 
-        if (sourceMode && !projects.isEmpty() && notMaven.isEmpty()) {
+        boolean isTreeStructured = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
+
+        if (isTreeStructured) {
+            List<MavenProjectModel> mavenProjects = Util.makeList(Util.map(projects, p -> (MavenProjectModel) p));
+            for (MavenProjectModel m : mavenProjects) {
+                List<MavenProjectModel> deps = getMavenDeps(m, mavenProjects);
+                if (deps.size() > 1) {
+                    // currently wala class loader can have only one parent, so
+                    // we can't map dag-like module dependencies to class loader dependencies
+                    isTreeStructured = false;
+                    break;
+                }
+            }
+        }
+
+        LOG.info("isTreeStructured = " + isTreeStructured);
+
+        if (isTreeStructured) {
 
             ModularAnalysisScope mods = new ModularAnalysisScope();
             scope = mods;
@@ -152,28 +170,26 @@ public class DivaLauncher extends GraphOperation {
             // For now, assume each p in projects has at-most-1 depending
             // p'. Partly due to wala's tree-not-dag class loaders (and class lookup
             // redundantly defined both in cha and loader-impl.)
+            List<MavenProjectModel> mavenProjects = Util.makeList(Util.map(projects, p -> (MavenProjectModel) p));
+            for (MavenProjectModel m : mavenProjects) {
+                LOG.info("Project: " + m.toPrettyString());
 
-            for (ProjectModel p : projects) {
-                LOG.info("Project: " + p.toPrettyString());
-
-                Stack<ProjectModel> todo = new Stack<>();
-                todo.push(p);
+                Stack<MavenProjectModel> todo = new Stack<>();
+                todo.push(m);
 
                 while (true) {
-                    List<ProjectModel> deps = Util.makeList(
-                            Util.filter(Util.map(p.getDependencies(), ProjectDependencyModel::getProjectModel),
-                                    projects::contains));
+                    List<MavenProjectModel> deps = getMavenDeps(m, mavenProjects);
                     if (deps.isEmpty())
                         break;
-                    p = deps.get(0);
-                    todo.push(p);
+                    m = deps.get(0);
+                    todo.push(m);
                 }
                 ClassLoaderReference parent = ClassLoaderReference.Application;
                 while (!todo.isEmpty()) {
-                    p = todo.pop();
-                    File f = new File(p.getRootFileModel().getFilePath() + "/src/main/java");
+                    m = todo.pop();
+                    File f = new File(m.getRootFileModel().getFilePath() + "/src/main/java");
                     if (f.exists()) {
-                        parent = mods.findOrCreateModuleLoader(p.getName(), new SourceDirectoryTreeModule(f), parent);
+                        parent = mods.findOrCreateModuleLoader(m.getName(), new SourceDirectoryTreeModule(f), parent);
                     }
                 }
             }
@@ -206,7 +222,7 @@ public class DivaLauncher extends GraphOperation {
 
             if (sourceMode) {
                 List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
-                LOG.info("Using root source dirs: " + sourceDirs + " due to non-maven projects: " + notMaven);
+                LOG.info("Using root source dirs: " + sourceDirs);
 
                 for (String sourceDir : sourceDirs) {
                     scope.addToScope(JavaSourceAnalysisScope.SOURCE,
@@ -285,11 +301,20 @@ public class DivaLauncher extends GraphOperation {
         JPAAnalysis.getEntities(relevantCha);
 
         AnalysisOptions options = new AnalysisOptions();
-        Supplier<CallGraph> builder = Framework.chaCgBuilder(relevantCha, options, cgEntries,
-                m -> relevantClasses.contains(m.getDeclaringClass()));
+        Set<IMethod> log = new HashSet<>();
+        Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries, m -> {
+            boolean res = relevantClasses.contains(m.getDeclaringClass());
+            String name = m.getDeclaringClass().getName().toString();
+            if (!res && !name.startsWith("Ljava") && !name.startsWith("Lcom/sun")) {
+                log.add(m);
+            }
+            return res;
+        });
 
         LOG.info("building call graph...");
         CallGraph cg = builder.get();
+
+        LOG.info(CallGraphStats.getStats(cg));
 
         Framework fw = new Framework(cha, cg);
 
@@ -309,6 +334,7 @@ public class DivaLauncher extends GraphOperation {
         DivaEntryMethodService entryMethodService = new DivaEntryMethodService(gc);
         GraphService<DivaRequestParamModel> requestParamService = new GraphService<>(gc, DivaRequestParamModel.class);
 
+        int success = 0, failure = 0;
         for (Context cxt : contexts) {
 
             try {
@@ -372,14 +398,34 @@ public class DivaLauncher extends GraphOperation {
                     }, txAnalysis);
                 }
                 gc.getGraph().tx().commit();
+                success++;
             } catch (RuntimeException e) {
                 gc.getGraph().tx().rollback();
+                failure++;
+            }
+            if ((success + failure) % 10 == 0) {
+                LOG.info("transaction analysis: " + (success + failure) + "/" + contexts.size() + " (" + failure
+                        + " failures)");
             }
         }
 
         endpointResolution(gc, projects);
 
         LOG.info("Diva: DONE");
+    }
+
+    public static List<MavenProjectModel> getMavenDeps(MavenProjectModel m, List<MavenProjectModel> knownProjects) {
+        List<MavenProjectModel> candidates = Util
+                .makeList(Util.map(Util.filter(Util.map(m.getDependencies(), ProjectDependencyModel::getProjectModel),
+                        d -> (d instanceof MavenProjectModel)), p -> (MavenProjectModel) p));
+        List<MavenProjectModel> res = new ArrayList<>();
+        for (MavenProjectModel known : knownProjects) {
+            if (Util.any(candidates, c -> c.getGroupId().equals(known.getGroupId())
+                    && c.getArtifactId().equals(known.getArtifactId()))) {
+                res.add(known);
+            }
+        }
+        return res;
     }
 
     public static String stripBraces(String s) {
