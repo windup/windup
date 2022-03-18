@@ -19,6 +19,7 @@
             <groupId>com.github.konveyor.tackle-diva</groupId>
             <artifactId>diva-core</artifactId>
             <version>0.1.5</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- Addon Dependencies -->
