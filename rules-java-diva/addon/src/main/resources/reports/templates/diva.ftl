@@ -14,24 +14,20 @@
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
 
-    <script>
-    function togglePanelSlide(event) {
-        var $panelHeading = $(this);
-        setPanelSlide($panelHeading, $panelHeading.hasClass("panel-collapsed"));
-    }
-
-    function setPanelSlide($panelHeading, expand) {
-        var projectGuid = $panelHeading.parent().data("windup-projectguid");
-        // $.sessionStorage.set(projectGuid, expand ? "true" : "false");
-        $panelHeading.parents(".panel").find(".panel-body")["slide" + (expand ? "Down" : "Up")]();
-        $panelHeading.parents(".panel").toggleClass("panel-boarding", expand);
-        $panelHeading.toggleClass("panel-collapsed", !expand);
-        $panelHeading.find("i").toggleClass("glyphicon-expand", !expand).toggleClass("glyphicon-collapse-up", expand);
-    }
-    $(document).on("click", ".panel-heading", function(event) {
-       togglePanelSlide.call(this, event);
-    });
-    </script>
+    <style>
+      a.collapse-button[aria-expanded="false"]:after {
+          margin-left: .5em;
+          font-size:1em;
+          font-family: fontAwesome;
+          content: '\f054';
+      }
+      a.collapse-button[aria-expanded="true"]:after {
+          margin-left: .5em;
+          font-size:1em;
+          font-family: fontAwesome;
+          content: '\f078';
+      }
+    </style>
 </head>
 <body role="document">
 
@@ -70,7 +66,13 @@
               <div class="panel panel-primary">
                   <div class="panel-body">
                       <table class="table">
-                          <thead>
+                        <colgroup>
+                          <#list 0..(width-1) as i>
+                            <col style="width: 10%;"/>
+                          </#list>
+                          <col style="width: 30%;"/>
+                        </colgroup>
+                        <thead>
                           <tr style="display:table-row" >
                               <th>entry class</th>
                               <th>entry method</th>
@@ -98,10 +100,7 @@
                               <tr style="display:table-row" >
                                   <#list 0..(width - 1) as i >
                                       <td>
-                                          <#if i == 0>
-                                              <a data-toggle="collapse" href="#entry_${context?index}" aria-expanded="false" aria-controls="entry_${context?index}"> &gt; </a>
-                                          </#if>
-                                          ${ cs["k" + i]! }
+                                        <#if i == 0><a class="collapse-button" data-toggle="collapse" href="#entry_${context?index}" aria-expanded="false" aria-controls="entry_${context?index}"></a>&nbsp;</#if>${ cs["k" + i]! }
                                       </td>
                                   </#list>
                               </tr>
@@ -114,8 +113,7 @@
                                                       <thead>
                                                       <tr>
                                                           <th style="font-weight: normal;">
-                                                              <a data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"> &gt; </a>
-                                                              ${op.sql}
+                                                            <a class="collapse-button" data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"></a>&nbsp;${op.sql}
                                                           </th>
                                                       </tr>
                                                       </thead>
