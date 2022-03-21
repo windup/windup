@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -172,7 +173,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         boolean isInputApp = inputPaths.stream().anyMatch(inputPath -> inputPath.getFilePath().equals(archiveModel.getFilePath()));
 
         // Do not include libraries found within the artifacts if they are known
-        boolean isKnownLibrary = archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash()) != null;
+        boolean isKnownLibrary = archiveModel instanceof IgnoredFileModel || archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash()) != null;
         boolean analyseKnownLibraries = cfg.isAnalyzeKnownLibraries();
         if (isKnownLibrary && !analyseKnownLibraries && !isInputApp) {
             LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
