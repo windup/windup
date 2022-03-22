@@ -26,7 +26,7 @@ public class LuceneFileArchiveIdentificationServiceTest
         Assert.assertNull("No coordinate for 55555555564e84315e83c6ba4a855b07ba51166b", coordinate);
 
         // Position 0
-        check(ident, "000005ce9bd9867e24cdc33c06e88a65edce71db", "com.google.apis:google-api-services-genomics:jar::v1beta-rev26-1.18.0-rc");
+        check(ident, "8aab519d6654d378f94c612e19495bbcb9d355e5", "com.google.apis:google-api-services-genomics:jar::v1-rev623-1.25.0");
 
         // Last entry
         check(ident, "ffffdf1558b62750b24bdaa33cb9a72b0cb766ce", "org.glassfish.metro:wsmc-impl:jar::2.1.1-b06");
@@ -46,7 +46,7 @@ public class LuceneFileArchiveIdentificationServiceTest
     private static void check(ArchiveIdentificationService ident, String hash, String coordString)
     {
         Coordinate coord = ident.getCoordinate(hash);
-        Assert.assertNotNull("Coordinate found for " + hash, coord);
+        Assert.assertNotNull("Coordinate not found for " + hash, coord);
         Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coord));
     }
 
