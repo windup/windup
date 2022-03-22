@@ -121,7 +121,9 @@
                                                       <#list stackTraceToList(op.stackTrace) as trace>
                                                           <tr>
                                                               <td style="padding-left: 20px;">
-                                                                  <@render_link model=trace.location project=reportModel.projectModel/>
+                                                                <@render_link model=trace.location
+                                                                              text=(trace.method.methodName + " (" + trace.location.file.filePath + ", line " + trace.location.lineNumber + ")")
+                                                                              project=reportModel.projectModel/>
                                                               </td>
                                                           </tr>
                                                       </#list>
