@@ -41,6 +41,9 @@ public class LuceneFileArchiveIdentificationServiceTest
 
         // Some which caused issues.
         check(ident, "7ff0d167a6816aa113b1b4a8a37515701a74b288", "org.kill-bill.billing:killbill-platform-osgi-bundles-lib-slf4j-osgi:jar::0.1.0");
+
+        // https://issues.redhat.com/browse/WINDUP-3300
+        check(ident, "d6153f8fc60c479ab0f9efb35c034526436a4953", "com.fasterxml.jackson.core:jackson-databind:jar::2.12.3");
     }
 
     private static void check(ArchiveIdentificationService ident, String hash, String coordString)
