@@ -175,6 +175,7 @@
                                 <@render_rule_link renderType='glyph' ruleID=hintLine.ruleID class='rule-link floatRight'/><#t>
                                 <#t>
                             </div><#t>
+                            <#if hintLine.hint != "---">
                             <div class='inline-comment-body'><#t>
                                 ${markdownToHtml(hintLine.hint)?js_string}<#t>
                                 <#if hintLine.links?? && hintLine.links?has_content>
@@ -187,6 +188,7 @@
                                         </ul><#t>
                                 </#if>
                             </div><#t>
+                            </#if>
                         </div><#t>
                     </#if>
                 </div><#t>

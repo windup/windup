@@ -122,7 +122,7 @@
                                                           <tr>
                                                               <td style="padding-left: 20px;">
                                                                 <@render_link model=trace.location
-                                                                              text=(trace.method.methodName + " (" + trace.location.file.filePath + ", line " + trace.location.lineNumber + ")")
+                                                                              text=(trace.method.javaClass.qualifiedName + "." + trace.method.methodName + " (" + trace.location.file.fileName + ", line " + trace.location.lineNumber + ")")
                                                                               project=reportModel.projectModel/>
                                                               </td>
                                                           </tr>
