@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>gremlin-shaded</artifactId>
+    <name>Fork of Apache TinkerPop :: Gremlin Shaded</name>
 
     <!--
     added to replace the lack of gremlin-shaded
@@ -40,11 +41,12 @@
         </dependency>
     </dependencies>
     <build>
-        <directory>target</directory>
+        <directory>${basedir}/target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <id>shade-kryo</id>
@@ -83,6 +85,22 @@
                                     <shadedPattern>org.apache.tinkerpop.shaded.jackson</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <!--
+                             Exclude service descriptors because they still reference unshaded classes, this
+                             causes an error if the JAR is used as an automatic module in a JPMS app.
+                            -->
+                            <filters>
+                                <filter>
+                                    <artifact>*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/services/**</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/versions/9/module-info.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <!-- false below means the shade plugin overwrites the main project artifact (the one with no classifier).
                                  false does *not* actually detach the main artifact, despite what the option name suggests. -->
                             <shadedArtifactAttached>false</shadedArtifactAttached>
