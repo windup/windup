@@ -30,7 +30,9 @@
         <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
         <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen"/>
-        <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+        <#assign basePath="resources">
+        <#include "include/favicon.ftl">
     </head>
     <body role="document" class="application-graph" ng-app="appDependencies">
         <!-- Navbar -->
@@ -94,7 +96,7 @@
                 </kubernetes-topology-icon>
                 <label>JARs</label>
 
-                <#if reportModel.projectModel??>           
+                <#if reportModel.projectModel??>
                     <kubernetes-topology-icon kind="ExternalJar">
                         <svg class="app-topology">
                             <use xlink:href="#vertex-ExternalJar" x="15" y="15"></use>
@@ -122,7 +124,7 @@
                         <circle r="15" fill="#fff" stroke="#aaa"></circle>
                         <text y="5" x="0.5" fill="#328CC1" font-family="FontAwesome" font-size="16px" text-anchor="middle">&#xf1b2;</text>
                     </g>
-                    <#if reportModel.projectModel??> 
+                    <#if reportModel.projectModel??>
                     <g class="ExternalJar" id="vertex-ExternalJar">
                         <circle r="15" fill="#fff" stroke="#aaa"></circle>
                         <text y="5" x="0.5" fill="#D9B310" font-family="FontAwesome" font-size="16px" text-anchor="middle">&#xf1b2;</text>

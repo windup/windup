@@ -65,10 +65,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeR
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
-import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.ProgressEstimate;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.*;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -142,6 +139,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         sourceRoots.add(rootSourceFolder.getFilePath());
                     }
 
+                    // TODO: why are we checking this here? It should have already been checked before for all artifacts
                     if (windupJavaConfigurationService.shouldScanPackage(javaFile.getPackageName()))
                     {
                         ProjectModel application = javaFile.getApplication();
@@ -370,7 +368,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 boolean windupStopRequested = event.ruleEvaluationProgress("Analyze Java", estimate.getWorked(), estimate.getTotal(), timeRemainingInMillis / 1000);
                 if (windupStopRequested)
                 {
-                    throw new WindupStopException(Util.WINDUP_BRAND_NAME_ACRONYM + " stop requested through ruleEvaluationProgress() during " + AnalyzeJavaFilesRuleProvider.class.getName());
+                    throw new WindupStopException(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " stop requested through ruleEvaluationProgress() during " + AnalyzeJavaFilesRuleProvider.class.getName());
                 }
             }
 

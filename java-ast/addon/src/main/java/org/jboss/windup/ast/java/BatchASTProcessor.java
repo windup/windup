@@ -13,9 +13,9 @@ import java.util.concurrent.ExecutorService;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.eclipse.jdt.core.dom.WindupASTParser;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.jboss.windup.util.threading.WindupExecutors;
 
@@ -74,7 +74,7 @@ public class BatchASTProcessor
                 @Override
                 public Void call() throws Exception
                 {
-                    ASTParser parser = ASTParser.newParser(AST.JLS8);
+                    WindupASTParser parser = WindupASTParser.newParser(AST.JLS8);
                     parser.setBindingsRecovery(false);
                     parser.setResolveBindings(true);
                     Map<String, String> options = JavaCore.getOptions();

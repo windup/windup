@@ -1,7 +1,7 @@
 package org.jboss.windup.config;
 
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * Indicates the Java packages for Windup to scan.
@@ -15,7 +15,7 @@ public class KeepWorkDirsOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "If set, "+Util.WINDUP_BRAND_NAME_ACRONYM+" will not delete the temporary working files, like graph database and unzipped archives."
+        return "If set, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " will not delete the temporary working files, like graph database and unzipped archives."
                 + " Debugging purposes.";
     }
 
@@ -28,7 +28,7 @@ public class KeepWorkDirsOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Should "+Util.WINDUP_BRAND_NAME_ACRONYM+" keep temporary working directories?";
+        return "Should " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " keep temporary working directories?";
     }
 
     @Override

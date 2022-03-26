@@ -101,6 +101,7 @@
         <module>windup-test-harness</module>
         <module>module-spec</module>
         <module>forks/jdt</module>
+        <module>forks/gremlin-shaded</module>
         <module>graph</module>
 
         <module>config</module>
@@ -182,6 +183,31 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-core</artifactId>
                 <version>2.3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.13.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.11.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -536,6 +562,45 @@
                         </configuration>
                     </plugin>
                 </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>mta</id>
+            <activation>
+                <property>
+                    <name>!community</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windup</id>
+            <activation>
+                <property>
+                    <name>community</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Tackle Analysis</distribution.brand.name>
+                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-windup</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                </resources>
             </build>
         </profile>
     </profiles>

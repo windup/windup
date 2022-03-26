@@ -38,7 +38,7 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
 
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
-        if (new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, payload))
+        if (new WindupJavaConfigurationService(event.getGraphContext()).checkRegexAndIgnore(event, payload))
             return;
 
         ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");

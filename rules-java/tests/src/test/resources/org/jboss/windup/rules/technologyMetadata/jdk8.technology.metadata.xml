@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<java-technology-metadata xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+   <technology id="jdk" />
+   <additional-classpath>./jdk8_rt.jar</additional-classpath>
+</java-technology-metadata>

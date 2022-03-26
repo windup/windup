@@ -4,22 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.furnace.FurnaceHolder;
@@ -552,4 +542,9 @@ public class WindupConfiguration
         Boolean export = getOptionValue(ExportCSVOption.NAME);
         return export == null ? false : export;
     }
+
+    public boolean isAnalyseKnownLibrariesSet() {
+        return (Boolean) Optional.ofNullable(getOptionMap().get(AnalyzeKnownLibrariesOption.NAME)).orElse(false);
+    }
+        
 }

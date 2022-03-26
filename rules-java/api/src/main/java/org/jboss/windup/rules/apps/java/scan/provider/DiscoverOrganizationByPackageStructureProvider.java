@@ -101,8 +101,8 @@ public class DiscoverOrganizationByPackageStructureProvider extends AbstractRule
 
     private String findOrganization(GraphRewrite context, String pkg)
     {
-        return PackageNameMapping.getOrganizationForPackage(context, pkg);
-    };
+        return PackageNameMapping.getOrganizationFromMappings(context, pkg);
+    }
 
     private String findPackage(final ArchiveModel payload, String entryName) {
         String packageName = StringUtils.removeEnd(entryName, ".class");

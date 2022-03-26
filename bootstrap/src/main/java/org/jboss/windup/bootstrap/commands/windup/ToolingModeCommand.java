@@ -18,7 +18,8 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.addons.AddImmutableAddonDirectoryCommand;
 import org.jboss.windup.tooling.IOptionKeys;
 import org.jboss.windup.tooling.ToolingModeRunner;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 
 public class ToolingModeCommand implements Command
 {
@@ -47,6 +48,8 @@ public class ToolingModeCommand implements Command
     @Override
     public CommandResult execute()
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         try
         {
             furnace = FurnaceFactory.getInstance();
@@ -59,7 +62,7 @@ public class ToolingModeCommand implements Command
             }
             catch (Exception e)
             {
-                System.out.println("Failed to start "+Util.WINDUP_BRAND_NAME_ACRONYM+"!");
+                System.out.println("Failed to start " + theme.getBrandNameAcronym() + "!");
                 e.printStackTrace();
             }
             this.analyze();
@@ -67,7 +70,7 @@ public class ToolingModeCommand implements Command
         }
         catch (Throwable t)
         {
-            System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM + " execution failed due to: " + t.getMessage());
+            System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
         return null;

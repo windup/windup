@@ -15,6 +15,8 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.bootstrap.Theme;
+import org.jboss.windup.bootstrap.ThemeProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -30,13 +32,15 @@ public class GreetingListener implements ContainerLifecycleListener
     @Override
     public void beforeStart(Furnace furnace) throws ContainerException
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw, true);
         out.println();
         out.println("");
-        out.print("Migration Toolkit for Applications (MTA) CLI, version [ ");
+        out.print(theme.getBrandNameLong() + " CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ] - by Red Hat, Inc. [ https://developers.redhat.com/products/mta/overview/ ]");
+        out.print(" ] - [ " + theme.getBrandDocumentationUrl() + " ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());

@@ -28,8 +28,20 @@
             <groupId>org.apache.tinkerpop</groupId>
             <artifactId>gremlin-core</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
+            <exclusions>
+                <!-- excluded due to Jackson Databind CVEs -->
+                <exclusion>
+                    <groupId>org.apache.tinkerpop</groupId>
+                    <artifactId>gremlin-shaded</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
+        <!-- added to replace the lack of org.apache.tinkerpop:gremlin-shaded -->
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>gremlin-shaded</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>

@@ -11,7 +11,8 @@ import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.addons.AddImmutableAddonDirectoryCommand;
 import org.jboss.windup.tooling.ToolingRMIServer;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 
 public class ServerModeCommand implements Command
 {
@@ -49,6 +50,8 @@ public class ServerModeCommand implements Command
     @Override
     public CommandResult execute()
     {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         try
         {
             furnace = FurnaceFactory.getInstance();
@@ -63,7 +66,7 @@ public class ServerModeCommand implements Command
             }
             catch (Exception e)
             {
-                System.out.println("Failed to start "+Util.WINDUP_BRAND_NAME_ACRONYM+"!");
+                System.out.println("Failed to start " + theme.getBrandNameAcronym() + "!");
                 if (e.getMessage() != null)
                     System.out.println("Failure reason: " + e.getMessage());
                 e.printStackTrace();
@@ -73,7 +76,7 @@ public class ServerModeCommand implements Command
         }
         catch (Throwable t)
         {
-            System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM+" execution failed due to: " + t.getMessage());
+            System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
 
