@@ -13,6 +13,7 @@ import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
+import org.jboss.windup.graph.model.DependencyLocation;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -95,6 +96,11 @@ public class Project extends ParameterizedGraphCondition
                     {
                         passed = passed && artifact.getVersion().validate(maven.getVersion());
                     }
+
+                    if (passed && artifact.getLocations() != null) {
+                        passed &= artifact.getLocations().contains(dependency.getDependencyLocation());
+                    }
+
                     if (passed)
                     {
                         dependency.getFileLocationReference().forEach(location -> {

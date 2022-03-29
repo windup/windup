@@ -9,6 +9,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DependencyLocation;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.logging.Logger;
 
 /**
@@ -323,8 +325,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             mavenProjectModel.setParentMavenPOM(parent);
         }
 
-        NodeList nodes = XmlUtil
-                    .xpathNodeList(document, "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency", namespaces);
+        NodeList nodes = XmlUtil.xpathNodeList(document, getDependenciesXpath(), namespaces);
         for (int i = 0, j = nodes.getLength(); i < j; i++)
         {
             Node node = nodes.item(i);
@@ -352,27 +353,65 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
                 }
+
+                DependencyLocation dependencyLocation = extractDependencyLocation(node);
+
                 ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
                 projectDep.setClassifier(dependencyClassifier);
                 projectDep.setScope(dependencyScope);
                 projectDep.setType(dependencyType);
                 projectDep.setProject(dependency);
-                int lineNumber = (int) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
-                int columnNumber = (int) node.getUserData(LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
-                FileLocationModel fileLocation = new GraphService<>(event.getGraphContext(), FileLocationModel.class).create();
-                String sourceSnippet = XmlUtil.nodeToString(node);
-                fileLocation.setSourceSnippit(sourceSnippet);
-                fileLocation.setLineNumber(lineNumber);
-                fileLocation.setColumnNumber(columnNumber);
-                fileLocation.setLength(node.toString().length());
-                fileLocation.setFile(xmlFileModel);
-                List<FileLocationModel> fileLocationList = new ArrayList<>(1);
-                fileLocationList.add(fileLocation);
+                projectDep.setDependencyLocation(dependencyLocation);
+
+                List<FileLocationModel> fileLocationList = extractFileLocations(event, xmlFileModel, node);
                 projectDep.setFileLocationReference(fileLocationList);
                 mavenProjectModel.addDependency(projectDep);
             }
         }
         return mavenProjectModel;
+    }
+
+    private String getDependenciesXpath() {
+        String parent               = "/pom:project/pom:parent | /project/parent";
+        String dependencies         = "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency";
+        String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin";
+        String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency";
+        String pluginManagement     = "/pom:project/pom:pluginManagement/pom:plugins/pom:plugin | /project/pluginManagement/plugins/plugin";
+        return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
+    }
+
+    // TODO: extract to its own class to be able to unit-test it
+    private DependencyLocation extractDependencyLocation(Node node) {
+        if (node.getNodeName().equals("parent")) {
+            return DependencyLocation.PARENT;
+        } else if (node.getNodeName().equals("dependency")) {
+            if (node.getParentNode().getParentNode().getNodeName().equals("dependencyManagement")) {
+                return DependencyLocation.DEPENDENCY_MANAGEMENT;
+            } else {
+                return DependencyLocation.DEPENDENCIES;
+            }
+        } else {
+            if (node.getParentNode().getParentNode().getNodeName().equals("pluginManagement")) {
+                return DependencyLocation.PLUGIN_MANAGEMENT;
+            } else {
+                return DependencyLocation.PLUGINS;
+            }
+        }
+    }
+
+    private List<FileLocationModel> extractFileLocations(GraphRewrite event, XmlFileModel xmlFileModel, Node node) {
+        int lineNumber = (int) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+        int columnNumber = (int) node.getUserData(LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+        FileLocationModel fileLocation = new GraphService<>(event.getGraphContext(), FileLocationModel.class).create();
+        String sourceSnippet = XmlUtil.nodeToString(node);
+        fileLocation.setSourceSnippit(sourceSnippet);
+        fileLocation.setLineNumber(lineNumber);
+        fileLocation.setColumnNumber(columnNumber);
+        fileLocation.setLength(node.toString().length());
+        fileLocation.setFile(xmlFileModel);
+        List<FileLocationModel> fileLocationList = new ArrayList<>(1);
+        fileLocationList.add(fileLocation);
+        return fileLocationList;
     }
 
     /**
