@@ -8,10 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -170,19 +172,21 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
         List<FileModel> inputPaths = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths();
-        boolean isInputApp = inputPaths.stream().anyMatch(inputPath -> inputPath.getFilePath().equals(archiveModel.getFilePath()));
+        final String archiveModelFilePath = archiveModel.getFilePath();
+        boolean isInputApp = inputPaths.stream().anyMatch(inputPath -> inputPath.getFilePath().equals(archiveModelFilePath));
 
         // Do not include libraries found within the artifacts if they are known
-        boolean isKnownLibrary = archiveModel instanceof IgnoredFileModel || archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash()) != null;
+        final String hash = archiveModel.getSHA1Hash();
+        final Coordinate coordinate = archiveIdentificationService.getCoordinate(hash);
+        boolean isKnownLibrary = archiveModel instanceof IgnoredFileModel || coordinate != null;
         boolean analyseKnownLibraries = cfg.isAnalyzeKnownLibraries();
         if (isKnownLibrary && !analyseKnownLibraries && !isInputApp) {
             LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
             
             GraphService.addTypeToModel(event.getGraphContext(), archiveModel, IgnoredArchiveModel.class);
             return;
-        } else {
-            LOG.info(String.format("Library will be analyzed: \"%s, %s\"", archiveModel.getSHA1Hash(), archiveIdentificationService.getCoordinate(archiveModel.getSHA1Hash())));
         }
+        LOG.log(Level.FINE, String.format("Library %s (coordinates %s) with hash %s will be inspected in sub folder %s", archiveModelFilePath, coordinate, hash, parentFileModel.getFilePath()));
 
         FileFilter filter = TrueFileFilter.TRUE;
         if (archiveModel instanceof IdentifiedArchiveModel)
