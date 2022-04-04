@@ -10,8 +10,11 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileLocationService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 
@@ -55,10 +58,23 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
             location.setLineNumber(lineNumber);
             location.setLength(length);
             location.setFile(fileModel);
-
+            if (fileModel instanceof SourceFileModel) {
+                ((SourceFileModel) fileModel).setGenerateSourceReport(true);
+                InlineHintModel inlineHint = location instanceof InlineHintModel ? (InlineHintModel) location
+                        : addTypeToModel(getGraphContext(), location, InlineHintModel.class);
+                if (inlineHint.getTitle() == null) {
+                    inlineHint.setTitle("Transactions report");
+                    inlineHint.setIssueDisplayMode(IssueDisplayMode.DETAIL_ONLY);
+                    inlineHint.setHint("---");
+                    inlineHint.setEffort(0);
+                } else {
+                    inlineHint.setTitle(inlineHint.getTitle() + ", Transactions report");
+                }
+            }
         } else {
             location = fileLocationService.frame((Vertex) locs.get(0));
-            traversal = new GraphTraversalSource(getGraphContext().getGraph()).V(location.getElement()).in(DivaStackTraceModel.LOCATION);
+            traversal = new GraphTraversalSource(getGraphContext().getGraph()).V(location.getElement())
+                    .in(DivaStackTraceModel.LOCATION);
             if (parent == null) {
                 traversal = traversal.not(__.out(DivaStackTraceModel.PARENT));
             } else {
