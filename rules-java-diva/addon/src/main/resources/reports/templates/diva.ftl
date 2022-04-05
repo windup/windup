@@ -108,12 +108,27 @@
                                   <td colspan="${width + 2}" style="padding-left: 20px;">
                                       <#list context.transactions as tx>
                                           <#list tx.ops as op>
+                                              <#if op.sql?? >
+                                                  <#assign optext = op.sql />
+                                              </#if>
+                                              <#if op.endpoint?? >
+                                                  <#if op.endpointMethod?? >
+                                                      <#assign optext = op.endpointMethod.javaClass.qualifiedName + "." + op.endpointMethod.methodName + "( " />
+                                                  <#else>
+                                                      <#assign optext = op.endpoint.endpointName + op.urlPath + "( " />
+                                                  </#if>
+                                                  <#list op.callParams as param>
+                                                     <#assign optext += param.paramName + "=" + param.paramValue + " " />
+                                                  </#list>
+                                                  <#assign optext += ")"/>
+                                              </#if>
+                                              <#if optext??>
                                               <div>
                                                   <table class="table table-striped">
                                                       <thead>
                                                       <tr>
                                                           <th style="font-weight: normal;">
-                                                            <a class="collapse-button" data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"></a>&nbsp;${op.sql}
+                                                            <a class="collapse-button" data-toggle="collapse" href="#op_${context?index}_${tx?index}_${op?index}" aria-expanded="false" aria-controls="op_${context?index}_${tx?index}_${op?index}"></a>&nbsp;${optext}
                                                           </th>
                                                       </tr>
                                                       </thead>
@@ -130,6 +145,7 @@
                                                       </tbody>
                                                   </table>
                                               </div>
+                                              </#if>
                                           </#list>
                                       </#list>
                                   </td>

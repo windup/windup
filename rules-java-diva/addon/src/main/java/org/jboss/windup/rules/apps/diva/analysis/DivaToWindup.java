@@ -100,8 +100,8 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                 } else if (key.equals(URL_PATH)) {
                     ((DivaRestCallOpModel) model).setUrlPath(DivaLauncher.stripBraces((String) value));
 
-                } else if (!key.equals(CLIENT_CLASS)) {
-                    return;
+                } else if (key.equals(CLIENT_CLASS)) {
+                    // do nothing
 
                 } else {
                     DivaRequestParamModel param = new GraphService<DivaRequestParamModel>(gc,

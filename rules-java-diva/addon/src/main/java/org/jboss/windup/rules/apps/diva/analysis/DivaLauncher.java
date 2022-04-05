@@ -143,24 +143,25 @@ public class DivaLauncher extends GraphOperation {
         Path temp = Files.createTempDirectory("diva-temp");
         Util.LOGGER.info("tempdir=" + temp);
 
-        boolean isTreeStructured = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
+        boolean isMultiModular = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
 
-        if (isTreeStructured) {
+        if (isMultiModular) {
             List<MavenProjectModel> mavenProjects = Util.makeList(Util.map(projects, p -> (MavenProjectModel) p));
             for (MavenProjectModel m : mavenProjects) {
                 List<MavenProjectModel> deps = getMavenDeps(m, mavenProjects);
                 if (deps.size() > 1) {
                     // currently wala class loader can have only one parent, so
                     // we can't map dag-like module dependencies to class loader dependencies
-                    isTreeStructured = false;
+                    isMultiModular = false;
                     break;
                 }
             }
         }
 
-        LOG.info("isTreeStructured = " + isTreeStructured);
+        LOG.info("Diva runs in " + (sourceMode ? "source" : "binary") + " mode"
+                + (isMultiModular ? ", with multi-modular analysis." : "."));
 
-        if (isTreeStructured) {
+        if (isMultiModular) {
 
             ModularAnalysisScope mods = new ModularAnalysisScope();
             scope = mods;
@@ -231,7 +232,7 @@ public class DivaLauncher extends GraphOperation {
 
             } else {
                 for (ProjectModel p : projects) {
-                    LOG.info("Project: " + p.toPrettyString());
+                    LOG.fine("Project: " + p.toPrettyString());
 
                     FileModel rootFileModel = p.getRootFileModel();
                     if (rootFileModel instanceof WarArchiveModel) {
@@ -244,7 +245,7 @@ public class DivaLauncher extends GraphOperation {
                         }
 
                     } else if (rootFileModel instanceof JarArchiveModel) {
-                        LOG.info("JAR: " + rootFileModel);
+                        LOG.fine("JAR: " + rootFileModel);
                         if (p instanceof MavenProjectModel) {
                             LOG.info(rootFileModel.getSHA1Hash() + " " + ((MavenProjectModel) p).getMavenIdentifier());
                         } else {
@@ -269,12 +270,14 @@ public class DivaLauncher extends GraphOperation {
             };
         }
 
+        LOG.info("Generating IR from scope = [" + scope + "]");
+
         DivaIRGen.init();
 
         // build the class hierarchy
         IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope, clf);
         LOG.info(cha.getNumberOfClasses() + " classes");
-        LOG.info(Warnings.asString());
+        LOG.fine(Warnings.asString());
 
         Set<IClass> relevantClasses = new HashSet<>();
         Set<IClass> appClasses = new HashSet<>();
@@ -290,7 +293,7 @@ public class DivaLauncher extends GraphOperation {
         entries.addAll(QuarkusAnalysis.getEntries(filteredCha));
 
         if (entries.isEmpty()) {
-            LOG.info("Diva: found no entry methods for anlaysis");
+            LOG.info("Diva: Found no entry methods for anlaysis");
             return;
         }
 
@@ -311,10 +314,10 @@ public class DivaLauncher extends GraphOperation {
             return res;
         });
 
-        LOG.info("building call graph...");
+        LOG.info("Diva: building call graph...");
         CallGraph cg = builder.get();
 
-        LOG.info(CallGraphStats.getStats(cg));
+        LOG.info("Diva: " + CallGraphStats.getStats(cg));
 
         Framework fw = new Framework(cha, cg);
 
@@ -346,10 +349,12 @@ public class DivaLauncher extends GraphOperation {
                 }
                 if (entry != null) {
                     CGNode n = entry;
-                    Trace.Visitor txAnalysis = JDBCAnalysis.getTransactionAnalysis(fw, cxt)
-                            .with(SpringBootAnalysis.getTransactionAnalysis(fw, cxt)
-                                    .with(JPAAnalysis.getTransactionAnalysis(fw, cxt)
-                                            .with(QuarkusAnalysis.getTransactionAnalysis(fw, cxt))));
+                    Trace.Visitor txAnalysis = JDBCAnalysis.getTransactionAnalysis(fw, cxt).with(SpringBootAnalysis
+                            .getTransactionAnalysis(fw, cxt).with(JPAAnalysis.getTransactionAnalysis(fw, cxt)));
+
+                    if (isMultiModular) {
+                        txAnalysis = txAnalysis.with(QuarkusAnalysis.getTransactionAnalysis(fw, cxt));
+                    }
 
                     fw.calculateTransactions(entry, cxt, new Util.LazyReport() {
                         @Override
@@ -404,12 +409,14 @@ public class DivaLauncher extends GraphOperation {
                 failure++;
             }
             if ((success + failure) % 10 == 0) {
-                LOG.info("transaction analysis: " + (success + failure) + "/" + contexts.size() + " (" + failure
+                LOG.info("Diva: transaction analysis: " + (success + failure) + "/" + contexts.size() + " (" + failure
                         + " failures)");
             }
         }
 
-        endpointResolution(gc, projects);
+        if (isMultiModular) {
+            endpointResolution(gc, projects);
+        }
 
         LOG.info("Diva: DONE");
     }
