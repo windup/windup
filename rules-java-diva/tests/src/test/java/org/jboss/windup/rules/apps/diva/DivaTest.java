@@ -100,5 +100,21 @@ public class DivaTest {
         }
     }
 
+    @Test
+    public void testHibernateTutorialWeb() throws IOException {
+        try (GraphContext context = factory.create(true)) {
+            Path inputPath = Paths.get("../../test-files/hibernate-tutorial-web-3.3.2.GA.war");
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup")
+                    .resolve(UUID.randomUUID().toString());
+
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                    .setGraphContext(context)
+                    .setOptionValue(EnableTransactionAnalysisOption.NAME, true)
+                    .addInputPath(inputPath)
+                    .setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
+        }
+    }
+
 
 }
