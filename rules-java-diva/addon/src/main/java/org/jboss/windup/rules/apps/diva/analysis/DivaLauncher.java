@@ -84,6 +84,7 @@ import com.ibm.wala.util.warnings.Warnings;
 
 import io.tackle.diva.Constants;
 import io.tackle.diva.Context;
+import io.tackle.diva.Context.Constraint;
 import io.tackle.diva.Context.EntryConstraint;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
@@ -140,8 +141,8 @@ public class DivaLauncher extends GraphOperation {
         String[] stdlibs;
         ClassLoaderFactory clf;
 
-        Path temp = Files.createTempDirectory("diva-temp");
-        Util.LOGGER.info("tempdir=" + temp);
+        Path temp = cfg.getOutputPath().asFile().toPath().resolve("diva-temp");
+        LOG.info("Diva: tempdir=" + temp);
 
         boolean isMultiModular = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
 
@@ -247,9 +248,9 @@ public class DivaLauncher extends GraphOperation {
                     } else if (rootFileModel instanceof JarArchiveModel) {
                         LOG.fine("JAR: " + rootFileModel);
                         if (p instanceof MavenProjectModel) {
-                            LOG.info(rootFileModel.getSHA1Hash() + " " + ((MavenProjectModel) p).getMavenIdentifier());
+                            LOG.fine(rootFileModel.getSHA1Hash() + " " + ((MavenProjectModel) p).getMavenIdentifier());
                         } else {
-                            LOG.info(rootFileModel.getSHA1Hash() + " "
+                            LOG.fine(rootFileModel.getSHA1Hash() + " "
                                     + ((JarArchiveModel) rootFileModel).getArchiveName());
                         }
                         if (rootFileModel instanceof IgnoredArchiveModel)
@@ -323,7 +324,7 @@ public class DivaLauncher extends GraphOperation {
 
         for (CGNode n : cg) {
             if (entries.contains(n.getMethod())) {
-                fw.recordContraint(new Context.EntryConstraint(n));
+                fw.recordContraint(new EntryConstraint(n));
             }
         }
         fw.traverse(cg.getNode(0), ServletAnalysis.getContextualAnalysis(fw));
@@ -342,13 +343,12 @@ public class DivaLauncher extends GraphOperation {
 
             try {
                 CGNode entry = null;
-                for (Context.Constraint c : cxt) {
-                    if (c instanceof Context.EntryConstraint) {
-                        entry = ((Context.EntryConstraint) c).node();
+                for (Constraint c : cxt) {
+                    if (c instanceof EntryConstraint) {
+                        entry = ((EntryConstraint) c).node();
                     }
                 }
                 if (entry != null) {
-                    CGNode n = entry;
                     Trace.Visitor txAnalysis = JDBCAnalysis.getTransactionAnalysis(fw, cxt).with(SpringBootAnalysis
                             .getTransactionAnalysis(fw, cxt).with(JPAAnalysis.getTransactionAnalysis(fw, cxt)));
 
@@ -362,7 +362,7 @@ public class DivaLauncher extends GraphOperation {
                             report.add((Report.Named map) -> {
                                 map.put(DivaToWindup.CONSTRAINTS, (Report r) -> {
                                     DivaToWindup<DivaConstraintModel> cs = (DivaToWindup<DivaConstraintModel>) r;
-                                    for (Context.Constraint c : cxt) {
+                                    for (Constraint c : cxt) {
                                         if (c.category().equals(Report.ENTRY)) {
                                             IMethod m = ((EntryConstraint) c).node().getMethod();
                                             DivaEntryMethodModel model = entryMethodService.getOrCreate(

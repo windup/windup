@@ -110,14 +110,15 @@
                                           <#list tx.ops as op>
                                               <#if op.sql?? >
                                                   <#assign optext = op.sql />
-                                              </#if>
-                                              <#if op.endpoint?? >
+                                              <#else>
                                                   <#if op.endpointMethod?? >
-                                                      <#assign optext = op.endpointMethod.javaClass.qualifiedName + "." + op.endpointMethod.methodName + "( " />
+                                                     <#assign optext = op.endpointMethod.javaClass.className + "." + op.endpointMethod.methodName + "( " />
+                                                  <#elseif op.urlPath?? >
+                                                     <#assign optext = op.method.javaClass.className + op.urlPath + "( " />
                                                   <#else>
-                                                      <#assign optext = op.endpoint.endpointName + op.urlPath + "( " />
+                                                     <#assign optext = op.method.javaClass.className + "." + op.method.methodName + "( " />
                                                   </#if>
-                                                  <#list op.callParams as param>
+                                                  <#list op.callParams! as param>
                                                      <#assign optext += param.paramName + "=" + param.paramValue + " " />
                                                   </#list>
                                                   <#assign optext += ")"/>
