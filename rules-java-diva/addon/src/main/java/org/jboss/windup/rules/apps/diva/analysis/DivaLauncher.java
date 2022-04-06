@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -236,25 +236,35 @@ public class DivaLauncher extends GraphOperation {
                     LOG.fine("Project: " + p.toPrettyString());
 
                     FileModel rootFileModel = p.getRootFileModel();
+
+                    if (rootFileModel.isDirectory()) {
+                        scope.addToScope(ClassLoaderReference.Application,
+                                new BinaryDirectoryTreeModule(rootFileModel.asFile()));
+
+                    }
+                    if (!(rootFileModel instanceof ArchiveModel))
+                        continue;
+
+                    Path unzippedPath = Paths.get(((ArchiveModel) rootFileModel).getUnzippedDirectory());
+
                     if (rootFileModel instanceof WarArchiveModel) {
-                        // use WEB-INF/classes and lib?
-                        Path unzippedPath = Paths.get(((WarArchiveModel) rootFileModel).getUnzippedDirectory());
                         Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
                         if (classRoot.toFile().isDirectory()) {
                             scope.addToScope(ClassLoaderReference.Application,
                                     new BinaryDirectoryTreeModule(classRoot.toFile()));
                         }
 
+                    } else if (rootFileModel instanceof JarArchiveModel
+                            && Util.any(projects, p2 -> p2.getRootFileModel().asFile().getAbsolutePath()
+                                    .startsWith(unzippedPath.normalize().toString()))) {
+
+                        scope.addToScope(ClassLoaderReference.Application,
+                                new BinaryDirectoryTreeModule(unzippedPath.toFile()));
+
                     } else if (rootFileModel instanceof JarArchiveModel) {
-                        LOG.fine("JAR: " + rootFileModel);
-                        if (p instanceof MavenProjectModel) {
-                            LOG.fine(rootFileModel.getSHA1Hash() + " " + ((MavenProjectModel) p).getMavenIdentifier());
-                        } else {
-                            LOG.fine(rootFileModel.getSHA1Hash() + " "
-                                    + ((JarArchiveModel) rootFileModel).getArchiveName());
-                        }
                         if (rootFileModel instanceof IgnoredArchiveModel)
                             continue;
+
                         scope.addToScope(ClassLoaderReference.Application,
                                 new JarFileModule(new JarFile(rootFileModel.getFilePath())));
                     }
