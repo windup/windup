@@ -304,7 +304,7 @@ public class DivaLauncher extends GraphOperation {
         entries.addAll(QuarkusAnalysis.getEntries(filteredCha));
 
         if (entries.isEmpty()) {
-            LOG.info("Diva: Found no entry methods for anlaysis");
+            LOG.info("Diva: Found no entry methods for analysis");
             return;
         }
 
