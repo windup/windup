@@ -74,6 +74,7 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraphStats;
+import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.AnnotationsReader.ConstantElementValue;
@@ -83,9 +84,9 @@ import com.ibm.wala.util.strings.StringStuff;
 import com.ibm.wala.util.warnings.Warnings;
 
 import io.tackle.diva.Constants;
-import io.tackle.diva.Context;
 import io.tackle.diva.Constraint;
 import io.tackle.diva.Constraint.EntryConstraint;
+import io.tackle.diva.Context;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
@@ -104,6 +105,13 @@ public class DivaLauncher extends GraphOperation {
 
     private static final Logger LOG = Logger.getLogger(DivaLauncher.class.getName());
 
+    @SuppressWarnings("serial")
+    public static class DivaException extends RuntimeException {
+        public DivaException(Exception e) {
+            super(e);
+        }
+    }
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context) {
 
@@ -117,11 +125,12 @@ public class DivaLauncher extends GraphOperation {
             Util.injectedCall(DivaIRGen.advices(), new String[] { "org.jboss.windup.rules.apps.diva.analysis" },
                     new String[] {}, DivaLauncher.class.getName() + ".launch", event, context);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DivaException(e);
         }
     }
 
-    public static void launch(GraphRewrite event, EvaluationContext context) throws Exception {
+    public static void launch(GraphRewrite event, EvaluationContext context)
+            throws IOException, ClassHierarchyException {
         GraphContext gc = event.getGraphContext();
 
         Boolean sourceMode = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(SourceModeOption.NAME,
