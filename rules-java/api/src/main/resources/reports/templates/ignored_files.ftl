@@ -25,7 +25,7 @@
                 <th>Ignored Reason</th>
             </tr>
 
-            <#list reportModel.ignoredFiles as file>
+            <#list reportModel.ignoredFiles?sort_by(["fileName"]) as file>
             <tr>
                 <td> <#if file.fileName?has_content> ${file.fileName} </#if> </td>
                 <td> <#if file.filePath?has_content> ${file.filePath} </#if> </td>
