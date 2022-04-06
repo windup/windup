@@ -74,7 +74,6 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraphStats;
-import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.AnnotationsReader.ConstantElementValue;
@@ -84,9 +83,9 @@ import com.ibm.wala.util.strings.StringStuff;
 import com.ibm.wala.util.warnings.Warnings;
 
 import io.tackle.diva.Constants;
+import io.tackle.diva.Context;
 import io.tackle.diva.Constraint;
 import io.tackle.diva.Constraint.EntryConstraint;
-import io.tackle.diva.Context;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
@@ -129,8 +128,7 @@ public class DivaLauncher extends GraphOperation {
         }
     }
 
-    public static void launch(GraphRewrite event, EvaluationContext context)
-            throws IOException, ClassHierarchyException {
+    public static void launch(GraphRewrite event, EvaluationContext context) throws Exception {
         GraphContext gc = event.getGraphContext();
 
         Boolean sourceMode = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(SourceModeOption.NAME,
@@ -259,16 +257,16 @@ public class DivaLauncher extends GraphOperation {
                     if (rootFileModel instanceof WarArchiveModel) {
                         Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
                         if (classRoot.toFile().isDirectory()) {
-                            scope.addToScope(ClassLoaderReference.Application,
-                                    new BinaryDirectoryTreeModule(classRoot.toFile()));
+                            scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                                    new SourceDirectoryTreeModule(classRoot.toFile()));
                         }
 
                     } else if (rootFileModel instanceof JarArchiveModel
                             && Util.any(projects, p2 -> p2.getRootFileModel().asFile().getAbsolutePath()
                                     .startsWith(unzippedPath.normalize().toString()))) {
 
-                        scope.addToScope(ClassLoaderReference.Application,
-                                new BinaryDirectoryTreeModule(unzippedPath.toFile()));
+                        scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                                new SourceDirectoryTreeModule(unzippedPath.toFile()));
 
                     } else if (rootFileModel instanceof JarArchiveModel) {
                         if (rootFileModel instanceof IgnoredArchiveModel)
@@ -433,9 +431,7 @@ public class DivaLauncher extends GraphOperation {
             }
         }
 
-        if (isMultiModular) {
-            endpointResolution(gc, projects);
-        }
+        endpointResolution(gc, projects);
 
         LOG.info("Diva: DONE");
     }
@@ -539,7 +535,7 @@ public class DivaLauncher extends GraphOperation {
 
         for (DivaContextModel cxt : gc.findAll(DivaContextModel.class)) {
             ProjectModel p = cxt.traverse(g -> g.out(DivaContextModel.CONSTRAINTS).in(JavaClassModel.JAVA_METHOD)
-                    .out(JavaClassModel.CLASS_FILE, JavaClassModel.ORIGINAL_SOURCE)
+                    .out(JavaClassModel.CLASS_FILE, JavaClassModel.ORIGINAL_SOURCE, JavaClassModel.CLASS_FILE)
                     .in(ProjectModel.PROJECT_MODEL_TO_FILE)).next(ProjectModel.class);
             if (p != null) {
                 DivaAppModel app = toApp.apply(p);
