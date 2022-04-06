@@ -73,6 +73,11 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
 
     }
 
+    @Override
+    public void add(Integer data) {
+
+    }
+
     public static class Named<T extends WindupVertexFrame> implements Report.Named {
 
         GraphContext gc;

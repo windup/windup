@@ -84,8 +84,8 @@ import com.ibm.wala.util.warnings.Warnings;
 
 import io.tackle.diva.Constants;
 import io.tackle.diva.Context;
-import io.tackle.diva.Context.Constraint;
-import io.tackle.diva.Context.EntryConstraint;
+import io.tackle.diva.Constraint;
+import io.tackle.diva.Constraint.EntryConstraint;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
