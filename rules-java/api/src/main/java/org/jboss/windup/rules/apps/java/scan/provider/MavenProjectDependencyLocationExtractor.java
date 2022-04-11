@@ -6,7 +6,7 @@ import org.w3c.dom.Node;
 /**
  * Given a Node in a Maven POM file which contains a dependency, extracts its location.
  *
- * @author jmle
+ * @author <a href="mailto:jleflete@redhat.com">Juan Manuel Leflet Estrada</a>
  */
 public class MavenProjectDependencyLocationExtractor {
     public MavenProjectDependencyLocationExtractor() {
