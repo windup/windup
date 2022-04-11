@@ -63,6 +63,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
     }
 
+    private final MavenProjectDependencyLocationExtractor mavenProjectDependencyLocationExtractor = new MavenProjectDependencyLocationExtractor();
+
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
@@ -354,7 +356,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                                 dependencyVersion));
                 }
 
-                DependencyLocation dependencyLocation = extractDependencyLocation(node);
+                DependencyLocation dependencyLocation = mavenProjectDependencyLocationExtractor.extractDependencyLocation(node);
 
                 ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
                 projectDep.setClassifier(dependencyClassifier);
@@ -378,25 +380,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency";
         String pluginManagement     = "/pom:project/pom:pluginManagement/pom:plugins/pom:plugin | /project/pluginManagement/plugins/plugin";
         return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
-    }
-
-    // TODO: extract to its own class to be able to unit-test it
-    private DependencyLocation extractDependencyLocation(Node node) {
-        if (node.getNodeName().equals("parent")) {
-            return DependencyLocation.PARENT;
-        } else if (node.getNodeName().equals("dependency")) {
-            if (node.getParentNode().getParentNode().getNodeName().equals("dependencyManagement")) {
-                return DependencyLocation.DEPENDENCY_MANAGEMENT;
-            } else {
-                return DependencyLocation.DEPENDENCIES;
-            }
-        } else {
-            if (node.getParentNode().getParentNode().getNodeName().equals("pluginManagement")) {
-                return DependencyLocation.PLUGIN_MANAGEMENT;
-            } else {
-                return DependencyLocation.PLUGINS;
-            }
-        }
     }
 
     private List<FileLocationModel> extractFileLocations(GraphRewrite event, XmlFileModel xmlFileModel, Node node) {
