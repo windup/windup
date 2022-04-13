@@ -87,6 +87,10 @@ public class DiscoverHardcodedIPAddressTest
             expectedIPs.add("192.168.0.2");
             expectedIPs.add("192.168.0.7");
             expectedIPs.add("192.168.0.13");
+            expectedIPs.add("10.10.1.0");
+            expectedIPs.add("10.10.1.1");
+            expectedIPs.add("10.10.1.2");
+            expectedIPs.add("10.10.1.3");
 
             Set<String> unexpectedIPs = new HashSet<>();
             unexpectedIPs.add("192.168.0.3");
@@ -96,6 +100,7 @@ public class DiscoverHardcodedIPAddressTest
             unexpectedIPs.add("192.168.270.8");
             unexpectedIPs.add("192.168.0.9.3.4");
             unexpectedIPs.add("192.168.0.12");
+            unexpectedIPs.add("10.10.1.4");
 
             InlineHintService service = new InlineHintService(context);
             Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
