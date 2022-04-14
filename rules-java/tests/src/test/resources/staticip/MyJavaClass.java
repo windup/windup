@@ -1,12 +1,12 @@
 package org.jboss.windup.rules.tests;
 
-public class Main {
+public class MyJavaClass {
 
     private String myAddress1 = "10.10.1.0";
     String myAddress2 = "10.10.1.1";
 
     public static void main(String[] args) {
-        Main main = new Main();
+        MyJavaClass main = new MyJavaClass();
 
         System.out.println(main.myAddress1);
         System.out.println(main.myAddress2);

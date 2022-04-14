@@ -24,6 +24,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.condition.FileContent;
@@ -101,6 +102,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
     private boolean ignoreLine(GraphContext context, FileLocationModel model)
     {
         boolean isPropertiesFile = model.getFile() instanceof PropertiesModel;
+        boolean isJavaFile = model.getFile() instanceof JavaSourceFileModel;
 
         int lineNumber = model.getLineNumber();
         LineIterator li = null;
@@ -124,6 +126,8 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
                         return true;
                     else if (isMavenVersionTag(context, model))
+                        return true;
+                    else if (isJavaFile && StringUtils.startsWith(line, "//"))
                         return true;
                     else
                         return false;
