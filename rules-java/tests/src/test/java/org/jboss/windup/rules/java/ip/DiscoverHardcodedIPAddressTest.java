@@ -104,30 +104,7 @@ public class DiscoverHardcodedIPAddressTest
             unexpectedIPs.add("192.168.0.12");
             unexpectedIPs.add("10.10.1.4");
 
-            InlineHintService service = new InlineHintService(context);
-            Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
-            int numberFound = 0;
-            for (InlineHintModel hint : service.findAll())
-            {
-                if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
-                {
-                    Matcher matcher = ipExtractor.matcher(hint.getHint());
-                    if (matcher.find())
-                    {
-                        String ip = matcher.group(1);
-                        if (unexpectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") should not have been marked valid");
-                        else if (!expectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
-                        numberFound++;
-                    }
-                    else
-                    {
-                        Assert.fail("Hint format not recognized: " + hint.getHint());
-                    }
-                }
-            }
-            Assert.assertEquals(expectedIPs.size(), numberFound);
+            assertExpectedAndUnexpectedIPs(context, expectedIPs, unexpectedIPs);
         }
     }
 
@@ -161,30 +138,36 @@ public class DiscoverHardcodedIPAddressTest
             Set<String> unexpectedIPs = new HashSet<>();
             unexpectedIPs.add("10.10.1.4");
 
-            InlineHintService service = new InlineHintService(context);
-            Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
-            int numberFound = 0;
-            for (InlineHintModel hint : service.findAll())
+            assertExpectedAndUnexpectedIPs(context, expectedIPs, unexpectedIPs);
+        }
+    }
+
+    private void assertExpectedAndUnexpectedIPs(GraphContext context, Set<String> expectedIPs, Set<String> unexpectedIPs) {
+        InlineHintService service = new InlineHintService(context);
+        Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
+        int numberFound = 0;
+
+        for (InlineHintModel hint : service.findAll())
+        {
+            if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
             {
-                if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
+                Matcher matcher = ipExtractor.matcher(hint.getHint());
+                if (matcher.find())
                 {
-                    Matcher matcher = ipExtractor.matcher(hint.getHint());
-                    if (matcher.find())
-                    {
-                        String ip = matcher.group(1);
-                        if (unexpectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") should not have been marked valid");
-                        else if (!expectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
-                        numberFound++;
-                    }
-                    else
-                    {
-                        Assert.fail("Hint format not recognized: " + hint.getHint());
-                    }
+                    String ip = matcher.group(1);
+                    if (unexpectedIPs.contains(ip))
+                        Assert.fail("This IP (" + ip + ") should not have been marked valid");
+                    else if (!expectedIPs.contains(ip))
+                        Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
+                    numberFound++;
+                }
+                else
+                {
+                    Assert.fail("Hint format not recognized: " + hint.getHint());
                 }
             }
-            Assert.assertEquals(expectedIPs.size(), numberFound);
         }
+
+        Assert.assertEquals(expectedIPs.size(), numberFound);
     }
 }
