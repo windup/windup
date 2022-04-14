@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -56,6 +57,7 @@ import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
@@ -104,13 +106,6 @@ public class DivaLauncher extends GraphOperation {
 
     private static final Logger LOG = Logger.getLogger(DivaLauncher.class.getName());
 
-    @SuppressWarnings("serial")
-    public static class DivaException extends RuntimeException {
-        public DivaException(Exception e) {
-            super(e);
-        }
-    }
-
     @Override
     public void perform(GraphRewrite event, EvaluationContext context) {
 
@@ -124,7 +119,7 @@ public class DivaLauncher extends GraphOperation {
             Util.injectedCall(DivaIRGen.advices(), new String[] { "org.jboss.windup.rules.apps.diva.analysis" },
                     new String[] {}, DivaLauncher.class.getName() + ".launch", event, context);
         } catch (Exception e) {
-            throw new DivaException(e);
+            throw new WindupException(e);
         }
     }
 
@@ -226,7 +221,7 @@ public class DivaLauncher extends GraphOperation {
                 }
             };
             // add standard libraries to scope
-            stdlibs = Framework.loadStandardLib(scope, temp);
+            String[] stdlibs_ = Framework.loadStandardLib(scope, temp);
             FileUtils.forceDeleteOnExit(temp.toFile());
 
             if (sourceMode) {
@@ -237,8 +232,10 @@ public class DivaLauncher extends GraphOperation {
                     scope.addToScope(JavaSourceAnalysisScope.SOURCE,
                             new SourceDirectoryTreeModule(new File(sourceDir)));
                 }
+                stdlibs = stdlibs_;
 
             } else {
+                List<String> stdList = new ArrayList(Arrays.asList(stdlibs_));
                 for (ProjectModel p : projects) {
                     LOG.fine("Project: " + p.toPrettyString());
 
@@ -269,6 +266,7 @@ public class DivaLauncher extends GraphOperation {
                                 new SourceDirectoryTreeModule(unzippedPath.toFile()));
 
                     } else if (rootFileModel instanceof JarArchiveModel) {
+                        stdList.add(rootFileModel.getFilePath());
                         if (rootFileModel instanceof IgnoredArchiveModel)
                             continue;
 
@@ -277,6 +275,7 @@ public class DivaLauncher extends GraphOperation {
                     }
                 }
 
+                stdlibs = stdList.toArray(new String[0]);
             }
 
             clf = new ECJClassLoaderFactory(scope.getExclusions()) {
@@ -373,7 +372,7 @@ public class DivaLauncher extends GraphOperation {
                         txAnalysis = txAnalysis.with(QuarkusAnalysis.getTransactionAnalysis(fw, cxt));
                     }
 
-                    fw.calculateTransactions(entry, cxt, new Util.LazyReport() {
+                    fw.calculateTransactionsWithTimeout(entry, cxt, new Util.LazyReport() {
                         @Override
                         public void accept(Report.Builder txs) {
                             report.add((Report.Named map) -> {

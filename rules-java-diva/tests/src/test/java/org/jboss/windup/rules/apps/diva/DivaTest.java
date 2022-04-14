@@ -26,7 +26,6 @@ import org.jboss.windup.rules.apps.diva.model.DivaAppModel;
 import org.jboss.windup.rules.apps.diva.model.DivaOpModel;
 import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.util.Assert;
@@ -107,14 +106,14 @@ public class DivaTest {
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup")
                     .resolve(UUID.randomUUID().toString());
 
-            WindupConfiguration windupConfiguration = new WindupConfiguration()
-                    .setGraphContext(context)
-                    .setOptionValue(EnableTransactionAnalysisOption.NAME, true)
-                    .addInputPath(inputPath)
+            WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(context)
+                    .setOptionValue(EnableTransactionAnalysisOption.NAME, true).addInputPath(inputPath)
                     .setOutputDirectory(outputPath);
+
+            windupConfiguration.setAlwaysHaltOnException(true);
+
             processor.execute(windupConfiguration);
         }
     }
-
 
 }
