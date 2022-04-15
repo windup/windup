@@ -254,16 +254,20 @@ public class DivaLauncher extends GraphOperation {
                     if (rootFileModel instanceof WarArchiveModel) {
                         Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
                         if (classRoot.toFile().isDirectory()) {
-                            scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                                    new SourceDirectoryTreeModule(classRoot.toFile()));
+                            //scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                            //        new SourceDirectoryTreeModule(classRoot.toFile()));
+                            scope.addToScope(ClassLoaderReference.Application,
+                                    new BinaryDirectoryTreeModule(classRoot.toFile()));
                         }
 
                     } else if (rootFileModel instanceof JarArchiveModel
                             && Util.any(projects, p2 -> p2.getRootFileModel().asFile().getAbsolutePath()
                                     .startsWith(unzippedPath.normalize().toString()))) {
 
-                        scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                                new SourceDirectoryTreeModule(unzippedPath.toFile()));
+                        //scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                        //        new SourceDirectoryTreeModule(unzippedPath.toFile()));
+                        scope.addToScope(ClassLoaderReference.Application,
+                                new BinaryDirectoryTreeModule(unzippedPath.toFile()));
 
                     } else if (rootFileModel instanceof JarArchiveModel) {
                         stdList.add(rootFileModel.getFilePath());

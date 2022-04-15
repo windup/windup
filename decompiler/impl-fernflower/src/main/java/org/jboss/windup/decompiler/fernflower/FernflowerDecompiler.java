@@ -50,6 +50,7 @@ public class FernflowerDecompiler extends AbstractDecompiler
         Map<String, Object> options = new HashMap<>();
         options.put(IFernflowerPreferences.MAX_PROCESSING_METHOD, 30);
         options.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
+        options.put(IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1");
         return options;
     }
 
@@ -95,6 +96,7 @@ public class FernflowerDecompiler extends AbstractDecompiler
 
                     ClassDecompileRequest firstRequest = requests.get(0);
                     List<String> classFiles = pathsFromDecompilationRequests(requests);
+
                     FernFlowerResultSaver resultSaver = getResultSaver(
                                 pathsFromDecompilationRequests(requests), firstRequest.getOutputDirectory().toFile(),
                                 listener);

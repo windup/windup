@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,9 +28,12 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.model.LineMappingModel;
 import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.service.LineMappingService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -174,7 +178,12 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile) {
+            fileDecompiled(inputPath, decompiledOutputFile, null);
+        }
+
+        @Override
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile, int[] lineMapping)
         {
             if (event.shouldWindupStop())
             {
@@ -212,8 +221,17 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
-                        handleDecompiledJavaFile(decompiledFileModel, fileService, classFilePath);
+                        JavaSourceFileModel sourceFileModel = handleDecompiledJavaFile(decompiledFileModel, fileService, classFilePath);
+
+                        if (lineMapping != null && lineMapping.length > 0)
+                        {
+                            LineMappingService mappingService = new LineMappingService(event.getGraphContext());
+                            LineMappingModel mappingModel = mappingService.create(lineMapping);
+                            sourceFileModel.setLineMapping(mappingModel);
+                        }
                     }
+
+
                     if (atomicInteger.incrementAndGet() % 100 == 0)
                     {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ")");
@@ -254,7 +272,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     return decompiledFileModel;
                 }
 
-                private void handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException
+                private JavaSourceFileModel handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException
                 {
                     if (!(decompiledFileModel instanceof JavaSourceFileModel))
                     {
@@ -306,6 +324,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                                 "Failed to find original JavaClassFileModel for decompiled Java file: "
                                         + decompiledOutputFile + " at: " + classFilePath.toString());
                     }
+                    return decompiledSourceFileModel;
                 }
 
             };
