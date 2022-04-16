@@ -1,9 +1,13 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 
 import org.jboss.forge.roaster._shade.org.eclipse.core.internal.preferences.Base64;
 import org.jboss.windup.graph.GraphContext;
@@ -25,7 +29,15 @@ public class LineMappingService extends GraphService<LineMappingModel> {
         if (data != null) {
             ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
             byteBuffer.asIntBuffer().put(data);
-            String encodedData = new String(Base64.encode(byteBuffer.array()));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            DeflaterOutputStream defl = new DeflaterOutputStream(out);
+            try {
+                defl.write(byteBuffer.array());
+                defl.close();
+            } catch (IOException e) {
+               return model;
+            }
+            String encodedData = new String(Base64.encode(out.toByteArray()));
             model.setEncodedMapping(encodedData);
         }
         return model;
@@ -50,7 +62,15 @@ public class LineMappingService extends GraphService<LineMappingModel> {
         String encoded = model.getEncodedMapping();
         if (encoded != null && !encoded.isEmpty()) { 
             byte[] bytes = Base64.decode(encoded.getBytes());
-            IntBuffer data = ByteBuffer.wrap(bytes).asIntBuffer();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            InflaterOutputStream infl = new InflaterOutputStream(out);
+            try {
+                infl.write(bytes);
+                infl.close();
+            } catch (IOException e) {
+                return lineMapping;
+            }
+            IntBuffer data = ByteBuffer.wrap(out.toByteArray()).asIntBuffer();
             while (data.hasRemaining()) {
                 lineMapping.put(data.get(), data.get());
             }
