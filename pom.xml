@@ -222,6 +222,12 @@
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -565,28 +571,14 @@
         </profile>
 
         <profile>
-            <id>mta</id>
-            <activation>
-                <property>
-                    <name>!community</name>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
-                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
-            </properties>
-        </profile>
-        <profile>
             <id>windup</id>
             <activation>
                 <property>
-                    <name>community</name>
+                    <name>!downstream</name>
                 </property>
             </activation>
             <properties>
-                <distribution.brand.name>Tackle Analysis</distribution.brand.name>
+                <distribution.brand.name>Windup</distribution.brand.name>
                 <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
                 <distribution.brand.documentation.url>https://github.com/windup/windup/wiki/</distribution.brand.documentation.url>
                 <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
@@ -596,8 +588,71 @@
                     <resource>
                         <directory>src/main/resources-windup</directory>
                     </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mta</value>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources-mta</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>tackle</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>tackle</value>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Tackle</distribution.brand.name>
+                <distribution.brand.name-acronym>TACKLE</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://tackle-docs.konveyor.io/documentation/doc-installing-and-using-tackle/master/index.html</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>tackle-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-tackle</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>mtr</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mtr</value>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Runtimes by Red Hat (MTA)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTR</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mtr-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-mtr</directory>
                     </resource>
                 </resources>
             </build>
