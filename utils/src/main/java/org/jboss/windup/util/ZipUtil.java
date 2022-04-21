@@ -168,7 +168,7 @@ public class ZipUtil
             ZipInputStream zis = new ZipInputStream(is);
             ZipEntry entry;
             List<String> results = new ArrayList<>();
-            while ((entry = zis.getNextEntry()) != null)
+            while ((entry = getNextEntry(zis)) != null)
             {
                 String fullPath = parentPath + "/" + entry.getName();
                 results.add(relativeOnly ? entry.getName() : fullPath);
@@ -183,6 +183,20 @@ public class ZipUtil
         {
             System.err.println("Could not read file: " + parentPath + " due to: " + e.getMessage());
             return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Return the next Entry of a ZipInputStream. If the nextEntry can not be read then kip it and continue with the next one
+     * @param zis
+     * @return next zip entry
+     * @throws IOException
+     */
+    public static ZipEntry getNextEntry(ZipInputStream zis) throws IOException {
+        try {
+            return zis.getNextEntry();
+        } catch (IllegalArgumentException e) {
+            return getNextEntry(zis);
         }
     }
 
