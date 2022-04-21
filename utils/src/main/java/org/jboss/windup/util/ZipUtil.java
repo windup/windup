@@ -187,12 +187,12 @@ public class ZipUtil
     }
 
     /**
-     * Return the next Entry of a ZipInputStream. If the nextEntry can not be read then kip it and continue with the next one
-     * @param zis
+     * Return the next Entry of a ZipInputStream. If the nextEntry can not be read then skip it and continue with the next one
+     * @param zis The ZIP stream to be used
      * @return next zip entry
      * @throws IOException
      */
-    public static ZipEntry getNextEntry(ZipInputStream zis) throws IOException {
+    private static ZipEntry getNextEntry(ZipInputStream zis) throws IOException {
         try {
             return zis.getNextEntry();
         } catch (IllegalArgumentException e) {
