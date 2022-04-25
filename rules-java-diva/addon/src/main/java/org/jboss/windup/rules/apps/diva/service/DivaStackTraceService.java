@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.FileLocationService;
@@ -37,12 +37,20 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
         // FileModel fileModel = fileService.createByFilePath(filePath);
-        GraphTraversal<?, ?> traversal = getGraphContext().getQuery(FileLocationModel.class).getRawTraversal()
-                .has(FileLocationModel.COLUMN_NUMBER, columnNumber).has(FileLocationModel.LINE_NUMBER, lineNumber)
-                .has(FileLocationModel.LENGTH, length)
-                .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
+        // GraphTraversal<?, ?> traversal =
+        // getGraphContext().getQuery(FileLocationModel.class).getRawTraversal()
+        // .has(FileLocationModel.COLUMN_NUMBER,
+        // columnNumber).has(FileLocationModel.LINE_NUMBER, lineNumber)
+        // .has(FileLocationModel.LENGTH, length)
+        // .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
 
-        List<?> locs = traversal.toList();
+        List<? extends FileLocationModel> locs = fileModel
+                .traverse(g -> g.in(FileReferenceModel.FILE_MODEL).has(WindupFrame.TYPE_PROP, FileLocationModel.TYPE)
+                        .has(FileLocationModel.COLUMN_NUMBER, columnNumber)
+                        .has(FileLocationModel.LINE_NUMBER, lineNumber).has(FileLocationModel.LENGTH, length))
+                .toList(FileLocationModel.class);
+
+        // List<?> locs = traversal.toList();
 
         // if (count0++ % 100 == 0) {
         // System.out.println(count0 + ", " + (total0 / 1000000D) + "ms, " + count1 + ",
@@ -72,9 +80,10 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
                 }
             }
         } else {
-            location = fileLocationService.frame((Vertex) locs.get(0));
-            traversal = new GraphTraversalSource(getGraphContext().getGraph()).V(location.getElement())
-                    .in(DivaStackTraceModel.LOCATION);
+            // location = fileLocationService.frame((Vertex) locs.get(0));
+            location = locs.get(0);
+            GraphTraversal<?, ?> traversal = new GraphTraversalSource(getGraphContext().getGraph())
+                    .V(location.getElement()).in(DivaStackTraceModel.LOCATION);
             if (parent == null) {
                 traversal = traversal.not(__.out(DivaStackTraceModel.PARENT));
             } else {

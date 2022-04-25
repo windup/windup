@@ -85,9 +85,9 @@ import com.ibm.wala.util.strings.StringStuff;
 import com.ibm.wala.util.warnings.Warnings;
 
 import io.tackle.diva.Constants;
-import io.tackle.diva.Context;
 import io.tackle.diva.Constraint;
 import io.tackle.diva.Constraint.EntryConstraint;
+import io.tackle.diva.Context;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
 import io.tackle.diva.Trace;
@@ -146,20 +146,22 @@ public class DivaLauncher extends GraphOperation {
         Path temp = cfg.getOutputPath().asFile().toPath().resolve("diva-temp");
         LOG.info("Diva: tempdir=" + temp);
 
-        boolean isMultiModular = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
+        boolean treeStructured = sourceMode && !projects.isEmpty() && notMaven.isEmpty();
 
-        if (isMultiModular) {
+        if (treeStructured) {
             List<MavenProjectModel> mavenProjects = Util.makeList(Util.map(projects, p -> (MavenProjectModel) p));
             for (MavenProjectModel m : mavenProjects) {
                 List<MavenProjectModel> deps = getMavenDeps(m, mavenProjects);
                 if (deps.size() > 1) {
                     // currently wala class loader can have only one parent, so
                     // we can't map dag-like module dependencies to class loader dependencies
-                    isMultiModular = false;
+                    treeStructured = false;
                     break;
                 }
             }
         }
+
+        boolean isMultiModular = treeStructured;
 
         LOG.info("Diva runs in " + (sourceMode ? "source" : "binary") + " mode"
                 + (isMultiModular ? ", with multi-modular analysis." : "."));
@@ -299,7 +301,9 @@ public class DivaLauncher extends GraphOperation {
         Set<IClass> relevantClasses = new HashSet<>();
         Set<IClass> appClasses = new HashSet<>();
         Framework.relevantJarsAnalysis(cha, relevantClasses, appClasses,
-                c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c));
+                c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
+                        || SpringBootAnalysis.checkRelevance(c)
+                        || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
 
         IClassHierarchy filteredCha = new FilteredClassHierarchy(cha, appClasses::contains);
         IClassHierarchy relevantCha = new FilteredClassHierarchy(cha, relevantClasses::contains);
@@ -338,8 +342,11 @@ public class DivaLauncher extends GraphOperation {
 
         Framework fw = new Framework(cha, cg);
 
+        fw.relevanceAnalysis(c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
+                || SpringBootAnalysis.checkRelevance(c) || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
+
         for (CGNode n : cg) {
-            if (entries.contains(n.getMethod())) {
+            if (entries.contains(n.getMethod()) && fw.isRelevant(n)) {
                 fw.recordContraint(new EntryConstraint(n));
             }
         }
@@ -533,9 +540,13 @@ public class DivaLauncher extends GraphOperation {
         // 3) Attaching list of contexts to each app-model
 
         for (DivaContextModel cxt : gc.findAll(DivaContextModel.class)) {
-            ProjectModel p = cxt.traverse(g -> g.out(DivaContextModel.CONSTRAINTS).in(JavaClassModel.JAVA_METHOD)
-                    .out(JavaClassModel.CLASS_FILE, JavaClassModel.ORIGINAL_SOURCE, JavaClassModel.CLASS_FILE)
-                    .in(ProjectModel.PROJECT_MODEL_TO_FILE)).next(ProjectModel.class);
+            ProjectModel p = cxt
+                    .traverse(
+                            g -> g.out(DivaContextModel.CONSTRAINTS).in(JavaClassModel.JAVA_METHOD)
+                                    .out(JavaClassModel.CLASS_FILE, JavaClassModel.ORIGINAL_SOURCE,
+                                            JavaClassModel.CLASS_FILE)
+                                    .in(ProjectModel.PROJECT_MODEL_TO_FILE))
+                    .next(ProjectModel.class);
             if (p != null) {
                 DivaAppModel app = toApp.apply(p);
                 app.addContext(cxt);
