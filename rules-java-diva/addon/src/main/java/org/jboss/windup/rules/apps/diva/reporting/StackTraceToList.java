@@ -35,7 +35,10 @@ public class StackTraceToList implements WindupFreeMarkerMethod {
         }
 
         List<DivaStackTraceModel> list = new ArrayList<>();
-        DivaStackTraceModel model = (DivaStackTraceModel)((StringModel) arguments.get(0)).getWrappedObject() ;
+        StringModel stringModel = (StringModel) arguments.get(0);
+        if (stringModel == null)
+            return list;
+        DivaStackTraceModel model = (DivaStackTraceModel)stringModel.getWrappedObject() ;
 
         while (model != null) {
             list.add(model);
