@@ -65,12 +65,12 @@ public class DivaTest {
             processor.execute(windupConfiguration);
 
             List<? extends ProjectModel> projects = IterableUtils.toList(context.findAll(DivaAppModel.class));
-            Assert.equals(projects.size(), 1);
+            Assert.equals(1, projects.size());
             List<? extends DivaTxModel> txs = IterableUtils.toList(context.findAll(DivaTxModel.class));
-            Assert.equals(txs.size(), 1);
+            Assert.equals(1, txs.size());
             List<?> ops = context.getQuery(DivaOpModel.class).getRawTraversal()
                     .has("sql", P.without("BEGIN", "COMMIT", "ROLLBACK")).toList();
-            Assert.equals(ops.size(), 2);
+            Assert.equals(2, ops.size());
 
         }
     }
@@ -90,12 +90,12 @@ public class DivaTest {
             processor.execute(windupConfiguration);
 
             List<? extends ProjectModel> projects = IterableUtils.toList(context.findAll(DivaAppModel.class));
-            Assert.equals(projects.size(), 1);
+            Assert.equals(1, projects.size());
             List<? extends DivaTxModel> txs = IterableUtils.toList(context.findAll(DivaTxModel.class));
-            Assert.equals(txs.size(), 1);
+            Assert.equals(1, txs.size());
             List<?> ops = context.getQuery(DivaOpModel.class).getRawTraversal()
                     .has("sql", P.without("BEGIN", "COMMIT", "ROLLBACK")).toList();
-            Assert.equals(ops.size(), 1);
+            Assert.equals(1, ops.size());
         }
     }
 
