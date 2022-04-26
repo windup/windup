@@ -175,7 +175,8 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                         LineMappingModel lineMapping = null;
                         if (sourceFile == null) {
                             sourceFile = classModel.getDecompiledSource();
-                            lineMapping = sourceFile.getLineMapping();
+                            if (sourceFile != null)
+                                lineMapping = sourceFile.getLineMapping();
                         }
 
                         if (lineMapping != null) {
