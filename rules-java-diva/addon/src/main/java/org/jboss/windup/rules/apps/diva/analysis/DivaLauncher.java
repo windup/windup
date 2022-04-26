@@ -306,7 +306,7 @@ public class DivaLauncher extends GraphOperation {
         Set<IClass> appClasses = new HashSet<>();
         Framework.relevantJarsAnalysis(cha, relevantClasses, appClasses,
                 c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
-                        || SpringBootAnalysis.checkRelevance(c)
+                        || c.getName() == Constants.LSpringJPARepository || SpringBootAnalysis.checkRelevance(c)
                         || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
 
         IClassHierarchy filteredCha = new FilteredClassHierarchy(cha, appClasses::contains);
@@ -347,7 +347,8 @@ public class DivaLauncher extends GraphOperation {
         Framework fw = new Framework(cha, cg);
 
         fw.relevanceAnalysis(c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
-                || SpringBootAnalysis.checkRelevance(c) || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
+                || c.getName() == Constants.LSpringJPARepository || SpringBootAnalysis.checkRelevance(c)
+                || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
 
         for (CGNode n : cg) {
             if (entries.contains(n.getMethod()) && fw.isRelevant(n)) {
