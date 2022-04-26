@@ -57,19 +57,19 @@ public class MetadataOptionsTest
     @Test
     public void testSourceOption() throws Exception
     {
-        Collection<?> availableValues = sourceOption.getAvailableValues();
+        Object[] availableValues = sourceOption.getAvailableValues().toArray();
 
-        Assert.assertTrue(availableValues.contains("sourceTech1"));
-        Assert.assertTrue(availableValues.contains("sourceTech2"));
+        Assert.assertEquals("sourceTech1", availableValues[0]);
+        Assert.assertEquals("sourceTech2", availableValues[1]);
     }
 
     @Test
     public void testTargetOption() throws Exception
     {
-        Collection<?> availableValues = targetOption.getAvailableValues();
+        Object[] availableValues = targetOption.getAvailableValues().toArray();
 
-        Assert.assertTrue(availableValues.contains("targetTech1"));
-        Assert.assertTrue(availableValues.contains("targetTech1"));
+        Assert.assertEquals("targetTech1", availableValues[0]);
+        Assert.assertEquals("targetTech2", availableValues[1]);
     }
 
     @Test

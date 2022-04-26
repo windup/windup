@@ -76,14 +76,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
         for (RuleProvider provider : registry.getProviders())
         {
-            for (TechnologyReference technologyReference : provider.getMetadata().getSourceTechnologies())
-            {
-                sourceOptions.add(technologyReference);
-            }
+            sourceOptions.addAll(provider.getMetadata().getSourceTechnologies());
         }
         addTransformers(sourceOptions);
 
-        return sourceOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        return sourceOptions.stream().map(TechnologyReference::getId).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -96,14 +93,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
         for (RuleProvider provider : registry.getProviders())
         {
-            for (TechnologyReference technologyReference : provider.getMetadata().getTargetTechnologies())
-            {
-                targetOptions.add(technologyReference);
-            }
+            targetOptions.addAll(provider.getMetadata().getTargetTechnologies());
         }
         addTransformers(targetOptions);
 
-        return targetOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        return targetOptions.stream().map(TechnologyReference::getId).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private void addTransformers(Set<TechnologyReference> techs)
