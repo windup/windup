@@ -1,11 +1,11 @@
 package org.jboss.windup.rules.apps.diva.analysis;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.diva.model.DivaConstraintModel;
 import org.jboss.windup.rules.apps.diva.model.DivaContextModel;
@@ -16,10 +16,13 @@ import org.jboss.windup.rules.apps.diva.model.DivaSqlOpModel;
 import org.jboss.windup.rules.apps.diva.model.DivaStackTraceModel;
 import org.jboss.windup.rules.apps.diva.model.DivaTxModel;
 import org.jboss.windup.rules.apps.diva.service.DivaStackTraceService;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
+import org.jboss.windup.rules.apps.java.model.LineMappingModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.JavaMethodService;
+import org.jboss.windup.rules.apps.java.service.LineMappingService;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.IMethod.SourcePosition;
@@ -151,6 +154,7 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                 DivaStackTraceService service = new DivaStackTraceService(gc);
                 JavaClassService classService = new JavaClassService(gc);
                 JavaMethodService methodService = new JavaMethodService(gc);
+                LineMappingService lineMappingService = new LineMappingService(gc);
                 DivaStackTraceModel parent = null;
                 DivaStackTraceModel current = null;
                 for (Trace t : ((Trace) data).reversed()) {
@@ -167,13 +171,27 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                         JavaMethodModel methodModel = methodService.createJavaMethod(classModel,
                                 m.getName().toString());
 
-                        FileModel sourceFile = classModel.getOriginalSource();
+                        AbstractJavaSourceModel sourceFile = classModel.getOriginalSource();
+                        LineMappingModel lineMapping = null;
                         if (sourceFile == null) {
                             sourceFile = classModel.getDecompiledSource();
+                            if (sourceFile != null)
+                                lineMapping = sourceFile.getLineMapping();
                         }
-                        current = service.getOrCreate(sourceFile, p.getFirstLine(), p.getFirstCol(),
-                                p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
-                        parent = current;
+
+                        if (lineMapping != null) {
+                            Map<Integer, Integer> mapping = lineMappingService.getMapping(lineMapping);
+                            int lineNum = mapping.getOrDefault(p.getFirstLine(), p.getFirstLine());
+                            current = service.getOrCreate(sourceFile, lineNum, 0, 0, parent, methodModel);
+                            parent = current;
+
+                        } else if (sourceFile != null) {
+                            current = service.getOrCreate(sourceFile, p.getFirstLine(), p.getFirstCol(),
+                                    p.getLastOffset() - p.getFirstOffset(), parent, methodModel);
+                            parent = current;
+
+                        }
+
                     }
                 }
                 ((DivaOpModel) model).setStackTrace(current);

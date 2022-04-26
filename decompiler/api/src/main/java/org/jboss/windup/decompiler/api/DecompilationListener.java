@@ -13,6 +13,13 @@ public interface DecompilationListener
     void fileDecompiled(List<String> sourceClassPaths, String outputPath);
 
     /**
+     * Indicates that the files at inputPath has been decompiled to outputPath
+     */
+    default void fileDecompiled(List<String> sourceClassPaths, String outputPath, int[] lineMapping) {
+        fileDecompiled(sourceClassPaths, outputPath);
+    }
+
+    /**
      * Called to indicate that decompilation of this particular files has failed for the specified reason.
      */
     void decompilationFailed(List<String> sourceClassPaths, String message);
