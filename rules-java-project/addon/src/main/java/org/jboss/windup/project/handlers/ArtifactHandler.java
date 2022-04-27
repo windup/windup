@@ -32,7 +32,7 @@ public class ArtifactHandler implements ElementHandler<Artifact>
         List<Element> locationElements = $(element).children().get();
 
         Collection<DependencyLocation> locations = null;
-        if (locationElements != null) {
+        if (locationElements != null && !locationElements.isEmpty()) {
              locations = locationElements.stream().map(child -> DependencyLocation.valueOf(child.getTextContent())).collect(toSet());
         }
 
