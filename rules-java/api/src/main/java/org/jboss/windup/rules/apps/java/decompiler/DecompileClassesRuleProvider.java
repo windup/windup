@@ -40,10 +40,8 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(SourceMode.isDisabled())
         .perform(new DecompileCondition())
         .addRule()
-        .when(SourceMode.isDisabled())
         .perform(new CleanFromMultipleSourceFiles());
 
     }

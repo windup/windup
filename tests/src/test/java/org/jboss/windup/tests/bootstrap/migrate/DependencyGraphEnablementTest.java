@@ -36,7 +36,7 @@ public class DependencyGraphEnablementTest extends AbstractBootstrapTestWithRule
    }
 
    @Test
-   public void dependencyGraphDisabledByDefaultWithSourceMode()
+   public void dependencyGraphEnabledWithSourceMode()
    {
       bootstrap("--input", "../test-files/src_example",
                "--output", tmp.getRoot().getAbsolutePath(),
@@ -44,7 +44,7 @@ public class DependencyGraphEnablementTest extends AbstractBootstrapTestWithRule
                "--target", "eap7",
                "--sourceMode");
 
-      assertFalse(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "dependency_graph_report.html")));
+      assertTrue(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "dependency_graph_report.html")));
    }
 
 }

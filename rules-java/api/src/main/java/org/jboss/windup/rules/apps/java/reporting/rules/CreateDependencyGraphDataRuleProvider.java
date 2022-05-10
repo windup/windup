@@ -51,7 +51,6 @@ public class CreateDependencyGraphDataRuleProvider extends AbstractRuleProvider
    {
       return ConfigurationBuilder.begin()
                .addRule()
-               .when(SourceMode.isDisabled())
                .perform(new GraphOperation()
                {
                   @Override

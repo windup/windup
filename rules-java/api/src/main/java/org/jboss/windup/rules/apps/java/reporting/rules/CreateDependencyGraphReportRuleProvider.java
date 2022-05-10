@@ -38,7 +38,6 @@ public class CreateDependencyGraphReportRuleProvider extends AbstractRuleProvide
    {
       return ConfigurationBuilder.begin()
                .addRule()
-               .when(SourceMode.isDisabled())
                .perform(new CreateDependencyGraphReportOperation());
    }
 
