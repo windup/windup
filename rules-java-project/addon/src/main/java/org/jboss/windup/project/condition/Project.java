@@ -1,12 +1,5 @@
 package org.jboss.windup.project.condition;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.config.condition.NoopEvaluationStrategy;
@@ -21,8 +14,14 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
-import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.util.Maps;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Condition used to search the projects based on {@link Artifact} within the graph.
@@ -36,7 +35,7 @@ public class Project extends ParameterizedGraphCondition
     private Artifact artifact;
 
     /**
-     * Specify the Artifact for which the condition should search for.
+     * Specify the Artifact for which the condition should search.
      * 
      * @param artifact
      * @return
@@ -93,13 +92,18 @@ public class Project extends ParameterizedGraphCondition
 
                     if (passed && artifact.getVersion() != null)
                     {
-                        passed = passed && artifact.getVersion().validate(maven.getVersion());
+                        passed = artifact.getVersion().validate(maven.getVersion());
                     }
+
+                    if (passed && artifact.getLocations() != null) {
+                        passed = artifact.getLocations().contains(dependency.getDependencyLocation());
+                    }
+
                     if (passed)
                     {
-                        dependency.getFileLocationReference().forEach(location -> {
-                            result.add(location);
-                            evaluationStrategy.modelSubmitted(location);
+                        dependency.getFileLocationReference().forEach(fileLocation -> {
+                            result.add(fileLocation);
+                            evaluationStrategy.modelSubmitted(fileLocation);
                         });
                     }
                     else
