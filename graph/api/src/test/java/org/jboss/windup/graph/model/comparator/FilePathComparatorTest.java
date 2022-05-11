@@ -1,12 +1,11 @@
 package org.jboss.windup.graph.model.comparator;
 
-import org.jboss.windup.graph.model.comparator.FilePathComparator;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class FilePathComparatorTest
 {
