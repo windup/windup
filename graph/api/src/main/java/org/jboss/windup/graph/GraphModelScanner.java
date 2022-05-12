@@ -43,6 +43,7 @@ class GraphModelScanner
                 this.skipPackages.add("javax.");
                 this.skipPackages.add("org.jboss.weld.");
                 this.skipPackages.add("freemarker.");
+                this.skipPackages.add("com.sun.tools.");
             }
 
             @Override

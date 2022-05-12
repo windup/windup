@@ -1,0 +1,380 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxToJakarta
+displayName: migrate javax to jakarta
+recipeList:
+  - org.konveyor.tackle.JavaxDecoratorToJakartaDecorator
+  - org.konveyor.tackle.JavaxEjbToJakartaEjb
+  - org.konveyor.tackle.JavaxElToJakartaEl
+  - org.konveyor.tackle.JavaxEnterpriseToJakartaEnterprise
+  - org.konveyor.tackle.JavaxFacesToJakartaFaces
+  - org.konveyor.tackle.JavaxInterceptorToJakartaInterceptor
+  - org.konveyor.tackle.JavaxJmsToJakartaJms
+  - org.konveyor.tackle.JavaxJsonToJakartaJson
+  - org.konveyor.tackle.JavaxJwsToJakartaJws
+  - org.konveyor.tackle.JavaxMailToJakartaMail
+  - org.konveyor.tackle.JavaxPersistenceToJakartaPersistence
+  - org.konveyor.tackle.JavaxResourceToJakartaResource
+  - org.konveyor.tackle.JavaxSecurityToJakartaSecurity
+  - org.konveyor.tackle.JavaxServletToJakartaServlet
+  - org.konveyor.tackle.JavaxValidationToJakartaValidation
+  - org.konveyor.tackle.JavaxWebsocketToJakartaWebsocket
+  - org.konveyor.tackle.JavaxWsToJakartaWs
+  - org.konveyor.tackle.JavaxXmlCryptoToJakartaXmlCrypto
+  - org.konveyor.tackle.JavaxXmlDatatypeToJakartaXmlDatatype
+  - org.konveyor.tackle.JavaxXmlParsersToJakartaXmlParsers
+  - org.konveyor.tackle.JavaxXmlNamespaceToJakartaXmlNamespace
+  - org.konveyor.tackle.JavaxXmlSoapToJakartaXmlSoap
+  - org.konveyor.tackle.JavaxXmlStreamToJakartaXmlStream
+  - org.konveyor.tackle.JavaxXmlTransformToJakartaXmlTransform
+  - org.konveyor.tackle.JavaxXmlValidationToJakartaXmlValidation
+  - org.konveyor.tackle.JavaxXmlXPathToJakartaXmlXPath
+
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxDecoratorToJakartaDecorator
+displayName: Change type example
+recipeList:
+
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.decorator
+      newPackageName: jakarta.decorator
+
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxEjbToJakartaEjb
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.ejb
+      newPackageName: jakarta.ejb
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxElToJakartaEl
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.el
+      newPackageName: jakarta.el
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxEnterpriseToJakartaEnterprise
+displayName: Change type example
+recipeList:
+
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.enterprise
+      newPackageName: jakarta.enterprise
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxFacesToJakartaFaces
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.faces
+      newPackageName: jakarta.faces
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxImageioToJakartaImageio
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.imageio
+      newPackageName: jakarta.imageio
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxInterceptorToJakartaInterceptor
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.interceptor
+      newPackageName: jakarta.interceptor
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxJmsToJakartaJms
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.jms
+      newPackageName: jakarta.jms
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxJsonToJakartaJson
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.json
+      newPackageName: jakarta.json
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxJwsToJakartaJws
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.jws
+      newPackageName: jakarta.jws
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxLangToJakartaLang
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.lang
+      newPackageName: jakarta.lang
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxMailToJakartaMail
+displayName: Change type example
+recipeList:
+
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.mail
+      newPackageName: jakarta.mail
+
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxManagementToJakartaManagement
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.management
+      newPackageName: jakarta.management
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxNamingToJakartaNaming
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.naming
+      newPackageName: jakarta.naming
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxNetToJakartaNet
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.net
+      newPackageName: jakarta.net
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxPersistenceToJakartaPersistence
+displayName: Change type example
+recipeList:
+   - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.persistence
+      newPackageName: jakarta.persistence
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxPrintToJakartaPrint
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.print
+      newPackageName: jakarta.print
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxResourceToJakartaResource
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.resource
+      newPackageName: jakarta.resource
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxRmiToJakartaRmi
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.rmi
+      newPackageName: jakarta.rmi
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxScriptToJakartaScript
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.script
+      newPackageName: jakarta.script
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxSecurityToJakartaSecurity
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.security
+      newPackageName: jakarta.security
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxServletToJakartaServlet
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.servlet
+      newPackageName: jakarta.servlet
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxSoundToJakartaSound
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.sound
+      newPackageName: jakarta.sound
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxSqlToJakartaSql
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.sql
+      newPackageName: jakarta.sql
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxSwingToJakartaSwing
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.swing
+      newPackageName: jakarta.swing
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxToolsToJakartaTools
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.tools
+      newPackageName: jakarta.tools
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxValidationToJakartaValidation
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.validation
+      newPackageName: jakarta.validation
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxWebsocketToJakartaWebsocket
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.websocket
+      newPackageName: jakarta.websocket
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxWsToJakartaWs
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.ws
+      newPackageName: jakarta.ws
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlCryptoToJakartaXmlCrypto
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.crypto
+      newPackageName: jakarta.xml.crypto
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlDatatypeToJakartaXmlDatatype
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.datatype
+      newPackageName: jakarta.xml.datatype
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlNamespaceToJakartaXmlNamespace
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.namespace
+      newPackageName: jakarta.xml.namespace
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlParsersToJakartaXmlParsers
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.parsers
+      newPackageName: jakarta.xml.parsers
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlSoapToJakartaXmlSoap
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.soap
+      newPackageName: jakarta.xml.soap
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlStreamToJakartaXmlStream
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.stream
+      newPackageName: jakarta.xml.stream
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlTransformToJakartaXmlTransform
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.transform
+      newPackageName: jakarta.xml.transform
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlValidationToJakartaXmlValidation
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.validation
+      newPackageName: jakarta.xml.validation
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.konveyor.tackle.JavaxXmlXPathToJakartaXmlXPath
+displayName: Change type example
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.xml.xpath
+      newPackageName: jakarta.xml.xpath
+
