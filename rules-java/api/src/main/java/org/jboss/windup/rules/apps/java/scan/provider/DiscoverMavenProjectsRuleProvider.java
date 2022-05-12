@@ -378,7 +378,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         String dependencies         = "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency";
         String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin";
         String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency";
-        String pluginManagement     = "/pom:project/pom:pluginManagement/pom:plugins/pom:plugin | /project/pluginManagement/plugins/plugin";
+        String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin | /project/build/pluginManagement/plugins/plugin";
         return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
     }
 
