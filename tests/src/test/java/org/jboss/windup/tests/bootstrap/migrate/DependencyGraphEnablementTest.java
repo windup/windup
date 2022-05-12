@@ -1,6 +1,5 @@
 package org.jboss.windup.tests.bootstrap.migrate;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
