@@ -375,10 +375,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
     private String getDependenciesXpath() {
         String parent               = "/pom:project/pom:parent | /project/parent";
-        String dependencies         = "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency";
-        String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin";
-        String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency";
-        String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin | /project/build/pluginManagement/plugins/plugin";
+        String dependencies         = "/pom:project/pom:dependencies/pom:dependency  | /project/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencies/pom:dependency  | /project/profiles/profile/dependencies/dependency";
+        String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin    | /pom:project/pom:profiles/pom:profile/pom:build/pom:plugins/pom:plugin | /project/profiles/profile/build/plugins/plugin";
+        String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/profiles/profile/dependencyManagement/dependencies/dependency";
+        String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/build/pluginManagement/plugins/plugin        | /pom:project/pom:profiles/pom:profile/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/profiles/profile/build/pluginManagement/plugins/plugin";
         return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
     }
 
