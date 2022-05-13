@@ -1,7 +1,7 @@
 <#if index_page??>
-    <#assign redHatLogoPrefix = navUrlPrefix>
+    <#assign logoPrefix = navUrlPrefix>
 <#else>
-    <#assign redHatLogoPrefix = "">
+    <#assign logoPrefix = "">
 </#if>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                 <span class="icon-bar"></span>

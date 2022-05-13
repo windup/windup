@@ -1,1 +1,1 @@
-<link href="${basePath}/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+<link href="${basePath}/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>

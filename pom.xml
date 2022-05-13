@@ -222,6 +222,12 @@
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -568,7 +574,7 @@
             <id>mta</id>
             <activation>
                 <property>
-                    <name>!community</name>
+                    <name>!downstream</name>
                 </property>
             </activation>
             <properties>
@@ -577,27 +583,32 @@
                 <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
                 <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
             </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-mta</directory>
+                    </resource>
+                </resources>
+            </build>
         </profile>
         <profile>
-            <id>windup</id>
+            <id>tackle</id>
             <activation>
                 <property>
-                    <name>community</name>
+                    <name>downstream</name>
+                    <value>tackle</value>
                 </property>
             </activation>
             <properties>
                 <distribution.brand.name>Tackle Analysis</distribution.brand.name>
-                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
+                <distribution.brand.name-acronym>TACKLE</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>tackle-cli</distribution.brand.cli-name>
             </properties>
             <build>
                 <resources>
                     <resource>
-                        <directory>src/main/resources-windup</directory>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources-tackle</directory>
                     </resource>
                 </resources>
             </build>
