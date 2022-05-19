@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.archives.listener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,8 +20,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
-import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 

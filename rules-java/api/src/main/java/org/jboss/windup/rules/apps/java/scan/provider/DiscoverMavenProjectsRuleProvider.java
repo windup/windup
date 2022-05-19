@@ -21,7 +21,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -92,9 +93,12 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, context, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
-                    // add classification information to file.
-                    classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
-                    technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
+                    // Do not classify POM files if they are part of an ignored archive, to keep them from appearing in the Issues report
+                    if (!(payload.getArchive() instanceof IgnoredArchiveModel)) {
+                        LOG.log(Level.INFO, "Entering ignored");
+                        classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
+                        technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
+                    }
 
                     ArchiveModel archiveModel = payload.getArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))

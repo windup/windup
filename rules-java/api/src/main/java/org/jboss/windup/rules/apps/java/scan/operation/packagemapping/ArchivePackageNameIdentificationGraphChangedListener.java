@@ -15,7 +15,7 @@ import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.util.Logging;
