@@ -95,7 +95,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 {
                     // Do not classify POM files if they are part of an ignored archive, to keep them from appearing in the Issues report
                     if (!(payload.getArchive() instanceof IgnoredArchiveModel)) {
-                        LOG.log(Level.INFO, "Entering ignored");
                         classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
                         technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
                     }
