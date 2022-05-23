@@ -210,7 +210,7 @@ function summaryChart() {
     createChart("#tagsChartContainer-sum", rootProjCountMap);
 
     // Substitutes yaxis: { font: } - Flot uses "smaller" which breaks alignment.
-    $(".tagChart .flot-text").css("font-size", "");
+    // $(".tagChart .flot-text").css("font-size", "");
 }
 
 
