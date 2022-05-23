@@ -1,7 +1,5 @@
-package org.jboss.windup.rules.apps.java.archives.model;
+package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 
 /**

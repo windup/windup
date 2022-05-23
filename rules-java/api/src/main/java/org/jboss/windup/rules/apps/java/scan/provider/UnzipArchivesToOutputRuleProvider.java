@@ -14,7 +14,7 @@ import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

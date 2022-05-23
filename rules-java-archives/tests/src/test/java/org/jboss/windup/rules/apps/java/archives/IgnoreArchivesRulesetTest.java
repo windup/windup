@@ -26,7 +26,7 @@ import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentif
 import org.jboss.windup.rules.apps.java.archives.ignore.SkippedArchives;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.junit.After;
 import org.junit.Assert;
