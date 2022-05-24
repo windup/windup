@@ -73,6 +73,16 @@
                                             ${gav}
                                         </#if>
                                     </dd>
+                                <#else>
+                                    <dt class="trait">Maven URL:</dt>
+                                    <dd id="${archiveName}-maven">
+                                        <#if sha1?has_content>
+                                            <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
+                                            <a id="${archiveName}-link" href="${sha1URL?html}" target="_blank">Maven Central Link</a>
+                                        <#else>
+                                            Link Unavailable
+                                        </#if>
+                                    </dd>
                                 </#if>
                                 <#if sha1?trim?has_content>
                                     <dt class="trait">SHA1 hash:</dt>
