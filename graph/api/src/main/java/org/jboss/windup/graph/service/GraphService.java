@@ -280,6 +280,36 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return frame((Vertex)resultObj);
     }
 
+    public T getOrCreateByProperties(String key, String value, String... kvs)
+    {
+        if (kvs.length % 2 != 0)
+            throw new WindupException("Number of arguments should be even.");
+        String[] keys = new String[kvs.length / 2 + 1];
+        String[] values = new String[kvs.length / 2 + 1];
+        keys[0] = key;
+        values[0] = value;
+        for (int k = 0; k < kvs.length;)
+        {
+            keys[k / 2 + 1] = kvs[k++];
+            values[k / 2 + 1] = kvs[k++];
+        }
+        Iterator<T> iter = findAllByProperties(keys, values).iterator();
+        if (iter.hasNext())
+        {
+            return iter.next();
+        }
+        else
+        {
+            T model = create();
+            model.setProperty(key, value);
+            for (int k = 0; k < kvs.length;)
+            {
+                model.setProperty(kvs[k++], kvs[k++]);
+            }
+            return model;
+        }
+    }
+
     protected GraphContext getGraphContext()
     {
         return context;

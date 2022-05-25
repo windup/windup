@@ -55,10 +55,16 @@ public class FernFlowerResultSaver implements IResultSaver
             {
                 fw.write(content);
             }
-            if (listener != null)
-                listener.fileDecompiled(sourceClassFiles, outputFile.toString());
+            if (listener != null) {
+                if (mapping != null) {
+                    listener.fileDecompiled(sourceClassFiles, outputFile.toString(), mapping);
+                } else {
+                    listener.fileDecompiled(sourceClassFiles, outputFile.toString());
+                }
+            }
 
             fileSaved = true;
+
         }
         catch (IOException t)
         {

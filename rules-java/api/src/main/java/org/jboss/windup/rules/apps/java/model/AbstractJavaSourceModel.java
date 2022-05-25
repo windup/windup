@@ -31,6 +31,7 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
     String PACKAGE_NAME = "packageName";
     String JAVA_CLASS_MODEL = "javaClass";
     String ROOT_SOURCE_FOLDER = "rootSourceFolder";
+    String LINE_MAPPING = "lineMapping";
 
     /**
      * This is the "root" directory for this source file.
@@ -93,4 +94,17 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
      */
     @Adjacency(label = FileReferenceModel.FILE_MODEL, direction = Direction.IN)
     List<WindupVertexFrame> getAllTypeReferencesInternal();
+
+    /**
+     * Line mapping between original and decompiled source code
+     */
+    @Adjacency(label = LINE_MAPPING, direction = Direction.OUT)
+    LineMappingModel getLineMapping();
+
+    /**
+     * Line mapping between original and decompiled source code
+     */
+    @Adjacency(label = LINE_MAPPING, direction = Direction.OUT)
+    void setLineMapping(LineMappingModel model);
+
 }
