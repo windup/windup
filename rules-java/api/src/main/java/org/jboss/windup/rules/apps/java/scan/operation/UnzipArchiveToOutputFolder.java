@@ -28,7 +28,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -184,7 +184,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
             
             GraphService.addTypeToModel(event.getGraphContext(), archiveModel, IgnoredArchiveModel.class);
-            return;
         }
         LOG.log(Level.FINE, String.format("Library %s (coordinates %s) with hash %s will be inspected in sub folder %s", archiveModelFilePath, coordinate, hash, parentFileModel.getFilePath()));
 

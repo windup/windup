@@ -31,6 +31,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,6 +81,7 @@ public class DiscoverHardcodedIPAddressTest
                         .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
+            windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);
 
             Set<String> expectedIPs = new HashSet<>();
@@ -87,6 +89,10 @@ public class DiscoverHardcodedIPAddressTest
             expectedIPs.add("192.168.0.2");
             expectedIPs.add("192.168.0.7");
             expectedIPs.add("192.168.0.13");
+            expectedIPs.add("10.10.1.0");
+            expectedIPs.add("10.10.1.1");
+            expectedIPs.add("10.10.1.2");
+            expectedIPs.add("10.10.1.3");
 
             Set<String> unexpectedIPs = new HashSet<>();
             unexpectedIPs.add("192.168.0.3");
@@ -96,32 +102,72 @@ public class DiscoverHardcodedIPAddressTest
             unexpectedIPs.add("192.168.270.8");
             unexpectedIPs.add("192.168.0.9.3.4");
             unexpectedIPs.add("192.168.0.12");
+            unexpectedIPs.add("10.10.1.4");
 
-            InlineHintService service = new InlineHintService(context);
-            Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
-            int numberFound = 0;
-            for (InlineHintModel hint : service.findAll())
-            {
-                if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
-                {
-                    Matcher matcher = ipExtractor.matcher(hint.getHint());
-                    if (matcher.find())
-                    {
-                        String ip = matcher.group(1);
-                        if (unexpectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") should not have been marked valid");
-                        else if (!expectedIPs.contains(ip))
-                            Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
-                        numberFound++;
-                    }
-                    else
-                    {
-                        Assert.fail("Hint format not recognized: " + hint.getHint());
-                    }
-                }
-            }
-            Assert.assertEquals(expectedIPs.size(), numberFound);
+            assertExpectedAndUnexpectedIPs(context, expectedIPs, unexpectedIPs);
         }
     }
 
+    @Test
+    public void testStaticIPScannerInBinary() throws IOException, InstantiationException, IllegalAccessException
+    {
+        try (GraphContext context = factory.create(true))
+        {
+            Path inputPath = Paths.get("src/test/resources/staticip/sample.jar");
+
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
+
+            Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
+
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
+            windupConfiguration.addInputPath(inputPath);
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
+
+            Set<String> expectedIPs = new HashSet<>();
+            expectedIPs.add("10.10.1.0");
+            expectedIPs.add("10.10.1.1");
+            expectedIPs.add("10.10.1.2");
+            expectedIPs.add("10.10.1.3");
+
+            Set<String> unexpectedIPs = new HashSet<>();
+            unexpectedIPs.add("10.10.1.4");
+
+            assertExpectedAndUnexpectedIPs(context, expectedIPs, unexpectedIPs);
+        }
+    }
+
+    private void assertExpectedAndUnexpectedIPs(GraphContext context, Set<String> expectedIPs, Set<String> unexpectedIPs) {
+        InlineHintService service = new InlineHintService(context);
+        Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
+        int numberFound = 0;
+
+        for (InlineHintModel hint : service.findAll())
+        {
+            if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
+            {
+                Matcher matcher = ipExtractor.matcher(hint.getHint());
+                if (matcher.find())
+                {
+                    String ip = matcher.group(1);
+                    if (unexpectedIPs.contains(ip))
+                        Assert.fail("This IP (" + ip + ") should not have been marked valid");
+                    else if (!expectedIPs.contains(ip))
+                        Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
+                    numberFound++;
+                }
+                else
+                {
+                    Assert.fail("Hint format not recognized: " + hint.getHint());
+                }
+            }
+        }
+
+        Assert.assertEquals(expectedIPs.size(), numberFound);
+    }
 }

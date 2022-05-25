@@ -1,9 +1,10 @@
 package org.jboss.windup.project.condition;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jboss.windup.graph.model.DependencyLocation;
 import org.jboss.windup.rules.apps.java.condition.Version;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.Parameterized;
@@ -22,6 +23,7 @@ public class Artifact implements Parameterized
     private RegexParameterizedPatternParser groupId;
     private RegexParameterizedPatternParser artifactId;
     private Version version;
+    private Collection<DependencyLocation> locations;
 
     /**
      * Start with specifying the artifact version
@@ -79,6 +81,11 @@ public class Artifact implements Parameterized
 
     }
 
+    public Artifact andLocations(Collection<DependencyLocation> locations) {
+        this.locations = locations;
+        return this;
+    }
+
     public ParameterizedPatternParser getGroupId()
     {
         return groupId;
@@ -92,6 +99,10 @@ public class Artifact implements Parameterized
     public Version getVersion()
     {
         return version;
+    }
+
+    public Collection<DependencyLocation> getLocations() {
+        return locations;
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DependencyLocation;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
@@ -20,7 +21,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.logging.Logger;
 
 /**
@@ -60,6 +62,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     {
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
     }
+
+    private final MavenProjectDependencyLocationExtractor mavenProjectDependencyLocationExtractor = new MavenProjectDependencyLocationExtractor();
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -88,9 +92,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, context, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
-                    // add classification information to file.
-                    classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
-                    technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
+                    // Do not classify POM files if they are part of an ignored archive, to keep them from appearing in the Issues report
+                    if (!(payload.getArchive() instanceof IgnoredArchiveModel)) {
+                        classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.INFORMATION, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
+                        technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
+                    }
 
                     ArchiveModel archiveModel = payload.getArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
@@ -323,8 +329,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             mavenProjectModel.setParentMavenPOM(parent);
         }
 
-        NodeList nodes = XmlUtil
-                    .xpathNodeList(document, "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency", namespaces);
+        NodeList nodes = XmlUtil.xpathNodeList(document, getDependenciesXpath(), namespaces);
         for (int i = 0, j = nodes.getLength(); i < j; i++)
         {
             Node node = nodes.item(i);
@@ -352,27 +357,46 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
                 }
+
+                DependencyLocation dependencyLocation = mavenProjectDependencyLocationExtractor.extractDependencyLocation(node);
+
                 ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
                 projectDep.setClassifier(dependencyClassifier);
                 projectDep.setScope(dependencyScope);
                 projectDep.setType(dependencyType);
                 projectDep.setProject(dependency);
-                int lineNumber = (int) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
-                int columnNumber = (int) node.getUserData(LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
-                FileLocationModel fileLocation = new GraphService<>(event.getGraphContext(), FileLocationModel.class).create();
-                String sourceSnippet = XmlUtil.nodeToString(node);
-                fileLocation.setSourceSnippit(sourceSnippet);
-                fileLocation.setLineNumber(lineNumber);
-                fileLocation.setColumnNumber(columnNumber);
-                fileLocation.setLength(node.toString().length());
-                fileLocation.setFile(xmlFileModel);
-                List<FileLocationModel> fileLocationList = new ArrayList<>(1);
-                fileLocationList.add(fileLocation);
+                projectDep.setDependencyLocation(dependencyLocation);
+
+                List<FileLocationModel> fileLocationList = extractFileLocations(event, xmlFileModel, node);
                 projectDep.setFileLocationReference(fileLocationList);
                 mavenProjectModel.addDependency(projectDep);
             }
         }
         return mavenProjectModel;
+    }
+
+    private String getDependenciesXpath() {
+        String parent               = "/pom:project/pom:parent | /project/parent";
+        String dependencies         = "/pom:project/pom:dependencies/pom:dependency  | /project/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencies/pom:dependency  | /project/profiles/profile/dependencies/dependency";
+        String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin    | /pom:project/pom:profiles/pom:profile/pom:build/pom:plugins/pom:plugin | /project/profiles/profile/build/plugins/plugin";
+        String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/profiles/profile/dependencyManagement/dependencies/dependency";
+        String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/build/pluginManagement/plugins/plugin        | /pom:project/pom:profiles/pom:profile/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/profiles/profile/build/pluginManagement/plugins/plugin";
+        return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
+    }
+
+    private List<FileLocationModel> extractFileLocations(GraphRewrite event, XmlFileModel xmlFileModel, Node node) {
+        int lineNumber = (int) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+        int columnNumber = (int) node.getUserData(LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+        FileLocationModel fileLocation = new GraphService<>(event.getGraphContext(), FileLocationModel.class).create();
+        String sourceSnippet = XmlUtil.nodeToString(node);
+        fileLocation.setSourceSnippit(sourceSnippet);
+        fileLocation.setLineNumber(lineNumber);
+        fileLocation.setColumnNumber(columnNumber);
+        fileLocation.setLength(node.toString().length());
+        fileLocation.setFile(xmlFileModel);
+        List<FileLocationModel> fileLocationList = new ArrayList<>(1);
+        fileLocationList.add(fileLocation);
+        return fileLocationList;
     }
 
     /**
