@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,6 +89,7 @@ import io.tackle.diva.Constraint.EntryConstraint;
 import io.tackle.diva.Context;
 import io.tackle.diva.Framework;
 import io.tackle.diva.Report;
+import io.tackle.diva.Standalone;
 import io.tackle.diva.Trace;
 import io.tackle.diva.Util;
 import io.tackle.diva.analysis.JDBCAnalysis;
@@ -222,6 +222,9 @@ public class DivaLauncher extends GraphOperation {
                             || loader.getReference().equals(JavaSourceAnalysisScope.SOURCE);
                 }
             };
+
+            Standalone.addDefaultExclusions(scope);
+
             // add standard libraries to scope
             String[] stdlibs_ = Framework.loadStandardLib(scope, temp);
             FileUtils.forceDeleteOnExit(temp.toFile());
@@ -253,13 +256,12 @@ public class DivaLauncher extends GraphOperation {
 
                     Path unzippedPath = Paths.get(((ArchiveModel) rootFileModel).getUnzippedDirectory());
 
-                    // LOG.info("filepath -> unzipped path: " + rootFileModel.asFile().getAbsolutePath() + " -> " + unzippedPath);
+                    // LOG.info("filepath -> unzipped path: " +
+                    // rootFileModel.asFile().getAbsolutePath() + " -> " + unzippedPath);
 
                     if (rootFileModel instanceof WarArchiveModel) {
                         Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
                         if (classRoot.toFile().isDirectory()) {
-                            // scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                            // new SourceDirectoryTreeModule(classRoot.toFile()));
                             scope.addToScope(ClassLoaderReference.Application,
                                     new BinaryDirectoryTreeModule(classRoot.toFile()));
                         }
@@ -267,9 +269,6 @@ public class DivaLauncher extends GraphOperation {
                     } else if (rootFileModel instanceof JarArchiveModel && !rootFileModel.traverse(
                             g -> g.out(ArchiveModel.PARENT_ARCHIVE).has(WindupFrame.TYPE_PROP, JarArchiveModel.TYPE))
                             .toList(JarArchiveModel.class).isEmpty()) {
-
-                        // scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                        // new SourceDirectoryTreeModule(unzippedPath.toFile()));
                         scope.addToScope(ClassLoaderReference.Application,
                                 new BinaryDirectoryTreeModule(unzippedPath.toFile()));
 
@@ -301,6 +300,7 @@ public class DivaLauncher extends GraphOperation {
 
         // build the class hierarchy
         IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope, clf);
+        DivaIRGen.loadKnownIntefaces(cha);
         LOG.info(cha.getNumberOfClasses() + " classes");
         LOG.fine(Warnings.asString());
 
@@ -308,7 +308,7 @@ public class DivaLauncher extends GraphOperation {
         Set<IClass> appClasses = new HashSet<>();
         Framework.relevantJarsAnalysis(cha, relevantClasses, appClasses,
                 c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
-                        || c.getName() == Constants.LSpringJPARepository || SpringBootAnalysis.checkRelevance(c)
+                        || SpringBootAnalysis.checkRelevance(c)
                         || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
 
         IClassHierarchy filteredCha = new FilteredClassHierarchy(cha, appClasses::contains);
@@ -331,15 +331,8 @@ public class DivaLauncher extends GraphOperation {
         JPAAnalysis.getEntities(relevantCha);
 
         AnalysisOptions options = new AnalysisOptions();
-        Set<IMethod> log = new HashSet<>();
-        Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries, m -> {
-            boolean res = relevantClasses.contains(m.getDeclaringClass());
-            String name = m.getDeclaringClass().getName().toString();
-            if (!res && !name.startsWith("Ljava") && !name.startsWith("Lcom/sun")) {
-                log.add(m);
-            }
-            return res;
-        });
+        Supplier<CallGraph> builder = Framework.chaCgBuilder(cha, options, cgEntries,
+                m -> relevantClasses.contains(m.getDeclaringClass()));
 
         LOG.info("Diva: building call graph...");
         CallGraph cg = builder.get();
@@ -349,8 +342,7 @@ public class DivaLauncher extends GraphOperation {
         Framework fw = new Framework(cha, cg);
 
         fw.relevanceAnalysis(c -> JDBCAnalysis.checkRelevance(c) || JPAAnalysis.checkRelevance(c)
-                || c.getName() == Constants.LSpringJPARepository || SpringBootAnalysis.checkRelevance(c)
-                || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
+                || SpringBootAnalysis.checkRelevance(c) || (isMultiModular && QuarkusAnalysis.checkRelevance(c)));
 
         for (CGNode n : cg) {
             if (entries.contains(n.getMethod()) && fw.isRelevant(n)) {
@@ -440,7 +432,7 @@ public class DivaLauncher extends GraphOperation {
                 gc.getGraph().tx().rollback();
                 failure++;
             }
-            if ((success + failure) % 10 == 0) {
+            if ((success + failure) % 10 == 0 || cxt == contexts.get(contexts.size() - 1)) {
                 LOG.info("Diva: transaction analysis: " + (success + failure) + "/" + contexts.size() + " (" + failure
                         + " failures)");
             }
@@ -518,17 +510,28 @@ public class DivaLauncher extends GraphOperation {
         for (FileModel dockerComposeYaml : gc.getQuery(FileModel.class)
                 .traverse(g -> g.has(FileModel.FILE_NAME, "docker-compose.yml")).toList(FileModel.class)) {
             try {
-                Object o = Util.YAML_SERIALIZER.readValue(new File(dockerComposeYaml.getFilePath()), Object.class);
-                for (Map.Entry<String, Map<String, Map<String, String>>> e : ((Map<String, Map<String, Map<String, Map<String, String>>>>) o)
-                        .get("services").entrySet()) {
+                Map<String, Object> topLevel = (Map<String, Object>) Util.YAML_SERIALIZER
+                        .readValue(new File(dockerComposeYaml.getFilePath()), Object.class);
+                Map<String, Map<String, Object>> services = (Map<String, Map<String, Object>>) topLevel
+                        .getOrDefault("services", topLevel);
+                for (Map.Entry<String, Map<String, Object>> e : services.entrySet()) {
                     String targetPath = null;
-                    if (e.getValue().getOrDefault("build", Collections.EMPTY_MAP).containsKey("dockerfile")) {
-                        targetPath = Paths.get(dockerComposeYaml.getParentFile().getFilePath())
-                                .resolve(e.getValue().get("build").get("dockerfile")).toFile().getCanonicalPath();
+                    Object build = e.getValue().getOrDefault("build", null);
+                    if (build instanceof String) {
+                        targetPath = Paths.get(dockerComposeYaml.getParentFile().getFilePath()).resolve((String) build)
+                                .toFile().getCanonicalPath();
 
-                    } else if (e.getValue().getOrDefault("build", Collections.EMPTY_MAP).containsKey("context")) {
-                        targetPath = Paths.get(dockerComposeYaml.getParentFile().getFilePath())
-                                .resolve(e.getValue().get("build").get("context")).toFile().getCanonicalPath();
+                    } else if (build instanceof Map) {
+                        Map<String, String> buildDict = (Map<String, String>) build;
+
+                        if (buildDict.containsKey("dockerfile")) {
+                            targetPath = Paths.get(dockerComposeYaml.getParentFile().getFilePath())
+                                    .resolve(buildDict.get("dockerfile")).toFile().getCanonicalPath();
+
+                        } else if (buildDict.containsKey("context")) {
+                            targetPath = Paths.get(dockerComposeYaml.getParentFile().getFilePath())
+                                    .resolve(buildDict.get("context")).toFile().getCanonicalPath();
+                        }
                     }
                     if (targetPath != null) {
                         String thePath = targetPath;
