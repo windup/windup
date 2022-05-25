@@ -253,21 +253,23 @@ public class DivaLauncher extends GraphOperation {
 
                     Path unzippedPath = Paths.get(((ArchiveModel) rootFileModel).getUnzippedDirectory());
 
+                    // LOG.info("filepath -> unzipped path: " + rootFileModel.asFile().getAbsolutePath() + " -> " + unzippedPath);
+
                     if (rootFileModel instanceof WarArchiveModel) {
                         Path classRoot = unzippedPath.resolve("WEB-INF").resolve("classes");
                         if (classRoot.toFile().isDirectory()) {
-                            //scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                            //        new SourceDirectoryTreeModule(classRoot.toFile()));
+                            // scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                            // new SourceDirectoryTreeModule(classRoot.toFile()));
                             scope.addToScope(ClassLoaderReference.Application,
                                     new BinaryDirectoryTreeModule(classRoot.toFile()));
                         }
 
-                    } else if (rootFileModel instanceof JarArchiveModel
-                            && Util.any(projects, p2 -> p2.getRootFileModel().asFile().getAbsolutePath()
-                                    .startsWith(unzippedPath.normalize().toString()))) {
+                    } else if (rootFileModel instanceof JarArchiveModel && !rootFileModel.traverse(
+                            g -> g.out(ArchiveModel.PARENT_ARCHIVE).has(WindupFrame.TYPE_PROP, JarArchiveModel.TYPE))
+                            .toList(JarArchiveModel.class).isEmpty()) {
 
-                        //scope.addToScope(JavaSourceAnalysisScope.SOURCE,
-                        //        new SourceDirectoryTreeModule(unzippedPath.toFile()));
+                        // scope.addToScope(JavaSourceAnalysisScope.SOURCE,
+                        // new SourceDirectoryTreeModule(unzippedPath.toFile()));
                         scope.addToScope(ClassLoaderReference.Application,
                                 new BinaryDirectoryTreeModule(unzippedPath.toFile()));
 
@@ -365,6 +367,8 @@ public class DivaLauncher extends GraphOperation {
 
         DivaEntryMethodService entryMethodService = new DivaEntryMethodService(gc);
         GraphService<DivaRequestParamModel> requestParamService = new GraphService<>(gc, DivaRequestParamModel.class);
+
+        gc.getGraph().tx().commit();
 
         int success = 0, failure = 0;
         for (Context cxt : contexts) {
