@@ -29,16 +29,19 @@ public class StackTraceToList implements WindupFreeMarkerMethod {
         if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument");
         }
-        if (arguments.get(0) instanceof DivaStackTraceModel) {
-            throw new TemplateModelException(
-                    "Error, method expects argument of type " + DivaStackTraceModel.class.getSimpleName());
-        }
 
         List<DivaStackTraceModel> list = new ArrayList<>();
         StringModel stringModel = (StringModel) arguments.get(0);
         if (stringModel == null)
             return list;
-        DivaStackTraceModel model = (DivaStackTraceModel)stringModel.getWrappedObject() ;
+
+        if (stringModel.getWrappedObject() != null
+                && !(stringModel.getWrappedObject() instanceof DivaStackTraceModel)) {
+            throw new TemplateModelException(
+                    "Error, method expects argument of type " + DivaStackTraceModel.class.getSimpleName());
+        }
+
+        DivaStackTraceModel model = (DivaStackTraceModel) stringModel.getWrappedObject();
 
         while (model != null) {
             list.add(model);
