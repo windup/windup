@@ -46,7 +46,7 @@ import org.jboss.windup.rules.apps.diva.model.DivaRequestParamModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestApiModel;
 import org.jboss.windup.rules.apps.diva.model.DivaRestCallOpModel;
 import org.jboss.windup.rules.apps.diva.service.DivaEntryMethodService;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
