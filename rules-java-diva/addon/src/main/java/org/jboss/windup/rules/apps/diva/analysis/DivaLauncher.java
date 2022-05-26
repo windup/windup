@@ -230,7 +230,18 @@ public class DivaLauncher extends GraphOperation {
             FileUtils.forceDeleteOnExit(temp.toFile());
 
             if (sourceMode) {
-                List<String> sourceDirs = Util.makeList(Util.map(cfg.getInputPaths(), FileModel::getFilePath));
+                List<String> sourceDirs = new ArrayList<>();
+                for (FileModel file : cfg.getInputPaths()) {
+                    if (file.isDirectory()) {
+                        sourceDirs.add(file.getFilePath());
+                    } else if (file instanceof ArchiveModel) {
+                        String unzipped = ((ArchiveModel)file).getUnzippedDirectory();
+                        if (unzipped != null) {
+                            sourceDirs.add(unzipped);
+                        }
+                    }
+                }
+
                 LOG.info("Using root source dirs: " + sourceDirs);
 
                 for (String sourceDir : sourceDirs) {
