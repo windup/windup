@@ -484,6 +484,7 @@ public class DivaLauncher extends GraphOperation {
                 try {
                     appProps.put(p.getName(), file.getProperties());
                 } catch (IOException e) {
+                    LOG.info("Failed to read: " + targetPath);
                 }
             }
         }
@@ -546,6 +547,7 @@ public class DivaLauncher extends GraphOperation {
                     }
                 }
             } catch (IOException e1) {
+                LOG.info("Failed to read: " + dockerComposeYaml.getFilePath());
             }
         }
 
