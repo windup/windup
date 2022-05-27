@@ -27,36 +27,14 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
         fileLocationService = new FileLocationService(context);
     }
 
-    // public static int count0 = 0;
-    // public static long total0 = 0;
-    // public static int count1 = 0;
-    // public static long total1 = 0;
-    // public static int count2 = 0;
-    // public static long total2 = 0;
-
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
             DivaStackTraceModel parent, JavaMethodModel method) {
-        // FileModel fileModel = fileService.createByFilePath(filePath);
-        // GraphTraversal<?, ?> traversal =
-        // getGraphContext().getQuery(FileLocationModel.class).getRawTraversal()
-        // .has(FileLocationModel.COLUMN_NUMBER,
-        // columnNumber).has(FileLocationModel.LINE_NUMBER, lineNumber)
-        // .has(FileLocationModel.LENGTH, length)
-        // .filter(__.out(FileReferenceModel.FILE_MODEL).is(fileModel.getElement()));
 
         List<? extends FileLocationModel> locs = fileModel
                 .traverse(g -> g.in(FileReferenceModel.FILE_MODEL).has(WindupFrame.TYPE_PROP, FileLocationModel.TYPE)
                         .has(FileLocationModel.COLUMN_NUMBER, columnNumber)
                         .has(FileLocationModel.LINE_NUMBER, lineNumber).has(FileLocationModel.LENGTH, length))
                 .toList(FileLocationModel.class);
-
-        // List<?> locs = traversal.toList();
-
-        // if (count0++ % 100 == 0) {
-        // System.out.println(count0 + ", " + (total0 / 1000000D) + "ms, " + count1 + ",
-        // " + (total1 / 1000000D)
-        // + "ms, " + count2 + ", " + (total2 / 1000000D) + "ms");
-        // }
 
         FileLocationModel location;
         DivaStackTraceModel model = null;
@@ -80,7 +58,6 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
                 }
             }
         } else {
-            // location = fileLocationService.frame((Vertex) locs.get(0));
             location = locs.get(0);
             GraphTraversal<?, ?> traversal = new GraphTraversalSource(getGraphContext().getGraph())
                     .V(location.getElement()).in(DivaStackTraceModel.LOCATION);

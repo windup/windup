@@ -32,6 +32,7 @@ import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.typedgraph.TestIncidenceAaaModel;
 import org.jboss.windup.graph.typedgraph.TestIncidenceAaaToBbbEdgeModel;
 import org.jboss.windup.graph.typedgraph.TestIncidenceBbbModel;
+import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assume;
 
 @RunWith(Arquillian.class)
@@ -284,6 +285,14 @@ public class GraphServiceTest
                 Assert.assertNotNull(foos[4]);
                 Assert.assertNull(foos[4].getProp1());
                 Assert.assertEquals("2", foos[4].getProp2());
+
+                try {
+                    service.getOrCreateByProperties("prop2", "1", "prop3");
+                    Assert.fail("Exception should be raised");
+                } catch (RuntimeException e) {
+                    Assert.assertEquals("Number of arguments should be even.", e.getMessage());
+                }
+
             } finally {
                 for (TestFooModel foo: foos) {
                     if (foo != null)
