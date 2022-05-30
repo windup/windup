@@ -123,4 +123,4 @@ jobs:
       - name: Build windup-rulesets
         working-directory: windup-rulesets
         run: |
-          mvn install -DskipTests
+          mvn install
