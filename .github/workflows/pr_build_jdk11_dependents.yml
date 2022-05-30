@@ -98,6 +98,7 @@ jobs:
     name: OS build
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ macos-latest, windows-latest ]
     steps:
