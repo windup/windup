@@ -93,3 +93,28 @@ jobs:
           key: ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -s settings.xml -nsu
+
+  windup-os-build:
+    name: OS build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, windows-latest ]
+    steps:
+      - name: Checkout windup
+        uses: actions/checkout@v2.3.4
+        with:
+          path: windup
+      - name: Checkout windup-rulesets
+        uses: actions/checkout@v2.3.4
+        with:
+          path: windup-rulesets
+          repository: windup/windup-rulesets
+      - name: Build windup
+        working-directory: windup
+        run: |
+          mvn install -DskipTests
+      - name: Build windup-rulesets
+        working-directory: windup-rulesets
+        run: |
+          mvn install -DskipTests
