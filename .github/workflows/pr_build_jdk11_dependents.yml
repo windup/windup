@@ -124,4 +124,5 @@ jobs:
       - name: Build windup-rulesets
         working-directory: windup-rulesets
         run: |
-          mvn install -Dsurefire-argLine="-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m"
+          mvn install -Dsurefire-argLine="-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m -Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=1000"
+          mvn install -Dsurefire-argLine="-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m -Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=1000"
