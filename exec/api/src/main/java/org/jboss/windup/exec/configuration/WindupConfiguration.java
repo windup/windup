@@ -1,11 +1,5 @@
 package org.jboss.windup.exec.configuration;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.util.Predicate;
@@ -21,11 +15,26 @@ import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.exec.configuration.options.UserLabelsDirectoryOption;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Configuration of WindupProcessor.
@@ -221,8 +230,7 @@ public class WindupConfiguration
      */
     public Collection<Path> getInputPaths()
     {
-        Collection<Path> inputPaths = getOptionValue(InputPathOption.NAME);
-        return inputPaths;
+        return getOptionValue(InputPathOption.NAME);
     }
 
     public WindupConfiguration addInputApplicationName(String name)

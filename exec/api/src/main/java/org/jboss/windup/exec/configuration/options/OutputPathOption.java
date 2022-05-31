@@ -1,13 +1,15 @@
 package org.jboss.windup.exec.configuration.options;
 
+import org.jboss.windup.config.AbstractPathConfigurationOption;
+import org.jboss.windup.config.InputType;
+import org.jboss.windup.config.ValidationResult;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-
-import org.jboss.windup.config.AbstractPathConfigurationOption;
-import org.jboss.windup.config.InputType;
-import org.jboss.windup.config.ValidationResult;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Indicates that output path for the windup report and other data produced by a Windup execution.
@@ -17,6 +19,9 @@ import org.jboss.windup.config.ValidationResult;
  */
 public class OutputPathOption extends AbstractPathConfigurationOption
 {
+
+    private static Logger LOG = Logger.getLogger(OutputPathOption.class.getName());
+
     public static final String NAME = "output";
 
     public OutputPathOption()
@@ -81,14 +86,13 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
 
+        inputPaths.stream().forEach(
+                input -> LOG.log(Level.INFO, "[Jandepora] input.toString())")
+        );
+
         if (inputPaths == null)
         {
             return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
-        }
-        
-        if (inputPaths.isEmpty())
-        {
-            return new ValidationResult(ValidationResult.Level.ERROR, "Couldn't find any application at the root level of the directory. Use `--sourceMode` if the directory contains source files you want to analyse.");
         }
 
         if (outputPath == null)

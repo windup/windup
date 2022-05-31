@@ -1,15 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.ParserException;
 import org.jboss.forge.roaster.Roaster;
@@ -33,12 +23,9 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
-import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
-import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_CLASSIFICATION;
-import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_DESCRIPTION;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
@@ -46,6 +33,19 @@ import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_CLASSIFICATION;
+import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_DESCRIPTION;
 
 /**
  * Discovers .java files from the applications being analyzed.
@@ -96,13 +96,6 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
-            // If we are in binary mode, then we ignore java sources. Just remove them from the graph
-            if (SourceMode.isDisabled().evaluate(event, context))
-            {
-                payload.remove();
-                return;
-            }
-
             WindupWildcardImportResolver.setContext(event.getGraphContext());
             try
             {

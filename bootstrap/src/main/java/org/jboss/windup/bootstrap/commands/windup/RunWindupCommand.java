@@ -1,13 +1,5 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
@@ -41,6 +33,23 @@ import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -238,7 +247,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         if (!isExplodedApp)
         {
             List<Path> input = (List<Path>) optionValues.get(InputPathOption.NAME);
-            input = expandMultiAppInputDirs(input);
+            input = new InputsHandler().handle(input);
             optionValues.put(InputPathOption.NAME, input);
         }
 

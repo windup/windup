@@ -52,7 +52,7 @@ public class InputPathOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Input file or directory (a directory is required for source mode). Multiple paths can be specified separated by a space (for example, --input PATH_1 PATH_2).";
+        return "Input file or directory. Multiple paths can be specified separated by a space (for example, --input PATH_1 PATH_2).";
     }
 
     @Override

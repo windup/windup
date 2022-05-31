@@ -1,18 +1,5 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.jboss.windup.bootstrap.commands.AbstractListCommand;
 import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
@@ -26,6 +13,19 @@ import org.jboss.windup.util.PackageFrequencyTrie;
 import org.jboss.windup.util.PackageFrequencyTrieVisitor;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
