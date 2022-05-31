@@ -7,8 +7,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
-{
+public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs {
     /**
      * Narrow the query via a {@link QueryGremlinCriterion} in order to execute Gremlin queries.
      */
@@ -38,7 +37,7 @@ public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
      * Narrow the query to {@link WindupVertexFrame} instances that satisfy the given property comparison.
      */
     QueryBuilderWith withProperty(String property, QueryPropertyComparisonType searchType,
-                Object searchValue);
+                                  Object searchValue);
 
     /**
      * Narrow the query to {@link WindupVertexFrame} instances that satisfy the given property comparison.

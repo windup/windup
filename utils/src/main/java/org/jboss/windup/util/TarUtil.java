@@ -1,5 +1,10 @@
 package org.jboss.windup.util;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.kamranzafar.jtar.TarEntry;
+import org.kamranzafar.jtar.TarInputStream;
+import org.kamranzafar.jtar.TarOutputStream;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,25 +19,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.kamranzafar.jtar.TarEntry;
-import org.kamranzafar.jtar.TarInputStream;
-import org.kamranzafar.jtar.TarOutputStream;
-
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TarUtil
-{
+public class TarUtil {
     private static Logger LOG = Logger.getLogger(TarUtil.class.getName());
 
-    public static void tarDirectory(Path outputFile, Path inputDirectory) throws IOException
-    {
+    public static void tarDirectory(Path outputFile, Path inputDirectory) throws IOException {
         tarDirectory(outputFile, inputDirectory, Collections.emptyList());
     }
 
-    public static void tarDirectory(Path outputFile, Path inputDirectory, List<String> pathPrefixesToExclude) throws IOException
-    {
+    public static void tarDirectory(Path outputFile, Path inputDirectory, List<String> pathPrefixesToExclude) throws IOException {
         LOG.info("Creating archive at: " + outputFile);
 
         Collection<String> collectionPathPrefixesToExclude = CollectionUtils.emptyIfNull(pathPrefixesToExclude);
@@ -44,8 +41,7 @@ public class TarUtil
         final int inputPathLength = inputDirectoryAbsolute.toString().length();
 
         // Create a TarOutputStream
-        try (TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest)))
-        {
+        try (TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest))) {
             Files.walk(inputDirectoryAbsolute).forEach(entry -> {
                 if (Files.isDirectory(entry))
                     return;
@@ -54,8 +50,7 @@ public class TarUtil
                 if (entry.equals(outputFileAbsolute))
                     return;
 
-                try
-                {
+                try {
                     String relativeName = entry.toString().substring(inputPathLength + 1);
                     if (collectionPathPrefixesToExclude.stream().anyMatch(pathPrefixToExclude -> relativeName.startsWith(pathPrefixToExclude)))
                         return;
@@ -65,16 +60,13 @@ public class TarUtil
                     int count;
                     byte data[] = new byte[2048];
 
-                    while ((count = origin.read(data)) != -1)
-                    {
+                    while ((count = origin.read(data)) != -1) {
                         out.write(data, 0, count);
                     }
 
                     out.flush();
                     origin.close();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     LOG.severe("Failed to add tar entry due to: " + e.getMessage());
                     e.printStackTrace();
                 }
@@ -82,23 +74,18 @@ public class TarUtil
         }
     }
 
-    public static void untar(Path outputDirectory, Path inputTarFile) throws IOException
-    {
-        try (FileInputStream fileInputStream = new FileInputStream(inputTarFile.toFile()))
-        {
+    public static void untar(Path outputDirectory, Path inputTarFile) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(inputTarFile.toFile())) {
             untar(outputDirectory, fileInputStream);
         }
     }
 
 
-    public static void untar(Path outputDirectory, InputStream inputStream) throws IOException
-    {
-        try (TarInputStream tarInputStream = new TarInputStream(inputStream))
-        {
+    public static void untar(Path outputDirectory, InputStream inputStream) throws IOException {
+        try (TarInputStream tarInputStream = new TarInputStream(inputStream)) {
             TarEntry entry;
 
-            while ((entry = tarInputStream.getNextEntry()) != null)
-            {
+            while ((entry = tarInputStream.getNextEntry()) != null) {
                 int count;
                 byte data[] = new byte[32768];
                 File outputFile = new File(outputDirectory + "/" + entry.getName());
@@ -108,8 +95,7 @@ public class TarUtil
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 BufferedOutputStream dest = new BufferedOutputStream(fos);
 
-                while ((count = tarInputStream.read(data)) != -1)
-                {
+                while ((count = tarInputStream.read(data)) != -1) {
                     dest.write(data, 0, count);
                 }
 

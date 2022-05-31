@@ -6,7 +6,6 @@ package org.jboss.windup.config.metadata;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelProviderMetadata extends LabelsetMetadata
-{
+public interface LabelProviderMetadata extends LabelsetMetadata {
 
 }

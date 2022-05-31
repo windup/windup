@@ -1,21 +1,19 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import java.util.Map;
-
-import org.jboss.windup.graph.MapInAdjacentProperties;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.MapInAdjacentProperties;
 import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.Map;
 
 /**
  * Contains EJB Message Driven model information and related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbMessageDrivenModel.TYPE)
-public interface EjbMessageDrivenModel extends EjbBeanBaseModel
-{
+public interface EjbMessageDrivenModel extends EjbBeanBaseModel {
 
     String TYPE = "EjbMessageDrivenModel";
     String DESTINATION = "destination";
@@ -58,11 +56,11 @@ public interface EjbMessageDrivenModel extends EjbBeanBaseModel
      * References the thread pool, if defined.
      */
     @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
-    void setThreadPool(ThreadPoolModel threadPool);
+    ThreadPoolModel getThreadPool();
 
     /**
      * References the thread pool, if defined.
      */
     @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
-    ThreadPoolModel getThreadPool();
+    void setThreadPool(ThreadPoolModel threadPool);
 }

@@ -8,16 +8,20 @@
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true"
-                                    aria-expanded="false"><span class="filter-by"><!--Dynamically load content here --></span> <span class="caret"></span></button>
+                                    aria-expanded="false"><span
+                                        class="filter-by"><!--Dynamically load content here --></span> <span
+                                        class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <!-- Dynamically load content here -->
                             </ul>
                         </div><!-- /btn-group -->
-                        <input type="text" class="form-control" id="filter" placeholder="Filter by name..." autocomplete="off" title="">
+                        <input type="text" class="form-control" id="filter" placeholder="Filter by name..."
+                               autocomplete="off" title="">
                         <div class="input-group-btn" id="filter-type">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true"
-                                    aria-expanded="false"><span class="filter-type"><!--Dynamically load content here --></span> <span class="caret"></span></button>
+                                    aria-expanded="false"><span class="filter-type"><!--Dynamically load content here --></span>
+                                <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <!-- Dynamically load content here -->
                             </ul>
@@ -30,7 +34,8 @@
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false"
-                        ><span id="sort-by"><!-- Dynamically load content here --></span> <span class="caret"></span></button>
+                        ><span id="sort-by"><!-- Dynamically load content here --></span> <span class="caret"></span>
+                        </button>
                         <ul class="dropdown-menu">
                             <!-- Dynamically load content here -->
                         </ul>
@@ -42,7 +47,8 @@
             </form>
             <div class="row collapse" id="searchTermError">
                 <div class="col-sm-4 alert alert-warning" role="alert">
-                    <button type="button" class="close" data-toggle="collapse" data-target="#searchTermError" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-toggle="collapse" data-target="#searchTermError"
+                            aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <strong>Warning!</strong> Invalid search regular expression!
                 </div>
             </div>

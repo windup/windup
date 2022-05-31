@@ -1,13 +1,12 @@
 package org.jboss.windup.graph.model.resource;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
 
 import java.util.List;
 
@@ -17,8 +16,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SourceFileModel.TYPE)
-public interface SourceFileModel extends WindupVertexFrame
-{
+public interface SourceFileModel extends WindupVertexFrame {
     String TYPE = "SourceFileModel";
     String TRANSFORMED_TO = "transformedTo";
     String GENERATE_SOURCE_REPORT = "generateSourceReport";
@@ -38,12 +36,11 @@ public interface SourceFileModel extends WindupVertexFrame
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
-    default boolean isGenerateSourceReport()
-    {
+    default boolean isGenerateSourceReport() {
         VertexProperty result = getElement().property(GENERATE_SOURCE_REPORT);
         if (!result.isPresent())
             return false;
-        return (Boolean)result.value();
+        return (Boolean) result.value();
     }
 
     /**

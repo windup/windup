@@ -6,9 +6,6 @@
  */
 package org.jboss.windup.config;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
@@ -22,65 +19,61 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class TestMavenExampleRuleProvider extends AbstractRuleProvider
-{
+public class TestMavenExampleRuleProvider extends AbstractRuleProvider {
     private final List<MavenProjectModel> results = new LinkedList<>();
 
-    public TestMavenExampleRuleProvider()
-    {
+    public TestMavenExampleRuleProvider() {
         super(MetadataBuilder.forProvider(TestMavenExampleRuleProvider.class, "TestMavenExampleRuleProvider")
-                    .setPhase(DiscoveryPhase.class));
+                .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         Configuration configuration = ConfigurationBuilder.begin()
 
-        // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
-        .addRule()
-        .when(
-            Query.fromType(TestXmlMetaFacetModel.class)
-        )
-        .perform(
-            Iteration.over(TestXmlMetaFacetModel.class)
-            .perform(
-                TypeOperation.addType(Iteration.DEFAULT_SINGLE_VARIABLE_STRING, MavenProjectModel.class)
-            )
-            .endIteration()
-        )
+                // Add the MavenFacetModel type to all XmlMetaFacetModel vertices.
+                .addRule()
+                .when(
+                        Query.fromType(TestXmlMetaFacetModel.class)
+                )
+                .perform(
+                        Iteration.over(TestXmlMetaFacetModel.class)
+                                .perform(
+                                        TypeOperation.addType(Iteration.DEFAULT_SINGLE_VARIABLE_STRING, MavenProjectModel.class)
+                                )
+                                .endIteration()
+                )
 
-        // Add all MavenFacetModel vertices to this.results.
-        .addRule()
-        .when(
-            Query.fromType(MavenProjectModel.class).as("mavenModels")
-        )
-        .perform(
-            Iteration.over(MavenProjectModel.class, "mavenModels")
-                .perform( new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        Variables varStack = Variables.instance(event);
-                        MavenProjectModel mavenFacetModel = 
-                            Iteration.getCurrentPayload(varStack, MavenProjectModel.class, Iteration.singleVariableIterationName("mavenModels"));
-                        results.add(mavenFacetModel);
-                    }
-                })
-                .endIteration()
-        );
+                // Add all MavenFacetModel vertices to this.results.
+                .addRule()
+                .when(
+                        Query.fromType(MavenProjectModel.class).as("mavenModels")
+                )
+                .perform(
+                        Iteration.over(MavenProjectModel.class, "mavenModels")
+                                .perform(new GraphOperation() {
+                                    @Override
+                                    public void perform(GraphRewrite event, EvaluationContext context) {
+                                        Variables varStack = Variables.instance(event);
+                                        MavenProjectModel mavenFacetModel =
+                                                Iteration.getCurrentPayload(varStack, MavenProjectModel.class, Iteration.singleVariableIterationName("mavenModels"));
+                                        results.add(mavenFacetModel);
+                                    }
+                                })
+                                .endIteration()
+                );
         return configuration;
     }
     // @formatter:on
 
-    public List<MavenProjectModel> getSearchResults()
-    {
+    public List<MavenProjectModel> getSearchResults() {
         return results;
     }
 }

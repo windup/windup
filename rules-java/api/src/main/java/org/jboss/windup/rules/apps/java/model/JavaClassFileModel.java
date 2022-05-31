@@ -1,21 +1,18 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * This Model represents Java class files on disk (eg, /path/to/Foo.class). This does not represent Java source files (.java files). The class itself
  * is represented by the {@link JavaClassModel} frame.
  */
 @TypeValue(JavaClassFileModel.TYPE)
-public interface JavaClassFileModel extends FileModel
-{
+public interface JavaClassFileModel extends FileModel {
     String MINOR_VERSION = "minorVersion";
     String MAJOR_VERSION = "majorVersion";
     String TYPE = "JavaClassFileModel";
@@ -55,13 +52,13 @@ public interface JavaClassFileModel extends FileModel
      * Contains the {@link JavaClassModel} represented by this .class file.
      */
     @Adjacency(label = JavaSourceFileModel.JAVA_CLASS_MODEL, direction = Direction.OUT)
-    void setJavaClass(JavaClassModel model);
+    JavaClassModel getJavaClass();
 
     /**
      * Contains the {@link JavaClassModel} represented by this .class file.
      */
     @Adjacency(label = JavaSourceFileModel.JAVA_CLASS_MODEL, direction = Direction.OUT)
-    JavaClassModel getJavaClass();
+    void setJavaClass(JavaClassModel model);
 
     /**
      * Contains the Major version of this class file
@@ -91,8 +88,7 @@ public interface JavaClassFileModel extends FileModel
      * Returns the path of this file within the parent project (format suitable for reporting)
      * Uses fully qualified class name notation for classes
      */
-    default String getPrettyPathWithinProject(boolean useFQNForClasses)
-    {
+    default String getPrettyPathWithinProject(boolean useFQNForClasses) {
         if (!useFQNForClasses) {
             return this.getPrettyPathWithinProject();
         }

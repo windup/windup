@@ -1,14 +1,5 @@
 package org.jboss.windup.config.metadata;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -22,7 +13,6 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,9 +20,16 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.w3c.dom.Document;
 
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 @RunWith(Arquillian.class)
-public class MetaDataHandlerTest
-{
+public class MetaDataHandlerTest {
 
     private static final String XML_WINDUP_FILE = "src/test/resources/testxml/metadata.windup.xml";
     private static final String XML_WINDUP_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.windup.xml";
@@ -40,47 +37,40 @@ public class MetaDataHandlerTest
     private static final String XML_RHAMT_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.rhamt.xml";
     private static final String XML_MTA_FILE = "src/test/resources/testxml/metadata.mta.xml";
     private static final String XML_MTA_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.mta.xml";
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
     @Inject
     private Furnace furnace;
-
     @Inject
     private GraphContextFactory graphContextFactory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+    }
+
     @Test
-    public void testWindupXmlParsinfOfRulesetMetadata() throws Exception
-    {
+    public void testWindupXmlParsinfOfRulesetMetadata() throws Exception {
         File fXmlFile = new File(XML_WINDUP_FILE);
         testXmlParsinfOfRulesetMetadata(fXmlFile);
     }
 
     @Test
-    public void testRhamtXmlParsinfOfRulesetMetadata() throws Exception
-    {
+    public void testRhamtXmlParsinfOfRulesetMetadata() throws Exception {
         File fXmlFile = new File(XML_RHAMT_FILE);
         testXmlParsinfOfRulesetMetadata(fXmlFile);
     }
 
     @Test
-    public void testMtaXmlParsinfOfRulesetMetadata() throws Exception
-    {
+    public void testMtaXmlParsinfOfRulesetMetadata() throws Exception {
         File fXmlFile = new File(XML_MTA_FILE);
         testXmlParsinfOfRulesetMetadata(fXmlFile);
     }
 
-    private void testXmlParsinfOfRulesetMetadata(File fXmlFile) throws Exception
-    {
+    private void testXmlParsinfOfRulesetMetadata(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -122,28 +112,24 @@ public class MetaDataHandlerTest
     }
 
     @Test
-    public void testWindupXmlRuleOverrideProviderMetadata() throws Exception
-    {
+    public void testWindupXmlRuleOverrideProviderMetadata() throws Exception {
         File fXmlFile = new File(XML_WINDUP_WITH_OVERRIDE_FILE);
         testXmlRuleOverrideProviderMetadata(fXmlFile);
     }
 
     @Test
-    public void testRhamtXmlRuleOverrideProviderMetadata() throws Exception
-    {
+    public void testRhamtXmlRuleOverrideProviderMetadata() throws Exception {
         File fXmlFile = new File(XML_RHAMT_WITH_OVERRIDE_FILE);
         testXmlRuleOverrideProviderMetadata(fXmlFile);
     }
 
     @Test
-    public void testMtaXmlRuleOverrideProviderMetadata() throws Exception
-    {
+    public void testMtaXmlRuleOverrideProviderMetadata() throws Exception {
         File fXmlFile = new File(XML_MTA_WITH_OVERRIDE_FILE);
         testXmlRuleOverrideProviderMetadata(fXmlFile);
     }
 
-    public void testXmlRuleOverrideProviderMetadata(File fXmlFile) throws Exception
-    {
+    public void testXmlRuleOverrideProviderMetadata(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

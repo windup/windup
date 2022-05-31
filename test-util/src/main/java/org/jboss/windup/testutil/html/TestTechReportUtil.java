@@ -1,5 +1,11 @@
 package org.jboss.windup.testutil.html;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.util.Util;
+import org.ocpsoft.common.util.Strings;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,20 +13,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.util.Util;
-import org.ocpsoft.common.util.Assert;
-import org.ocpsoft.common.util.Strings;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 /**
  * Contains methods for evaluating and retrieving data from the technologies report.
  *
  * @author Ondrej Zizka
  */
-public class TestTechReportUtil extends TestChromeDriverReportUtil
-{
+public class TestTechReportUtil extends TestChromeDriverReportUtil {
     private final static Logger LOG = Logger.getLogger(TestReportUtil.class.getName());
 
     final int COLS_BEFORE_BUBBLES = 1;
@@ -28,20 +26,17 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
     /**
      * Basically this checks few bubbles if they are as big (or missing) as they should be.
      */
-    public void checkTechGlobalReport(Path path, List<BubbleInfo> bubblesExpected)
-    {
+    public void checkTechGlobalReport(Path path, List<BubbleInfo> bubblesExpected) {
         loadPage(path);
 
-        for (BubbleInfo bubbleInfo : bubblesExpected)
-        {
+        for (BubbleInfo bubbleInfo : bubblesExpected) {
             checkBubble(bubbleInfo);
         }
 
         this.getDriver().close();
     }
 
-    public void checkPoints(String appName, PointsType pointsType, int expectedCount)
-    {
+    public void checkPoints(String appName, PointsType pointsType, int expectedCount) {
         LOG.info("    Checking points " + appName + ", pointstype: " + pointsType);
 
         String columnName;
@@ -61,7 +56,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
 
         int colOffset = getPunchCardReportColumnOffset(columnName);
         final String precedingSummaryElementXpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[contains(@class, 'sectorSummary')]",
-            appName);
+                appName);
         List<WebElement> precedingSummaryElements = getDriver().findElements(By.xpath(precedingSummaryElementXpath));
         //No '+1' in this colOffset as the 'name' field gets counted twice
         final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]",
@@ -85,14 +80,13 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
     /**
      * The sizes are 0 to 4. 0 represents the missing icon, 1-4 are the sizes used.
      */
-    private void checkBubble(BubbleInfo bubbleExpected)
-    {
+    private void checkBubble(BubbleInfo bubbleExpected) {
         LOG.info("    Checking bubble " + bubbleExpected);
 
         String appName = bubbleExpected.appName.trim();
         int colOffset = getPunchCardReportColumnOffset(bubbleExpected.techColumnLabel);
         final String precedingSummaryElementXpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[contains(@class, 'sectorSummary') and position()<=%d]",
-                appName, colOffset + COLS_BEFORE_BUBBLES +1);
+                appName, colOffset + COLS_BEFORE_BUBBLES + 1);
         List<WebElement> precedingSummaryElements = getDriver().findElements(By.xpath(precedingSummaryElementXpath));
         //No '+1' in this colOffset as the 'name' field gets counted twice
         final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]",
@@ -110,15 +104,14 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
             throw new CheckFailedException(String.format("Bubble size larger than expected: %d > %d", actualSize, bubbleExpected.maxSize));
     }
 
-    private int parseSizeFromClasses(String classes)
-    {
+    private int parseSizeFromClasses(String classes) {
         Matcher mat = Pattern.compile("(?:.*size)(\\d)(?:.*)").matcher(classes);
         mat.matches();
         String size = mat.group(1);
         return Integer.valueOf(size);
     }
 
-    private int getPunchCardReportColumnOffset(String label){
+    private int getPunchCardReportColumnOffset(String label) {
         label = label.trim();
         List<WebElement> headersTR = getDriver().findElements(By.xpath(String.format("//tr[@class='headersGroup']", label)));
         assertNotEmpty(headersTR, "headers row");
@@ -131,26 +124,22 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         assertNotEmpty(precedingSiblings, "precending siblings of header column div " + label);
 
 
-
         return precedingSiblings.size() - COLS_BEFORE_BUBBLES; // Substracting the app name column.
     }
 
     // ----------------------------
 
-    public void checkTechBoxReport(Path path, List<BoxInfo> boxesExpected)
-    {
+    public void checkTechBoxReport(Path path, List<BoxInfo> boxesExpected) {
         loadPage(path);
 
         List errors = new ArrayList();
-        for (BoxInfo box : boxesExpected)
-        {
+        for (BoxInfo box : boxesExpected) {
             if (box.sectorLabel == null)
                 checkNoBoxInRow(box);
             else if (box.boxLabel == null)
                 //checkNoBoxUnderSector(box); // TBD when someone wants to.
                 ;
-            else
-            {
+            else {
                 String error = checkBox(box);
                 if (null != error)
                     errors.add(error);
@@ -163,8 +152,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         this.getDriver().close();
     }
 
-    private void checkNoBoxInRow(BoxInfo boxNotExpected)
-    {
+    private void checkNoBoxInRow(BoxInfo boxNotExpected) {
         final String xpath = String.format("//tr[@class='rowHeader' and //div[normalize-space()='%s']]//div[contains(@class,'box')]", boxNotExpected.rowLabel);
         List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
         if (!boxes.isEmpty())
@@ -172,8 +160,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
                     String.format("There should be no boxes for row '%s';  xpath: " + xpath, boxNotExpected.rowLabel));
     }
 
-    private void checkNoBoxUnderSector(BoxInfo boxNotExpected)
-    {
+    private void checkNoBoxUnderSector(BoxInfo boxNotExpected) {
         int sectorOffset = getBoxesReportSectorOffset(boxNotExpected.sectorLabel);
 
         final String xpath = String.format("//tr[@class='rowHeader' and //div[normalize-space()='%s']]//td[position()=%d]//div[contains(@class,'box')", boxNotExpected.rowLabel, sectorOffset);
@@ -184,8 +171,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
                             boxNotExpected.rowLabel, boxNotExpected.sectorLabel));
     }
 
-    private int getBoxesReportSectorOffset(String sectorLabel)
-    {
+    private int getBoxesReportSectorOffset(String sectorLabel) {
         // TBD
         return 0;
     }
@@ -193,8 +179,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
     /**
      * Returns null if ok, or an error message if not found or wrong number.
      */
-    private String checkBox(BoxInfo boxExpected)
-    {
+    private String checkBox(BoxInfo boxExpected) {
         final String xpath = String.format("//div[contains(@class,'box') and //h4[normalize-space() = '%s']]", boxExpected.boxLabel);
         List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
         if (boxes.isEmpty())
@@ -213,7 +198,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         final List<WebElement> countBs = techLi.findElements(By.tagName("b"));
         if (countBs.isEmpty())
             return String.format("Count was missing, expected to be %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
-                            boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
+                    boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
 
         final Integer actualCount = Integer.valueOf(countBs.get(0).getText());
         if (actualCount < boxExpected.minCount)
@@ -224,9 +209,7 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
     }
 
 
-
-    private boolean assertNotNull(Object object, String whatIsIt, boolean throwIfNotFound)
-    {
+    private boolean assertNotNull(Object object, String whatIsIt, boolean throwIfNotFound) {
         if (object == null) {
             if (throwIfNotFound)
                 throw new CheckFailedException(whatIsIt + " was not found on the page.");
@@ -234,30 +217,26 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         return object != null;
     }
 
-    private void assertNotEmpty(Iterable iterable, String whatIsIt)
-    {
+    private void assertNotEmpty(Iterable iterable, String whatIsIt) {
         if (!iterable.iterator().hasNext()) {
-                throw new CheckFailedException(whatIsIt + " was not found on the page.");
+            throw new CheckFailedException(whatIsIt + " was not found on the page.");
         }
     }
 
 
-    public enum PointsType
-    {
+    public enum PointsType {
         MANDATORY,
         CLOUD_MANDATORY,
         POTENTIAL
     }
 
-    public static class BubbleInfo
-    {
+    public static class BubbleInfo {
         String appName;
         String techColumnLabel;
         int minSize;
         int maxSize;
 
-        public BubbleInfo(String appName, String techColumnLabel, int minSize, int maxSize)
-        {
+        public BubbleInfo(String appName, String techColumnLabel, int minSize, int maxSize) {
             this.appName = appName;
             this.techColumnLabel = techColumnLabel;
             this.minSize = minSize;
@@ -265,14 +244,12 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "BubbleInfo{appName='" + appName + '\'' + ", techColumnLabel='" + techColumnLabel + '\'' + ", " + minSize + " to " + maxSize + '}';
         }
     }
 
-    public static class BoxInfo
-    {
+    public static class BoxInfo {
         String rowLabel;
         String sectorLabel;
         String boxLabel;
@@ -281,11 +258,10 @@ public class TestTechReportUtil extends TestChromeDriverReportUtil
         int maxCount;
 
         /**
-         * @param sectorLabel  If null, the row should not contain any boxes.
-         * @param boxLabel     If null, the sector should not contain any boxes.
+         * @param sectorLabel If null, the row should not contain any boxes.
+         * @param boxLabel    If null, the sector should not contain any boxes.
          */
-        public BoxInfo(String rowLabel, String sectorLabel, String boxLabel, String techName, int minCount, int maxCount)
-        {
+        public BoxInfo(String rowLabel, String sectorLabel, String boxLabel, String techName, int minCount, int maxCount) {
             this.rowLabel = rowLabel;
             this.sectorLabel = sectorLabel;
             this.boxLabel = boxLabel;

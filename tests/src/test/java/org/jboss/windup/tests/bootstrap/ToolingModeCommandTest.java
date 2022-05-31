@@ -1,18 +1,17 @@
 package org.jboss.windup.tests.bootstrap;
 
+import com.google.common.collect.Lists;
 import org.jboss.windup.bootstrap.commands.windup.ToolingModeCommand;
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 public class ToolingModeCommandTest {
 
     @Test
-    public void testPathWithSpace() throws Exception
-    {
+    public void testPathWithSpace() throws Exception {
         String input1 = new String("\"/test files/example1\"");
         String input2 = new String("\"/test files/example2\"");
         List<String> input = Lists.newArrayList("--input", input1, input2);
@@ -23,8 +22,7 @@ public class ToolingModeCommandTest {
     }
 
     @Test
-    public void testPackages() throws Exception
-    {
+    public void testPackages() throws Exception {
         String packageOne = "com.test.package.one";
         String packageTwo = "com.test.package.two";
         List<String> args = Lists.newArrayList("--packages", packageOne, packageTwo);
@@ -35,8 +33,7 @@ public class ToolingModeCommandTest {
     }
 
     @Test
-    public void testExcludePackages() throws Exception
-    {
+    public void testExcludePackages() throws Exception {
         String packageOne = "com.test.package.one";
         String packageTwo = "com.test.package.two";
         List<String> args = Lists.newArrayList("--excludePackages", packageOne, packageTwo);
@@ -47,8 +44,7 @@ public class ToolingModeCommandTest {
     }
 
     @Test
-    public void testIncludeTags() throws Exception
-    {
+    public void testIncludeTags() throws Exception {
         String tagOne = "tagOne";
         String tagTwo = "tagTwo";
         List<String> args = Lists.newArrayList("--includeTags", tagOne, tagTwo);
@@ -60,17 +56,16 @@ public class ToolingModeCommandTest {
     }
 
     @Test
-    public void testBoolean() throws Exception
-    {
+    public void testBoolean() throws Exception {
         String mavenize = "--mavenize";
         String online = "--online";
         String disableTattletale = "--disableTattletale";
         List<String> args = Lists.newArrayList(mavenize, online, disableTattletale);
         ToolingModeCommand command = new ToolingModeCommand(args);
         Map<String, Object> options = command.collectOptions();
-        Assert.assertTrue((Boolean)options.get("mavenize"));
-        Assert.assertTrue((Boolean)options.get("online"));
-        Assert.assertTrue((Boolean)options.get("disableTattletale"));
-        Assert.assertFalse((Boolean)options.get("exportCSV"));
+        Assert.assertTrue((Boolean) options.get("mavenize"));
+        Assert.assertTrue((Boolean) options.get("online"));
+        Assert.assertTrue((Boolean) options.get("disableTattletale"));
+        Assert.assertFalse((Boolean) options.get("exportCSV"));
     }
 }

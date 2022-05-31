@@ -1,14 +1,18 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.*;
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.HasApplications;
+import org.jboss.windup.graph.model.HasProject;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,11 +22,9 @@ import java.util.stream.Collectors;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
- *
  */
 @TypeValue(JavaClassModel.TYPE)
-public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, HasApplications, HasProject
-{
+public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, HasApplications, HasProject {
     String TYPE = "JavaClassModel";
 
     String JAVA_METHOD = "javaMethod";
@@ -136,21 +138,14 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      * decompiled from a .class file)
      */
     @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
-    void setDecompiledSource(JavaSourceFileModel source);
+    JavaSourceFileModel getDecompiledSource();
 
     /**
      * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
      * decompiled from a .class file)
      */
     @Adjacency(label = DECOMPILED_SOURCE, direction = Direction.OUT)
-    JavaSourceFileModel getDecompiledSource();
-
-    /**
-     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
-     * via a decompilation).
-     */
-    @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
-    void setOriginalSource(AbstractJavaSourceModel source);
+    void setDecompiledSource(JavaSourceFileModel source);
 
     /**
      * Contains the original source code of this file, assuming that it was originally provided in source form (and not
@@ -158,6 +153,13 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      */
     @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
     AbstractJavaSourceModel getOriginalSource();
+
+    /**
+     * Contains the original source code of this file, assuming that it was originally provided in source form (and not
+     * via a decompilation).
+     */
+    @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
+    void setOriginalSource(AbstractJavaSourceModel source);
 
     /**
      * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class
@@ -176,8 +178,7 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     /**
      * Gets the {@link JavaMethodModel} by name
      */
-    default List<JavaMethodModel> getMethod(String methodName)
-    {
+    default List<JavaMethodModel> getMethod(String methodName) {
         List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
                 .in(JAVA_METHOD)
                 .has(JavaMethodModel.METHOD_NAME, methodName)
@@ -199,12 +200,10 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     List<JavaMethodModel> getJavaMethods();
 
     @Override
-    default List<ProjectModel> getApplications()
-    {
+    default List<ProjectModel> getApplications() {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return Collections.emptyList();
         }
 
@@ -212,29 +211,24 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     }
 
     @Override
-    default ProjectModel getProjectModel()
-    {
+    default ProjectModel getProjectModel() {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return null;
         }
 
         return sourceModel.getProjectModel();
     }
 
-    default FileModel getSourceFile()
-    {
+    default FileModel getSourceFile() {
         FileModel classFile = this.getClassFile();
 
-        if (classFile == null)
-        {
+        if (classFile == null) {
             // .jsp class will have originalSource instead of classFile
             AbstractJavaSourceModel originalSource = this.getOriginalSource();
 
-            if (originalSource == null)
-            {
+            if (originalSource == null) {
                 String name = this.getClassName();
 
                 Logger.getLogger(JavaClassModel.class.getName()).log(
@@ -253,12 +247,10 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     }
 
     @Override
-    default boolean belongsToProject(ProjectModel projectModel)
-    {
+    default boolean belongsToProject(ProjectModel projectModel) {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return false;
         }
 

@@ -1,19 +1,5 @@
 package org.jboss.windup.addon.ui;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -55,67 +41,69 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @RunWith(Arquillian.class)
-public class WindupCommandTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
-                    .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE);
-    }
-
+public class WindupCommandTest {
     private static String TEST_IGNORE_FILE = "/test.txt";
-
     @Inject
     private UITestHarness uiTestHarness;
-
     // This is just there to make sure that we have at least one "target" technology available
     @Inject
     private SampleProviderForTarget provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
+                .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE);
+    }
+
     @Before
-    public void beforeTest()
-    {
-        if (System.getProperty("forge.home") == null)
-        {
+    public void beforeTest() {
+        if (System.getProperty("forge.home") == null) {
             String defaultForgeHomePath = Paths.get(OperatingSystemUtils.getTempDirectory().getAbsolutePath())
-                        .resolve("Windup")
-                        .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
+                    .resolve("Windup")
+                    .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
             System.setProperty("forge.home", defaultForgeHomePath);
         }
     }
 
     @Test
-    public void testOutputDirCannotBeParentOfInputDir() throws Exception
-    {
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+    public void testOutputDirCannotBeParentOfInputDir() throws Exception {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File tempDir = OperatingSystemUtils.createTempDir();
             File inputFile = File.createTempFile("windupwizardtest", ".jar", tempDir);
             inputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(inputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(inputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
-            try
-            {
+            try {
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
                 controller.setValueFor(TargetOption.NAME, Collections.singletonList("eap"));
@@ -125,10 +113,8 @@ public class WindupCommandTest
                 Assert.assertFalse(controller.canExecute());
                 List<UIMessage> messages = controller.validate();
                 boolean validationFound = false;
-                for (UIMessage message : messages)
-                {
-                    if (message.getDescription().equals("Output path must not be a parent of input path."))
-                    {
+                for (UIMessage message : messages) {
+                    if (message.getDescription().equals("Output path must not be a parent of input path.")) {
                         validationFound = true;
                         break;
                     }
@@ -137,37 +123,30 @@ public class WindupCommandTest
                 controller.setValueFor(OutputPathOption.NAME, null);
                 Assert.assertTrue(controller.canExecute());
                 controller.setValueFor(OverwriteOption.NAME, true);
-            }
-            finally
-            {
+            } finally {
                 FileUtils.deleteDirectory(tempDir);
             }
         }
     }
 
     @Test
-    public void testOverwriteConfirmation() throws Exception
-    {
+    public void testOverwriteConfirmation() throws Exception {
         String overwritePromptMessage = "Overwrite all contents of .*\\?";
 
         // Sets the overwrite response flag to false
         uiTestHarness.getPromptResults().put(overwritePromptMessage, "false");
 
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File inputFile = File.createTempFile("windupwizardtest", "jar");
             inputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(inputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(inputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
                 File newFileInOutputPath = new File(reportPath, "forceoverwriteprompt");
                 // make sure that at least one file is in the output
@@ -180,9 +159,7 @@ public class WindupCommandTest
                 // make sure that it failed to run (since the user's response to the overwrite question is false)
                 Assert.assertTrue(result instanceof Failed);
                 Assert.assertTrue(result.getMessage().contains("overwrite not specified"));
-            }
-            finally
-            {
+            } finally {
                 inputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
@@ -190,24 +167,19 @@ public class WindupCommandTest
     }
 
     @Test
-    public void testNewMigration() throws Exception
-    {
+    public void testNewMigration() throws Exception {
         Assert.assertNotNull(uiTestHarness);
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File inputFile = File.createTempFile("windupwizardtest", ".jar");
             inputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(inputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(inputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
 
                 setupController(controller, inputFile, reportPath);
@@ -215,9 +187,7 @@ public class WindupCommandTest
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
-            }
-            finally
-            {
+            } finally {
                 inputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
@@ -225,32 +195,27 @@ public class WindupCommandTest
     }
 
     @Test
-    public void testOutputDefaultValue() throws Exception
-    {
+    public void testOutputDefaultValue() throws Exception {
         Assert.assertNotNull(uiTestHarness);
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File inputFile = File.createTempFile("windupwizardtest", ".jar");
             inputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(inputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(inputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
-            try
-            {
+            try {
 
                 setupController(controller, inputFile, null);
 
                 Result result = controller.execute();
                 Object outputDir = controller.getValueFor("output");
                 Assert.assertTrue("The output should be a folder",
-                            DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
+                        DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
                 Assert.assertTrue("The output should be created inside the .report folder by default",
-                            ((DirectoryResource) outputDir).getName().endsWith(".report"));
+                        ((DirectoryResource) outputDir).getName().endsWith(".report"));
                 ArrayList<File> inputDirs = (ArrayList<File>) controller.getValueFor("input");
                 Assert.assertEquals(1, inputDirs.size());
 
@@ -260,39 +225,32 @@ public class WindupCommandTest
                 Assert.assertTrue("The output should be created near the ${input} folder by default", child.isDirectory());
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
-            }
-            finally
-            {
+            } finally {
                 inputFile.delete();
             }
         }
     }
 
     @Test
-    public void testUserRulesDirMigration() throws Exception
-    {
+    public void testUserRulesDirMigration() throws Exception {
         Assert.assertNotNull(uiTestHarness);
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File outputFile = File.createTempFile("windupwizardtest", ".jar");
             outputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(outputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(outputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
 
                 setupController(controller, outputFile, reportPath);
 
                 File userRulesDir = FileUtils.getTempDirectory().toPath().resolve("Windup")
-                            .resolve("windupcommanduserrules_" + RandomStringUtils.randomAlphanumeric(6)).toFile();
+                        .resolve("windupcommanduserrules_" + RandomStringUtils.randomAlphanumeric(6)).toFile();
                 userRulesDir.mkdirs();
                 controller.setValueFor(UserRulesDirectoryOption.NAME, Collections.singletonList(userRulesDir));
 
@@ -301,8 +259,8 @@ public class WindupCommandTest
                 Assert.assertFalse(msg, result instanceof Failed);
 
                 WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
-                            .getAttributeMap()
-                            .get(WindupConfiguration.class);
+                        .getAttributeMap()
+                        .get(WindupConfiguration.class);
                 List<File> resultUserSpecifiedRulesDirs = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
                 Assert.assertEquals(1, resultUserSpecifiedRulesDirs.size());
 
@@ -315,19 +273,15 @@ public class WindupCommandTest
                 boolean foundUserHomeDirRulesPath = false;
                 boolean foundWindupHomeDirRulesPath = false;
                 int totalFound = 0;
-                for (Path rulesPath : allRulesPaths)
-                {
+                for (Path rulesPath : allRulesPaths) {
                     totalFound++;
-                    if (rulesPath.equals(userRulesDir.toPath()))
-                    {
+                    if (rulesPath.equals(userRulesDir.toPath())) {
                         foundUserSpecifiedPath = true;
                     }
-                    if (rulesPath.equals(expectedUserHomeRulesDir))
-                    {
+                    if (rulesPath.equals(expectedUserHomeRulesDir)) {
                         foundUserHomeDirRulesPath = true;
                     }
-                    if (rulesPath.equals(expectedWindupHomeRulesDir))
-                    {
+                    if (rulesPath.equals(expectedWindupHomeRulesDir)) {
                         foundWindupHomeDirRulesPath = true;
                     }
                 }
@@ -335,9 +289,7 @@ public class WindupCommandTest
                 Assert.assertTrue(foundUserHomeDirRulesPath);
                 Assert.assertTrue(foundWindupHomeDirRulesPath);
                 Assert.assertEquals(3, totalFound);
-            }
-            finally
-            {
+            } finally {
                 outputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
@@ -345,24 +297,19 @@ public class WindupCommandTest
     }
 
     @Test
-    public void testDuplicateUserRulesDirMigration() throws Exception
-    {
+    public void testDuplicateUserRulesDirMigration() throws Exception {
         Assert.assertNotNull(uiTestHarness);
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File outputFile = File.createTempFile("windupwizardtest", ".jar");
             outputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(outputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(outputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
 
                 setupController(controller, outputFile, reportPath);
@@ -376,10 +323,10 @@ public class WindupCommandTest
                 Assert.assertFalse(msg, result instanceof Failed);
 
                 WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
-                            .getAttributeMap()
-                            .get(WindupConfiguration.class);
+                        .getAttributeMap()
+                        .get(WindupConfiguration.class);
                 Collection<File> resultUserSpecifiedRulesDirs = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
-                
+
                 Assert.assertEquals(expectedUserHomeRulesDir.toFile(), resultUserSpecifiedRulesDirs.iterator().next());
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
@@ -389,24 +336,19 @@ public class WindupCommandTest
                 boolean foundUserHomeDirRulesPath = false;
                 boolean foundWindupHomeDirRulesPath = false;
                 int totalFound = 0;
-                for (Path rulesPath : allRulesPaths)
-                {
+                for (Path rulesPath : allRulesPaths) {
                     totalFound++;
-                    if (rulesPath.equals(expectedUserHomeRulesDir))
-                    {
+                    if (rulesPath.equals(expectedUserHomeRulesDir)) {
                         foundUserHomeDirRulesPath = true;
                     }
-                    if (rulesPath.equals(expectedWindupHomeRulesDir))
-                    {
+                    if (rulesPath.equals(expectedWindupHomeRulesDir)) {
                         foundWindupHomeDirRulesPath = true;
                     }
                 }
                 Assert.assertTrue(foundUserHomeDirRulesPath);
                 Assert.assertTrue(foundWindupHomeDirRulesPath);
                 Assert.assertEquals(2, totalFound);
-            }
-            finally
-            {
+            } finally {
                 outputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
@@ -414,33 +356,26 @@ public class WindupCommandTest
     }
 
     @Test
-    public void testUserIgnoreDirMigration() throws Exception
-    {
+    public void testUserIgnoreDirMigration() throws Exception {
         Assert.assertNotNull(uiTestHarness);
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File outputFile = File.createTempFile("windupwizardtest", ".jar");
             outputFile.deleteOnExit();
             File inputIgnoreFile = File.createTempFile("generated-windup-ignore", ".txt");
             inputIgnoreFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(outputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(outputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
-            try (InputStream iStream = getClass().getResourceAsStream(TEST_IGNORE_FILE))
-            {
-                try (OutputStream oStream = new FileOutputStream(inputIgnoreFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream(TEST_IGNORE_FILE)) {
+                try (OutputStream oStream = new FileOutputStream(inputIgnoreFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(outputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
 
                 setupController(controller, outputFile, reportPath);
@@ -452,8 +387,8 @@ public class WindupCommandTest
                 Assert.assertFalse(msg, result instanceof Failed);
 
                 WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
-                            .getAttributeMap()
-                            .get(WindupConfiguration.class);
+                        .getAttributeMap()
+                        .get(WindupConfiguration.class);
                 File resultIgnoreFile = windupConfiguration.getOptionValue(UserIgnorePathOption.NAME);
                 Assert.assertEquals(inputIgnoreFile, resultIgnoreFile);
 
@@ -466,19 +401,15 @@ public class WindupCommandTest
                 boolean foundUserHomeDirIgnorePath = false;
                 boolean foundWindupHomeDirIgnorePath = false;
                 int totalFound = 0;
-                for (Path rulesPath : allIgnoreDirectories)
-                {
+                for (Path rulesPath : allIgnoreDirectories) {
                     totalFound++;
-                    if (rulesPath.equals(resultIgnoreFile.toPath()))
-                    {
+                    if (rulesPath.equals(resultIgnoreFile.toPath())) {
                         foundUserSpecifiedPath = true;
                     }
-                    if (rulesPath.equals(expectedUserHomeIgnoreDir))
-                    {
+                    if (rulesPath.equals(expectedUserHomeIgnoreDir)) {
                         foundUserHomeDirIgnorePath = true;
                     }
-                    if (rulesPath.equals(expectedWindupHomeIgnoreDir))
-                    {
+                    if (rulesPath.equals(expectedWindupHomeIgnoreDir)) {
                         foundWindupHomeDirIgnorePath = true;
                     }
                 }
@@ -490,26 +421,21 @@ public class WindupCommandTest
                 GraphService<FileModel> service = new GraphService<>(context.load(), FileModel.class);
                 Iterable<FileModel> findAll = service.findAll();
                 boolean notEmpty = false;
-                for (FileModel fileModel : findAll)
-                {
+                for (FileModel fileModel : findAll) {
                     notEmpty = true;
-                    if (!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF")))
-                    {
+                    if (!(fileModel instanceof IgnoredFileModel) && (fileModel.getFileName().contains("META-INF"))) {
                         Assert.fail("The file " + fileModel.getFileName() + " should be ignored");
                     }
                 }
                 Assert.assertTrue("There should be some file models present in the graph", notEmpty);
-            }
-            finally
-            {
+            } finally {
                 outputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
         }
     }
 
-    private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception
-    {
+    private void setupController(CommandController controller, File inputFile, File outputFile) throws Exception {
         controller.initialize();
         Assert.assertTrue(controller.isEnabled());
         controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile)); // FORGE-2524
@@ -519,8 +445,7 @@ public class WindupCommandTest
         Assume.assumeTrue(((Collection) value).iterator().next() instanceof File);
         Assume.assumeTrue(((Collection) value).iterator().next().equals(inputFile));
 
-        if (outputFile != null)
-        {
+        if (outputFile != null) {
             controller.setValueFor(OutputPathOption.NAME, outputFile);
         }
         controller.setValueFor(TargetOption.NAME, Collections.singletonList("eap"));
@@ -534,19 +459,16 @@ public class WindupCommandTest
      * This class exists purely to guarantee that we have at least one selection available for "target".
      */
     @Singleton
-    public static class SampleProviderForTarget extends AbstractRuleProvider
-    {
-        public SampleProviderForTarget()
-        {
+    public static class SampleProviderForTarget extends AbstractRuleProvider {
+        public SampleProviderForTarget() {
             super(MetadataBuilder.forProvider(SampleProviderForTarget.class)
-                        .addTag("tag2")
-                        .addSourceTechnology(new TechnologyReference("foo", "[1.0,)"))
-                        .addTargetTechnology(new TechnologyReference("eap", "[1.0,)")));
+                    .addTag("tag2")
+                    .addSourceTechnology(new TechnologyReference("foo", "[1.0,)"))
+                    .addTargetTechnology(new TechnologyReference("eap", "[1.0,)")));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin();
         }
     }

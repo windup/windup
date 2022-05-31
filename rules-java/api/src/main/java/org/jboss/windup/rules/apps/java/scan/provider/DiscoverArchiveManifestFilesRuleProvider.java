@@ -1,12 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -26,44 +19,46 @@ import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Discovers MANIFEST.MF files within archives.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverManifestFilesInArchives")
-public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
-{
+public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel> {
     private static final Logger LOG = Logging.get(DiscoverArchiveManifestFilesRuleProvider.class);
 
     private static final String TECH_TAG = "Manifest";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(ArchiveModel.class);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload) {
         String[] filenames = {
-                    "META-INF/MANIFEST.MF",
-                    "WEB-INF/classes/META-INF/MANIFEST.MF"
+                "META-INF/MANIFEST.MF",
+                "WEB-INF/classes/META-INF/MANIFEST.MF"
         };
         Arrays.stream(filenames).forEach(filename -> {
             importManifest(event, payload, filename);
         });
     }
 
-    private void importManifest(GraphRewrite event, ArchiveModel archive, String manifestFilePath)
-    {
+    private void importManifest(GraphRewrite event, ArchiveModel archive, String manifestFilePath) {
         ArchiveService archiveService = new ArchiveService(event.getGraphContext());
         FileModel manifestFile = archiveService.getChildFile(archive, manifestFilePath);
 
-        if (manifestFile == null)
-        {
+        if (manifestFile == null) {
             // no manifest found, skip this one
             return;
         }
@@ -77,30 +72,24 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
 
         jarManifest.setGenerateSourceReport(true);
 
-        try (InputStream is = manifestFile.asInputStream())
-        {
+        try (InputStream is = manifestFile.asInputStream()) {
             Manifest manifest = new Manifest(is);
-            if (manifest.getMainAttributes().isEmpty())
-            {
+            if (manifest.getMainAttributes().isEmpty()) {
                 // no manifest found, skip this one
                 return;
             }
 
-            for (Object key : manifest.getMainAttributes().keySet())
-            {
+            for (Object key : manifest.getMainAttributes().keySet()) {
                 String property = StringUtils.trim(key.toString());
                 String propertyValue = StringUtils.trim(manifest.getMainAttributes().get(key).toString());
                 jarManifest.setProperty(property, propertyValue);
             }
 
-            if (StringUtils.isBlank(jarManifest.getName()))
-            {
+            if (StringUtils.isBlank(jarManifest.getName())) {
                 // if the name is still blank, try to get it from the first entry in the file list.
                 // A few apache projects do it this way
-                for (String entry : manifest.getEntries().keySet())
-                {
-                    for (Object key : manifest.getAttributes(entry).keySet())
-                    {
+                for (String entry : manifest.getEntries().keySet()) {
+                    for (Object key : manifest.getAttributes(entry).keySet()) {
                         String property = StringUtils.trim(key.toString());
                         String propertyValue = StringUtils.trim(manifest.getAttributes(entry).get(key).toString());
                         if (StringUtils.isBlank(jarManifest.getProperty(property)))
@@ -110,9 +99,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
                         break;
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             LOG.log(Level.WARNING, "Exception reading manifest from file: " + manifestFile.getFilePath(), e);
         }
     }

@@ -1,21 +1,20 @@
 package org.jboss.windup.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Base class for {@link Rule} implementations that operate on {@link GraphRewrite} events.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class GraphRule implements Rule, Context
-{
+public abstract class GraphRule implements Rule, Context {
     private final Map<Object, Object> context = new HashMap<>();
 
     /**
@@ -30,40 +29,34 @@ public abstract class GraphRule implements Rule, Context
     public abstract void perform(GraphRewrite event, EvaluationContext context);
 
     @Override
-    public boolean containsKey(Object key)
-    {
+    public boolean containsKey(Object key) {
         return context.containsKey(key);
     }
 
     @Override
-    public void put(Object key, Object value)
-    {
+    public void put(Object key, Object value) {
         context.put(key, value);
     }
 
     @Override
-    public Object get(Object key)
-    {
+    public Object get(Object key) {
         return context.get(key);
     }
 
     @Override
-    public void clear()
-    {
+    public void clear() {
         context.clear();
     }
 
     @Override
-    public final boolean evaluate(Rewrite event, EvaluationContext context)
-    {
+    public final boolean evaluate(Rewrite event, EvaluationContext context) {
         if (event instanceof GraphRewrite)
             return evaluate((GraphRewrite) event, context);
         return false;
     }
 
     @Override
-    public final void perform(Rewrite event, EvaluationContext context)
-    {
+    public final void perform(Rewrite event, EvaluationContext context) {
         if (event instanceof GraphRewrite)
             perform((GraphRewrite) event, context);
     }

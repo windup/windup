@@ -7,8 +7,7 @@ import org.jboss.windup.config.metadata.LabelProviderRegistry;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelLoader
-{
+public interface LabelLoader {
     /**
      * Loads all known {@link LabelProviderLoader}
      */

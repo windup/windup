@@ -1,13 +1,9 @@
 package org.jboss.windup.graph.service;
 
-import java.util.Iterator;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
@@ -19,30 +15,29 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class RuleProviderExecutionStatisticsServiceTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
-        return archive;
-    }
+import javax.inject.Inject;
+import java.util.Iterator;
 
+@RunWith(Arquillian.class)
+public class RuleProviderExecutionStatisticsServiceTest {
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
+        return archive;
+    }
+
     @Test
-    public void testFindAllOrderedByIndex() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFindAllOrderedByIndex() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(context);
             RuleProviderExecutionStatisticsModel m1 = service.create();
             m1.setRuleIndex(10);

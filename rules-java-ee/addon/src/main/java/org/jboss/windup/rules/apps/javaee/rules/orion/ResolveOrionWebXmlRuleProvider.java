@@ -1,16 +1,13 @@
 package org.jboss.windup.rules.apps.javaee.rules.orion;
 
-import static org.joox.JOOX.$;
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -29,23 +26,22 @@ import org.w3c.dom.Element;
 
 import java.util.Set;
 
+import static org.joox.JOOX.$;
+
 /**
  * Discovers Orion Web XML files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover Orion Web XML Files")
-public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "orion-web-app");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
@@ -59,32 +55,27 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT);
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
-        for (Element orionWeb : $(doc).child("orion-web-app"))
-        {
+        for (Element orionWeb : $(doc).child("orion-web-app")) {
             String majorVersion = $(orionWeb).attr("schema-major-version");
             String minorVersion = $(orionWeb).attr("schema-minor-version");
 
-            if (StringUtils.isNotBlank(majorVersion))
-            {
+            if (StringUtils.isNotBlank(majorVersion)) {
                 String version = majorVersion;
-                if (StringUtils.isNotBlank(minorVersion))
-                {
+                if (StringUtils.isNotBlank(minorVersion)) {
                     version = version + "." + minorVersion;
                 }
                 technologyTag.setVersion(version);
             }
         }
 
-        for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
-        {
+        for (Element resourceRef : $(doc).find("resource-ref-mapping").get()) {
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
 
             JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
 
             // now, look up the resource
-            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
-            {
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
                 envRefService.associateEnvironmentToJndi(resource, ref);
             }
 

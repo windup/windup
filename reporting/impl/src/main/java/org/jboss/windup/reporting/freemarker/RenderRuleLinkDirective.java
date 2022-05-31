@@ -1,50 +1,44 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.reporting.rules.rendering.RenderRuleProviderReportRuleProvider;
-
 import freemarker.core.Environment;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.reporting.rules.rendering.RenderRuleProviderReportRuleProvider;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirective
-{
+public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirective {
 
     public static final String RENDER_RULE_LINK = "render_rule_link";
     public static final String RENDER_TYPE_GLYPH = "glyph";
     public static final String RENDER_TYPE_TAG = "tag";
 
     @Override
-    public String getDirectiveName()
-    {
+    public String getDirectiveName() {
         return RENDER_RULE_LINK;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Renders a link to the Rule with the specified ID in the Rule Provider report.";
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         // no-op
     }
 
     @Override
-    public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody body) throws TemplateException, IOException
-    {
+    public void execute(Environment env, Map params, TemplateModel[] loopVars, TemplateDirectiveBody body) throws TemplateException, IOException {
         final Writer writer = env.getOut();
         SimpleScalar ruleIDStringModel = (SimpleScalar) params.get("ruleID");
         if (ruleIDStringModel == null || ruleIDStringModel.getAsString() == null)
@@ -61,8 +55,7 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
         String cssClass;
         if (cssClassScalar == null || StringUtils.isBlank(cssClassScalar.getAsString())) {
             cssClass = "";
-        }
-        else {
+        } else {
             cssClass = cssClassScalar.getAsString();
         }
 
@@ -70,11 +63,11 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
 
         writer.append("<a title='View Rule: " + ruleID + "' href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
         if (RENDER_TYPE_GLYPH.equals(renderType))
-            writer.append("<span class='glyphicon glyphicon-link "+cssClass+"'></span>");
+            writer.append("<span class='glyphicon glyphicon-link " + cssClass + "'></span>");
         else if (RENDER_TYPE_TAG.equals(renderType))
-            writer.append("<span class='tag "+cssClass+"'>&lt;rule/></span>");
+            writer.append("<span class='tag " + cssClass + "'>&lt;rule/></span>");
         else
-            writer.append("<span class='plain "+cssClass+"'>"+ ruleID +"</span>");
+            writer.append("<span class='plain " + cssClass + "'>" + ruleID + "</span>");
         writer.append("</a>");
     }
 }

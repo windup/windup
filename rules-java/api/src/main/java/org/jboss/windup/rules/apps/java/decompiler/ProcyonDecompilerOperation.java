@@ -1,17 +1,5 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
@@ -37,11 +25,22 @@ import org.jboss.windup.util.exception.WindupStopException;
 import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
+
 /**
  * Decompile all .class files that match the requested package filter.
  */
-public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
-{
+public class ProcyonDecompilerOperation extends AbstractDecompilerOperation {
     private static final Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
 
     private static final String TECH_TAG = "Decompiled Java File";
@@ -50,14 +49,12 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
     /**
      * Let the variable name to be set by the current Iteration.
      */
-    public ProcyonDecompilerOperation()
-    {
+    public ProcyonDecompilerOperation() {
         super();
     }
 
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext context)
-    {
+    public void perform(final GraphRewrite event, final EvaluationContext context) {
         ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
         int threads = WindupExecutors.getDefaultThreadCount();
         LOG.info("Decompiling with " + threads + " threads");
@@ -65,10 +62,8 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
         Iterable<JavaClassFileModel> allClasses = getFilesToDecompile(event.getGraphContext());
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
-        for (JavaClassFileModel classFileModel : allClasses)
-        {
-            if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
-            {
+        for (JavaClassFileModel classFileModel : allClasses) {
+            if (configurationService.shouldScanPackage(classFileModel.getPackageName())) {
                 File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
             }
@@ -91,10 +86,8 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
      * This listens for decompiled files and writes the results to disk in a background thread.
      *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
-     *
      */
-    private class AddDecompiledItemsToGraph implements DecompilationListener
-    {
+    private class AddDecompiledItemsToGraph implements DecompilationListener {
         private final ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
         private final AtomicInteger queueSize = new AtomicInteger(0);
 
@@ -102,65 +95,51 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
         private final AtomicInteger atomicInteger = new AtomicInteger(0);
         private final ProgressEstimate progressEstimate;
 
-        private AddDecompiledItemsToGraph(ProgressEstimate progressEstimate, GraphRewrite event)
-        {
+        private AddDecompiledItemsToGraph(ProgressEstimate progressEstimate, GraphRewrite event) {
             this.progressEstimate = progressEstimate;
             this.event = event;
         }
 
         @Override
-        public void decompilationProcessComplete()
-        {
-            executorService.submit(new Runnable()
-            {
+        public void decompilationProcessComplete() {
+            executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     LOG.info("Performing final commit for decompilation process!");
                     event.getGraphContext().commit();
                 }
             });
             executorService.shutdown();
-            try
-            {
+            try {
                 executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 throw new IllegalStateException("Thread pool failed to complete.");
             }
         }
 
         @Override
-        public void decompilationFailed(List<String> inputPath, String message)
-        {
+        public void decompilationFailed(List<String> inputPath, String message) {
             progressEstimate.addWork(1);
         }
 
         @Override
-        public boolean isCancelled()
-        {
+        public boolean isCancelled() {
             return this.event.shouldWindupStop();
         }
 
         @Override
-        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
-        {
-            if (event.shouldWindupStop())
-            {
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile) {
+            if (event.shouldWindupStop()) {
                 LOG.warning("Request to stop received.");
                 throw new WindupStopException("Request to stop received.");
             }
 
-            Runnable saveDecompiledRunnable = new Runnable()
-            {
+            Runnable saveDecompiledRunnable = new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     queueSize.decrementAndGet();
                     progressEstimate.addWork(1);
-                    if (progressEstimate.getWorked() % 250 == 0)
-                    {
+                    if (progressEstimate.getWorked() % 250 == 0) {
                         long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
                         if (remainingTimeMillis > 1000) {
                             event.ruleEvaluationProgress("Decompilation",
@@ -174,27 +153,23 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     Path classFilePath = Paths.get(inputPath.get(0));
 
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                                decompiledOutputFile);
+                            decompiledOutputFile);
 
-                    if (decompiledFileModel == null)
-                    {
+                    if (decompiledFileModel == null) {
                         decompiledFileModel = createDecompiledFileModel(fileService);
                     }
 
-                    if (decompiledOutputFile.endsWith(".java"))
-                    {
+                    if (decompiledOutputFile.endsWith(".java")) {
                         handleDecompiledJavaFile(decompiledFileModel, fileService, classFilePath);
                     }
 
-                    if (atomicInteger.incrementAndGet() % 100 == 0)
-                    {
+                    if (atomicInteger.incrementAndGet() % 100 == 0) {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ")");
                         event.getGraphContext().commit();
                     }
                 }
 
-                private FileModel createDecompiledFileModel(FileService fileService)
-                {
+                private FileModel createDecompiledFileModel(FileService fileService) {
                     FileModel decompiledFileModel;
                     FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
                             .getParent()
@@ -202,21 +177,18 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     // Make sure parent files already exist.
                     // It can happen that it does not if PROCYON puts the decompiled .java file in an unexpected place,
                     // for example in the case of war files.
-                    if (parentFileModel == null)
-                    {
+                    if (parentFileModel == null) {
                         List<Path> lineage = new LinkedList<>();
                         Path parentPath = Paths.get(decompiledOutputFile).getParent();
                         FileModel existingParentFM = parentFileModel;
-                        while (existingParentFM == null)
-                        {
+                        while (existingParentFM == null) {
                             lineage.add(0, parentPath);
                             parentPath = parentPath.getParent();
                             existingParentFM = fileService.findByPath(parentPath.toString());
                         }
 
                         FileModel currentParent = existingParentFM;
-                        for (Path p : lineage)
-                        {
+                        for (Path p : lineage) {
                             currentParent = fileService.createByFilePath(currentParent, p.toString());
                         }
                         parentFileModel = currentParent;
@@ -225,10 +197,8 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     return decompiledFileModel;
                 }
 
-                private void handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException
-                {
-                    if (!(decompiledFileModel instanceof JavaSourceFileModel))
-                    {
+                private void handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException {
+                    if (!(decompiledFileModel instanceof JavaSourceFileModel)) {
                         decompiledFileModel = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class)
                                 .addTypeToModel(decompiledFileModel);
                     }
@@ -242,17 +212,15 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
 
                     FileModel classFileModel = fileService.getUniqueByProperty(
                             FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
-                    if (classFileModel == null || !(classFileModel instanceof JavaClassFileModel))
-                    {
+                    if (classFileModel == null || !(classFileModel instanceof JavaClassFileModel)) {
                         throw new WindupException("Failed to find original JavaClassFileModel for decompiled Java file: "
-                                        + decompiledOutputFile + " at: " + classFilePath.toString());
+                                + decompiledOutputFile + " at: " + classFilePath.toString());
                     }
 
                     ProjectModel projectModel = classFileModel.getProjectModel();
 
                     // only add it to the project model if it is not already there
-                    if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
-                    {
+                    if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel)) {
                         projectModel.addFileModel(decompiledFileModel);
                     }
 
@@ -267,8 +235,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     // a non-null root path.
                     Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
                             classModel.getPackageName());
-                    if (rootSourcePath != null)
-                    {
+                    if (rootSourcePath != null) {
                         FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
                         decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
                     }
@@ -280,23 +247,18 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
             queueSize.incrementAndGet();
             executorService.submit(saveDecompiledRunnable);
 
-            while (queueSize.get() > 1000)
-            {
-                try
-                {
+            while (queueSize.get() > 1000) {
+                try {
                     LOG.warning("Decompiler queue size got over 1000, waiting for 250 ms.");
                     Thread.sleep(250L);
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     // noop
                 }
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "DecompileWithProcyon";
         }
     }

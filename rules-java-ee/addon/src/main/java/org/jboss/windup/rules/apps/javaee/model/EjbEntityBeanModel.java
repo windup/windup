@@ -1,11 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 /**
  * Contains EJB Entity information and related data.
@@ -14,8 +13,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(EjbEntityBeanModel.TYPE)
-public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel
-{
+public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel {
     public static final String TYPE = "EjbEntityBeanModel";
 
     public static final String EJB_HOME = TYPE + "-ejbHome";
@@ -28,20 +26,13 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityM
      * Contains the Entity Persistence Type
      */
     @Property(PERSISTENCE_TYPE)
-    public void setPersistenceType(String persistenceType);
+    public String getPersistenceType();
 
     /**
      * Contains the Entity Persistence Type
      */
     @Property(PERSISTENCE_TYPE)
-    public String getPersistenceType();
-
-
-    /**
-     * Contains the Session bean's local interface
-     */
-    @Adjacency(label = EJB_LOCAL, direction = Direction.OUT)
-    public void setEjbLocal(JavaClassModel ejbLocal);
+    public void setPersistenceType(String persistenceType);
 
     /**
      * Contains the Session bean's local interface
@@ -50,10 +41,10 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityM
     public JavaClassModel getEjbLocal();
 
     /**
-     * Contains the Session bean's remote interface
+     * Contains the Session bean's local interface
      */
-    @Adjacency(label = EJB_REMOTE, direction = Direction.OUT)
-    public void setEjbRemote(JavaClassModel ejbRemote);
+    @Adjacency(label = EJB_LOCAL, direction = Direction.OUT)
+    public void setEjbLocal(JavaClassModel ejbLocal);
 
     /**
      * Contains the Session bean's remote interface
@@ -62,10 +53,10 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityM
     public JavaClassModel getEjbRemote();
 
     /**
-     * Contains the Session bean's local home
+     * Contains the Session bean's remote interface
      */
-    @Adjacency(label = EJB_LOCAL_HOME, direction = Direction.OUT)
-    public void setEjbLocalHome(JavaClassModel ejbLocalHome);
+    @Adjacency(label = EJB_REMOTE, direction = Direction.OUT)
+    public void setEjbRemote(JavaClassModel ejbRemote);
 
     /**
      * Contains the Session bean's local home
@@ -74,16 +65,22 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityM
     public JavaClassModel getEjbLocalHome();
 
     /**
-     * Contains the Session bean's home interface
+     * Contains the Session bean's local home
      */
-    @Adjacency(label = EJB_HOME, direction = Direction.OUT)
-    public void setEjbHome(JavaClassModel ejbHome);
+    @Adjacency(label = EJB_LOCAL_HOME, direction = Direction.OUT)
+    public void setEjbLocalHome(JavaClassModel ejbLocalHome);
 
     /**
      * Contains the Session bean's home interface
      */
     @Adjacency(label = EJB_HOME, direction = Direction.OUT)
     public JavaClassModel getEjbHome();
+
+    /**
+     * Contains the Session bean's home interface
+     */
+    @Adjacency(label = EJB_HOME, direction = Direction.OUT)
+    public void setEjbHome(JavaClassModel ejbHome);
 
     /**
      * References the Deployment Descriptor containing EJB.

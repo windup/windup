@@ -1,14 +1,7 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import freemarker.template.SimpleScalar;
+import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.util.Logging;
 import org.pegdown.Extensions;
@@ -20,26 +13,28 @@ import org.pegdown.ast.RootNode;
 import org.pegdown.plugins.PegDownPlugins;
 import org.pegdown.plugins.ToHtmlSerializerPlugin;
 
-import freemarker.template.SimpleScalar;
-import freemarker.template.TemplateModelException;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Converts from an input string in Markdown format to an output string in HTML.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
-{
-    private static final Logger LOG = Logging.get(MarkdownToHtmlMethod.class);
-
+public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod {
     public static final long MAX_PARSING_TIME_MILLIS = 100000;
+    private static final Logger LOG = Logging.get(MarkdownToHtmlMethod.class);
     private static final Map<String, SoftReference<String>> cache = new ConcurrentHashMap<>();
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
-        if (arguments.size() != 1)
-        {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (String)");
         }
         SimpleScalar freemarkerArg = (SimpleScalar) arguments.get(0);
@@ -47,13 +42,11 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
 
         SoftReference<String> cachedResult = cache.get(markdownSource);
         String cachedResultString;
-        if (cachedResult != null && (cachedResultString = cachedResult.get()) != null)
-        {
+        if (cachedResult != null && (cachedResultString = cachedResult.get()) != null) {
             return cachedResultString;
         }
 
-        try
-        {
+        try {
             // build the plugins object with our extensions
             PegDownPlugins plugins = PegDownPlugins.builder().build();
             PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS, MAX_PARSING_TIME_MILLIS, plugins);
@@ -64,14 +57,12 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
             // Our plugin is also a serializer, so build a plugins list for serialization as well
             List<ToHtmlSerializerPlugin> serializerPlugins = new ArrayList<>(1);
 
-            ToHtmlSerializer serializer = new ToHtmlSerializerExtended(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(),
-                        serializerPlugins);
+            ToHtmlSerializer serializer = new ToHtmlSerializerExtended(new LinkRenderer(), Collections.<String, VerbatimSerializer>emptyMap(),
+                    serializerPlugins);
             String result = serializer.toHtml(outputNode);
             cache.put(markdownSource, new SoftReference<>(result));
             return result;
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             LOG.log(Level.WARNING, "Failed to parse markdown due to: " + t.getMessage() + " markdown source: " + markdownSource, t);
             // Return the unformatted markdown, as this is better than failing the report completely.
             return markdownSource;
@@ -79,19 +70,16 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return "markdownToHtml";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Converts from an input string in Markdown format to an output string in HTML format";
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 }

@@ -1,11 +1,5 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +18,12 @@ import org.jboss.windup.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * An operation doing a pre-scan of the .class file in order to check if it is possible to tell in advance if it is worth decompiling the class.
  *
@@ -31,17 +31,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  * @author Ondrej Zizka
  */
-public class ClassFilePreDecompilationScan extends AbstractIterationOperation<JavaClassFileModel>
-{
+public class ClassFilePreDecompilationScan extends AbstractIterationOperation<JavaClassFileModel> {
     private static final Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
 
     String UNPARSEABLE_CLASS_CLASSIFICATION = "Unparseable Class File";
     String UNPARSEABLE_CLASS_DESCRIPTION = "This Class file could not be parsed";
 
-    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel)
-    {
-        try (FileInputStream fis = new FileInputStream(javaClassFileModel.getFilePath()))
-        {
+    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel) {
+        try (FileInputStream fis = new FileInputStream(javaClassFileModel.getFilePath())) {
             final ClassParser parser = new ClassParser(fis, javaClassFileModel.getFilePath());
             final JavaClass bcelJavaClass = parser.parse();
             final String packageName = bcelJavaClass.getPackageName();
@@ -54,8 +51,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             int minorVersion = bcelJavaClass.getMinor();
 
             String simpleName = qualifiedName;
-            if (packageName != null && !packageName.isEmpty() && simpleName != null)
-            {
+            if (packageName != null && !packageName.isEmpty() && simpleName != null) {
                 simpleName = StringUtils.substringAfterLast(simpleName, ".");
             }
 
@@ -71,10 +67,8 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             javaClassModel.setInterface(bcelJavaClass.isInterface());
 
             final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
-            if (interfaceNames != null)
-            {
-                for (final String interfaceName : interfaceNames)
-                {
+            if (interfaceNames != null) {
+                for (final String interfaceName : interfaceNames) {
                     JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
                     javaClassService.addInterface(javaClassModel, interfaceModel);
                 }
@@ -85,9 +79,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
                 javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
             javaClassFileModel.setJavaClass(javaClassModel);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String nl = ex.getMessage() != null ? Util.NL + "\t" : " ";
             final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':" + nl + ex.toString();
             LOG.log(Level.WARNING, message);
@@ -99,13 +91,11 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
     }
 
 
-    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
-    {
+    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel) {
         if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
             return;
 
-        try (InputStream is = fileModel.asInputStream())
-        {
+        try (InputStream is = fileModel.asInputStream()) {
             WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
             boolean shouldScan;
             if (fileModel.getPackageName() != null)
@@ -113,8 +103,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             else
                 shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
 
-            if (!shouldScan)
-            {
+            if (!shouldScan) {
                 LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
                 fileModel.setSkipDecompilation(true);
                 return;
@@ -129,17 +118,14 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             classReader.accept(dependencyVisitor, 0);
 
             // If we should ignore any of the contained classes, skip decompilation of the whole file.
-            for (String typeReference : dependencyVisitor.classes)
-            {
+            for (String typeReference : dependencyVisitor.classes) {
                 if (shouldIgnore(typeReference)) {
                     LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
                     fileModel.setSkipDecompilation(true);
                     break;
                 }
             }
-        }
-        catch (IOException|IllegalArgumentException e)
-        {
+        } catch (IOException | IllegalArgumentException e) {
             final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
@@ -150,39 +136,34 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
 
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel) {
         ExecutionStatistics.get().begin("ClassFilePreDecompilationScan.perform()");
-        try
-        {
+        try {
             addClassFileMetadata(event, context, fileModel);
             if (fileModel.getParseError() != null)
                 return;
 
             filterClassesToDecompile(event, context, fileModel);
 
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end("ClassFilePreDecompilationScan.perform()");
         }
     }
 
     /**
      * This method is called on every reference that is in the .class file.
+     *
      * @param typeReference
      * @return
      */
-    private boolean shouldIgnore(String typeReference)
-    {
+    private boolean shouldIgnore(String typeReference) {
         typeReference = typeReference.replace('/', '.').replace('\\', '.');
         return JavaClassIgnoreResolver.singletonInstance().matches(typeReference);
     }
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return ClassFilePreDecompilationScan.class.getSimpleName();
     }
 }

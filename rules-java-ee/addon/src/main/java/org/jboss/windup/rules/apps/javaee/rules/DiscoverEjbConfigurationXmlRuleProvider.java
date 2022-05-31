@@ -1,17 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import static org.joox.JOOX.$;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -22,7 +11,6 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -64,6 +52,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import static org.joox.JOOX.$;
+
 /**
  * Discovers ejb-jar.xml files and parses the related metadata
  *
@@ -75,8 +73,7 @@ import org.w3c.dom.Element;
         after = AnalyzeJavaFilesRuleProvider.class,
         perform = "Discover EJB-JAR XML Files and other EJBs"
 )
-public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getName());
 
     private static final String TECH_TAG = "EJB XML";
@@ -85,60 +82,50 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
     private static final String REGEX_DTD = "(?i).*enterprise.javabeans.*";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar"))
-                    .perform(new AbstractIterationOperation<XmlFileModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-                        {
-                            try
-                            {
-                                Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, payload);
-                                extractMetadata(event, context, payload, doc);
-                            }
-                            catch (Exception ex)
-                            {
-                                payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
-                            }
+                .addRule()
+                .when(Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar"))
+                .perform(new AbstractIterationOperation<XmlFileModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
+                        try {
+                            Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, payload);
+                            extractMetadata(event, context, payload, doc);
+                        } catch (Exception ex) {
+                            payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
                         }
-                    })
-                    .addRule()
-                    .when(JavaClass.references("javax.ejb.EntityBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
-                    .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            payload.getFile().setGenerateSourceReport(true);
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.EntityBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                        payload.getFile().setGenerateSourceReport(true);
 
-                            List<JavaClassModel> classes = payload.getFile().getJavaClasses();
-                            classes.forEach(classModel -> {
-                                // Get the entity model
-                                GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
-                                Iterable<EjbEntityBeanModel> entityBeanModels = findByClass(event.getGraphContext(), EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbEntityBeanModel.class);
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the entity model
+                            GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
+                            Iterable<EjbEntityBeanModel> entityBeanModels = findByClass(event.getGraphContext(), EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbEntityBeanModel.class);
 
-                                // If it already exists, then skip this one
-                                if (entityBeanModels.iterator().hasNext())
-                                    return;
+                            // If it already exists, then skip this one
+                            if (entityBeanModels.iterator().hasNext())
+                                return;
 
-                                // We can only create this one piece as we don't know have any other information
-                                EjbEntityBeanModel entity = ejbEntityService.create();
-                                entity.setApplications(payload.getFile().getApplications());
-                                entity.setEjbClass(classModel);
-                            });
-                        }
-                    })
+                            // We can only create this one piece as we don't know have any other information
+                            EjbEntityBeanModel entity = ejbEntityService.create();
+                            entity.setApplications(payload.getFile().getApplications());
+                            entity.setEjbClass(classModel);
+                        });
+                    }
+                })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.EJBHome").at(TypeReferenceLocation.INHERITANCE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -160,11 +147,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.EJBObject").at(TypeReferenceLocation.INHERITANCE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -186,11 +171,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.SessionBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -212,11 +195,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.EJBLocalHome").at(TypeReferenceLocation.INHERITANCE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -238,11 +219,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.EJBLocalObject").at(TypeReferenceLocation.INHERITANCE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -264,11 +243,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 })
                 .addRule()
                 .when(JavaClass.references("javax.ejb.MessageDrivenBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         payload.getFile().setGenerateSourceReport(true);
 
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
@@ -291,8 +268,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> findByClass(GraphContext graphContext, String edgeLabel, JavaClassModel javaClassModel, Class<T> typeClass)
-    {
+    public <T> List<T> findByClass(GraphContext graphContext, String edgeLabel, JavaClassModel javaClassModel, Class<T> typeClass) {
         List<T> result = new ArrayList<>();
         graphContext.getGraph().traversal().V()
                 .has(JavaClassModel.QUALIFIED_NAME, javaClassModel.getQualifiedName())
@@ -306,49 +282,39 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         return result;
     }
 
-    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc)
-    {
+    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc) {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
         classificationService.attachClassification(event, context, xmlModel, IssueCategoryRegistry.INFORMATION, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
         // otherwise, it is a EJB-JAR XML.
-        if (xmlModel.getDoctype() != null)
-        {
+        if (xmlModel.getDoctype() != null) {
             // check doctype.
-            if (!processDoctypeMatches(xmlModel.getDoctype()))
-            {
+            if (!processDoctypeMatches(xmlModel.getDoctype())) {
                 // move to next document.
                 return;
             }
             String version = processDoctypeVersion(xmlModel.getDoctype());
             extractMetadata(event, context, xmlModel, doc, version);
-        }
-        else
-        {
+        } else {
             String namespace = $(doc).find("ejb-jar").namespaceURI();
-            if (StringUtils.isBlank(namespace))
-            {
+            if (StringUtils.isBlank(namespace)) {
                 namespace = doc.getFirstChild().getNamespaceURI();
             }
 
             String version = $(doc).attr("version");
 
             // if the version attribute isn't found, then grab it from the XSD name if we can.
-            if (StringUtils.isBlank(version))
-            {
-                for (NamespaceMetaModel ns : xmlModel.getNamespaces())
-                {
-                    if (StringUtils.equals(ns.getURI(), namespace))
-                    {
+            if (StringUtils.isBlank(version)) {
+                for (NamespaceMetaModel ns : xmlModel.getNamespaces()) {
+                    if (StringUtils.equals(ns.getURI(), namespace)) {
                         version = NamespaceUtils.extractVersion(ns.getSchemaLocation());
                     }
                 }
             }
 
-            if (StringUtils.isNotBlank(version))
-            {
+            if (StringUtils.isNotBlank(version)) {
                 technologyTag.setVersion(version);
             }
 
@@ -356,48 +322,38 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         }
     }
 
-    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xml, Document doc, String versionInformation)
-    {
+    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xml, Document doc, String versionInformation) {
         EjbDeploymentDescriptorModel facet = GraphService.addTypeToModel(event.getGraphContext(), xml, EjbDeploymentDescriptorModel.class);
 
-        if (StringUtils.isNotBlank(versionInformation))
-        {
+        if (StringUtils.isNotBlank(versionInformation)) {
             facet.setSpecificationVersion(versionInformation);
         }
 
         // process all session beans...
-        for (Element element : $(doc).find("session").get())
-        {
+        for (Element element : $(doc).find("session").get()) {
             processSessionBeanElement(event, context, facet, element);
         }
 
         // process all message driven beans...
-        for (Element element : $(doc).find("message-driven").get())
-        {
+        for (Element element : $(doc).find("message-driven").get()) {
             processMessageDrivenElement(event, context, facet, element);
         }
 
         // process all entity beans...
-        for (Element element : $(doc).find("entity").get())
-        {
+        for (Element element : $(doc).find("entity").get()) {
             processEntityElement(event, context, facet, element);
         }
     }
 
-    private boolean processDoctypeMatches(DoctypeMetaModel entry)
-    {
-        if (StringUtils.isNotBlank(entry.getPublicId()))
-        {
-            if (Pattern.matches(REGEX_DTD, entry.getPublicId()))
-            {
+    private boolean processDoctypeMatches(DoctypeMetaModel entry) {
+        if (StringUtils.isNotBlank(entry.getPublicId())) {
+            if (Pattern.matches(REGEX_DTD, entry.getPublicId())) {
                 return true;
             }
         }
 
-        if (StringUtils.isNotBlank(entry.getSystemId()))
-        {
-            if (Pattern.matches(REGEX_DTD, entry.getSystemId()))
-            {
+        if (StringUtils.isNotBlank(entry.getSystemId())) {
+            if (Pattern.matches(REGEX_DTD, entry.getSystemId())) {
                 return true;
             }
 
@@ -405,8 +361,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         return false;
     }
 
-    private String processDoctypeVersion(DoctypeMetaModel entry)
-    {
+    private String processDoctypeVersion(DoctypeMetaModel entry) {
         String publicId = entry.getPublicId();
         String systemId = entry.getSystemId();
 
@@ -415,8 +370,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         return versionInformation;
     }
 
-    private void processSessionBeanElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
-    {
+    private void processSessionBeanElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), ejbConfig.getProjectModel());
@@ -433,36 +387,31 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
 
         // get local class.
         String localClz = extractChildTagAndTrim(element, "local");
-        if (localClz != null)
-        {
+        if (localClz != null) {
             local = getOrCreatePhantom(event, context, javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
-        if (localHomeClz != null)
-        {
+        if (localHomeClz != null) {
             localHome = getOrCreatePhantom(event, context, javaClassService, localHomeClz);
         }
 
         // get home class.
         String homeClz = extractChildTagAndTrim(element, "home");
-        if (homeClz != null)
-        {
+        if (homeClz != null) {
             home = getOrCreatePhantom(event, context, javaClassService, homeClz);
         }
 
         // get remote class.
         String remoteClz = extractChildTagAndTrim(element, "remote");
-        if (remoteClz != null)
-        {
+        if (remoteClz != null) {
             remote = getOrCreatePhantom(event, context, javaClassService, remoteClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
-        if (ejbClz != null)
-        {
+        if (ejbClz != null) {
             ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
@@ -484,16 +433,14 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         sessionBean.setTransactionType(transactionType);
 
         List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
-        for (EnvironmentReferenceModel ref : refs)
-        {
+        for (EnvironmentReferenceModel ref : refs) {
             sessionBean.addEnvironmentReference(ref);
         }
 
         ejbConfig.addEjbSessionBean(sessionBean);
     }
 
-    private void processMessageDrivenElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
-    {
+    private void processMessageDrivenElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel ejb = null;
 
@@ -505,8 +452,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
-        if (ejbClz != null)
-        {
+        if (ejbClz != null) {
             ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
@@ -514,12 +460,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
         String destination = null;
-        for (Element activationConfigPropertyElement : $($(element).find("activation-config")).find("activation-config-property").get())
-        {
+        for (Element activationConfigPropertyElement : $($(element).find("activation-config")).find("activation-config-property").get()) {
             String propName = extractChildTagAndTrim(activationConfigPropertyElement, "activation-config-property-name");
             String propValue = extractChildTagAndTrim(activationConfigPropertyElement, "activation-config-property-value");
-            if ("destination".equals(propName))
-            {
+            if ("destination".equals(propName)) {
                 destination = propValue;
             }
         }
@@ -536,24 +480,21 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         mdb.setSessionType(sessionType);
         mdb.setTransactionType(transactionType);
 
-        if (StringUtils.isNotBlank(destination))
-        {
+        if (StringUtils.isNotBlank(destination)) {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
             JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
             mdb.setDestination(jndiRef);
         }
 
         List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
-        for (EnvironmentReferenceModel ref : refs)
-        {
+        for (EnvironmentReferenceModel ref : refs) {
             mdb.addEnvironmentReference(ref);
         }
 
         ejbConfig.addMessageDriven(mdb);
     }
 
-    private void processEntityElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
-    {
+    private void processEntityElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel localHome = null;
         JavaClassModel local = null;
@@ -568,22 +509,19 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
 
         // get local class.
         String localClz = extractChildTagAndTrim(element, "local");
-        if (localClz != null)
-        {
+        if (localClz != null) {
             local = getOrCreatePhantom(event, context, javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
-        if (localHomeClz != null)
-        {
+        if (localHomeClz != null) {
             localHome = getOrCreatePhantom(event, context, javaClassService, localHomeClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
-        if (ejbClz != null)
-        {
+        if (ejbClz != null) {
             ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
@@ -603,22 +541,19 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         entity.setEjbLocal(local);
 
         List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
-        for (EnvironmentReferenceModel ref : refs)
-        {
+        for (EnvironmentReferenceModel ref : refs) {
             entity.addEnvironmentReference(ref);
         }
 
         ejbConfig.addEjbEntityBean(entity);
     }
 
-    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element)
-    {
+    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element) {
         EnvironmentReferenceService environmentReferenceService = new EnvironmentReferenceService(context);
         List<EnvironmentReferenceModel> resources = new LinkedList<>();
 
         // find Environment Resource references...
-        for (Element e : $(element).find("resource-ref").get())
-        {
+        for (Element e : $(element).find("resource-ref").get()) {
             String id = $(e).attr("id");
             String type = $(e).child("res-type").text();
             String name = $(e).child("res-ref-name").text();
@@ -627,8 +562,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             name = StringUtils.trim(name);
 
             EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.RESOURCE_REF);
-            if (ref == null)
-            {
+            if (ref == null) {
                 ref = environmentReferenceService.create();
                 ref.setName(name);
                 ref.setReferenceId(id);
@@ -639,8 +573,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             resources.add(ref);
         }
 
-        for (Element e : $(element).find("resource-env-ref").get())
-        {
+        for (Element e : $(element).find("resource-env-ref").get()) {
             String id = $(e).attr("id");
             String type = $(e).child("resource-env-ref-type").text();
             String name = $(e).child("resource-env-ref-name").text();
@@ -649,8 +582,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             name = StringUtils.trim(name);
 
             EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.RESOURCE_ENV_REF);
-            if (ref == null)
-            {
+            if (ref == null) {
                 ref = environmentReferenceService.create();
                 ref.setReferenceId(id);
                 ref.setName(name);
@@ -661,8 +593,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             resources.add(ref);
         }
 
-        for (Element e : $(element).find("message-destination-ref").get())
-        {
+        for (Element e : $(element).find("message-destination-ref").get()) {
             String id = $(e).attr("id");
             String type = $(e).child("message-destination-type").text();
             String name = $(e).child("message-destination-ref-name").text();
@@ -671,9 +602,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             name = StringUtils.trim(name);
 
             EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name,
-                        EnvironmentReferenceTagType.MSG_DESTINATION_REF);
-            if (ref == null)
-            {
+                    EnvironmentReferenceTagType.MSG_DESTINATION_REF);
+            if (ref == null) {
                 ref = environmentReferenceService.create();
                 ref.setReferenceId(id);
                 ref.setName(name);
@@ -684,8 +614,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             resources.add(ref);
         }
 
-        for (Element e : $(element).find("ejb-local-ref").get())
-        {
+        for (Element e : $(element).find("ejb-local-ref").get()) {
             String id = $(e).attr("id");
             String type = $(e).child("ejb-ref-type").text();
             String name = $(e).child("ejb-ref-name").text();
@@ -694,8 +623,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             name = StringUtils.trim(name);
 
             EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.EJB_LOCAL_REF);
-            if (ref == null)
-            {
+            if (ref == null) {
                 ref = environmentReferenceService.create();
                 ref.setReferenceId(id);
                 ref.setName(name);
@@ -706,8 +634,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             resources.add(ref);
         }
 
-        for (Element e : $(element).find("ejb-ref").get())
-        {
+        for (Element e : $(element).find("ejb-ref").get()) {
             String id = $(e).attr("id");
             String type = $(e).child("ejb-ref-type").text();
             String name = $(e).child("ejb-ref-name").text();
@@ -716,8 +643,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             name = StringUtils.trim(name);
 
             EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.EJB_REF);
-            if (ref == null)
-            {
+            if (ref == null) {
                 ref = environmentReferenceService.create();
                 ref.setReferenceId(id);
                 ref.setName(name);
@@ -731,30 +657,23 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
         return resources;
     }
 
-    private JavaClassModel getOrCreatePhantom(GraphRewrite event, EvaluationContext context, JavaClassService service, String fqcn)
-    {
+    private JavaClassModel getOrCreatePhantom(GraphRewrite event, EvaluationContext context, JavaClassService service, String fqcn) {
         JavaClassModel classModel = service.getOrCreatePhantom(fqcn);
-        if (classModel instanceof AmbiguousJavaClassModel)
-        {
-            for (JavaClassModel reference : ((AmbiguousJavaClassModel) classModel).getReferences())
-            {
+        if (classModel instanceof AmbiguousJavaClassModel) {
+            for (JavaClassModel reference : ((AmbiguousJavaClassModel) classModel).getReferences()) {
                 markAsReportReportable(event, context, reference);
             }
-        }
-        else if (!(classModel instanceof PhantomJavaClassModel))
-        {
+        } else if (!(classModel instanceof PhantomJavaClassModel)) {
             markAsReportReportable(event, context, classModel);
         }
         return classModel;
     }
 
-    private void markAsReportReportable(GraphRewrite event, EvaluationContext context, JavaClassModel reference)
-    {
+    private void markAsReportReportable(GraphRewrite event, EvaluationContext context, JavaClassModel reference) {
         AbstractJavaSourceModel originalSource = reference.getOriginalSource();
         JavaSourceFileModel decompiledSource = reference.getDecompiledSource();
         if (originalSource == null && decompiledSource == null && reference.getClassFile() != null
-                    && reference.getClassFile() instanceof JavaClassFileModel)
-        {
+                && reference.getClassFile() instanceof JavaClassFileModel) {
             JavaClassFileModel javaClassFileModel = (JavaClassFileModel) reference.getClassFile();
             javaClassFileModel.setSkipDecompilation(false);
 
@@ -767,8 +686,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             // be visible).
             event.getGraphContext().commit();
 
-            if (reference.getDecompiledSource() != null)
-            {
+            if (reference.getDecompiledSource() != null) {
                 reference.getDecompiledSource().setGenerateSourceReport(true);
             }
         }
@@ -779,14 +697,12 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
             decompiledSource.setGenerateSourceReport(true);
     }
 
-    private String extractAttributeAndTrim(Element element, String property)
-    {
+    private String extractAttributeAndTrim(Element element, String property) {
         String result = $(element).attr(property);
         return StringUtils.trimToNull(result);
     }
 
-    private String extractChildTagAndTrim(Element element, String property)
-    {
+    private String extractChildTagAndTrim(Element element, String property) {
         String result = $(element).find(property).first().text();
         return StringUtils.trimToNull(result);
     }

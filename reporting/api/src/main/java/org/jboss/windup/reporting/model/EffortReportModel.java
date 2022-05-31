@@ -5,10 +5,9 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import org.jboss.windup.graph.Property;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
@@ -21,18 +20,11 @@ import java.util.Iterator;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @TypeValue(EffortReportModel.TYPE)
-public interface EffortReportModel extends WindupVertexFrame
-{
+public interface EffortReportModel extends WindupVertexFrame {
     String TYPE = "EffortReportModel";
     String TYPE_PREFIX = TYPE + "-";
-    String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with special characters
     String ISSUE_CATEGORY = TYPE_PREFIX + "issueCategory";
-
-    /**
-     * Set the effort weight (E.g. How difficult is it to fix the issue?)
-     */
-    @Property(EFFORT)
-    void setEffort(int effort);
+    String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with special characters
 
     /**
      * Get the effort weight (E.g. How difficult is it to fix the issue?)
@@ -42,28 +34,30 @@ public interface EffortReportModel extends WindupVertexFrame
     int getEffort();
 
     /**
-     * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
+     * Set the effort weight (E.g. How difficult is it to fix the issue?)
      */
-    @Adjacency(label = ISSUE_CATEGORY, direction = Direction.OUT)
-    void setIssueCategory(IssueCategoryModel issueCategory);
+    @Property(EFFORT)
+    void setEffort(int effort);
 
     /**
      * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
      */
-    default IssueCategoryModel getIssueCategory()
-    {
+    default IssueCategoryModel getIssueCategory() {
         Iterator<Vertex> categoryVertices = getElement().vertices(Direction.OUT, ISSUE_CATEGORY);
 
         IssueCategoryModel result;
-        if (categoryVertices.hasNext())
-        {
+        if (categoryVertices.hasNext()) {
             result = getGraph().frameElement(categoryVertices.next(), IssueCategoryModel.class);
-        }
-        else
-        {
+        } else {
             result = IssueCategoryRegistry.loadFromGraph(getGraph(), IssueCategoryRegistry.DEFAULT);
         }
         return result;
     }
+
+    /**
+     * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
+     */
+    @Adjacency(label = ISSUE_CATEGORY, direction = Direction.OUT)
+    void setIssueCategory(IssueCategoryModel issueCategory);
 
 }

@@ -1,15 +1,5 @@
 package org.jboss.windup.rules.apps.tattletale;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.base.StandardSystemProperty;
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -32,49 +22,52 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Runs Tattletale on the Windup's input.
  */
-public class TattletaleRuleProvider extends AbstractRuleProvider
-{
+public class TattletaleRuleProvider extends AbstractRuleProvider {
     public static final String REPORT_TEMPLATE = "/reports/templates/embedded.ftl";
-    private static final String TATTLETALE_REPORT_SUBDIR = "tattletale";
     public static final String REPORT_DESCRIPTION = "This report contains the results of running Tattletale on the input application.";
+    private static final String TATTLETALE_REPORT_SUBDIR = "tattletale";
 
-    public TattletaleRuleProvider()
-    {
+    public TattletaleRuleProvider() {
         super(MetadataBuilder.forProvider(TattletaleRuleProvider.class));
     }
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new TattletaleOperation());
+                .addRule()
+                .perform(new TattletaleOperation());
     }
 
-    private class TattletaleOperation extends GraphOperation
-    {
+    private class TattletaleOperation extends GraphOperation {
         private static final String TTALE_CONFIG_FILE_NAME = "tattletale-config.properties";
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context) {
             if (!isTattleTaleReportGenerationEnabled(event))
                 return;
 
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            for (FileModel input : configuration.getInputPaths())
-            {
+            for (FileModel input : configuration.getInputPaths()) {
                 String inputPath = input.getFilePath();
                 Path reportDirectory = new ReportService(event.getGraphContext()).getReportDirectory();
 
                 String tattletaleRelativePath = TATTLETALE_REPORT_SUBDIR + File.separator + input.getFileName();
                 Path tattletaleReportPath = reportDirectory.resolve(tattletaleRelativePath);
 
-                for (int i = 1; Files.exists(tattletaleReportPath); i++)
-                {
+                for (int i = 1; Files.exists(tattletaleReportPath); i++) {
                     tattletaleRelativePath = TATTLETALE_REPORT_SUBDIR + File.separator + input.getFileName() + "." + i;
                     tattletaleReportPath = reportDirectory.resolve(tattletaleRelativePath);
                 }
@@ -84,13 +77,11 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
                 main.setSource(inputPath);
                 main.setDestination(tattletaleDir);
 
-                try
-                {
+                try {
                     // The only way Tattletale accepts configuration is through a file.
                     new File(tattletaleDir).mkdirs();
                     File configPath = new File(tattletaleDir, TTALE_CONFIG_FILE_NAME);
-                    try (PrintStream str = new PrintStream(configPath))
-                    {
+                    try (PrintStream str = new PrintStream(configPath)) {
                         str.append("enableDot=false\n"); // Whether to generate .dot and .png
                         str.append("graphvizDot=dot\n"); // Dot executable
                         str.close();
@@ -108,17 +99,14 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
                     System.setProperty(StandardSystemProperty.JAVA_IO_TMPDIR.key(), previousTmpDir);
 
                     createReportModel(event.getGraphContext(), input, tattletaleRelativePath, tattletaleDir);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     throw new WindupException("Failed to run Tattletale due to: " + e.getMessage());
                 }
             }
         }
 
         private void createReportModel(GraphContext context, FileModel input, String reportRelativePath,
-                                       String tattletaleAbsolutePath)
-        {
+                                       String tattletaleAbsolutePath) {
             ProjectModel inputProjectModel = input.getProjectModel();
 
             Path reportIndexPath = Paths.get(tattletaleAbsolutePath, "index.html");
@@ -148,8 +136,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             reportService.setUniqueFilename(applicationReportModel, "tattletale" + "_" + inputProjectModel.getName(), "html");
         }
 
-        private boolean isTattleTaleReportGenerationEnabled(GraphRewrite event)
-        {
+        private boolean isTattleTaleReportGenerationEnabled(GraphRewrite event) {
             Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(EnableTattletaleReportOption.NAME, Boolean.FALSE);
             Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(DisableTattletaleReportOption.NAME, Boolean.FALSE);
             Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().getOrDefault(TargetOption.NAME, Collections.EMPTY_SET);

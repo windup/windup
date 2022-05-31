@@ -1,11 +1,10 @@
 package org.jboss.windup.graph.typedgraph;
 
-import javax.inject.Inject;
-
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
@@ -16,35 +15,30 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-
+import javax.inject.Inject;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupPropertyMethodHandlerTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
-        return archive;
-    }
+public class WindupPropertyMethodHandlerTest {
 
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
+        return archive;
+    }
+
     @Test
-    public void testPropertyHandler() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testPropertyHandler() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
             GraphService<TestFooModel> fooModelService = new GraphService<>(context, TestFooModel.class);
@@ -59,8 +53,7 @@ public class WindupPropertyMethodHandlerTest
                     .collect(Collectors.toList());
 
             int numberFound = 0;
-            for (Vertex v : vertices)
-            {
+            for (Vertex v : vertices) {
                 numberFound++;
                 TestFooModel framed = (TestFooModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 

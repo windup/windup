@@ -1,15 +1,5 @@
 package org.jboss.windup.rules.java;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -47,9 +37,17 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.logging.Logger;
+
 @RunWith(Arquillian.class)
-public class JavaClassTest
-{
+public class JavaClassTest {
     @Inject
     JavaClassTestRuleProvider provider;
     @Inject
@@ -59,29 +57,26 @@ public class JavaClassTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -106,7 +101,7 @@ public class JavaClassTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        JavaClassTestRuleProvider.class));
+                    JavaClassTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
@@ -116,7 +111,7 @@ public class JavaClassTest
             processor.execute(processorConfig);
 
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                        JavaTypeReferenceModel.class);
+                    JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
@@ -130,93 +125,80 @@ public class JavaClassTest
      * Testing that .from() and .as() sets the right variable
      */
     @Test
-    public void testJavaClassInputOutputVariables()
-    {
+    public void testJavaClassInputOutputVariables() {
         JavaClass as = (JavaClass) JavaClass.from("input").references("abc").as("output");
         Assert.assertEquals("input", as.getInputVariablesName());
         Assert.assertEquals("output", as.getOutputVariablesName());
     }
 
     @Singleton
-    public static class JavaClassTestRuleProvider extends AbstractRuleProvider
-    {
+    public static class JavaClassTestRuleProvider extends AbstractRuleProvider {
         private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
 
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
         private int thirdRuleMatchCount = 0;
 
-        public JavaClassTestRuleProvider()
-        {
+        public JavaClassTestRuleProvider() {
             super(MetadataBuilder.forProvider(JavaClassTestRuleProvider.class)
-                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
-                            JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
-                )
-            ).perform(
-                Iteration.over("1").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
-                    }
-                }).endIteration()
-            )
+                    .addRule().when(
+                            JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
+                                    JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
+                            )
+                    ).perform(
+                            Iteration.over("1").perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    firstRuleMatchCount++;
+                                    log.info("First rule matched: " + payload.getFile().getFilePath());
+                                }
+                            }).endIteration()
+                    )
 
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
-            ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        secondRuleMatchCount++;
-                    }
-                }).endIteration()
-            )
+                    .addRule().when(
+                            JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
+                    ).perform(
+                            Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    secondRuleMatchCount++;
+                                }
+                            }).endIteration()
+                    )
 
-                        //test iteration over matched file
-            .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
-                JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
-                )
-            ).perform(
-                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        thirdRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
-                    }
-                }).endIteration()
-            );
+                    //test iteration over matched file
+                    .addRule().when(
+                            JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
+                                    JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
+                            )
+                    ).perform(
+                            Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    thirdRuleMatchCount++;
+                                    log.info("First rule matched: " + payload.getFile().getFilePath());
+                                }
+                            }).endIteration()
+                    );
         }
         // @formatter:on
 
-        public int getFirstRuleMatchCount()
-        {
+        public int getFirstRuleMatchCount() {
             return firstRuleMatchCount;
         }
 
-        public int getSecondRuleMatchCount()
-        {
+        public int getSecondRuleMatchCount() {
             return secondRuleMatchCount;
         }
 
-        public int getThirdRuleMatchCount()
-        {
+        public int getThirdRuleMatchCount() {
             return thirdRuleMatchCount;
         }
 

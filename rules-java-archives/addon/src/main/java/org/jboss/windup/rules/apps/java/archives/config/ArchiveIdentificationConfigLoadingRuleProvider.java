@@ -1,10 +1,5 @@
 package org.jboss.windup.rules.apps.java.archives.config;
 
-import java.io.File;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -24,6 +19,10 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.util.logging.Logger;
+
 /**
  * Loads configuration/metadata for identifying archives by SHA1 hashes.
  *
@@ -31,40 +30,31 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RuleMetadata(phase = InitializationPhase.class)
-public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRuleProvider
-{
+public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRuleProvider {
     private static final Logger log = Logging.get(ArchiveIdentificationConfigLoadingRuleProvider.class);
 
     @Inject
     private CompositeArchiveIdentificationService identifier;
 
     @Override
-    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new AddDelimitedFileIndexOperation())
-                    .addRule()
-                    .perform(new AddLuceneFileIndexOperation());
+                .addRule()
+                .perform(new AddDelimitedFileIndexOperation())
+                .addRule()
+                .perform(new AddLuceneFileIndexOperation());
     }
 
-    private class AddDelimitedFileIndexOperation extends GraphOperation
-    {
+    private class AddDelimitedFileIndexOperation extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
-            Visitor<File> visitor = new Visitor<File>()
-            {
+        public void perform(GraphRewrite event, EvaluationContext context) {
+            Visitor<File> visitor = new Visitor<File>() {
                 @Override
-                public void visit(File file)
-                {
-                    try
-                    {
+                public void visit(File file) {
+                    try {
                         log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
                         identifier.addIdentifier(new InMemoryArchiveIdentificationService().addMappingsFrom(file));
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         throw new WindupException("Failed to load identification data from file [" + file + "]", e);
                     }
                 }
@@ -76,23 +66,16 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
         }
     }
 
-    private class AddLuceneFileIndexOperation extends GraphOperation
-    {
+    private class AddLuceneFileIndexOperation extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
-            Visitor<File> visitor = new Visitor<File>()
-            {
+        public void perform(GraphRewrite event, EvaluationContext context) {
+            Visitor<File> visitor = new Visitor<File>() {
                 @Override
-                public void visit(File file)
-                {
-                    try
-                    {
+                public void visit(File file) {
+                    try {
                         log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
                         identifier.addIdentifier(new LuceneArchiveIdentificationService(file.getParentFile()));
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         throw new WindupException("Failed to load identification data from file [" + file + "]", e);
                     }
                 }

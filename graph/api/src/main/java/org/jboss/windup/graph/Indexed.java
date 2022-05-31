@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.windup.graph.Property;
-
 /**
  * Designates that a Framed method annotated with {@link Property} should be indexed by the underlying database
  * implementation. This is used as a runtime performance enhancement, but comes at the cost of using additional storage
@@ -14,13 +12,12 @@ import org.jboss.windup.graph.Property;
  * <p>
  * <b>Note:</b> Only one property in any getter/setter pair need be annotated with {@link Indexed}. Multiple annotations
  * will have no effect.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Indexed
-{
+public @interface Indexed {
     /**
      * The type of index to be created.
      */

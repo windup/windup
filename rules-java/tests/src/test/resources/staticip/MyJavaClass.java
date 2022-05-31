@@ -2,8 +2,8 @@ package org.jboss.windup.rules.tests;
 
 public class MyJavaClass {
 
-    private String myAddress1 = "10.10.1.0";
     String myAddress2 = "10.10.1.1";
+    private String myAddress1 = "10.10.1.0";
 
     public static void main(String[] args) {
         MyJavaClass main = new MyJavaClass();

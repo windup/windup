@@ -1,9 +1,10 @@
 package org.jboss.windup.reporting.renderer.graphviz;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.jboss.windup.reporting.renderer.dot.DotWriter;
+import org.jboss.windup.util.Logging;
 
 import javax.script.Bindings;
 import javax.script.Compilable;
@@ -12,27 +13,22 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.jboss.windup.reporting.renderer.dot.DotWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 import java.util.logging.Logger;
-import org.jboss.windup.util.Logging;
 
-public class GraphvizWriter extends DotWriter
-{
+public class GraphvizWriter extends DotWriter {
     private static final Logger LOG = Logging.get(GraphvizWriter.class);
 
     private final CompiledScript vizJsCompiled;
 
-    public GraphvizWriter(Graph graph) throws ScriptException, IOException
-    {
+    public GraphvizWriter(Graph graph) throws ScriptException, IOException {
         super(graph);
-        if (true)
-        {
+        if (true) {
             throw new RuntimeException(
-                        "Not yet implemented; this is unstable.  The javascript requires Int32Array, which isn't currently provided by Rhino.");
+                    "Not yet implemented; this is unstable.  The javascript requires Int32Array, which isn't currently provided by Rhino.");
         }
 
         // precompile the javascript.
@@ -51,13 +47,11 @@ public class GraphvizWriter extends DotWriter
     }
 
     @Override
-    public void writeGraph(OutputStream os) throws IOException
-    {
+    public void writeGraph(OutputStream os) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         super.writeGraph(baos);
 
-        try
-        {
+        try {
             StringBuilder builder = new StringBuilder();
             builder.append(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("vizjs/viz.js")));
             builder.append("var result = new Viz(dotGraph);");
@@ -69,17 +63,14 @@ public class GraphvizWriter extends DotWriter
 
             // Bindings bindings = cscript.getEngine().createBindings();
             Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
-            for (Map.Entry me : bindings.entrySet())
-            {
+            for (Map.Entry me : bindings.entrySet()) {
                 System.out.printf("%s: %s\n", me.getKey(), String.valueOf(me.getValue()));
             }
             bindings.put("dotGraph", baos.toString());
             // cscript.eval();
             Object result = cscript.eval(bindings);
             LOG.info("Result:" + ReflectionToStringBuilder.toString(result));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new IOException("Exception generating graph.", e);
         }
     }

@@ -1,22 +1,20 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import java.util.List;
 
 /**
  * Contains metadata extracted from a hibernate mapping file (*.hbm.xml)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(HibernateMappingFileModel.TYPE)
-public interface HibernateMappingFileModel extends XmlFileModel
-{
+public interface HibernateMappingFileModel extends XmlFileModel {
     String TYPE = "HibernateMappingFileModel";
     String HIBERNATE_ENTITY = "hibernateEntity";
     String SPECIFICATION_VERSION = "specificationVersion";

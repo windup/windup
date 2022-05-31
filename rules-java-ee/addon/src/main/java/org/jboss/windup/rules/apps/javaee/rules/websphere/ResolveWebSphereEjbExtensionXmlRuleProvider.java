@@ -26,49 +26,45 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:mnovotny@redhat.com">Marek Novotny</a>
- * 
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover WebSphere EJB XML Files")
-public class ResolveWebSphereEjbExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class ResolveWebSphereEjbExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-ext.xmi")
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarExtension");
+                .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarExtension");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        
+
         ClassificationModel classificationModel = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY,
-                    "WebSphere EJB extension descriptor (ibm-ejb-jar-ext)",
-                    "WebSphere Enterprise Java Bean Extension XML Descriptor is used to specify extensions to be (de-)activated in the EJB Container."
-                                + " \n "
-                                + "JBoss EAP uses Java EE `jboss-ejb.xml` file descriptor or EAP specific `jboss-ejb3.xml` descriptor file. EJB 3.2 doesn't require descriptor file to be in deployment.");
+                "WebSphere EJB extension descriptor (ibm-ejb-jar-ext)",
+                "WebSphere Enterprise Java Bean Extension XML Descriptor is used to specify extensions to be (de-)activated in the EJB Container."
+                        + " \n "
+                        + "JBoss EAP uses Java EE `jboss-ejb.xml` file descriptor or EAP specific `jboss-ejb3.xml` descriptor file. EJB 3.2 doesn't require descriptor file to be in deployment.");
         classificationModel.setEffort(3);
-        
+
         GraphContext graphContext = event.getGraphContext();
         LinkService linkService = new LinkService(graphContext);
-        
+
         LinkModel link = linkService.create();
         link.setDescription("Websphere AS - EJB 3.0 application bindings overview");
         link.setLink("https://www.ibm.com/support/knowledgecenter/en/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/cejb_bindingsejbfp.html");
 
         classificationService.attachLink(classificationModel, link);
-        
+
         LinkModel ejb3RefLink = linkService.create();
         ejb3RefLink.setDescription("EAP 7 - jboss-ejb3.xml Deployment Descriptor Reference");
         ejb3RefLink.setLink("https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/developing_ejb_applications/#jboss_ejb3_xml_deployment_descriptor_reference");
         classificationService.attachLink(classificationModel, ejb3RefLink);
-        
+
         LinkModel ejb3RefLink_ = linkService.create();
         ejb3RefLink_.setDescription("EAP 6 - jboss-ejb3.xml Deployment Descriptor Reference");
         ejb3RefLink_.setLink("https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6/html-single/Development_Guide/index.html#jboss-ejb3xml_Deployment_Descriptor_Reference");
         classificationService.attachLink(classificationModel, ejb3RefLink_);
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB Ext", TechnologyTagLevel.IMPORTANT);
 

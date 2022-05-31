@@ -1,6 +1,5 @@
 package testclasses.annotations.basic;
 
-public @interface SimpleSingleMemberAnnotation
-{
+public @interface SimpleSingleMemberAnnotation {
     String value();
 }

@@ -1,7 +1,5 @@
 package org.jboss.windup.exec.test;
 
-import java.nio.file.Path;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -16,32 +14,30 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.nio.file.Path;
+
 @RunWith(Arquillian.class)
-public class OutputPathOptionTest
-{
+public class OutputPathOptionTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
-    private Path getBasePath()
-    {
+    private Path getBasePath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
     @Test
-    public void testInputAndOutputEqual()
-    {
+    public void testInputAndOutputEqual() {
         Path basePath = getBasePath();
         Path appPath = basePath.resolve("ApplicationDir");
 
@@ -50,54 +46,42 @@ public class OutputPathOptionTest
     }
 
     @Test
-    public void testInputAsSubOfOutput() throws Exception
-    {
+    public void testInputAsSubOfOutput() throws Exception {
         Path basePath = getBasePath();
         Path appPath = basePath.resolve("myapppath");
         FileUtils.forceMkdir(appPath.toFile());
-        try
-        {
+        try {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(appPath, basePath);
             Assert.assertEquals(ValidationResult.Level.ERROR, result.getLevel());
-        }
-        finally
-        {
+        } finally {
             FileUtils.deleteDirectory(basePath.toFile());
         }
     }
 
     @Test
-    public void testOutputAsSubOfInput() throws Exception
-    {
+    public void testOutputAsSubOfInput() throws Exception {
         Path basePath = getBasePath();
         Path subpath = basePath.resolve("subpath");
         FileUtils.forceMkdir(subpath.toFile());
-        try
-        {
+        try {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(basePath, subpath);
             Assert.assertEquals(ValidationResult.Level.ERROR, result.getLevel());
-        }
-        finally
-        {
+        } finally {
             FileUtils.deleteDirectory(basePath.toFile());
         }
     }
 
     @Test
-    public void testValidConfiguration() throws Exception
-    {
+    public void testValidConfiguration() throws Exception {
         Path basePath = getBasePath();
         Path input = basePath.resolve("input");
         Path output = basePath.resolve("output");
         FileUtils.forceMkdir(input.toFile());
         FileUtils.forceMkdir(output.toFile());
-        try
-        {
+        try {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(input, output);
             Assert.assertEquals(ValidationResult.Level.SUCCESS, result.getLevel());
-        }
-        finally
-        {
+        } finally {
             FileUtils.deleteDirectory(basePath.toFile());
         }
     }

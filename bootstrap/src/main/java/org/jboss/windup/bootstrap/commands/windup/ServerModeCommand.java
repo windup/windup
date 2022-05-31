@@ -1,8 +1,5 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.windup.bootstrap.Bootstrap;
@@ -14,8 +11,10 @@ import org.jboss.windup.tooling.ToolingRMIServer;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 
-public class ServerModeCommand implements Command
-{
+import java.util.List;
+import java.util.concurrent.Future;
+
+public class ServerModeCommand implements Command {
     public static final String COMMAND_ID = "--startServer";
 
     private Furnace furnace;
@@ -23,49 +22,40 @@ public class ServerModeCommand implements Command
     private int port;
     private String addonsDirectory;
 
-    public ServerModeCommand(List<String> arguments)
-    {
+    public ServerModeCommand(List<String> arguments) {
         this.port = getServerPort(arguments);
         this.addonsDirectory = getAddonDirectory(arguments);
     }
 
-    public static boolean isServerMode(List<String> arguments)
-    {
+    public static boolean isServerMode(List<String> arguments) {
         return arguments.contains(ServerModeCommand.COMMAND_ID);
     }
 
-    private static String getAddonDirectory(List<String> arguments)
-    {
+    private static String getAddonDirectory(List<String> arguments) {
         int addDirectoryIndex = arguments.indexOf("--immutableAddonDir") + 1;
         return arguments.get(addDirectoryIndex);
     }
 
-    private static int getServerPort(List<String> arguments)
-    {
+    private static int getServerPort(List<String> arguments) {
         int serverPort = arguments.indexOf(ServerModeCommand.COMMAND_ID) + 1;
         String serverPortString = arguments.get(serverPort);
         return Integer.valueOf(serverPortString);
     }
 
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
-        try
-        {
+        try {
             furnace = FurnaceFactory.getInstance();
             furnace.setServerMode(true);
 
             loadAddons();
 
-            try
-            {
+            try {
                 Future<Furnace> future = furnace.startAsync();
                 future.get(); // use future.get() to wait until it is started
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 System.out.println("Failed to start " + theme.getBrandNameAcronym() + "!");
                 if (e.getMessage() != null)
                     System.out.println("Failure reason: " + e.getMessage());
@@ -73,9 +63,7 @@ public class ServerModeCommand implements Command
             }
 
             startServer();
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
@@ -84,15 +72,13 @@ public class ServerModeCommand implements Command
         return null;
     }
 
-    private void loadAddons()
-    {
+    private void loadAddons() {
         AddImmutableAddonDirectoryCommand addonCommand = new AddImmutableAddonDirectoryCommand(addonsDirectory);
         addonCommand.setFurnace(furnace);
         addonCommand.execute();
     }
 
-    private void startServer()
-    {
+    private void startServer() {
         System.out.println("Calling ToolingRMIServer start...");
         furnace.getAddonRegistry().getServices(ToolingRMIServer.class).get().startServer(port, Bootstrap.getVersion());
     }
@@ -100,15 +86,13 @@ public class ServerModeCommand implements Command
     // TODO: Not sure if this is necessary, or if killing the processes is sufficient.
     // If necessary, the client needs to invoke.
     @SuppressWarnings("unused")
-    private void stop()
-    {
+    private void stop() {
         if (furnace != null && !furnace.getStatus().isStopped())
             furnace.stop();
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return null;
     }
 }

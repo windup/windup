@@ -1,13 +1,5 @@
 package org.jboss.windup.rules.java;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -32,36 +24,38 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+
 /**
  * Tests the javaclass condition along with hint-not-exists condition.
  */
 @RunWith(Arquillian.class)
-public class JavaClassWithoutHintTest
-{
-    @Deployment
-    @AddonDependencies
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("org/jboss/windup/rules/java/javaclass-withouthint.windup.xml");
-    }
-
+public class JavaClassWithoutHintTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource("org/jboss/windup/rules/java/javaclass-withouthint.windup.xml");
+    }
+
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
         final Path outputPath = getDefaultPath();
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath, true))
-        {
+        try (GraphContext context = factory.create(outputPath, true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
@@ -79,8 +73,7 @@ public class JavaClassWithoutHintTest
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
 
             int count = 0;
-            for (JavaTypeReferenceModel ref : typeReferences)
-            {
+            for (JavaTypeReferenceModel ref : typeReferences) {
                 String sourceSnippit = ref.getResolvedSourceSnippit();
                 if (sourceSnippit.contains("org.jboss"))
                     count++;
@@ -91,24 +84,19 @@ public class JavaClassWithoutHintTest
             Iterable<InlineHintModel> hints = hintService.findAll();
 
             count = 0;
-            for (InlineHintModel hint : hints)
-            {
+            for (InlineHintModel hint : hints) {
                 if (hint.getHint().contains("Rule1"))
                     count++;
             }
             Assert.assertEquals(1, count);
 
             count = 0;
-            for (InlineHintModel hint : hints)
-            {
-                if (hint.getHint().contains("Rule2"))
-                {
-                    if (hint.getFileLocationReference().getSourceSnippit().contains("org.jboss.forge.furnace.util.Callables"))
-                    {
+            for (InlineHintModel hint : hints) {
+                if (hint.getHint().contains("Rule2")) {
+                    if (hint.getFileLocationReference().getSourceSnippit().contains("org.jboss.forge.furnace.util.Callables")) {
                         Assert.assertTrue(hint.getHint().contains("Callables"));
                         count++;
-                    }
-                    else
+                    } else
                         Assert.fail("Catch-all hint should not be registered for locations that already contain hint");
                 }
 
@@ -116,10 +104,8 @@ public class JavaClassWithoutHintTest
             Assert.assertEquals(1, count);
 
             count = 0;
-            for (InlineHintModel hint : hints)
-            {
-                if (hint.getHint().contains("Rule3"))
-                {
+            for (InlineHintModel hint : hints) {
+                if (hint.getHint().contains("Rule3")) {
                     if (hint.getFileLocationReference().getSourceSnippit().contains("org.jboss.windup.exec.configuration.WindupConfiguration"))
                         count++;
                     else
@@ -129,10 +115,8 @@ public class JavaClassWithoutHintTest
             }
             Assert.assertEquals(1, count);
 
-            for (InlineHintModel hint : hints)
-            {
-                if (hint.getHint().contains("Rule4"))
-                {
+            for (InlineHintModel hint : hints) {
+                if (hint.getHint().contains("Rule4")) {
                     Assert.fail("Catch-all hint should not be registered for locations that already contain hint");
                 }
             }
@@ -140,9 +124,8 @@ public class JavaClassWithoutHintTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

@@ -25,32 +25,28 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateReportIndexRuleProvider extends AbstractRuleProvider
-{
+public class CreateReportIndexRuleProvider extends AbstractRuleProvider {
     public static final String REPORT_INDEX = "Dashboard";
     public static final String TEMPLATE = "/reports/templates/report_index.ftl";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(new GraphOperation() {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context) {
-                WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                for (FileModel inputPath : configuration.getInputPaths())
-                {
-                    createReportIndex(event.getGraphContext(), inputPath.getProjectModel());
-                }
-            }
-        });
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                        for (FileModel inputPath : configuration.getInputPaths()) {
+                            createReportIndex(event.getGraphContext(), inputPath.getProjectModel());
+                        }
+                    }
+                });
     }
     // @formatter:on
 
-    private void createReportIndex(GraphContext context, ProjectModel projectModel)
-    {
+    private void createReportIndex(GraphContext context, ProjectModel projectModel) {
         ApplicationReportService service = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = service.create();
         applicationReportModel.setReportPriority(100);
@@ -62,7 +58,7 @@ public class CreateReportIndexRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setDescription(
-                    "Dashboard report aggregating findings from the analysis.");
+                "Dashboard report aggregating findings from the analysis.");
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);

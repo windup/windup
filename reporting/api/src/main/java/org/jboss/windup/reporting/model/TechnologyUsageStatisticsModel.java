@@ -2,13 +2,12 @@ package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
-
-import java.util.Date;
-
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.Date;
 
 /**
  * Maps particular set of statistic items known in advance in the properties of this single model.
@@ -17,8 +16,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:jsightle@redhat.com">Jess Sightler</a>
  */
 @TypeValue(TechnologyUsageStatisticsModel.TYPE)
-public interface TechnologyUsageStatisticsModel extends TaggableModel
-{
+public interface TechnologyUsageStatisticsModel extends TaggableModel {
     String TYPE = "TechnologyUsageStatisticsModel";
 
     String COMPUTED = "stats.computed";

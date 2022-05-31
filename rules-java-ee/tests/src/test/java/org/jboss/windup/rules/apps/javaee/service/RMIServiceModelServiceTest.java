@@ -1,9 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import java.nio.file.Path;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.junit.Arquillian;
@@ -21,7 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Iterables;
+import javax.inject.Inject;
+import java.nio.file.Path;
 
 /**
  * Tests the {@link RMIServiceModelService}.
@@ -29,8 +27,7 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class RMIServiceModelServiceTest extends AbstractTest
-{
+public class RMIServiceModelServiceTest extends AbstractTest {
     @Inject
     private GraphContextFactory factory;
 
@@ -40,8 +37,7 @@ public class RMIServiceModelServiceTest extends AbstractTest
     private RMIServiceModelService rmiService;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         this.graphPath = getDefaultPath();
         this.context = this.factory.create(graphPath, true);
         this.javaClassService = new JavaClassService(this.context);
@@ -49,15 +45,13 @@ public class RMIServiceModelServiceTest extends AbstractTest
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         this.context.clear();
         FileUtils.deleteDirectory(this.graphPath.toFile());
     }
 
     @Test
-    public void testGetOrCreate_CreationRequired() throws Exception
-    {
+    public void testGetOrCreate_CreationRequired() throws Exception {
         // create a class representing an rmi interface
         JavaClassModel rmiClass = javaClassService.create("com.example.MyRMIService");
 
@@ -72,8 +66,7 @@ public class RMIServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindExisting() throws Exception
-    {
+    public void testGetOrCreate_FindExisting() throws Exception {
         // create a class representing an rmi interface
         JavaClassModel rmiClass = javaClassService.create("com.example.MyRMIService");
 
@@ -89,9 +82,8 @@ public class RMIServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(rmiService.findAll()));
     }
 
-    Path getDefaultPath()
-    {
+    Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

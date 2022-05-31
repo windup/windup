@@ -1,17 +1,5 @@
 package org.jboss.windup.project.operation.test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,12 +34,22 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class ProjectWithHintTest
-{
+public class ProjectWithHintTest {
     @Inject
     private ProjectWithHintTest.TestProjectProvider provider;
     @Inject
@@ -61,25 +59,22 @@ public class ProjectWithHintTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(ProjectWithHintTest.TestProjectProvider.class);
+                .addBeansXML()
+                .addClass(ProjectWithHintTest.TestProjectProvider.class);
     }
 
     @Test
-    public void testProjectWithHint() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testProjectWithHint() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             ProjectModel subProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
@@ -112,7 +107,7 @@ public class ProjectWithHintTest
             subsubinputPath.setFilePath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -124,7 +119,7 @@ public class ProjectWithHintTest
             subsubProject.setRootFileModel(subsubinputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setGraphContext(context);
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -155,36 +150,29 @@ public class ProjectWithHintTest
     }
 
     @Singleton
-    public static class TestProjectProvider extends AbstractRuleProvider
-    {
+    public static class TestProjectProvider extends AbstractRuleProvider {
 
         private List<FileLocationModel> matches = new ArrayList<>();
 
-        public TestProjectProvider()
-        {
+        public TestProjectProvider() {
             super(MetadataBuilder.forProvider(ProjectWithHintTest.TestProjectProvider.class)
-                        .setPhase(PostMigrationRulesPhase.class));
+                    .setPhase(PostMigrationRulesPhase.class));
         }
 
-        public void addMatch(FileLocationModel match)
-        {
+        public void addMatch(FileLocationModel match) {
             this.matches.add(match);
         }
 
-        public List<FileLocationModel> getMatches()
-        {
+        public List<FileLocationModel> getMatches() {
             return this.matches;
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            AbstractIterationOperation<FileLocationModel> addMatch = new AbstractIterationOperation<FileLocationModel>()
-            {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            AbstractIterationOperation<FileLocationModel> addMatch = new AbstractIterationOperation<FileLocationModel>() {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
+                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
                     addMatch(payload);
                 }
             };

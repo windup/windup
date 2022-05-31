@@ -1,7 +1,5 @@
 package org.jboss.windup.config.operation;
 
-import java.util.logging.Logger;
-
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -11,13 +9,14 @@ import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.logging.Logger;
+
 /**
  * Provides a simplistic way of printing a message to the log every {@link IterationProgress#interval} iterations.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class IterationProgress extends AbstractIterationOperation<WindupVertexFrame>
-{
+public class IterationProgress extends AbstractIterationOperation<WindupVertexFrame> {
     private static final Logger LOG = Logging.get(IterationProgress.class);
 
     private final String messagePrefix;
@@ -26,43 +25,35 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     private boolean estimateTimeRemaining = true;
     private ProgressEstimate progressEstimate;
 
-    private IterationProgress(String messagePrefix, int interval)
-    {
+    private IterationProgress(String messagePrefix, int interval) {
         this.messagePrefix = messagePrefix;
         this.interval = interval;
     }
 
-    public static IterationProgress monitoring(String messagePrefix, int interval)
-    {
+    public static IterationProgress monitoring(String messagePrefix, int interval) {
         return new IterationProgress(messagePrefix, interval);
     }
 
-    public IterationProgress disableTimeEstimation()
-    {
+    public IterationProgress disableTimeEstimation() {
         estimateTimeRemaining = false;
         return this;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
-        if (event.shouldWindupStop())
-        {
+    public void perform(GraphRewrite event, EvaluationContext context) {
+        if (event.shouldWindupStop()) {
             throw new WindupStopException("Request to stop detected during iteration related to: " + messagePrefix);
         }
 
-        if (totalIterations == -1)
-        {
+        if (totalIterations == -1) {
             @SuppressWarnings("unchecked")
             Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(Iteration.DEFAULT_VARIABLE_LIST_STRING);
             totalIterations = Iterators.asList(frames).size();
             progressEstimate = new ProgressEstimate(totalIterations);
         }
         progressEstimate.addWork(1);
-        if (progressEstimate.getWorked() % interval == 0)
-        {
-            if (estimateTimeRemaining)
-            {
+        if (progressEstimate.getWorked() % interval == 0) {
+            if (estimateTimeRemaining) {
                 long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
                 if (remainingTimeMillis > 1000)
                     event.ruleEvaluationProgress(messagePrefix, progressEstimate.getWorked(), totalIterations, (int) remainingTimeMillis / 1000);
@@ -72,14 +63,12 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
         // noop
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "IterationProgress{msg=" + messagePrefix + ", int=" + interval + ", est=" + estimateTimeRemaining + '}';
     }
 }

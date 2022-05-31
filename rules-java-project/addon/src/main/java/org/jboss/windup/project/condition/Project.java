@@ -25,73 +25,60 @@ import java.util.Set;
 
 /**
  * Condition used to search the projects based on {@link Artifact} within the graph.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class Project extends ParameterizedGraphCondition 
-{
+public class Project extends ParameterizedGraphCondition {
 
     private Artifact artifact;
 
     /**
      * Specify the Artifact for which the condition should search.
-     * 
+     *
      * @param artifact
      * @return
      */
-    public static Project dependsOnArtifact(Artifact artifact)
-    {
+    public static Project dependsOnArtifact(Artifact artifact) {
         Project project = new Project();
         project.artifact = artifact;
         return project;
     }
 
-    public static ProjectFrom from(String from)
-    {
+    public static ProjectFrom from(String from) {
         return new ProjectFrom(from);
     }
 
-    public void setArtifact(Artifact artifact)
-    {
-        this.artifact = artifact;
-    }
-
-    public Artifact getArtifact()
-    {
+    public Artifact getArtifact() {
         return artifact;
     }
 
+    public void setArtifact(Artifact artifact) {
+        this.artifact = artifact;
+    }
+
     public boolean evaluate(GraphRewrite event, EvaluationContext context,
-                final EvaluationStrategy evaluationStrategy)
-    {
+                            final EvaluationStrategy evaluationStrategy) {
         // TODO:handle from attribute
         GraphService<ProjectModel> projectService = new GraphService<>(event.getGraphContext(), ProjectModel.class);
         Iterable<ProjectModel> findAll = projectService.findAll();
         List<WindupVertexFrame> result = new ArrayList<>();
-        for (ProjectModel payload : findAll)
-        {
+        for (ProjectModel payload : findAll) {
             Iterable<ProjectDependencyModel> dependencies = payload.getDependencies();
 
-            for (ProjectDependencyModel dependency : dependencies)
-            {
+            for (ProjectDependencyModel dependency : dependencies) {
                 ProjectModel projectModel = dependency.getProjectModel();
-                if (projectModel instanceof MavenProjectModel)
-                {
+                if (projectModel instanceof MavenProjectModel) {
                     boolean passed = true;
                     MavenProjectModel maven = (MavenProjectModel) projectModel;
                     evaluationStrategy.modelMatched();
-                    if (artifact.getGroupId() != null)
-                    {
+                    if (artifact.getGroupId() != null) {
                         passed = passed && artifact.getGroupId().parse(maven.getGroupId()).submit(event, context);
                     }
-                    if (artifact.getArtifactId() != null)
-                    {
+                    if (artifact.getArtifactId() != null) {
                         passed = passed && artifact.getArtifactId().parse(maven.getArtifactId()).submit(event, context);
                     }
 
-                    if (passed && artifact.getVersion() != null)
-                    {
+                    if (passed && artifact.getVersion() != null) {
                         passed = artifact.getVersion().validate(maven.getVersion());
                     }
 
@@ -99,76 +86,62 @@ public class Project extends ParameterizedGraphCondition
                         passed = artifact.getLocations().contains(dependency.getDependencyLocation());
                     }
 
-                    if (passed)
-                    {
+                    if (passed) {
                         dependency.getFileLocationReference().forEach(fileLocation -> {
                             result.add(fileLocation);
                             evaluationStrategy.modelSubmitted(fileLocation);
                         });
-                    }
-                    else
-                    {
+                    } else {
                         evaluationStrategy.modelSubmissionRejected();
                     }
                 }
             }
         }
-        if (result.isEmpty())
-        {
+        if (result.isEmpty()) {
             return false;
-        }
-        else
-        {
+        } else {
             setResults(event, getOutputVariablesName(), result);
             return true;
         }
 
     }
 
-    public ConditionBuilder as(String as)
-    {
+    public ConditionBuilder as(String as) {
         super.setOutputVariablesName(as);
         return this;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "Project.dependsOnArtifact(" + artifact.toString() + ")";
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext)
-    {
-        return evaluate(event, context, new EvaluationStrategy()
-        {
+    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext) {
+        return evaluate(event, context, new EvaluationStrategy() {
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
             @SuppressWarnings("rawtypes")
-            public void modelMatched()
-            {
+            public void modelMatched() {
                 this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 
             @Override
-            public void modelSubmitted(WindupVertexFrame model)
-            {
+            public void modelSubmitted(WindupVertexFrame model) {
                 Maps.addListValue(this.variables, getVarname(), model);
             }
 
             @Override
-            public void modelSubmissionRejected()
-            {
+            public void modelSubmissionRejected() {
                 frameCreationContext.rollback();
             }
         });
     }
 
     @Override
-    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext)
-    {
+    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext) {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
         if (!result)
@@ -178,14 +151,12 @@ public class Project extends ParameterizedGraphCondition
     }
 
     @Override
-    protected String getVarname()
-    {
+    protected String getVarname() {
         return getOutputVariablesName();
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (artifact != null)
             result.addAll(artifact.getRequiredParameterNames());
@@ -193,8 +164,7 @@ public class Project extends ParameterizedGraphCondition
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         if (artifact != null)
             artifact.setParameterStore(store);
     }

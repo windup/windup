@@ -6,22 +6,18 @@ package org.jboss.windup.decompiler.api;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DecompilationException extends RuntimeException
-{
+public class DecompilationException extends RuntimeException {
     private static final long serialVersionUID = -8377473815060311293L;
 
-    public DecompilationException()
-    {
+    public DecompilationException() {
 
     }
 
-    public DecompilationException(String message)
-    {
+    public DecompilationException(String message) {
         super(message);
     }
 
-    public DecompilationException(String message, Throwable cause)
-    {
+    public DecompilationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

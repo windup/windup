@@ -1,13 +1,5 @@
 package org.jboss.windup.config.parameters;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -25,80 +17,73 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
-public class ParameterWiringTestModelCondition extends ParameterizedGraphCondition implements Parameterized
-{
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+public class ParameterWiringTestModelCondition extends ParameterizedGraphCondition implements Parameterized {
     private RegexParameterizedPatternParser pattern;
     private String varname = Iteration.DEFAULT_VARIABLE_LIST_STRING;
     private String fromVarname;
 
-    public ParameterWiringTestModelCondition(String pattern)
-    {
+    public ParameterWiringTestModelCondition(String pattern) {
         this.pattern = new RegexParameterizedPatternParser(pattern);
     }
 
-    public static ParameterWiringTestModelCondition matchesValue(String pattern)
-    {
+    public static ParameterWiringTestModelCondition matchesValue(String pattern) {
         return new ParameterWiringTestModelCondition(pattern);
     }
 
-    public ParameterWiringTestModelCondition from(String varname)
-    {
+    public ParameterWiringTestModelCondition from(String varname) {
         this.fromVarname = varname;
         return this;
     }
 
-    public ConditionBuilder as(String varname)
-    {
+    public ConditionBuilder as(String varname) {
         this.varname = varname;
         return this;
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context,
-                FrameCreationContext frameCreationContext)
-    {
+                                                     FrameCreationContext frameCreationContext) {
         ParameterStore store = DefaultParameterStore.getInstance(context);
 
         QueryBuilderFrom query = Query.fromType(ParameterWiringTestModel.class);
-        if (!StringUtils.isBlank(fromVarname))
-        {
+        if (!StringUtils.isBlank(fromVarname)) {
             query = Query.from(fromVarname);
         }
 
         Pattern compiledPattern = pattern.getCompiledPattern(store);
         query.withProperty(ParameterWiringTestModel.VALUE, QueryPropertyComparisonType.REGEX,
-                    compiledPattern.pattern());
+                compiledPattern.pattern());
 
         String uuid = UUID.randomUUID().toString();
         query.as(uuid);
 
         List<WindupVertexFrame> allFrameResults = new ArrayList<>();
-        if (query.evaluate(event, context))
-        {
+        if (query.evaluate(event, context)) {
             Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
-            for (WindupVertexFrame frame : frames)
-            {
+            for (WindupVertexFrame frame : frames) {
                 ParameterWiringTestModel model = (ParameterWiringTestModel) frame;
 
                 ParameterizedPatternResult parseResult = pattern.parse(model.getValue());
-                if (parseResult.matches())
-                {
+                if (parseResult.matches()) {
                     Map<String, List<WindupVertexFrame>> variables = new LinkedHashMap<>();
                     frameCreationContext.beginNew((Map) variables);
-                    if (parseResult.submit(event, context))
-                    {
+                    if (parseResult.submit(event, context)) {
                         allFrameResults.add(model);
                         Maps.addListValue(variables, varname, model);
-                    }
-                    else
-                    {
+                    } else {
                         System.out.println("nope: " + model);
                         frameCreationContext.rollback();
                     }
-                }
-                else
-                {
+                } else {
                     System.out.println("nope: " + model);
                 }
             }
@@ -112,43 +97,37 @@ public class ParameterWiringTestModelCondition extends ParameterizedGraphConditi
 
     @Override
     protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context,
-                FrameContext frameContext)
-    {
+                                             FrameContext frameContext) {
         ParameterStore store = DefaultParameterStore.getInstance(context);
 
         QueryBuilderFrom query = Query.fromType(ParameterWiringTestModel.class);
-        if (!StringUtils.isBlank(fromVarname))
-        {
+        if (!StringUtils.isBlank(fromVarname)) {
             query = Query.from(fromVarname);
         }
 
         Pattern compiledPattern = pattern.getCompiledPattern(store);
         query.withProperty(ParameterWiringTestModel.VALUE, QueryPropertyComparisonType.REGEX,
-                    compiledPattern.pattern());
+                compiledPattern.pattern());
 
         String uuid = UUID.randomUUID().toString();
         query.as(uuid);
-        if (query.evaluate(event, context))
-        {
+        if (query.evaluate(event, context)) {
             boolean result = false;
             List<WindupVertexFrame> results = new ArrayList<>();
             Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
-            for (WindupVertexFrame frame : frames)
-            {
+            for (WindupVertexFrame frame : frames) {
                 ParameterWiringTestModel model = (ParameterWiringTestModel) frame;
 
                 String value = model.getValue();
                 ParameterizedPatternResult parseResult = pattern.parse(value);
-                if (parseResult.submit(event, context))
-                {
+                if (parseResult.submit(event, context)) {
                     result = true;
                     results.add(model);
                 }
             }
 
             Variables.instance(event).removeVariable(uuid);
-            if (result)
-            {
+            if (result) {
                 Variables.instance(event).setVariable(varname, results);
                 return true;
             }
@@ -159,20 +138,17 @@ public class ParameterWiringTestModelCondition extends ParameterizedGraphConditi
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         return pattern.getRequiredParameterNames();
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         pattern.setParameterStore(store);
     }
 
     @Override
-    protected String getVarname()
-    {
+    protected String getVarname() {
         return varname;
     }
 

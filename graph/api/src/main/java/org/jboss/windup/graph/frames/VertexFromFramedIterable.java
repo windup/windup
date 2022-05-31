@@ -1,44 +1,37 @@
 package org.jboss.windup.graph.frames;
 
-import java.util.Iterator;
-
 import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+
+import java.util.Iterator;
 
 /**
  * Converts an {@link Iterable<? extends VertexFrame>} to {@link Iterable<Vertex>}.
  */
-public class VertexFromFramedIterable implements Iterable<Vertex>
-{
+public class VertexFromFramedIterable implements Iterable<Vertex> {
     private final Iterable<? extends VertexFrame> iterable;
 
     /**
      * Converts the provided {@link Iterable<? extends VertexFrame>} to {@link Iterable<Vertex>}.
      */
-    public VertexFromFramedIterable(final Iterable<? extends VertexFrame> iterable)
-    {
+    public VertexFromFramedIterable(final Iterable<? extends VertexFrame> iterable) {
         this.iterable = iterable;
     }
 
     @Override
-    public Iterator<Vertex> iterator()
-    {
-        return new Iterator<Vertex>()
-        {
+    public Iterator<Vertex> iterator() {
+        return new Iterator<Vertex>() {
             private final Iterator<? extends VertexFrame> iterator = iterable.iterator();
 
-            public void remove()
-            {
+            public void remove() {
                 throw new UnsupportedOperationException();
             }
 
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return this.iterator.hasNext();
             }
 
-            public Vertex next()
-            {
+            public Vertex next() {
                 return iterator.next().getElement();
             }
         };

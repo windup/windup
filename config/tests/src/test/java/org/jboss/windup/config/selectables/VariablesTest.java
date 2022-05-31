@@ -1,18 +1,9 @@
 package org.jboss.windup.config.selectables;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Sets;
@@ -32,31 +23,35 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
-@RunWith(Arquillian.class)
-public class VariablesTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
-    }
+import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+@RunWith(Arquillian.class)
+public class VariablesTest {
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML();
+        return archive;
+    }
+
     @Test
-    public void testMultipleFramesSameName() throws Exception
-    {
+    public void testMultipleFramesSameName() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -89,11 +84,9 @@ public class VariablesTest
     }
 
     @Test
-    public void testInvalidTypeGet() throws Exception
-    {
+    public void testInvalidTypeGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -107,28 +100,23 @@ public class VariablesTest
             Variables vars = Variables.instance(event);
             vars.push();
             vars.setSingletonVariable("classModel1", classModel1);
-            try
-            {
+            try {
                 vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-            }
-            catch (IllegalTypeArgumentException e)
-            {
+            } catch (IllegalTypeArgumentException e) {
                 Assert.assertNotNull(e.getMessage());
                 Assert.assertTrue(e
-                            .getMessage()
-                            .contains("Variable \"classModel1\" does not implement expected interface "
-                                        + "\"" + MavenProjectModel.class.getName()
-                                        + "\", actual implemented interfaces are"));
+                        .getMessage()
+                        .contains("Variable \"classModel1\" does not implement expected interface "
+                                + "\"" + MavenProjectModel.class.getName()
+                                + "\", actual implemented interfaces are"));
             }
         }
     }
 
     @Test
-    public void testUnTypedGet() throws Exception
-    {
+    public void testUnTypedGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -148,11 +136,9 @@ public class VariablesTest
     }
 
     @Test
-    public void testInvalidCountGet() throws Exception
-    {
+    public void testInvalidCountGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -166,12 +152,9 @@ public class VariablesTest
             Variables vars = Variables.instance(event);
             vars.push();
             vars.setVariable("classModel1", Arrays.asList((WindupVertexFrame) classModel1, classModel2));
-            try
-            {
+            try {
                 vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-            }
-            catch (IllegalStateException e)
-            {
+            } catch (IllegalStateException e) {
                 Assert.assertNotNull(e.getMessage());
                 Assert.assertTrue(e.getMessage().contains("More than one frame present"));
             }

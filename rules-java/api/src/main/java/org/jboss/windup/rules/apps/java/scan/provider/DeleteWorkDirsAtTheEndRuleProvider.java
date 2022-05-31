@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.io.File;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
@@ -21,6 +20,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Not;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.File;
+
 /**
  * Deletes the directories with the content unzipped from the archives.
  * The graph can't be deleted at this point so that's left up to the Bootstrap.
@@ -28,31 +29,29 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author Ondrej Zizka
  */
 @RuleMetadata(
-    afterIDs = "CreateRuleProviderReportRuleProvider",
-    // I don't want to create a dependency: before = {ExecutionTimeReportRuleProvider.class},
-    description = "Deletes the temporary data the CLI analyzes: the unzipped archives, and the graph data."
-            + " Use --" + KeepWorkDirsOption.NAME + " to keep them.",
-    phase = PostFinalizePhase.class
+        afterIDs = "CreateRuleProviderReportRuleProvider",
+        // I don't want to create a dependency: before = {ExecutionTimeReportRuleProvider.class},
+        description = "Deletes the temporary data the CLI analyzes: the unzipped archives, and the graph data."
+                + " Use --" + KeepWorkDirsOption.NAME + " to keep them.",
+        phase = PostFinalizePhase.class
 )
-public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
-{
+public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         // @formatter:off
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(
-                Not.any(WindupConfigurationQuery.hasOption(WindupConfigurationModel.KEEP_WORKING_DIRECTORIES, true).as("discard")),
-                Query.fromType(ArchiveModel.class).withProperty(ArchiveModel.UNZIPPED_DIRECTORY).as("archives")
-        )
-        .perform(
-                Iteration.over("archives").perform(
-                        DeleteWorkDirsOperation.delete(),
-                        IterationProgress.monitoring("Deleted archive unzip directory", 1)
-                ).endIteration()
-        )
-        .addRule().perform(
+                .addRule()
+                .when(
+                        Not.any(WindupConfigurationQuery.hasOption(WindupConfigurationModel.KEEP_WORKING_DIRECTORIES, true).as("discard")),
+                        Query.fromType(ArchiveModel.class).withProperty(ArchiveModel.UNZIPPED_DIRECTORY).as("archives")
+                )
+                .perform(
+                        Iteration.over("archives").perform(
+                                DeleteWorkDirsOperation.delete(),
+                                IterationProgress.monitoring("Deleted archive unzip directory", 1)
+                        ).endIteration()
+                )
+                .addRule().perform(
                         new GraphOperation() {
                             public void perform(GraphRewrite event, EvaluationContext context) {
                                 File archivesDir = WindupConfigurationService.getArchivesPath(event.getGraphContext()).toFile();
@@ -65,7 +64,7 @@ public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
                             }
                         }
                 )
-        ;
+                ;
         // @formatter:on
     }
 

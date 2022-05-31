@@ -16,7 +16,7 @@
     <#elseif includeExcludeTagAndIssueCategoryParameters?size == 2>
         <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0], includeExcludeTagAndIssueCategoryParameters[1])>
     <#elseif includeExcludeTagAndIssueCategoryParameters?size gt 2>
-            <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0], includeExcludeTagAndIssueCategoryParameters[1], includeExcludeTagAndIssueCategoryParameters[2])>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0], includeExcludeTagAndIssueCategoryParameters[1], includeExcludeTagAndIssueCategoryParameters[2])>
     </#if>
 
     <#assign totalEffort = 0>

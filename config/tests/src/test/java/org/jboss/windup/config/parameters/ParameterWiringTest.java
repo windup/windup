@@ -1,16 +1,9 @@
 package org.jboss.windup.config.parameters;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -36,33 +29,35 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternBuilder;
 
-@RunWith(Arquillian.class)
-public class ParameterWiringTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addPackage(ParameterWiringTestModel.class.getPackage())
-                    .addBeansXML();
-        return archive;
-    }
+import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+@RunWith(Arquillian.class)
+public class ParameterWiringTest {
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        final AddonArchive archive = ShrinkWrap
+                .create(AddonArchive.class)
+                .addPackage(ParameterWiringTestModel.class.getPackage())
+                .addBeansXML();
+        return archive;
+    }
+
     @Test
-    public void testIterationVariableResolving() throws Exception
-    {
+    public void testIterationVariableResolving() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -107,61 +102,10 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider extends AbstractRuleProvider
-    {
-        public ParameterWiringTestRuleProvider()
-        {
-            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider.class));
-        }
-
-        private int matchCount;
-        private List<ParameterWiringTestModel> results = new ArrayList<>();
-
-        @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal} {verb}{*}")
-                                    .as("1")
-                                    .and(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal}.")
-                                                .from("1").as("result"))
-                        )
-                        .perform(Iteration.over("result").perform(
-                                    new AbstractIterationOperation<ParameterWiringTestModel>()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context,
-                                                    ParameterWiringTestModel payload)
-                                        {
-                                            matchCount++;
-                                            results.add(payload);
-                                        }
-                                    })
-                                    .endIteration()
-                        )
-                        .where("adjective").matches("lazy|quick brown")
-                        .where("animal").matches("fox")
-                        .where("verb").matches("\\w+");
-        }
-
-        public int getMatchCount()
-        {
-            return matchCount;
-        }
-
-        public List<ParameterWiringTestModel> getResults()
-        {
-            return results;
-        }
-    }
-
     @Test
-    public void testIterationVariableResolving2() throws Exception
-    {
+    public void testIterationVariableResolving2() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -212,84 +156,10 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider2 extends AbstractRuleProvider
-    {
-        public ParameterWiringTestRuleProvider2()
-        {
-            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider2.class));
-        }
-
-        private int matchCount;
-        private List<ParameterWiringTestModel> results = new ArrayList<>();
-        private List<String> resultParameterValues = new ArrayList<>();
-
-        @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal} {verb}{*}")
-                                    .as("1")
-                                    .and(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal}.")
-                                                .from("1").as("result"))
-                        )
-                        .perform(Iteration.over("result").perform(
-                                    new ParameterizedIterationOperation<ParameterWiringTestModel>()
-                                    {
-                                        RegexParameterizedPatternBuilder builder = new RegexParameterizedPatternBuilder(
-                                                    "{animal} {verb} {adjective}");
-
-                                        @Override
-                                        public void performParameterized(GraphRewrite event, EvaluationContext context,
-                                                    ParameterWiringTestModel payload)
-                                        {
-                                            matchCount++;
-                                            results.add(payload);
-                                            String resultParameterValue = builder.build(event, context);
-                                            resultParameterValues.add(resultParameterValue);
-                                        }
-
-                                        @Override
-                                        public Set<String> getRequiredParameterNames()
-                                        {
-                                            return builder.getRequiredParameterNames();
-                                        }
-
-                                        @Override
-                                        public void setParameterStore(ParameterStore store)
-                                        {
-                                            builder.setParameterStore(store);
-                                        }
-                                    })
-                                    .endIteration()
-                        )
-                        .where("adjective").matches("\\b\\w+\\b")
-                        .where("animal").matches("fox")
-                        .where("verb").matches("\\b\\w+\\b");
-        }
-
-        public int getMatchCount()
-        {
-            return matchCount;
-        }
-
-        public List<ParameterWiringTestModel> getResults()
-        {
-            return results;
-        }
-
-        public List<String> getResultParameterValues()
-        {
-            return resultParameterValues;
-        }
-    }
-
     @Test
-    public void testIterationVariableResolving3() throws Exception
-    {
+    public void testIterationVariableResolving3() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -348,71 +218,10 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider3 extends AbstractRuleProvider
-    {
-        private int matchCount;
-        private List<ParameterWiringTestModel> results = new ArrayList<>();
-
-        public ParameterWiringTestRuleProvider3()
-        {
-            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider3.class));
-        }
-
-        @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(ParameterWiringTestModelCondition
-                                    .matchesValue("{*} {adjective} {animal} {verb}{*}")
-                                    .as("1")
-                                    .and(ParameterWiringTestModelCondition
-                                                .matchesValue("{*} {adjective} {otheranimal}.")
-                                                .from("1").as("2"))
-                                    .and(ParameterWiringTestModelCondition
-                                                .matchesValue("{*} {adjective} {animal} {*} {isstupid} {otheranimal}.")
-                                                .from("2").as("3"))
-                                    .and(ParameterWiringTestModelCondition.matchesValue("{isstupid}.").as("4"))
-                                    .and(ParameterWiringTestModelCondition.matchesValue("some {isstupid}.")
-                                                .as("result"))
-                        )
-                        .perform(Iteration.over("result").perform(
-                                    new AbstractIterationOperation<ParameterWiringTestModel>()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context,
-                                                    ParameterWiringTestModel payload)
-                                        {
-                                            matchCount++;
-                                            results.add(payload);
-                                        }
-                                    })
-                                    .endIteration()
-                        )
-                        .where("adjective").matches("\\w+")
-                        .where("animal").matches("fox")
-                        .where("verb").matches("\\w+")
-                        .where("isstupid").matches(".*");
-        }
-
-        public int getMatchCount()
-        {
-            return matchCount;
-        }
-
-        public List<ParameterWiringTestModel> getResults()
-        {
-            return results;
-        }
-    }
-
     @Test
-    public void testIterationVariableResolving4() throws Exception
-    {
+    public void testIterationVariableResolving4() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -447,46 +256,193 @@ public class ParameterWiringTest
         }
     }
 
-    private static class ParameterWiringTestRuleProvider4 extends AbstractRuleProvider
-    {
+    private static class ParameterWiringTestRuleProvider extends AbstractRuleProvider {
         private int matchCount;
         private List<ParameterWiringTestModel> results = new ArrayList<>();
-
-        public ParameterWiringTestRuleProvider4()
-        {
-            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider4.class));
+        public ParameterWiringTestRuleProvider() {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(ParameterWiringTestModelCondition.matchesValue("{*} {adjective} {animal} {verb}{*}").as(
-                                    "result"))
-                        .perform(Iteration.over("result").perform(
-                                    new AbstractIterationOperation<ParameterWiringTestModel>()
-                                    {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal} {verb}{*}")
+                            .as("1")
+                            .and(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal}.")
+                                    .from("1").as("result"))
+                    )
+                    .perform(Iteration.over("result").perform(
+                                    new AbstractIterationOperation<ParameterWiringTestModel>() {
                                         @Override
                                         public void perform(GraphRewrite event, EvaluationContext context,
-                                                    ParameterWiringTestModel payload)
-                                        {
+                                                            ParameterWiringTestModel payload) {
                                             matchCount++;
                                             results.add(payload);
                                         }
                                     })
-                                    .endIteration()
-                        ).where("animal").matches("fox");
+                            .endIteration()
+                    )
+                    .where("adjective").matches("lazy|quick brown")
+                    .where("animal").matches("fox")
+                    .where("verb").matches("\\w+");
         }
 
-        public int getMatchCount()
-        {
+        public int getMatchCount() {
             return matchCount;
         }
 
-        public List<ParameterWiringTestModel> getResults()
-        {
+        public List<ParameterWiringTestModel> getResults() {
+            return results;
+        }
+    }
+
+    private static class ParameterWiringTestRuleProvider2 extends AbstractRuleProvider {
+        private int matchCount;
+        private List<ParameterWiringTestModel> results = new ArrayList<>();
+        private List<String> resultParameterValues = new ArrayList<>();
+        public ParameterWiringTestRuleProvider2() {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider2.class));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal} {verb}{*}")
+                            .as("1")
+                            .and(ParameterWiringTestModelCondition.matchesValue("{*}{adjective} {animal}.")
+                                    .from("1").as("result"))
+                    )
+                    .perform(Iteration.over("result").perform(
+                                    new ParameterizedIterationOperation<ParameterWiringTestModel>() {
+                                        RegexParameterizedPatternBuilder builder = new RegexParameterizedPatternBuilder(
+                                                "{animal} {verb} {adjective}");
+
+                                        @Override
+                                        public void performParameterized(GraphRewrite event, EvaluationContext context,
+                                                                         ParameterWiringTestModel payload) {
+                                            matchCount++;
+                                            results.add(payload);
+                                            String resultParameterValue = builder.build(event, context);
+                                            resultParameterValues.add(resultParameterValue);
+                                        }
+
+                                        @Override
+                                        public Set<String> getRequiredParameterNames() {
+                                            return builder.getRequiredParameterNames();
+                                        }
+
+                                        @Override
+                                        public void setParameterStore(ParameterStore store) {
+                                            builder.setParameterStore(store);
+                                        }
+                                    })
+                            .endIteration()
+                    )
+                    .where("adjective").matches("\\b\\w+\\b")
+                    .where("animal").matches("fox")
+                    .where("verb").matches("\\b\\w+\\b");
+        }
+
+        public int getMatchCount() {
+            return matchCount;
+        }
+
+        public List<ParameterWiringTestModel> getResults() {
+            return results;
+        }
+
+        public List<String> getResultParameterValues() {
+            return resultParameterValues;
+        }
+    }
+
+    private static class ParameterWiringTestRuleProvider3 extends AbstractRuleProvider {
+        private int matchCount;
+        private List<ParameterWiringTestModel> results = new ArrayList<>();
+
+        public ParameterWiringTestRuleProvider3() {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider3.class));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(ParameterWiringTestModelCondition
+                            .matchesValue("{*} {adjective} {animal} {verb}{*}")
+                            .as("1")
+                            .and(ParameterWiringTestModelCondition
+                                    .matchesValue("{*} {adjective} {otheranimal}.")
+                                    .from("1").as("2"))
+                            .and(ParameterWiringTestModelCondition
+                                    .matchesValue("{*} {adjective} {animal} {*} {isstupid} {otheranimal}.")
+                                    .from("2").as("3"))
+                            .and(ParameterWiringTestModelCondition.matchesValue("{isstupid}.").as("4"))
+                            .and(ParameterWiringTestModelCondition.matchesValue("some {isstupid}.")
+                                    .as("result"))
+                    )
+                    .perform(Iteration.over("result").perform(
+                                    new AbstractIterationOperation<ParameterWiringTestModel>() {
+                                        @Override
+                                        public void perform(GraphRewrite event, EvaluationContext context,
+                                                            ParameterWiringTestModel payload) {
+                                            matchCount++;
+                                            results.add(payload);
+                                        }
+                                    })
+                            .endIteration()
+                    )
+                    .where("adjective").matches("\\w+")
+                    .where("animal").matches("fox")
+                    .where("verb").matches("\\w+")
+                    .where("isstupid").matches(".*");
+        }
+
+        public int getMatchCount() {
+            return matchCount;
+        }
+
+        public List<ParameterWiringTestModel> getResults() {
+            return results;
+        }
+    }
+
+    private static class ParameterWiringTestRuleProvider4 extends AbstractRuleProvider {
+        private int matchCount;
+        private List<ParameterWiringTestModel> results = new ArrayList<>();
+
+        public ParameterWiringTestRuleProvider4() {
+            super(MetadataBuilder.forProvider(ParameterWiringTestRuleProvider4.class));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(ParameterWiringTestModelCondition.matchesValue("{*} {adjective} {animal} {verb}{*}").as(
+                            "result"))
+                    .perform(Iteration.over("result").perform(
+                                    new AbstractIterationOperation<ParameterWiringTestModel>() {
+                                        @Override
+                                        public void perform(GraphRewrite event, EvaluationContext context,
+                                                            ParameterWiringTestModel payload) {
+                                            matchCount++;
+                                            results.add(payload);
+                                        }
+                                    })
+                            .endIteration()
+                    ).where("animal").matches("fox");
+        }
+
+        public int getMatchCount() {
+            return matchCount;
+        }
+
+        public List<ParameterWiringTestModel> getResults() {
             return results;
         }
     }

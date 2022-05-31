@@ -1,78 +1,67 @@
 package org.jboss.windup.rules.apps.java.config;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Indicates the Java packages for Windup to scan.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ScanPackagesOption extends AbstractConfigurationOption
-{
+public class ScanPackagesOption extends AbstractConfigurationOption {
     public static final String NAME = "packages";
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "A list of java package name prefixes to scan (eg, com.myapp). Multiple items can be separated by a space (eg, --" + NAME
-                    + " PACKAGE_1 PACKAGE_2).";
+                + " PACKAGE_1 PACKAGE_2).";
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Java packages to scan";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return String.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.MANY;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
-        if (packagesNotSpecified((List<String>) value))
-        {
+        if (packagesNotSpecified((List<String>) value)) {
             String message = "No packages were set in --" + ScanPackagesOption.NAME
-                        + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
-                        + "Check the " + theme.getBrandNameAcronym() + " User Guide for performance tips.";
+                    + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
+                    + "Check the " + theme.getBrandNameAcronym() + " User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
-        }
-        else if (packagesTooGeneral((List<String>) value))
-        {
+        } else if (packagesTooGeneral((List<String>) value)) {
             String message = "The packages specified to scan are very broad. This may cause many .jar files to be "
-                        + "decompiled and can possibly take a long time. "
-                        + "Check the " + theme.getBrandNameAcronym() + " User Guide for performance tips.";
+                    + "decompiled and can possibly take a long time. "
+                    + "Check the " + theme.getBrandNameAcronym() + " User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
         }
@@ -80,11 +69,9 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         return ValidationResult.SUCCESS;
     }
 
-    private boolean packagesTooGeneral(List<String> includeJavaPackages)
-    {
+    private boolean packagesTooGeneral(List<String> includeJavaPackages) {
         List<String> generalPackages = Arrays.asList("com", "org", "net");
-        for (String packge : includeJavaPackages)
-        {
+        for (String packge : includeJavaPackages) {
             if (generalPackages.contains(packge))
                 continue;
 
@@ -96,8 +83,7 @@ public class ScanPackagesOption extends AbstractConfigurationOption
     /**
      * @return <code>true</code> if the given packages are too general, or not set at all.
      */
-    private boolean packagesNotSpecified(List<String> includeJavaPackages)
-    {
+    private boolean packagesNotSpecified(List<String> includeJavaPackages) {
         return includeJavaPackages == null || includeJavaPackages.isEmpty();
     }
 

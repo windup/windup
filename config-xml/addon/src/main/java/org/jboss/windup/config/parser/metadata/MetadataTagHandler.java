@@ -8,14 +8,11 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "tag", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataTagHandler implements ElementHandler<String>
-{
+public class MetadataTagHandler implements ElementHandler<String> {
     @Override
-    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String tag = element.getTextContent();
-        if (tag != null)
-        {
+        if (tag != null) {
             tag = tag.trim();
         }
         return tag;

@@ -1,6 +1,7 @@
 package org.jboss.windup.testutil.basics;
 
-import java.nio.file.Path;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
@@ -9,39 +10,34 @@ import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
+
+import java.nio.file.Path;
 
 /**
  * A class providing helping static methods for the tests in Windup.
  */
-public class WindupTestUtilMethods
-{
+public class WindupTestUtilMethods {
 
-    public static void runOnlyRuleProviders(Iterable<? extends RuleProvider> providers, GraphContext context)
-    {
+    public static void runOnlyRuleProviders(Iterable<? extends RuleProvider> providers, GraphContext context) {
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-        for (RuleProvider provider : providers)
-        {
+        for (RuleProvider provider : providers) {
             Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
         }
     }
 
-    public static DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
+    public static DefaultEvaluationContext createEvalContext(GraphRewrite event) {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
     }
 
-    public static Path getTempDirectoryForGraph()
-    {
+    public static Path getTempDirectoryForGraph() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("graph_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("graph_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
 }

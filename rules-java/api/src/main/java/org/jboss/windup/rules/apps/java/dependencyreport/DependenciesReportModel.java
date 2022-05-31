@@ -1,22 +1,19 @@
 package org.jboss.windup.rules.apps.java.dependencyreport;
 
-import org.jboss.windup.reporting.model.ApplicationReportModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import java.util.List;
 
 /**
  * This represents Jar Dependencies report model
- * 
- * @author mnovotny
  *
+ * @author mnovotny
  */
 @TypeValue(DependenciesReportModel.TYPE)
-public interface DependenciesReportModel extends ApplicationReportModel
-{
+public interface DependenciesReportModel extends ApplicationReportModel {
     String TYPE = "DependenciesReportModel";
 
     String DEPENDENCY_REPORT_GROUP = "dependencyReportGroup";

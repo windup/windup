@@ -1,10 +1,9 @@
 package org.jboss.windup.rules.apps.java.archives.model;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import org.jboss.windup.graph.Property;
 
 /**
  * Represents a {@link Coordinate} for an {@link IdentifiedArchiveModel}.
@@ -13,8 +12,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(ArchiveCoordinateModel.TYPE)
-public interface ArchiveCoordinateModel extends WindupVertexFrame
-{
+public interface ArchiveCoordinateModel extends WindupVertexFrame {
     String TYPE = "ArchiveCoordinateModel";
     String GROUP_ID = TYPE + "-groupId";
     String ARTIFACT_ID = TYPE + "-artifactId";

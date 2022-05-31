@@ -1,14 +1,14 @@
 package org.jboss.windup.config.metadata;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
 import org.ocpsoft.rewrite.config.Rule;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * A descriptor for {@link RuleProvider} metadata. Can be overridden by altering the {@link RuleProviderMetadata} directly.
@@ -18,8 +18,7 @@ import org.ocpsoft.rewrite.config.Rule;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RuleMetadata
-{
+public @interface RuleMetadata {
     /**
      * Returns a unique identifier for this particular {@link RuleProvider}. The default is based on the {@link Class} name, but this can be
      * overridden here - or in subclasses - to provide a more readable name.
@@ -84,7 +83,7 @@ public @interface RuleMetadata
 
     /**
      * Whether Windup should stop execution if this provider's rule execution ends with an exception.
-     *
+     * <p>
      * By default, the exceptions are only logged and the failing rule appears in report.
      * The rule itself is responsible for handling exceptions and storing them into the graph.
      */
@@ -92,7 +91,7 @@ public @interface RuleMetadata
 
     /**
      * Indicates whether or not the rules in this provider should override other rules.
-     *
+     * <p>
      * If this ruleprovider has the same ID as another rule provider, then any rules in this provider
      * will override rules from that base rule provider that have the same id.
      */

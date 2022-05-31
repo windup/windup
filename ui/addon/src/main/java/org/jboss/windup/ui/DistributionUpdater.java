@@ -1,13 +1,5 @@
 package org.jboss.windup.ui;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Logger;
-import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -21,42 +13,53 @@ import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Logger;
+
 /**
  * Performs the update of Windup distribution, currently by replacing a Windup directory
  * with the content of a new Windup version offline distribution archive.
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class DistributionUpdater
-{
-    private static final Logger log = Logger.getLogger( DistributionUpdater.class.getName() );
+public class DistributionUpdater {
+    private static final Logger log = Logger.getLogger(DistributionUpdater.class.getName());
 
     @Inject
     private RulesetsUpdater updater;
 
-    public void replaceWindupDirectoryWithLatestDistribution()
-    {
+    public static File getWindupDistributionSubdir(File tempFolder) throws WindupException {
+        File[] matchingDirs = tempFolder.listFiles((FilenameFilter) FileFilterUtils.prefixFileFilter("windup-distribution-", IOCase.INSENSITIVE));
+        if (matchingDirs.length == 0)
+            return null;
+        return matchingDirs[0];
+    }
+
+    public void replaceWindupDirectoryWithLatestDistribution() {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
         Coordinate coord = updater.queryLatestWindupRelease();
-        if(coord == null)
-            throw new WindupException("No "+ theme.getBrandNameAcronym() +" release found.");
-        log.info("Latest "+ theme.getBrandNameAcronym() +" version available: " + coord.getVersion());
-        log.fine("Latest "+ theme.getBrandNameAcronym() +" version available: " + coord);
+        if (coord == null)
+            throw new WindupException("No " + theme.getBrandNameAcronym() + " release found.");
+        log.info("Latest " + theme.getBrandNameAcronym() + " version available: " + coord.getVersion());
+        log.fine("Latest " + theme.getBrandNameAcronym() + " version available: " + coord);
 
         replaceWindupDirectoryWithDistribution(coord);
     }
-
 
     /**
      * Downloads the given artifact, extracts it and replaces current Windup directory (as given by PathUtil)
      * with the content from the artifact (assuming it really is a Windup distribution zip).
      */
     public void replaceWindupDirectoryWithDistribution(Coordinate distCoordinate)
-            throws WindupException
-    {
-        try
-        {
+            throws WindupException {
+        try {
             final CoordinateBuilder coord = CoordinateBuilder.create(distCoordinate);
             File tempFolder = OperatingSystemUtils.createTempDir();
             this.updater.extractArtifact(coord, tempFolder);
@@ -65,7 +68,7 @@ public class DistributionUpdater
 
             if (null == newDistWindupDir)
                 throw new WindupException("Distribution update failed: "
-                    + "The distribution archive did not contain the windup-distribution-* directory: " + coord.toString());
+                        + "The distribution archive did not contain the windup-distribution-* directory: " + coord.toString());
 
 
             Path addonsDir = PathUtil.getWindupAddonsDir();
@@ -85,15 +88,12 @@ public class DistributionUpdater
             File coreDir = rulesDir.resolve(RulesetsUpdater.RULESET_CORE_DIRECTORY).toFile();
 
             // This is for testing purposes. The releases do not contain migration-core/ .
-            if (coreDir.exists())
-            {
+            if (coreDir.exists()) {
                 // migration-core/ exists -> Only replace that one.
                 FileUtils.deleteDirectory(coreDir);
                 final File coreDirNew = newDistWindupDir.toPath().resolve(PathUtil.RULES_DIRECTORY_NAME).resolve(RulesetsUpdater.RULESET_CORE_DIRECTORY).toFile();
                 FileUtils.moveDirectory(coreDirNew, rulesDir.resolve(RulesetsUpdater.RULESET_CORE_DIRECTORY).toFile());
-            }
-            else
-            {
+            } else {
                 // Otherwise replace the whole rules directory (backing up the old one).
                 final String newName = "rules-" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
                 FileUtils.moveDirectory(rulesDir.toFile(), rulesDir.getParent().resolve(newName).toFile());
@@ -101,20 +101,9 @@ public class DistributionUpdater
             }
 
             FileUtils.deleteDirectory(tempFolder);
-        }
-        catch (IllegalStateException | DependencyException | IOException ex)
-        {
+        } catch (IllegalStateException | DependencyException | IOException ex) {
             throw new WindupException("Distribution update failed: " + ex.getMessage(), ex);
         }
-    }
-
-
-    public static File getWindupDistributionSubdir(File tempFolder) throws WindupException
-    {
-        File[] matchingDirs = tempFolder.listFiles((FilenameFilter) FileFilterUtils.prefixFileFilter("windup-distribution-", IOCase.INSENSITIVE));
-        if (matchingDirs.length == 0)
-            return null;
-        return matchingDirs[0];
     }
 
 }

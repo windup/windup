@@ -8,16 +8,20 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Condition that returns <code>true</code> if {@link SourceModeOption} is set to <code>true</code>.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class SourceMode extends GraphCondition
-{
+public class SourceMode extends GraphCondition {
+    private final Boolean value;
+
+    private SourceMode(Boolean value) {
+        this.value = value;
+    }
+
     /**
      * Create a new {@link SourceMode} condition that returns <code>true</code> if {@link SourceModeOption} is enabled.
      */
-    public static ConditionBuilder isEnabled()
-    {
+    public static ConditionBuilder isEnabled() {
         return new SourceMode(Boolean.TRUE);
     }
 
@@ -25,28 +29,16 @@ public class SourceMode extends GraphCondition
      * Create a new {@link SourceMode} condition that returns <code>true</code> if {@link SourceModeOption} is NOT
      * enabled.
      */
-    public static ConditionBuilder isDisabled()
-    {
+    public static ConditionBuilder isDisabled() {
         return new SourceMode(Boolean.FALSE);
     }
 
-    private final Boolean value;
-
-    private SourceMode(Boolean value)
-    {
-        this.value = value;
-    }
-
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         Boolean result = (Boolean) event.getGraphContext().getOptionMap().get(SourceModeOption.NAME);
-        if (value)
-        {
+        if (value) {
             return value.equals(result);
-        }
-        else
-        {
+        } else {
             return value.equals(result) || result == null;
         }
     }

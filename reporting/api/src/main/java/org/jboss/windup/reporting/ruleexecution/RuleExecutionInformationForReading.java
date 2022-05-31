@@ -1,17 +1,15 @@
 package org.jboss.windup.reporting.ruleexecution;
 
-import org.ocpsoft.rewrite.config.Rule;
-
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Provides access to RuleExecutionInformation data
  *
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
-public interface RuleExecutionInformationForReading
-{
+public interface RuleExecutionInformationForReading {
     /**
      * Gets the {@link Rule}.
      */

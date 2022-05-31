@@ -1,20 +1,5 @@
 package org.jboss.windup.addon.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -57,74 +42,77 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @RunWith(Arquillian.class)
-public class WindupUpdateDistributionCommandTest
-{
+public class WindupUpdateDistributionCommandTest {
     private static final Logger log = Logging.get(WindupUpdateDistributionCommandTest.class);
 
     private static final String WINDUP_UI_ADDON_NAME = "org.jboss.windup.ui:windup-ui";
 
     private static final String WINDUP_OLD_VERSION = "2.2.0.Final";
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = WINDUP_UI_ADDON_NAME),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.addon:maven"),
-                @AddonDependency(name = "org.jboss.forge.addon:addon-manager"),
-                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(WindupCommandTest.class.getResource(TEST_RULESET_ZIP), TEST_RULESET_ZIP);
-        return archive;
-    }
-
     private static String TEST_RULESET_ZIP = "/windup-old-ruleset.zip";
-
     @Inject
     private DependencyResolver resolver;
-
     @Inject
     private Addon addon;
-
     @Inject
     private Furnace furnace;
-
     @Inject
     private UITestHarness uiTestHarness;
-
     @Inject
     private RulesetsUpdater updater;
-
     @Inject
     private DistributionUpdater distUpdater;
-
     @Inject
     private AddonManager manager;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = WINDUP_UI_ADDON_NAME),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:addon-manager"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(WindupCommandTest.class.getResource(TEST_RULESET_ZIP), TEST_RULESET_ZIP);
+        return archive;
+    }
+
     @Test
     @Ignore("The current implementation doesn't work as it tampers with addons loaded at the time."
-                + " Even if it replaced all Windup addons, it would still fail on Windows as they keep the .jar's locked.")
-    public void testUpdateDistribution() throws Exception
-    {
+            + " Even if it replaced all Windup addons, it would still fail on Windows as they keep the .jar's locked.")
+    public void testUpdateDistribution() throws Exception {
         // Download and unzip an old distribution.
         final CoordinateBuilder coords = CoordinateBuilder.create()
-                    .setGroupId("org.jboss.windup")
-                    .setArtifactId("windup-distribution")
-                    .setClassifier("offline")
-                    .setVersion("2.2.0.Final")
-                    .setPackaging("zip");
+                .setGroupId("org.jboss.windup")
+                .setArtifactId("windup-distribution")
+                .setClassifier("offline")
+                .setVersion("2.2.0.Final")
+                .setPackaging("zip");
         System.out.println("Downloading " + coords + ", may take a while.");
         List<Coordinate> results = resolver.resolveVersions(DependencyQueryBuilder.create(coords));
 
@@ -144,8 +132,7 @@ public class WindupUpdateDistributionCommandTest
         // Try to run Windup from there.
         // TODO: I need to set the harness addons directory to the freshly created dir.
         UITestHarness harness = furnace.getAddonRegistry().getServices(UITestHarness.class).get();
-        try (CommandController controller = harness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = harness.createCommandController(WindupCommand.class)) {
             controller.initialize();
             controller.setValueFor(InputPathOption.NAME, Collections.singletonList(new File("src/test/resources/test.jar").getAbsolutePath()));
             final File resultDir = new File("target/testRunFromUpgraded");
@@ -154,17 +141,14 @@ public class WindupUpdateDistributionCommandTest
 
             Result result = controller.execute();
             Assert.assertTrue(result.getMessage(), !(result instanceof Failed));
-        }
-        catch (Throwable ex)
-        {
+        } catch (Throwable ex) {
             throw new WindupException("Failed running Windup from the upgraded directory: " + ex.getMessage(), ex);
         }
     }
 
     @Test
     @Ignore("Completely broken now. New Furnace doesn't deal well with setting windup.home like this.")
-    public void testUpdateDistributionCommand() throws Exception
-    {
+    public void testUpdateDistributionCommand() throws Exception {
 
         // Unzip the rulesets from a .zip in resources.
 
@@ -180,15 +164,13 @@ public class WindupUpdateDistributionCommandTest
 
         String currentUiVersion = getInstalledAddonVersion(addon.getRepository().getRootDirectory().getPath(), WINDUP_UI_ADDON_NAME);
         installOldAddonVersion(currentUiVersion); // changeUiAddonVersion(addon.getRepository().getRootDirectory(),
-                                                  // currentUiVersion);
+        // currentUiVersion);
         waitForOldWindupUIAddon(furnace);
 
         boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
         Assert.assertTrue(rulesetNeedUpdate);
-        try (CommandController controller = uiTestHarness.createCommandController("Windup Update Distribution"))
-        {
-            try
-            {
+        try (CommandController controller = uiTestHarness.createCommandController("Windup Update Distribution")) {
+            try {
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
                 // Actually runs the command.
@@ -196,19 +178,16 @@ public class WindupUpdateDistributionCommandTest
                 Assert.assertFalse("Windup Update Distribution command should suceed, but it failed.", result instanceof Failed);
                 rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
                 Assert.assertFalse("Ruleset should have already been updated to the latest version and as such should not need another update.",
-                            rulesetNeedUpdate);
+                        rulesetNeedUpdate);
 
                 checkWindupDirectory(windupDir);
-            }
-            finally
-            {
+            } finally {
                 FileUtils.deleteDirectory(tempDir);
             }
         }
     }
 
-    private void checkWindupDirectory(String windupDir)
-    {
+    private void checkWindupDirectory(String windupDir) {
         File addonsHomeNew = new File(windupDir, "addons");
         Assert.assertTrue("Addons folder was not updated sucessfully", addonsHomeNew.exists());
         Assert.assertTrue("Addons folder does not contain enough addons (at least 6)", addonsHomeNew.listFiles().length > 5);
@@ -222,12 +201,10 @@ public class WindupUpdateDistributionCommandTest
         Assert.assertTrue("Library folder does not contain enough libraries (at least 8)", libNew.listFiles().length > 7);
     }
 
-    private void waitForOldWindupUIAddon(Furnace furnace) throws InterruptedException
-    {
+    private void waitForOldWindupUIAddon(Furnace furnace) throws InterruptedException {
         Addon addon = furnace.getAddonRegistry().getAddon(AddonId.from(WINDUP_UI_ADDON_NAME, WINDUP_OLD_VERSION));
         Addons.waitUntilStarted(addon);
-        do
-        {
+        do {
             // We need to wait till furnace will process all the information changed in the directories.
             Thread.sleep(500);
         }
@@ -238,8 +215,7 @@ public class WindupUpdateDistributionCommandTest
      * Uninstalls the current addon and installs the other one. This fails because we would need to replace all the
      * dependencies as well, effectively, the whole Windup.
      */
-    private void installOldAddonVersion(String currentUiVersion)
-    {
+    private void installOldAddonVersion(String currentUiVersion) {
         RemoveRequest remove = manager.remove(AddonId.from(WINDUP_UI_ADDON_NAME, currentUiVersion));
         remove.perform();
         final AddonId olderAddonId = AddonId.from(WINDUP_UI_ADDON_NAME, WINDUP_OLD_VERSION);
@@ -252,23 +228,19 @@ public class WindupUpdateDistributionCommandTest
      * Changes the org-jboss-windup-ui-windup-ui-* dir name to old version and rewrites the version in installed.xml. It
      * is a hack to fool Furnace into thinking a new addon was installed.
      */
-    private void changeUiAddonVersion(File addonsDir, String currentUiVersion)
-    {
+    private void changeUiAddonVersion(File addonsDir, String currentUiVersion) {
         File currentAddonDir = new File(addonsDir,
-                    "org-jboss-windup-ui-windup-ui-" + currentUiVersion.replaceAll("\\.", "-"));
+                "org-jboss-windup-ui-windup-ui-" + currentUiVersion.replaceAll("\\.", "-"));
         File olderVersionAddonDir = new File(addonsDir,
-                    "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
+                "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
         olderVersionAddonDir.mkdirs();
 
         log.warning("Replacing the addon: \n  " + currentAddonDir + System.lineSeparator() + olderVersionAddonDir);
-        try
-        {
+        try {
             FileUtils.copyDirectory(currentAddonDir, olderVersionAddonDir);
             changeUiAddonVersionInInstallXml(addonsDir.getPath());
             FileUtils.deleteDirectory(currentAddonDir);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             throw new RuntimeException("Failed replacing the addon: ", ex);
         }
     }
@@ -276,12 +248,10 @@ public class WindupUpdateDistributionCommandTest
     /**
      * Reads the version of the windup-ui addon from addons/installed.xml .
      */
-    private String getInstalledAddonVersion(String addonsRootDir, String addonName)
-    {
+    private String getInstalledAddonVersion(String addonsRootDir, String addonName) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
-        try
-        {
+        try {
             String oldUiAddonVersion = "";
             File installedXml = new File(addonsRootDir, "installed.xml");
             if (!installedXml.exists())
@@ -292,30 +262,21 @@ public class WindupUpdateDistributionCommandTest
             // this does not work properly
             Element documentElement = doc.getDocumentElement();
             NodeList childNodes = documentElement.getElementsByTagName("addon");
-            for (int i = 0; i <= childNodes.getLength() - 1; i++)
-            {
+            for (int i = 0; i <= childNodes.getLength() - 1; i++) {
                 Element item = (Element) childNodes.item(i);
-                if (item.getNodeName().equals("addon"))
-                {
+                if (item.getNodeName().equals("addon")) {
                     String addonNameAttr = item.getAttribute("name");
-                    if (addonNameAttr.equals(addonName))
-                    {
+                    if (addonNameAttr.equals(addonName)) {
                         oldUiAddonVersion = item.getAttribute("version");
                         return oldUiAddonVersion;
                     }
                 }
             }
-        }
-        catch (ParserConfigurationException ex)
-        {
+        } catch (ParserConfigurationException ex) {
             throw new RuntimeException("Failed parsing installed.xml: " + ex.getMessage(), ex);
-        }
-        catch (WindupException ex)
-        {
+        } catch (WindupException ex) {
             throw ex;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new RuntimeException("Unknown exception: " + ex.getMessage(), ex);
         }
         return null;
@@ -324,26 +285,21 @@ public class WindupUpdateDistributionCommandTest
     /**
      * Writes the version WINDUP_OLD_VERSION into installed.xml in given dir.
      */
-    private void changeUiAddonVersionInInstallXml(String homeAddonsDirPath)
-    {
+    private void changeUiAddonVersionInInstallXml(String homeAddonsDirPath) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
-        try
-        {
+        try {
             dBuilder = dbFactory.newDocumentBuilder();
             File installedXml = new File(homeAddonsDirPath, "installed.xml");
             Document doc = dBuilder.parse(installedXml);
             // this does not work properly
             Element documentElement = doc.getDocumentElement();
             NodeList childNodes = documentElement.getElementsByTagName("addon");
-            for (int i = 0; i <= childNodes.getLength() - 1; i++)
-            {
+            for (int i = 0; i <= childNodes.getLength() - 1; i++) {
                 Element item = (Element) childNodes.item(i);
-                if (item.getNodeName().equals("addon"))
-                {
+                if (item.getNodeName().equals("addon")) {
                     String addonName = item.getAttribute("name");
-                    if (addonName.equals(WINDUP_UI_ADDON_NAME))
-                    {
+                    if (addonName.equals(WINDUP_UI_ADDON_NAME)) {
                         item.setAttribute("version", WINDUP_OLD_VERSION);
                         TransformerFactory transformerFactory = TransformerFactory.newInstance();
                         Transformer transformer = transformerFactory.newTransformer();
@@ -354,13 +310,9 @@ public class WindupUpdateDistributionCommandTest
                     }
                 }
             }
-        }
-        catch (ParserConfigurationException e)
-        {
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Why?");
         }
         return;

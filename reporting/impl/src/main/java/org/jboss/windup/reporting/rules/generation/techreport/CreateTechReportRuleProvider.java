@@ -1,11 +1,5 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -28,65 +22,62 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Creates the ReportModel for Tech stats report, and the data structure the template needs.
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateTechReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateTechReportRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(CreateTechReportRuleProvider.class.getName());
 
     private static final String TEMPLATE_PATH_PUNCH = "/reports/templates/techReport-punchCard.ftl";
     private static final String REPORT_NAME_PUNCH = "Technologies";
     private static final String REPORT_DESCRIPTION_PUNCH = "This report is a statistic of technologies occurrences in the input applications."
-                + " It shows how the technologies are distributed and is mostly useful when analysing many applications.";
+            + " It shows how the technologies are distributed and is mostly useful when analysing many applications.";
 
     private static final String TEMPLATE_PATH_BOXES = "/reports/templates/techReport-boxes.ftl";
     private static final String REPORT_NAME_BOXES = "Technologies";
     private static final String REPORT_DESCRIPTION_BOXES = "This report is a statistic of technologies occurrences in the input applications."
-                + " It is an overview of what technologies are found in given project or a set of projects.";
+            + " It is an overview of what technologies are found in given project or a set of projects.";
 
     @Inject
     private TagServiceHolder tagServiceHolder;
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    /// TODO: Move this to a FeedTagStructureToGraphRuleProvider.
-                    .addRule()
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
-                        }
-                    }).withId("feedTagsToGraph")
-                    .addRule()
-                    .perform(new CreateTechReportPunchCardOperation()).withId("createTechReport");
+                /// TODO: Move this to a FeedTagStructureToGraphRuleProvider.
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
+                    }
+                }).withId("feedTagsToGraph")
+                .addRule()
+                .perform(new CreateTechReportPunchCardOperation()).withId("createTechReport");
     }
 
-    private class CreateTechReportPunchCardOperation extends GraphOperation
-    {
+    private class CreateTechReportPunchCardOperation extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext evCtx)
-        {
+        public void perform(GraphRewrite event, EvaluationContext evCtx) {
             // Get sectors tag and rows tag references.
             TagGraphService tagGraphService = new TagGraphService(event.getGraphContext());
             TagModel sectorsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_SECTORS);
             TagModel rowsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_ROWS);
-            if (null == sectorsTag)
-            {
+            if (null == sectorsTag) {
                 // throw new WindupException("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS + "', not found.");
                 LOG.severe("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS
-                            + "', not found. The technology report will not be rendered.");
+                        + "', not found. The technology report will not be rendered.");
                 return;
             }
-            if (null == rowsTag)
-            {
+            if (null == rowsTag) {
                 // throw new WindupException("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found.");
                 LOG.severe("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found. The technology report will not be rendered.");
                 return;
@@ -95,8 +86,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             Map<String, TechReportModel> appProjectToReportMap = new HashMap<>();
 
             // Create the boxes report models for each app.
-            for (ProjectModel appModel : new ProjectService(event.getGraphContext()).getRootProjectModels())
-            {
+            for (ProjectModel appModel : new ProjectService(event.getGraphContext()).getRootProjectModels()) {
                 final TechReportModel appTechReport = createTechReportBoxes(event.getGraphContext(), appModel);
                 appTechReport.setSectorsHolderTag(sectorsTag);
                 appTechReport.setRowsHolderTag(rowsTag);
@@ -111,8 +101,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
         }
 
         private TechReportModel createTechReportPunchCard(
-                    GraphContext graphContext)
-        {
+                GraphContext graphContext) {
             TechReportModel report = createTechReportBase(graphContext);
             report.setReportName(REPORT_NAME_PUNCH);
             report.setTemplatePath(TEMPLATE_PATH_PUNCH);
@@ -125,8 +114,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return report;
         }
 
-        private TechReportModel createTechReportBoxes(GraphContext graphContext, ProjectModel appModel)
-        {
+        private TechReportModel createTechReportBoxes(GraphContext graphContext, ProjectModel appModel) {
             TechReportModel report = createTechReportBase(graphContext);
             report.setProjectModel(appModel);
             report.setDisplayInGlobalApplicationIndex(false);
@@ -142,8 +130,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return new GraphService<>(graphContext, TechReportModel.class).addTypeToModel(report);
         }
 
-        private TechReportModel createTechReportBase(GraphContext graphContext)
-        {
+        private TechReportModel createTechReportBase(GraphContext graphContext) {
             ApplicationReportService applicationReportService = new ApplicationReportService(graphContext);
             ApplicationReportModel report = applicationReportService.create();
             report.setTemplateType(TemplateType.FREEMARKER);

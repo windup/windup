@@ -1,11 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -33,12 +27,16 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
 
+import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverProjectStructureTest
-{
+public class DiscoverProjectStructureTest {
     @Inject
     DiscoverMavenProjectsRuleProvider discoverMavenProvider;
     @Inject
@@ -52,43 +50,38 @@ public class DiscoverProjectStructureTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     /**
      * Project Structure
-     * 
+     *
      * <pre>
      *  - Root - ArchiveModel (MavenProjectModel)
      *       - ArchiveModel (MavenProjectModel)
      *      - DuplicateArchiveModel - null project
      *          -> ArchiveModel - MavenProjectModel
      * </pre>
-     *
+     * <p>
      * After the structure rules have been run, it should still retain this basic structure.
-     *
+     * <p>
      * In the past, a bug existed (WINDUP-2019) that would cause the project for DuplicateArchiveModel to be set incorrectly in this
      * scenario. This test serves as a regration test.
-     *
-     *
      */
     @Test
-    public void testDiscoveryWithIgnoredArchives() throws Exception
-    {
+    public void testDiscoveryWithIgnoredArchives() throws Exception {
         Path graphPath = null;
-        try (GraphContext graphContext = factory.create(true))
-        {
+        try (GraphContext graphContext = factory.create(true)) {
             graphPath = graphContext.getGraphDirectory();
 
             ArchiveModel application = createArchiveHierarchy(graphContext);
@@ -107,8 +100,7 @@ public class DiscoverProjectStructureTest
 
             GraphRewrite event = new GraphRewrite(graphContext);
             DefaultEvaluationContext evaluationContext = WindupTestUtilMethods.createEvalContext(event);
-            for (Rule rule : rules)
-            {
+            for (Rule rule : rules) {
                 Variables.instance(event).push();
                 if (rule.evaluate(event, evaluationContext))
                     rule.perform(event, evaluationContext);
@@ -120,27 +112,24 @@ public class DiscoverProjectStructureTest
             Assert.assertEquals("root_project", application.getProjectModel().getName());
 
             ArchiveModel child1 = (ArchiveModel) application.getAllFiles().stream().filter(child -> child.getFileName().equals("child1.jar"))
-                        .findFirst().get();
+                    .findFirst().get();
             Assert.assertEquals("child1.jar", child1.getFileName());
 
             ArchiveModel child2 = (ArchiveModel) application.getAllFiles().stream()
-                        .filter(child -> child.getFileName().equals("child2_duplicate.jar")).findFirst().get();
+                    .filter(child -> child.getFileName().equals("child2_duplicate.jar")).findFirst().get();
             Assert.assertEquals("child2_duplicate.jar", child2.getFileName());
             Assert.assertTrue(child2 instanceof DuplicateArchiveModel);
             DuplicateArchiveModel child2AsDuplicate = (DuplicateArchiveModel) child2;
             Assert.assertNull(child2.getProjectModel());
             Assert.assertNotNull(child2AsDuplicate.getCanonicalArchive());
             Assert.assertNotNull(child2AsDuplicate.getCanonicalArchive().getProjectModel());
-        }
-        finally
-        {
+        } finally {
             if (graphPath != null)
                 FileUtils.deleteDirectory(graphPath.toFile());
         }
     }
 
-    private ArchiveModel createArchiveHierarchy(GraphContext graphContext)
-    {
+    private ArchiveModel createArchiveHierarchy(GraphContext graphContext) {
         GraphService<DuplicateArchiveModel> duplicateArchiveService = new GraphService<>(graphContext, DuplicateArchiveModel.class);
         GraphService<MavenProjectModel> mavenProjectModelService = new GraphService<>(graphContext, MavenProjectModel.class);
 
@@ -172,8 +161,7 @@ public class DiscoverProjectStructureTest
         return root;
     }
 
-    private ArchiveModel createArchive(GraphContext graphContext, String name)
-    {
+    private ArchiveModel createArchive(GraphContext graphContext, String name) {
         GraphService<ArchiveModel> archiveService = new GraphService<>(graphContext, ArchiveModel.class);
         ArchiveModel fileModel = archiveService.create();
         fileModel.setFilePath("/path/to/" + name + ".jar");

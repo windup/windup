@@ -7,11 +7,7 @@ package testclasses.simple;
  *
  * DO NOT REMOVE or optimize imports
  */
-import java.util.*;
-import java.net.*;
-import java.awt.*;
 
-public class ExampleWildcardImport
-{
+public class ExampleWildcardImport {
 
 }

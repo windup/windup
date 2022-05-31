@@ -1,18 +1,5 @@
 package org.jboss.windup.tooling;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -39,6 +26,18 @@ import org.jboss.windup.tooling.data.ReportLink;
 import org.jboss.windup.tooling.data.ReportLinkImpl;
 import org.jboss.windup.util.exception.WindupException;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Contains an implementation of {@link ExecutionResults} that loads its results from a {@link GraphContext}.
  *
@@ -47,8 +46,7 @@ import org.jboss.windup.util.exception.WindupException;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @XmlRootElement(name = "execution-results")
-public class ExecutionResultsImpl implements ExecutionResults
-{
+public class ExecutionResultsImpl implements ExecutionResults {
     private static final long serialVersionUID = 1L;
 
     private final ToolingXMLService toolingXMLService;
@@ -58,8 +56,7 @@ public class ExecutionResultsImpl implements ExecutionResults
     private final List<ReportLink> reportLinks;
     private String windupStopOnRequestMessage;
 
-    public ExecutionResultsImpl()
-    {
+    public ExecutionResultsImpl() {
         this.toolingXMLService = null;
         this.windupStopOnRequestMessage = null;
         this.classifications = Collections.emptyList();
@@ -67,21 +64,18 @@ public class ExecutionResultsImpl implements ExecutionResults
         this.reportLinks = Collections.emptyList();
     }
 
-    public ExecutionResultsImpl(GraphContext graphContext, ToolingXMLService toolingXMLService)
-    {
+    public ExecutionResultsImpl(GraphContext graphContext, ToolingXMLService toolingXMLService) {
         this.toolingXMLService = toolingXMLService;
         this.classifications = getClassifications(graphContext);
         this.hints = getHints(graphContext);
         this.reportLinks = getReportLinks(graphContext);
     }
 
-    private static List<ReportLink> getReportLinks(GraphContext graphContext)
-    {
+    private static List<ReportLink> getReportLinks(GraphContext graphContext) {
         final List<ReportLink> reportLinks = new ArrayList<>();
         SourceReportService sourceReportService = new SourceReportService(graphContext);
         ReportService reportService = new ReportService(graphContext);
-        for (SourceReportModel sourceReportModel : sourceReportService.findAll())
-        {
+        for (SourceReportModel sourceReportModel : sourceReportService.findAll()) {
             ReportLinkImpl reportLink = new ReportLinkImpl();
             reportLink.setInputFile(sourceReportModel.getSourceFileModel().asFile());
             Path reportPath = reportService.getReportDirectory().resolve(sourceReportModel.getReportFilename());
@@ -91,12 +85,10 @@ public class ExecutionResultsImpl implements ExecutionResults
         return reportLinks;
     }
 
-    private static List<Hint> getHints(GraphContext graphContext)
-    {
+    private static List<Hint> getHints(GraphContext graphContext) {
         final List<Hint> hints = new ArrayList<>();
         InlineHintService hintService = new InlineHintService(graphContext);
-        for (InlineHintModel hintModel : hintService.findAll())
-        {
+        for (InlineHintModel hintModel : hintService.findAll()) {
             HintImpl hint = new HintImpl(hintModel.getElement().id());
             hint.setFile(hintModel.getFile().asFile());
             hint.setTitle(hintModel.getTitle());
@@ -116,14 +108,11 @@ public class ExecutionResultsImpl implements ExecutionResults
         return hints;
     }
 
-    private static List<Classification> getClassifications(GraphContext graphContext)
-    {
+    private static List<Classification> getClassifications(GraphContext graphContext) {
         final List<Classification> classifications = new ArrayList<>();
         ClassificationService classificationService = new ClassificationService(graphContext);
-        for (ClassificationModel classificationModel : classificationService.findAll())
-        {
-            for (FileModel fileModel : classificationModel.getFileModels())
-            {
+        for (ClassificationModel classificationModel : classificationService.findAll()) {
+            for (FileModel fileModel : classificationModel.getFileModels()) {
                 ClassificationImpl classification = new ClassificationImpl(classificationModel.getElement().id());
                 classification.setClassification(classificationModel.getClassification());
                 classification.setDescription(classificationModel.getDescription());
@@ -141,11 +130,9 @@ public class ExecutionResultsImpl implements ExecutionResults
         return classifications;
     }
 
-    private static List<Link> asLinks(Iterable<LinkModel> linkModels)
-    {
+    private static List<Link> asLinks(Iterable<LinkModel> linkModels) {
         List<Link> links = new ArrayList<>();
-        for (LinkModel linkModel : linkModels)
-        {
+        for (LinkModel linkModel : linkModels) {
             LinkImpl link = new LinkImpl();
             link.setDescription(linkModel.getDescription());
             link.setUrl(linkModel.getLink());
@@ -154,31 +141,26 @@ public class ExecutionResultsImpl implements ExecutionResults
         return links;
     }
 
-    private static List<Quickfix> asQuickfixes(Iterable<QuickfixModel> quickfixModels)
-    {
+    private static List<Quickfix> asQuickfixes(Iterable<QuickfixModel> quickfixModels) {
         List<Quickfix> fixes = new ArrayList<>();
-        for (QuickfixModel quickfixModel : quickfixModels)
-        {
+        for (QuickfixModel quickfixModel : quickfixModels) {
             QuickfixImpl quickfix = new QuickfixImpl();
             quickfix.setType(org.jboss.windup.tooling.data.QuickfixType.valueOf(quickfixModel.getQuickfixType().name()));
             quickfix.setName(quickfixModel.getName());
 
-            if (quickfixModel instanceof ReplacementQuickfixModel)
-            {
-                ReplacementQuickfixModel replacementQuickfixModel = (ReplacementQuickfixModel)quickfixModel;
+            if (quickfixModel instanceof ReplacementQuickfixModel) {
+                ReplacementQuickfixModel replacementQuickfixModel = (ReplacementQuickfixModel) quickfixModel;
                 quickfix.setNewline(replacementQuickfixModel.getNewline());
                 quickfix.setReplacement(replacementQuickfixModel.getReplacement());
                 quickfix.setSearch(replacementQuickfixModel.getSearch());
             }
 
-            if (quickfixModel instanceof TransformationQuickfixModel)
-            {
-            	TransformationQuickfixModel transformationQuickfixModel = (TransformationQuickfixModel)quickfixModel;
+            if (quickfixModel instanceof TransformationQuickfixModel) {
+                TransformationQuickfixModel transformationQuickfixModel = (TransformationQuickfixModel) quickfixModel;
                 quickfix.setTransformationID(transformationQuickfixModel.getTransformationID());
                 FileModel fileModel = transformationQuickfixModel.getFile();
-                if (fileModel != null)
-                {
-                	quickfix.setFile(fileModel.asFile());
+                if (fileModel != null) {
+                    quickfix.setFile(fileModel.asFile());
                 }
             }
 
@@ -189,44 +171,36 @@ public class ExecutionResultsImpl implements ExecutionResults
 
     @Override
     @XmlAttribute(name = "stopMessage")
-    public String getWindupStopOnRequestMessage()
-    {
+    public String getWindupStopOnRequestMessage() {
         return this.windupStopOnRequestMessage;
     }
 
     @Override
     @XmlElementWrapper(name = "classifications")
     @XmlElement(name = "classification", type = ClassificationImpl.class)
-    public List<Classification> getClassifications()
-    {
+    public List<Classification> getClassifications() {
         return classifications;
     }
 
     @Override
     @XmlElementWrapper(name = "hints")
     @XmlElement(name = "hint", type = HintImpl.class)
-    public List<Hint> getHints()
-    {
+    public List<Hint> getHints() {
         return hints;
     }
 
     @Override
     @XmlElementWrapper(name = "report-links")
     @XmlElement(name = "report-link", type = ReportLinkImpl.class)
-    public List<ReportLink> getReportLinks()
-    {
+    public List<ReportLink> getReportLinks() {
         return reportLinks;
     }
 
     @Override
-    public void serializeToXML(Path path)
-    {
-        try (OutputStream outputStream = new FileOutputStream(path.toFile()))
-        {
+    public void serializeToXML(Path path) {
+        try (OutputStream outputStream = new FileOutputStream(path.toFile())) {
             toolingXMLService.serializeResults(this, outputStream);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new WindupException("Failed to serialize results due to I/O Error: " + e.getMessage(), e);
         }
     }

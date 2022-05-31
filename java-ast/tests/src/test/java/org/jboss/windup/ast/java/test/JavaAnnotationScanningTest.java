@@ -1,8 +1,5 @@
 package org.jboss.windup.ast.java.test;
 
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
@@ -14,36 +11,32 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.nio.file.Paths;
+import java.util.List;
+
 @RunWith(Arquillian.class)
-public class JavaAnnotationScanningTest extends AbstractJavaASTTest
-{
+public class JavaAnnotationScanningTest extends AbstractJavaASTTest {
 
     @Test
-    public void testSimpleAnnotatedClass()
-    {
+    public void testSimpleAnnotatedClass() {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
+                Paths.get("src/test/resources/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
 
         boolean foundSimpleAnnotation = false;
         boolean foundSingleMemberAnnotation = false;
-        for (ClassReference reference : references)
-        {
+        for (ClassReference reference : references) {
             System.out.println("Reference: " + reference);
-            if (reference instanceof AnnotationClassReference)
-            {
+            if (reference instanceof AnnotationClassReference) {
                 AnnotationClassReference annotationReference = (AnnotationClassReference) reference;
-                if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleTestAnnotation"))
-                {
+                if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleTestAnnotation")) {
                     Assert.assertEquals("value 1",
-                                ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value1")).getLiteralValue());
+                            ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value1")).getLiteralValue());
                     Assert.assertEquals("value 2",
-                                ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value2")).getLiteralValue());
+                            ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value2")).getLiteralValue());
                     foundSimpleAnnotation = true;
-                }
-                else if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleSingleMemberAnnotation"))
-                {
+                } else if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleSingleMemberAnnotation")) {
                     Assert.assertEquals("single member value",
-                                ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value")).getLiteralValue());
+                            ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value")).getLiteralValue());
                     foundSingleMemberAnnotation = true;
                 }
             }
@@ -53,17 +46,14 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     }
 
     @Test
-    public void testComplexAnnotatedClass()
-    {
+    public void testComplexAnnotatedClass() {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
+                Paths.get("src/test/resources/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
 
         boolean foundAnnotation = false;
-        for (ClassReference reference : references)
-        {
+        for (ClassReference reference : references) {
             System.out.println("Reference: " + reference);
-            if (reference instanceof AnnotationClassReference)
-            {
+            if (reference instanceof AnnotationClassReference) {
                 foundAnnotation = true;
 
                 AnnotationClassReference annotation = (AnnotationClassReference) reference;
@@ -89,20 +79,16 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     }
 
     @Test
-    public void testAnnotationClassLiteral()
-    {
+    public void testAnnotationClassLiteral() {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                 Paths.get("src/test/resources/testclasses/annotations/mdb/MessageDrivenWithListenerAnnotationNoImplements.java"));
 
         boolean foundAnnotationType = false;
-        for (ClassReference reference : references)
-        {
+        for (ClassReference reference : references) {
             System.out.println("Reference: " + reference);
-            if (reference instanceof AnnotationClassReference)
-            {
+            if (reference instanceof AnnotationClassReference) {
                 AnnotationClassReference annotationReference = (AnnotationClassReference) reference;
-                if (reference.getQualifiedName().equals("javax.ejb.MessageDriven"))
-                {
+                if (reference.getQualifiedName().equals("javax.ejb.MessageDriven")) {
                     Assert.assertEquals("com.example.Foo",
                             ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("messageListenerInterface")).getLiteralValue());
                     foundAnnotationType = true;
@@ -112,8 +98,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         Assert.assertTrue(foundAnnotationType);
     }
 
-    private void checkFirstNestedAnnotation(AnnotationClassReference nestedAnnotation)
-    {
+    private void checkFirstNestedAnnotation(AnnotationClassReference nestedAnnotation) {
         Assert.assertNotNull(nestedAnnotation);
         Assert.assertEquals("testclasses.annotations.complex.ExampleNestedAnnotation", nestedAnnotation.getQualifiedName());
 
@@ -136,8 +121,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         Assert.assertEquals(String.class, ((AnnotationLiteralValue) firstInnerArrayValue.getValues().get(1)).getLiteralType());
     }
 
-    private void checkNestedAnnotationArray(AnnotationValue nestedAnnotationArray)
-    {
+    private void checkNestedAnnotationArray(AnnotationValue nestedAnnotationArray) {
         Assert.assertTrue(nestedAnnotationArray instanceof AnnotationArrayValue);
         AnnotationArrayValue arrayValue = (AnnotationArrayValue) nestedAnnotationArray;
 
@@ -145,7 +129,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         AnnotationClassReference annotation1Level2 = (AnnotationClassReference) annotation1.getAnnotationValues().get("level2");
         AnnotationClassReference annotation1InnerComplex = (AnnotationClassReference) annotation1Level2.getAnnotationValues().get("complex");
         Assert.assertEquals("inside complex annotation (key)",
-                    ((AnnotationLiteralValue) annotation1InnerComplex.getAnnotationValues().get("key")).getLiteralValue());
+                ((AnnotationLiteralValue) annotation1InnerComplex.getAnnotationValues().get("key")).getLiteralValue());
         Assert.assertEquals(String.class, ((AnnotationLiteralValue) annotation1InnerComplex.getAnnotationValues().get("key")).getLiteralType());
 
         AnnotationArrayValue annotation1InnerArrayValue = (AnnotationArrayValue) annotation1InnerComplex.getAnnotationValues().get("stringArray");
@@ -159,7 +143,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         AnnotationClassReference annotation2Level2 = (AnnotationClassReference) annotation2.getAnnotationValues().get("level2");
         AnnotationClassReference annotation2InnerComplex = (AnnotationClassReference) annotation2Level2.getAnnotationValues().get("complex");
         Assert.assertEquals("second inside complex annotation (key)",
-                    ((AnnotationLiteralValue) annotation2InnerComplex.getAnnotationValues().get("key")).getLiteralValue());
+                ((AnnotationLiteralValue) annotation2InnerComplex.getAnnotationValues().get("key")).getLiteralValue());
         Assert.assertEquals(String.class, ((AnnotationLiteralValue) annotation2InnerComplex.getAnnotationValues().get("key")).getLiteralType());
 
         AnnotationArrayValue annotation2InnerArrayValue = (AnnotationArrayValue) annotation2InnerComplex.getAnnotationValues().get("stringArray");
@@ -172,8 +156,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         Assert.assertEquals(String.class, ((AnnotationLiteralValue) annotation2InnerArrayValue.getValues().get(2)).getLiteralType());
     }
 
-    private void checkLiteralValue(AnnotationClassReference annotation, String name, Class<?> expectedType, Object expectedValue)
-    {
+    private void checkLiteralValue(AnnotationClassReference annotation, String name, Class<?> expectedType, Object expectedValue) {
         AnnotationLiteralValue literalValue = (AnnotationLiteralValue) annotation.getAnnotationValues().get(name);
         Assert.assertEquals(expectedValue, literalValue.getLiteralValue());
         Assert.assertEquals(expectedType, literalValue.getLiteralType());

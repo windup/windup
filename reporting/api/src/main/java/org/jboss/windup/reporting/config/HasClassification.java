@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.config;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationFilter;
 import org.jboss.windup.graph.model.FileReferenceModel;
@@ -16,41 +13,35 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * An implementation of {@link AbstractIterationFilter} to filter models based on the existence of a
  * {@link ClassificationModel} attached to the given payload.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class HasClassification extends AbstractIterationFilter<WindupVertexFrame> implements Parameterized
-{
+public class HasClassification extends AbstractIterationFilter<WindupVertexFrame> implements Parameterized {
     private RegexParameterizedPatternParser titlePattern;
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
         boolean result = false;
         ClassificationService service = new ClassificationService(event.getGraphContext());
 
-        if (payload instanceof FileReferenceModel)
-        {
+        if (payload instanceof FileReferenceModel) {
             payload = ((FileReferenceModel) payload).getFile();
         }
 
-        if (payload instanceof FileModel)
-        {
+        if (payload instanceof FileModel) {
             Iterable<ClassificationModel> classifications = service.getClassifications((FileModel) payload);
-            if (titlePattern == null)
-            {
+            if (titlePattern == null) {
                 result = classifications.iterator().hasNext();
-            }
-            else
-            {
-                for (ClassificationModel c : classifications)
-                {
+            } else {
+                for (ClassificationModel c : classifications) {
                     ParameterizedPatternResult parseResult = titlePattern.parse(c.getClassification());
-                    if (parseResult.matches() && parseResult.isValid(event, context))
-                    {
+                    if (parseResult.matches() && parseResult.isValid(event, context)) {
                         result = true;
                         break;
                     }
@@ -63,8 +54,7 @@ public class HasClassification extends AbstractIterationFilter<WindupVertexFrame
     /**
      * Get the pattern for which this filter should match. (May be <code>null</code>.)
      */
-    public String getTitlePattern()
-    {
+    public String getTitlePattern() {
         if (titlePattern != null)
             return titlePattern.getPattern();
         else
@@ -74,15 +64,13 @@ public class HasClassification extends AbstractIterationFilter<WindupVertexFrame
     /**
      * Set the pattern for which this filter should match. (May be <code>null</code>.)
      */
-    public void setTitlePattern(String titlePattern)
-    {
+    public void setTitlePattern(String titlePattern) {
         if (titlePattern != null)
             this.titlePattern = new RegexParameterizedPatternParser(titlePattern);
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (titlePattern != null)
             result.addAll(titlePattern.getRequiredParameterNames());
@@ -90,8 +78,7 @@ public class HasClassification extends AbstractIterationFilter<WindupVertexFrame
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         if (titlePattern != null)
             titlePattern.setParameterStore(store);
     }

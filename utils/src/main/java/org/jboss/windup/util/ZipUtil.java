@@ -1,5 +1,10 @@
 package org.jboss.windup.util;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.forge.furnace.util.Streams;
+import org.jboss.windup.util.exception.WindupException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,18 +22,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Streams;
-import org.jboss.windup.util.exception.WindupException;
-
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class ZipUtil
-{
+public class ZipUtil {
     private static final Logger log = Logger.getLogger(ZipUtil.class.getName());
 
     private static Set<String> supportedExtensions;
@@ -36,20 +35,15 @@ public class ZipUtil
     /**
      * Unzip a classpath resource using the given {@link Class} as the resource root path.
      */
-    public static void unzipFromClassResource(Class<?> clazz, String resourcePath, File extractToPath) throws IOException
-    {
+    public static void unzipFromClassResource(Class<?> clazz, String resourcePath, File extractToPath) throws IOException {
         File inputFile = File.createTempFile("windup-resource-to-unzip-", ".zip");
-        try
-        {
-            try (final InputStream stream = clazz.getResourceAsStream(resourcePath))
-            {
+        try {
+            try (final InputStream stream = clazz.getResourceAsStream(resourcePath)) {
                 FileUtils.copyInputStreamToFile(stream, inputFile);
             }
             extractToPath.mkdirs();
             ZipUtil.unzipToFolder(inputFile, extractToPath);
-        }
-        finally
-        {
+        } finally {
             inputFile.delete();
         }
     }
@@ -57,32 +51,25 @@ public class ZipUtil
     /**
      * Unzip the given {@link File} to the specified directory.
      */
-    public static void unzipToFolder(File inputFile, File outputDir) throws IOException
-    {
+    public static void unzipToFolder(File inputFile, File outputDir) throws IOException {
         if (inputFile == null)
             throw new IllegalArgumentException("Argument inputFile is null.");
         if (outputDir == null)
             throw new IllegalArgumentException("Argument outputDir is null.");
 
-        try (ZipFile zipFile = new ZipFile(inputFile))
-        {
+        try (ZipFile zipFile = new ZipFile(inputFile)) {
             Enumeration<? extends ZipEntry> entryEnum = zipFile.entries();
-            while (entryEnum.hasMoreElements())
-            {
+            while (entryEnum.hasMoreElements()) {
                 ZipEntry entry = entryEnum.nextElement();
                 String entryName = entry.getName();
                 File destFile = new File(outputDir, entryName);
-                if (!entry.isDirectory())
-                {
+                if (!entry.isDirectory()) {
                     File parentDir = destFile.getParentFile();
-                    if (!parentDir.isDirectory() && !parentDir.mkdirs())
-                    {
+                    if (!parentDir.isDirectory() && !parentDir.mkdirs()) {
                         throw new WindupException("Unable to create directory: " + parentDir.getAbsolutePath());
                     }
-                    try (InputStream zipInputStream = zipFile.getInputStream(entry))
-                    {
-                        try (FileOutputStream outputStream = new FileOutputStream(destFile))
-                        {
+                    try (InputStream zipInputStream = zipFile.getInputStream(entry)) {
+                        try (FileOutputStream outputStream = new FileOutputStream(destFile)) {
                             Streams.write(zipInputStream, outputStream);
                         }
                     }
@@ -91,20 +78,15 @@ public class ZipUtil
         }
     }
 
-    public static String getEndsWithZipRegularExpression()
-    {
+    public static String getEndsWithZipRegularExpression() {
         Set<String> zipExtensions = getZipExtensions();
         final String regex;
-        if (zipExtensions.size() == 1)
-        {
+        if (zipExtensions.size() == 1) {
             regex = ".+\\." + zipExtensions.iterator().next() + "$";
-        }
-        else
-        {
+        } else {
             StringBuilder builder = new StringBuilder();
             builder.append("\\b(");
-            for (String value : zipExtensions)
-            {
+            for (String value : zipExtensions) {
                 builder.append("|");
                 builder.append(value);
             }
@@ -114,22 +96,17 @@ public class ZipUtil
         return regex;
     }
 
-    public static boolean endsWithZipExtension(String path)
-    {
-        for (String extension : getZipExtensions())
-        {
-            if (StringUtils.endsWith(path, "." + extension))
-            {
+    public static boolean endsWithZipExtension(String path) {
+        for (String extension : getZipExtensions()) {
+            if (StringUtils.endsWith(path, "." + extension)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static Set<String> getZipExtensions()
-    {
-        if (supportedExtensions == null)
-        {
+    public static Set<String> getZipExtensions() {
+        if (supportedExtensions == null) {
             Set<String> extensions = new HashSet<>();
             extensions.add("war");
             extensions.add("ear");
@@ -144,43 +121,32 @@ public class ZipUtil
     }
 
 
-    public static List<String> scanZipFile(Path zipFilePath, boolean relativeOnly)
-    {
-        try
-        {
-            try (final InputStream is = new FileInputStream(zipFilePath.toFile()))
-            {
+    public static List<String> scanZipFile(Path zipFilePath, boolean relativeOnly) {
+        try {
+            try (final InputStream is = new FileInputStream(zipFilePath.toFile())) {
                 return scanZipFile(zipFilePath.normalize().toString(), is, relativeOnly);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.err.println("Could not read file: " + zipFilePath + " due to: " + e.getMessage());
             return Collections.emptyList();
         }
     }
 
 
-    public static List<String> scanZipFile(String parentPath, InputStream is, boolean relativeOnly)
-    {
-        try
-        {
+    public static List<String> scanZipFile(String parentPath, InputStream is, boolean relativeOnly) {
+        try {
             ZipInputStream zis = new ZipInputStream(is);
             ZipEntry entry;
             List<String> results = new ArrayList<>();
-            while ((entry = zis.getNextEntry()) != null)
-            {
+            while ((entry = zis.getNextEntry()) != null) {
                 String fullPath = parentPath + "/" + entry.getName();
                 results.add(relativeOnly ? entry.getName() : fullPath);
-                if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName()))
-                {
+                if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName())) {
                     results.addAll(scanZipFile(fullPath, zis, relativeOnly));
                 }
             }
             return results;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.err.println("Could not read file: " + parentPath + " due to: " + e.getMessage());
             return Collections.emptyList();
         }

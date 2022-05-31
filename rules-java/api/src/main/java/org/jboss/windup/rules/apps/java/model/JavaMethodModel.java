@@ -1,24 +1,21 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import java.util.List;
 
 /**
  * Represents a Java Method within a {@link JavaClassModel}
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaMethodModel.TYPE)
-public interface JavaMethodModel extends WindupVertexFrame
-{
+public interface JavaMethodModel extends WindupVertexFrame {
     public static final String METHOD_PARAMETER = "methodParameter";
     public static final String METHOD_NAME = "methodName";
     public static final String JAVA_METHOD = "javaMethod";
@@ -52,8 +49,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the number of method parameters to this method
      */
-    default long countParameters()
-    {
+    default long countParameters() {
         return new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
                 .in(METHOD_PARAMETER).toList().size();
     }
@@ -74,8 +70,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the {@link JavaParameterModel} at the provided position in the parameter list.
      */
-    default JavaParameterModel getParameter(int parameterPosition)
-    {
+    default JavaParameterModel getParameter(int parameterPosition) {
 /*
         List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
                 .in(METHOD_PARAMETER)

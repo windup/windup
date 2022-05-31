@@ -2,11 +2,10 @@ package org.jboss.windup.config;
 
 /**
  * Indicates the type of UI element that should be used for this input.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public enum InputType
-{
+public enum InputType {
     /**
      * A single input value (eg, a String with a simple textbox).
      */
@@ -38,14 +37,12 @@ public enum InputType
 
     private final String value;
 
-    private InputType(String val)
-    {
+    private InputType(String val) {
         this.value = val;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 }

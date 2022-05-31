@@ -1,9 +1,8 @@
 package org.jboss.windup.rules.apps.java.archives.model;
 
-import org.jboss.windup.graph.model.ArchiveModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.TypeValue;
 
 /**
@@ -13,8 +12,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(IdentifiedArchiveModel.TYPE)
-public interface IdentifiedArchiveModel extends ArchiveModel
-{
+public interface IdentifiedArchiveModel extends ArchiveModel {
     String TYPE = "IdentifiedArchiveModel";
     String COORDINATE = TYPE + "-coordinate";
 

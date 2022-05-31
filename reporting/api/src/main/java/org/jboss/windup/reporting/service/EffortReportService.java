@@ -10,15 +10,33 @@ import org.jboss.windup.reporting.model.EffortReportModel;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class EffortReportService extends GraphService
-{
-    public enum Verbosity
-    {
+public class EffortReportService extends GraphService {
+    public EffortReportService(GraphContext context) {
+        super(context, EffortReportModel.class);
+    }
+
+    /**
+     * Returns the right string representation of the effort level based on given number of points.
+     */
+    public static String getEffortLevelDescription(Verbosity verbosity, int points) {
+        EffortLevel level = EffortLevel.forPoints(points);
+
+        switch (verbosity) {
+            case ID:
+                return level.name();
+            case VERBOSE:
+                return level.getVerboseDescription();
+            case SHORT:
+            default:
+                return level.getShortDescription();
+        }
+    }
+
+    public enum Verbosity {
         ID, SHORT, VERBOSE
     }
 
-    public enum EffortLevel
-    {
+    public enum EffortLevel {
         INFO(0, "Info", "Info"),
         TRIVIAL(1, "Trivial", "Trivial change or 1-1 library swap"),
         COMPLEX(3, "Complex", "Complex change with documented solution"),
@@ -30,61 +48,31 @@ public class EffortReportService extends GraphService
         private final String shortDesc;
         private final String verboseDesc;
 
-        EffortLevel(final int points, final String shortDesc, final String verboseDesc)
-        {
+        EffortLevel(final int points, final String shortDesc, final String verboseDesc) {
             this.points = points;
             this.shortDesc = shortDesc;
             this.verboseDesc = verboseDesc;
         }
 
-        public static EffortLevel forPoints(int points)
-        {
+        public static EffortLevel forPoints(int points) {
             EffortLevel[] levels = EffortLevel.class.getEnumConstants();
-            for (EffortLevel level : levels)
-            {
+            for (EffortLevel level : levels) {
                 if (level.getPoints() == points)
                     return level;
             }
             return UNKNOWN;
         }
 
-        public int getPoints()
-        {
+        public int getPoints() {
             return points;
         }
 
-        public String getShortDescription()
-        {
+        public String getShortDescription() {
             return shortDesc;
         }
 
-        public String getVerboseDescription()
-        {
+        public String getVerboseDescription() {
             return verboseDesc;
-        }
-    }
-
-    public EffortReportService(GraphContext context)
-    {
-        super(context, EffortReportModel.class);
-    }
-
-    /**
-     * Returns the right string representation of the effort level based on given number of points.
-     */
-    public static String getEffortLevelDescription(Verbosity verbosity, int points)
-    {
-        EffortLevel level = EffortLevel.forPoints(points);
-
-        switch (verbosity)
-        {
-        case ID:
-            return level.name();
-        case VERBOSE:
-            return level.getVerboseDescription();
-        case SHORT:
-        default:
-            return level.getShortDescription();
         }
     }
 

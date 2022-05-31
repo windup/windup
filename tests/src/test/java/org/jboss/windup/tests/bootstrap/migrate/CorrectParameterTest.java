@@ -8,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.nio.file.Files;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -33,8 +34,7 @@ public class CorrectParameterTest extends AbstractBootstrapTestWithRules {
     }
 
 
-    void checkResult() throws IOException
-    {
+    void checkResult() throws IOException {
         assertTrue(capturedOutput().contains("WARNING: No packages were set in --packages."));
         assertTrue(capturedOutput().contains("Executing " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym()));
         assertTrue(capturedOutput().contains("Report created"));

@@ -4,22 +4,19 @@ import java.util.zip.ZipEntry;
 
 /**
  * ZipEntry Filter which only accepts certain number of class files, then STOPs.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class CountClassesFilter implements Filter<ZipEntry>
-{
-    private int curCount = 0;
+public class CountClassesFilter implements Filter<ZipEntry> {
     private final int maxCount;
+    private int curCount = 0;
 
-    public CountClassesFilter(int maxCount)
-    {
+    public CountClassesFilter(int maxCount) {
         this.maxCount = maxCount;
     }
 
     @Override
-    public Filter.Result decide(ZipEntry what)
-    {
+    public Filter.Result decide(ZipEntry what) {
         if ((!what.isDirectory()) && what.getName().endsWith(".class"))
             this.curCount++;
 

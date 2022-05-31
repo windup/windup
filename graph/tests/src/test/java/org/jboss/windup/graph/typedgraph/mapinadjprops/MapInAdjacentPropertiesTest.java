@@ -1,15 +1,11 @@
 package org.jboss.windup.graph.typedgraph.mapinadjprops;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
@@ -20,35 +16,33 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(Arquillian.class)
-public class MapInAdjacentPropertiesTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(MapMainModel.class);
-        return archive;
-    }
-
+public class MapInAdjacentPropertiesTest {
     @Inject
     private GraphContextFactory contextFactory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClasses(MapMainModel.class);
+        return archive;
+    }
+
     @Test
-    public void testMapHandling() throws Exception
-    {
+    public void testMapHandling() throws Exception {
         Assert.assertNotNull(contextFactory);
 
-        try (GraphContext context = contextFactory.create(true))
-        {
+        try (GraphContext context = contextFactory.create(true)) {
             MapMainModel mainModel = context.getFramed().addFramedVertex(MapMainModel.class);
 
             // Map 1
@@ -70,8 +64,7 @@ public class MapInAdjacentPropertiesTest
             Iterable<Vertex> vertices = context.getGraph().traversal().V().has(WindupVertexFrame.TYPE_PROP, Text.textContains(typeVal)).toList();
 
             int numberFound = 0;
-            for (Vertex v : vertices)
-            {
+            for (Vertex v : vertices) {
                 // final Set<String> propertyKeys = v.getVertices( Direction.OUT, "map").iterator().next().getPropertyKeys();
 
                 numberFound++;

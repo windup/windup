@@ -26,44 +26,15 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
     private static final String REMOVE = "--remove";
     private static final String I = "-i";
     private static final String R = "-r";
-
-    @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                {I,       ADDON,              R,      ADDON,              true},
-                {I,       ADDON,              R,      ADDON_WITH_VERSION, true},
-                {I,       ADDON,              REMOVE, ADDON,              true},
-                {I,       ADDON,              REMOVE, ADDON_WITH_VERSION, true},
-                {I,       ADDON_WITH_VERSION, R,      ADDON,              true},
-                {I,       ADDON_WITH_VERSION, R,      ADDON_WITH_VERSION, true},
-                {I,       ADDON_WITH_VERSION, REMOVE, ADDON,              true},
-                {I,       ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON,              R,      ADDON,              true},
-                {INSTALL, ADDON,              R,      ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON,              REMOVE, ADDON,              true},
-                {INSTALL, ADDON,              REMOVE, ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON_WITH_VERSION, R,      ADDON,              true},
-                {INSTALL, ADDON_WITH_VERSION, R,      ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON,              true},
-                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
-
-                {INSTALL, BAD_FORMAT,         REMOVE, BAD_FORMAT,         false},
-                {INSTALL, DOESNT_EXIST,       REMOVE, DOESNT_EXIST,       false},
-        });
-    }
-
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
-
     @Rule
     public final RetryRule retryRule = new RetryRule(3);
-
     private final String installOption;
     private final String installAddonId;
     private final String removeOption;
     private final String removeAddonId;
     private final boolean successExpected;
-
     public InstallRemoveAddonCommandsTest(String installOption, String installAddonId, String removeOption,
                                           String removeAddonId, boolean successExpected) {
         this.installOption = installOption;
@@ -71,6 +42,31 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
         this.removeOption = removeOption;
         this.removeAddonId = removeAddonId;
         this.successExpected = successExpected;
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {I, ADDON, R, ADDON, true},
+                {I, ADDON, R, ADDON_WITH_VERSION, true},
+                {I, ADDON, REMOVE, ADDON, true},
+                {I, ADDON, REMOVE, ADDON_WITH_VERSION, true},
+                {I, ADDON_WITH_VERSION, R, ADDON, true},
+                {I, ADDON_WITH_VERSION, R, ADDON_WITH_VERSION, true},
+                {I, ADDON_WITH_VERSION, REMOVE, ADDON, true},
+                {I, ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON, R, ADDON, true},
+                {INSTALL, ADDON, R, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON, REMOVE, ADDON, true},
+                {INSTALL, ADDON, REMOVE, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON_WITH_VERSION, R, ADDON, true},
+                {INSTALL, ADDON_WITH_VERSION, R, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON, true},
+                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
+
+                {INSTALL, BAD_FORMAT, REMOVE, BAD_FORMAT, false},
+                {INSTALL, DOESNT_EXIST, REMOVE, DOESNT_EXIST, false},
+        });
     }
 
     @Test

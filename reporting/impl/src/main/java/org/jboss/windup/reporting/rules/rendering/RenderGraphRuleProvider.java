@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.rules.rendering;
 
-import javax.enterprise.inject.Vetoed;
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -15,6 +12,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.enterprise.inject.Vetoed;
+import javax.inject.Inject;
+
 /**
  * This renders the graph itself to the output directory for debug purposes.
  *
@@ -22,32 +22,26 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 @Vetoed
 @RuleMetadata(phase = PostReportRenderingPhase.class)
-public class RenderGraphRuleProvider extends AbstractRuleProvider
-{
+public class RenderGraphRuleProvider extends AbstractRuleProvider {
     @Inject
     private Imported<GraphRenderer> renderers;
 
     @Override
-    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                for (GraphRenderer renderer : renderers)
-                {
-                    renderer.renderGraph(event.getGraphContext());
-                }
-            }
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        for (GraphRenderer renderer : renderers) {
+                            renderer.renderGraph(event.getGraphContext());
+                        }
+                    }
 
-            @Override
-            public String toString()
-            {
-                return "RenderGraphForDebugging";
-            }
-        });
+                    @Override
+                    public String toString() {
+                        return "RenderGraphForDebugging";
+                    }
+                });
     }
 }

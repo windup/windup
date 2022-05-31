@@ -1,12 +1,5 @@
 package org.jboss.windup.rules.apps.java;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -35,50 +28,49 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class ClassMetadataTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
+public class ClassMetadataTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+    }
+
     @Test
-    public void testJavaSourceScanning() throws Exception
-    {
+    public void testJavaSourceScanning() throws Exception {
         runTest("src/test/resources/classmetadatatest/src");
     }
 
     @Test
-    public void testJavaClassFiles() throws Exception
-    {
+    public void testJavaClassFiles() throws Exception {
         runTest("src/test/resources/classmetadatatest/sampleclasses");
     }
 
-    private void runTest(String inputPath) throws Exception
-    {
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+    private void runTest(String inputPath) throws Exception {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -86,7 +78,7 @@ public class ClassMetadataTest
             processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             Predicate<RuleProvider> ruleFilter = new AndPredicate(new RuleProviderWithDependenciesPredicate(MigrationRulesPhase.class),
-                        new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class)));
+                    new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class)));
 
             processorConfig.setRuleProviderFilter(ruleFilter);
             processorConfig.setGraphContext(context);
@@ -105,8 +97,7 @@ public class ClassMetadataTest
             Assert.assertTrue(javaClassModel.isInterface());
 
             int interfaceCountFound = 0;
-            for (JavaClassModel interfce : javaClassModel.getInterfaces())
-            {
+            for (JavaClassModel interfce : javaClassModel.getInterfaces()) {
                 interfaceCountFound++;
                 Assert.assertEquals("java.rmi.Remote", interfce.getQualifiedName());
             }
@@ -114,10 +105,9 @@ public class ClassMetadataTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_classmetadatatest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_classmetadatatest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
 }

@@ -1,15 +1,14 @@
 package org.jboss.windup.graph.traversal;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -28,7 +27,7 @@ import com.google.common.collect.Iterables;
  *      <li>duplicated.jar</li>
  *      <li>another.jar</li>
  *  </ul>
- *
+ * <p>
  *  Then this will only iterate root.ear, foo.war, duplicated.jar (one time only), WEB-INF/lib/other.jar, and another.jar.
  * </p>
  * <p>
@@ -39,46 +38,37 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class OnlyOnceTraversalStrategy implements TraversalStrategy
-{
+public class OnlyOnceTraversalStrategy implements TraversalStrategy {
     private Set<String> alreadySeenHashes;
 
-    public OnlyOnceTraversalStrategy()
-    {
+    public OnlyOnceTraversalStrategy() {
         reset();
     }
 
     @Override
-    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal)
-    {
+    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal) {
         return ProjectModelTraversal.TraversalState.ALL;
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
         this.alreadySeenHashes = new HashSet<>();
     }
 
     @Override
-    public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)
-    {
+    public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal) {
         ProjectModel canonicalProject = traversal.getCanonicalProject();
 
-        Iterable<ProjectModelTraversal> defaultChildren = Iterables.transform(canonicalProject.getChildProjects(), new Function<ProjectModel, ProjectModelTraversal>()
-        {
+        Iterable<ProjectModelTraversal> defaultChildren = Iterables.transform(canonicalProject.getChildProjects(), new Function<ProjectModel, ProjectModelTraversal>() {
             @Override
-            public ProjectModelTraversal apply(ProjectModel input)
-            {
+            public ProjectModelTraversal apply(ProjectModel input) {
                 return new ProjectModelTraversal(traversal, input, OnlyOnceTraversalStrategy.this);
             }
         });
 
-        return Iterables.filter(defaultChildren, new Predicate<ProjectModelTraversal>()
-        {
+        return Iterables.filter(defaultChildren, new Predicate<ProjectModelTraversal>() {
             @Override
-            public boolean apply(ProjectModelTraversal input)
-            {
+            public boolean apply(ProjectModelTraversal input) {
                 FileModel rootFile = input.getCurrent().getRootFileModel();
 
                 // This duplicate handling logic only applies to archives, so skip if it is not an archive
@@ -87,13 +77,10 @@ public class OnlyOnceTraversalStrategy implements TraversalStrategy
 
                 ArchiveModel archive = (ArchiveModel) rootFile;
 
-                if (!alreadySeenHashes.contains(archive.getSHA1Hash()))
-                {
+                if (!alreadySeenHashes.contains(archive.getSHA1Hash())) {
                     alreadySeenHashes.add(archive.getSHA1Hash());
                     return true;
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }

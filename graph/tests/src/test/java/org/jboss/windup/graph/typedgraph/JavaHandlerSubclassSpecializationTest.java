@@ -1,11 +1,9 @@
 package org.jboss.windup.graph.typedgraph;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
@@ -16,37 +14,34 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
 /**
  * Covers: https://issues.jboss.org/browse/WINDUP-168
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @RunWith(Arquillian.class)
-public class JavaHandlerSubclassSpecializationTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
-        return archive;
-    }
+public class JavaHandlerSubclassSpecializationTest {
 
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
+        return archive;
+    }
+
     @Test
-    public void testSubclassMethodHandling() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testSubclassMethodHandling() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
             TestFooModel model = context.getFramed().addFramedVertex(TestFooModel.class);

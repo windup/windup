@@ -15,65 +15,57 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This will decompile all Java .class files found in the incoming application.
- *
+ * <p>
  * This will use the Fernflower decompiler by default, however this can be overridden with a system property (
  * {@link DecompileClassesRuleProvider#DECOMPILER_PROPERTY}).
  */
 @RuleMetadata(phase = DecompilationPhase.class, after = BeforeDecompileClassesRuleProvider.class)
-public class DecompileClassesRuleProvider extends AbstractRuleProvider
-{
+public class DecompileClassesRuleProvider extends AbstractRuleProvider {
     /**
      * This System Property can be set to either {@link DecompilerType#PROCYON} or {@link DecompilerType#FERNFLOWER} to manually select the decompiler
      * to use during Windup execution.
      */
     public static final String DECOMPILER_PROPERTY = "windup.decompiler";
 
-    private enum DecompilerType
-    {
+    // @formatter:off
+    @Override
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        return ConfigurationBuilder.begin()
+                .addRule()
+                .when(SourceMode.isDisabled())
+                .perform(new DecompileCondition())
+                .addRule()
+                .when(SourceMode.isDisabled())
+                .perform(new CleanFromMultipleSourceFiles());
+
+    }
+
+    private enum DecompilerType {
         PROCYON,
         FERNFLOWER
     }
-
-    // @formatter:off
-    @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        return ConfigurationBuilder.begin()
-        .addRule()
-        .when(SourceMode.isDisabled())
-        .perform(new DecompileCondition())
-        .addRule()
-        .when(SourceMode.isDisabled())
-        .perform(new CleanFromMultipleSourceFiles());
-
-    }
     // @formatter:on
 
-    private class DecompileCondition extends GraphOperation
-    {
+    private class DecompileCondition extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
-            switch (getDecompilerType())
-            {
-            case FERNFLOWER:
-                new FernflowerDecompilerOperation().perform(event, context);
-                break;
-            case PROCYON:
-                new ProcyonDecompilerOperation().perform(event, context);
-                break;
-            default:
-                throw new WindupException("Failed to select decompiler due to unrecognized type: " + getDecompilerType());
+        public void perform(GraphRewrite event, EvaluationContext context) {
+            switch (getDecompilerType()) {
+                case FERNFLOWER:
+                    new FernflowerDecompilerOperation().perform(event, context);
+                    break;
+                case PROCYON:
+                    new ProcyonDecompilerOperation().perform(event, context);
+                    break;
+                default:
+                    throw new WindupException("Failed to select decompiler due to unrecognized type: " + getDecompilerType());
             }
         }
 
-        private DecompilerType getDecompilerType()
-        {
+        private DecompilerType getDecompilerType() {
             String decompilerProperty = System.getProperty(DECOMPILER_PROPERTY);
             if (StringUtils.isBlank(decompilerProperty))
                 return DecompilerType.FERNFLOWER;
-            else
-            {
+            else {
                 return DecompilerType.valueOf(decompilerProperty.toUpperCase());
             }
         }

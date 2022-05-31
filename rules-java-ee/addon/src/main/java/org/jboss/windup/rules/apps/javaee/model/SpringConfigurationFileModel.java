@@ -1,22 +1,20 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import java.util.List;
 
 /**
  * Contains metadata extracted from the XML configuration file.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SpringConfigurationFileModel.TYPE)
-public interface SpringConfigurationFileModel extends XmlFileModel
-{
+public interface SpringConfigurationFileModel extends XmlFileModel {
     String SPECIFICATION_VERSION = "specificationVersion";
     String TYPE = "SpringConfigurationFileModel";
 

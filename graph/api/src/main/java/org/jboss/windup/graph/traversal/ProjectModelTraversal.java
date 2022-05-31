@@ -1,22 +1,22 @@
 package org.jboss.windup.graph.traversal;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 /**
  * This allows a {@link ProjectModel} to be traversed in a way that is aware of {@link DuplicateProjectModel}s.
- *
+ * <p>
  * This should make it easier to calculate the actual path within the application without regard to where the original project was actually stored.
- *
+ * <p>
  * Cases where this is used include:
  * <ul>
  * <li>Listing all of the files in the application with accurate paths, regardless of how they are stored in the graph</li>
@@ -26,18 +26,17 @@ import org.jboss.windup.graph.model.resource.FileModel;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class ProjectModelTraversal
-{
+public class ProjectModelTraversal {
     private final ProjectModelTraversal previous;
     private final ProjectModel current;
     private final TraversalStrategy traversalStrategy;
+
     /**
      * Builds an instance with a reference to the previous {@link ProjectModelTraversal}, and the given parameters.
-     *
+     * <p>
      * NOTE: This would generally only be used by {@link TraversalStrategy} implementations. {@see DefaultTraversalStrategy}
      */
-    public ProjectModelTraversal(ProjectModelTraversal previous, ProjectModel current, TraversalStrategy traversalStrategy)
-    {
+    public ProjectModelTraversal(ProjectModelTraversal previous, ProjectModel current, TraversalStrategy traversalStrategy) {
         this.previous = previous;
         this.current = current;
         this.traversalStrategy = traversalStrategy == null ? new AllTraversalStrategy() : traversalStrategy;
@@ -46,22 +45,20 @@ public class ProjectModelTraversal
     /**
      * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel} should be a "root" model (an
      * application) rather than a subpart of an application.
-     *
+     * <p>
      * {@link TraversalStrategy} will default to {@link AllTraversalStrategy}.
      */
-    public ProjectModelTraversal(ProjectModel current)
-    {
+    public ProjectModelTraversal(ProjectModel current) {
         this(null, current, null);
     }
 
     /**
      * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel} should be a "root" model (an
      * application) rather than a subpart of an application.
-     *
+     * <p>
      * The provided {@link TraversalStrategy} will determine how the ProjectModel's subprojects tree will be traversed.
      */
-    public ProjectModelTraversal(ProjectModel current, TraversalStrategy traversalStrategy)
-    {
+    public ProjectModelTraversal(ProjectModel current, TraversalStrategy traversalStrategy) {
         this(null, current, traversalStrategy);
     }
 
@@ -69,8 +66,7 @@ public class ProjectModelTraversal
      * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a {@link Set}. The exact projects returns
      * will be affected by the {@link TraversalStrategy} in use by the current traversal.
      */
-    public Set<ProjectModel> getAllProjects(boolean recursive)
-    {
+    public Set<ProjectModel> getAllProjects(boolean recursive) {
         if (!recursive)
             return Collections.singleton(getCanonicalProject());
         else
@@ -80,25 +76,22 @@ public class ProjectModelTraversal
     /**
      * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a {@link Set}. The exact projects returns
      * will be affected by the {@link TraversalStrategy} in use by the current traversal.
-     *
+     * <p>
      * This is the same as {@link ProjectModelTraversal#getAllProjects(boolean)} except that it returns a Set of vertices instead of frames.
      */
-    public Set<Vertex> getAllProjectsAsVertices(boolean recursive)
-    {
+    public Set<Vertex> getAllProjectsAsVertices(boolean recursive) {
         Set<Vertex> vertices = new LinkedHashSet<>();
         for (ProjectModel projectModel : getAllProjects(recursive))
             vertices.add(projectModel.getElement());
         return vertices;
     }
 
-    private Set<ProjectModel> addProjects(Set<ProjectModel> existingVertices, ProjectModelTraversal traversal)
-    {
+    private Set<ProjectModel> addProjects(Set<ProjectModel> existingVertices, ProjectModelTraversal traversal) {
         TraversalState nodeTraversalState = traversal.getTraversalState();
         if (nodeTraversalState == TraversalState.ALL)
             existingVertices.add(traversal.getCanonicalProject());
 
-        if (nodeTraversalState != TraversalState.NONE)
-        {
+        if (nodeTraversalState != TraversalState.NONE) {
             for (ProjectModelTraversal child : traversal.getChildren())
                 addProjects(existingVertices, child);
         }
@@ -109,11 +102,10 @@ public class ProjectModelTraversal
     /**
      * Implements the Visitor pattern with a callback that receives each {@link ProjectModelTraversal} instance. This can be useful for implementing
      * algorithms that need to operate over all of the data within this traversal.
-     *
+     * <p>
      * Note that the children visited will be affected by the current {@link TraversalStrategy} selected for this traversal.
      */
-    public void accept(ProjectTraversalVisitor visitor)
-    {
+    public void accept(ProjectTraversalVisitor visitor) {
         visitor.visit(this);
 
         for (ProjectModelTraversal child : getChildren())
@@ -123,8 +115,7 @@ public class ProjectModelTraversal
     /**
      * Gets all child projects of the current project.
      */
-    public Iterable<ProjectModelTraversal> getChildren()
-    {
+    public Iterable<ProjectModelTraversal> getChildren() {
         return traversalStrategy.getChildren(this);
     }
 
@@ -132,8 +123,7 @@ public class ProjectModelTraversal
      * Gets the path of the specified {@link FileModel} within this traversal. The file must be within the current {@link ProjectModel} for this
      * method to return an accurate path.
      */
-    public String getFilePath(FileModel fileModel)
-    {
+    public String getFilePath(FileModel fileModel) {
         FileModel rootFileModel = getCurrent().getRootFileModel();
         FileModel canonicalRootFileModel = getCanonicalProject().getRootFileModel();
 
@@ -158,8 +148,7 @@ public class ProjectModelTraversal
         return combinePaths(base, relativePath);
     }
 
-    private String combinePaths(String path1, String path2)
-    {
+    private String combinePaths(String path1, String path2) {
         if (StringUtils.isNotBlank(path1) && StringUtils.isNotBlank(path2))
             return path1 + "/" + path2;
         else
@@ -169,8 +158,7 @@ public class ProjectModelTraversal
     /**
      * Returns a status indicating whether or not this should skip certain parts of the traversal for this node.
      */
-    public TraversalState getTraversalState()
-    {
+    public TraversalState getTraversalState() {
         TraversalState calculatedState = traversalStrategy.getTraversalState(this);
         return calculatedState == null ? TraversalState.ALL : calculatedState;
     }
@@ -178,44 +166,33 @@ public class ProjectModelTraversal
     /**
      * Gets the canonical Project by unwrapping any {@link DuplicateProjectModel}s wrapping it.
      */
-    public ProjectModel getCanonicalProject()
-    {
+    public ProjectModel getCanonicalProject() {
         return getCanonicalProject(current);
     }
 
     /**
      * Gets the current {@link ProjectModel} without unwrapping.
      */
-    public ProjectModel getCurrent()
-    {
+    public ProjectModel getCurrent() {
         return this.current;
     }
 
-    private ProjectModel getCanonicalProject(ProjectModel projectModel)
-    {
-        if (projectModel instanceof DuplicateProjectModel)
-        {
+    private ProjectModel getCanonicalProject(ProjectModel projectModel) {
+        if (projectModel instanceof DuplicateProjectModel) {
             DuplicateProjectModel duplicate = (DuplicateProjectModel) projectModel;
             return getCanonicalProject(duplicate.getCanonicalProject());
-        }
-        else
-        {
+        } else {
             return projectModel;
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         FileModel rootFileModel = null;
-        if (current != null)
-        {
-            try
-            {
+        if (current != null) {
+            try {
                 rootFileModel = current.getRootFileModel();
-            }
-            catch (NoSuchElementException e)
-            {
+            } catch (NoSuchElementException e) {
                 // Workaround for Ferma behavior
                 rootFileModel = null;
             }
@@ -230,13 +207,11 @@ public class ProjectModelTraversal
     /**
      * Resets the internal state of this traversal, so it can be reused.
      */
-    public void reset()
-    {
+    public void reset() {
         this.traversalStrategy.reset();
     }
 
-    public enum TraversalState
-    {
+    public enum TraversalState {
         /**
          * Traverse this node and all children.
          */

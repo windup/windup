@@ -1,5 +1,17 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.TagUtil;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
+import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.InlineHintService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,18 +20,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.TagUtil;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.IssueDisplayMode;
-import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.reporting.category.IssueCategoryModel;
-
 /**
  * Gets information about incidents found during the analysis and provides methods for summarizing and analyzing
  * this data.
@@ -27,8 +27,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class ProblemSummaryService
-{
+public class ProblemSummaryService {
     /**
      * Gets lists of {@link ProblemSummary} objects organized by {@link IssueCategoryModel}.
      */
@@ -36,8 +35,7 @@ public class ProblemSummaryService
             GraphContext graphContext,
             Set<ProjectModel> projectModels,
             Set<String> includeTags,
-            Set<String> excludeTags)
-    {
+            Set<String> excludeTags) {
         return getProblemSummaries(graphContext, projectModels, includeTags, excludeTags, false, false);
     }
 
@@ -47,16 +45,14 @@ public class ProblemSummaryService
     public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(GraphContext graphContext, Set<ProjectModel> projectModels, Set<String> includeTags,
                                                                                     Set<String> excludeTags,
                                                                                     boolean strictComparison,
-                                                                                    boolean strictExclude)
-    {
+                                                                                    boolean strictExclude) {
         // The key is the severity as a String
         Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(graphContext);
         final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(new ArrayList<>(projectModels));
-        for (InlineHintModel hint : hints)
-        {
+        for (InlineHintModel hint : hints) {
             if (hint.getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
                 continue;
 
@@ -64,43 +60,34 @@ public class ProblemSummaryService
 
             boolean hasTagMatch;
 
-            if (strictComparison)
-            {
+            if (strictComparison) {
                 hasTagMatch = TagUtil.strictCheckMatchingTags(tags, includeTags, excludeTags);
-            }
-            else
-            {
+            } else {
                 hasTagMatch = TagUtil.checkMatchingTags(tags, includeTags, excludeTags, strictExclude);
             }
 
-            if (!hasTagMatch)
-            {
+            if (!hasTagMatch) {
                 continue;
             }
 
             RuleSummaryKey key = new RuleSummaryKey(hint.getEffort(), hint.getRuleID(), hint.getTitle());
 
             ProblemSummary summary = ruleToSummary.get(key);
-            if (summary == null)
-            {
+            if (summary == null) {
                 summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getIssueCategory(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
-                for (LinkModel link : hint.getLinks())
-                {
+                for (LinkModel link : hint.getLinks()) {
                     summary.addLink(link.getDescription(), link.getLink());
                 }
                 ruleToSummary.put(key, summary);
                 addToResults(results, summary);
-            }
-            else
-            {
+            } else {
                 summary.setNumberFound(summary.getNumberFound() + 1);
             }
             summary.addFile(hint.getHint(), hint.getFile());
         }
 
         ClassificationService classificationService = new ClassificationService(graphContext);
-        for (ClassificationModel classification : classificationService.findAll())
-        {
+        for (ClassificationModel classification : classificationService.findAll()) {
             if (classification.getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
                 continue;
 
@@ -109,10 +96,8 @@ public class ProblemSummaryService
                 continue;
 
             List<FileModel> newFileModels = new ArrayList<>();
-            for (FileModel file : classification.getFileModels())
-            {
-                if (projectModels != null)
-                {
+            for (FileModel file : classification.getFileModels()) {
+                if (projectModels != null) {
                     // make sure this one is in the project
                     if (!projectModels.contains(file.getProjectModel()))
                         continue;
@@ -125,13 +110,11 @@ public class ProblemSummaryService
 
             RuleSummaryKey key = new RuleSummaryKey(classification.getEffort(), classification.getRuleID(), classification.getClassification());
             ProblemSummary summary = ruleToSummary.get(key);
-            if (summary == null)
-            {
+            if (summary == null) {
                 summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getIssueCategory(), classification.getRuleID(),
-                            classification.getClassification(),
-                            0, classification.getEffort());
-                for (LinkModel link : classification.getLinks())
-                {
+                        classification.getClassification(),
+                        0, classification.getEffort());
+                for (LinkModel link : classification.getLinks()) {
                     summary.addLink(link.getDescription(), link.getLink());
                 }
                 ruleToSummary.put(key, summary);
@@ -147,11 +130,9 @@ public class ProblemSummaryService
         return results;
     }
 
-    private static void addToResults(Map<IssueCategoryModel, List<ProblemSummary>> results, ProblemSummary summary)
-    {
+    private static void addToResults(Map<IssueCategoryModel, List<ProblemSummary>> results, ProblemSummary summary) {
         List<ProblemSummary> list = results.get(summary.getIssueCategoryModel());
-        if (list == null)
-        {
+        if (list == null) {
             list = new ArrayList<>();
             results.put(summary.getIssueCategoryModel(), list);
         }

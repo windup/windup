@@ -2,18 +2,15 @@ package org.jboss.windup.rules.files.condition.regex;
 
 /**
  * Contains information about the regular expression match (line, column, text).
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class StreamRegexMatchedEvent
-{
+public class StreamRegexMatchedEvent {
     private final String match;
     private final long lineNumber;
     private final long columnNumber;
 
-    protected StreamRegexMatchedEvent(String match, long lineNumber, long columnNumber)
-    {
+    protected StreamRegexMatchedEvent(String match, long lineNumber, long columnNumber) {
         this.match = match;
         this.lineNumber = lineNumber;
         this.columnNumber = columnNumber;
@@ -22,24 +19,21 @@ public class StreamRegexMatchedEvent
     /**
      * Gets the line on which the match started.
      */
-    public long getLineNumber()
-    {
+    public long getLineNumber() {
         return lineNumber;
     }
 
     /**
      * Gets the starting column within the line.
      */
-    public long getColumnNumber()
-    {
+    public long getColumnNumber() {
         return columnNumber;
     }
 
     /**
      * Gets the contents of the file that were matched by this regular expression.
      */
-    public String getMatch()
-    {
+    public String getMatch() {
         return match;
     }
 }

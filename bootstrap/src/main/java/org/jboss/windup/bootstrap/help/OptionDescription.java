@@ -7,8 +7,7 @@ import java.util.List;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class OptionDescription
-{
+public class OptionDescription {
     private String name;
     private String description;
     private String type;
@@ -18,11 +17,10 @@ public class OptionDescription
 
     /**
      * Creates an {@link OptionDescription} with the specified name, description, type, and UI Type (select one, select many, etc).
-     *
+     * <p>
      * The available options is unbounded.
      */
-    public OptionDescription(String name, String description, String type, String uiType)
-    {
+    public OptionDescription(String name, String description, String type, String uiType) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -33,8 +31,7 @@ public class OptionDescription
     /**
      * Creates an {@link OptionDescription} with the specified name, description, type, UI Type (select one, select many, etc), and available option list.
      */
-    public OptionDescription(String name, String description, String type, String uiType, List<String> availableOptions, boolean required)
-    {
+    public OptionDescription(String name, String description, String type, String uiType, List<String> availableOptions, boolean required) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -46,48 +43,42 @@ public class OptionDescription
     /**
      * Gets the name of the option.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * Gets the description of the option.
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     /**
      * Gets the type of the option.
      */
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
     /**
      * Gets the UI Type (SELECT_ONE, SELECT_MANY, etc).
      */
-    public String getUiType()
-    {
+    public String getUiType() {
         return uiType;
     }
 
     /**
      * Gets a list of all available options.
      */
-    public List<String> getAvailableOptions()
-    {
+    public List<String> getAvailableOptions() {
         return availableOptions;
     }
 
     /**
      * Tells if the option is required.
      */
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return required;
     }
 }

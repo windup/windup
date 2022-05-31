@@ -1,11 +1,10 @@
 package org.jboss.windup.reporting.model;
 
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * This contains information for a quickfix that will use a custom transformer class.
@@ -13,8 +12,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TransformationQuickfixModel.TYPE)
-public interface TransformationQuickfixModel extends QuickfixModel
-{
+public interface TransformationQuickfixModel extends QuickfixModel {
     String TYPE = "TransformationQuickfixModel";
 
     String TRANSFORMATION_ID = TYPE + "-transformationID";

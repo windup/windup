@@ -1,21 +1,19 @@
 package org.jboss.windup.tooling.data;
 
-import java.io.File;
-import java.util.List;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ClassificationModel;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.model.ClassificationModel;
+import java.io.File;
+import java.util.List;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ClassificationImpl implements Classification
-{
+public class ClassificationImpl implements Classification {
     private static final long serialVersionUID = 1L;
 
     private final Object id;
@@ -32,8 +30,7 @@ public class ClassificationImpl implements Classification
     /**
      * Constructs a {@link Classification} with the given id.
      */
-    public ClassificationImpl(Object id)
-    {
+    public ClassificationImpl(Object id) {
         this.id = id;
     }
 
@@ -41,8 +38,7 @@ public class ClassificationImpl implements Classification
      * Contains the unique identifier for the {@link Classification}.
      */
     @Override
-    public Object getID()
-    {
+    public Object getID() {
         return id;
     }
 
@@ -50,16 +46,14 @@ public class ClassificationImpl implements Classification
      * This is the {@link File} that this {@link Classification} refers to.
      */
     @Override
-    public File getFile()
-    {
+    public File getFile() {
         return file;
     }
 
     /**
      * This is the {@link File} that this {@link Classification} refers to.
      */
-    public void setFile(File file)
-    {
+    public void setFile(File file) {
         this.file = file;
     }
 
@@ -67,16 +61,14 @@ public class ClassificationImpl implements Classification
      * Contains a description of this {@link Classification}. This is similar in concept to a title, and should be one sentence or less.
      */
     @Override
-    public String getClassification()
-    {
+    public String getClassification() {
         return classification;
     }
 
     /**
      * Contains a description of this {@link Classification}. This is similar in concept to a title, and should be one sentence or less.
      */
-    public void setClassification(String classification)
-    {
+    public void setClassification(String classification) {
         this.classification = classification;
     }
 
@@ -84,16 +76,14 @@ public class ClassificationImpl implements Classification
      * Contains a description of the file and any migration steps that may be necessary.
      */
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     /**
      * Contains a description of the file and any migration steps that may be necessary.
      */
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -103,16 +93,14 @@ public class ClassificationImpl implements Classification
     @Override
     @XmlElementWrapper(name = "links")
     @XmlElement(name = "link", type = LinkImpl.class)
-    public List<Link> getLinks()
-    {
+    public List<Link> getLinks() {
         return links;
     }
 
     /**
      * This contains a list of {@link Link}s for further information about the problem and its solution.
      */
-    public void setLinks(List<Link> links)
-    {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
@@ -120,16 +108,14 @@ public class ClassificationImpl implements Classification
      * This contains the effort level as an integer (Story Points). This is based on the Scrum "modified-Fibonacci" system of effort estimation.
      */
     @Override
-    public int getEffort()
-    {
+    public int getEffort() {
         return effort;
     }
 
     /**
      * This contains the effort level as an integer (Story Points). This is based on the Scrum "modified-Fibonacci" system of effort estimation.
      */
-    public void setEffort(int effort)
-    {
+    public void setEffort(int effort) {
         this.effort = effort;
     }
 
@@ -138,16 +124,14 @@ public class ClassificationImpl implements Classification
      */
     @Override
     @XmlElement(name = "issue-category", type = IssueCategoryImpl.class)
-    public IssueCategory getIssueCategory()
-    {
+    public IssueCategory getIssueCategory() {
         return issueCategory;
     }
 
     /**
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
-    public void setIssueCategory(IssueCategory issueCategory)
-    {
+    public void setIssueCategory(IssueCategory issueCategory) {
         this.issueCategory = issueCategory;
     }
 
@@ -156,16 +140,14 @@ public class ClassificationImpl implements Classification
      */
     @Override
     @XmlElement(name = "rule-id")
-    public String getRuleID()
-    {
+    public String getRuleID() {
         return ruleID;
     }
 
     /**
      * This contains the id of the rule that produced this {@link Classification}.
      */
-    public void setRuleID(String ruleID)
-    {
+    public void setRuleID(String ruleID) {
         this.ruleID = ruleID;
     }
 
@@ -177,8 +159,7 @@ public class ClassificationImpl implements Classification
     @Override
     @XmlElementWrapper(name = "quickfixes")
     @XmlElement(name = "quickfix", type = QuickfixImpl.class)
-    public List<Quickfix> getQuickfixes()
-    {
+    public List<Quickfix> getQuickfixes() {
         return quickfixes;
     }
 
@@ -187,8 +168,7 @@ public class ClassificationImpl implements Classification
      *
      * @param quickfixes the quickfixes to set
      */
-    public void setQuickfixes(List<Quickfix> quickfixes)
-    {
+    public void setQuickfixes(List<Quickfix> quickfixes) {
         this.quickfixes = quickfixes;
     }
 }

@@ -36,89 +36,78 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(Arquillian.class)
-public class XmlFileDtdNamespaceTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(TestXMLNestedXmlFileRuleProvider.class).addClass(WindupTestUtilMethods.class);
-    }
+public class XmlFileDtdNamespaceTest {
 
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
-
     @Inject
     private TestXMLNestedXmlFileRuleProvider provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(TestXMLNestedXmlFileRuleProvider.class).addClass(WindupTestUtilMethods.class);
+    }
+
     @Test
-    public void testRuleProviders() throws Exception
-    {
+    public void testRuleProviders() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             initData(context);
             List<RuleProvider> providers = new ArrayList<>();
             providers.add(new DiscoverXmlFilesRuleProvider());
             providers.add(provider);
             WindupTestUtilMethods.runOnlyRuleProviders(providers, context);
             Assert.assertEquals(1, provider.counterStatic);
-            Assert.assertEquals(1,provider.counterInner);
+            Assert.assertEquals(1, provider.counterInner);
         }
     }
 
-    public void initData(GraphContext context)
-    {
-        XmlFileModel xmlFileWithDtdNamespace =context.getFramed().addFramedVertex(XmlFileModel.class);
+    public void initData(GraphContext context) {
+        XmlFileModel xmlFileWithDtdNamespace = context.getFramed().addFramedVertex(XmlFileModel.class);
         xmlFileWithDtdNamespace.setFilePath("src/test/resources/dtd-namespace-test.xml");
     }
 
     @Singleton
-    public static class TestXMLNestedXmlFileRuleProvider extends AbstractRuleProvider
-    {
-        public  int counterStatic = 0;
-        public  int counterInner = 0;
-        public TestXMLNestedXmlFileRuleProvider()
-        {
+    public static class TestXMLNestedXmlFileRuleProvider extends AbstractRuleProvider {
+        public int counterStatic = 0;
+        public int counterInner = 0;
+
+        public TestXMLNestedXmlFileRuleProvider() {
             super(MetadataBuilder.forProvider(TestXMLNestedXmlFileRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.withDTDSystemId("http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"))
-                        .perform(new AbstractIterationOperation<WindupVertexFrame>() {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-                            {
-                                counterStatic++;
-                            }
-                        })
-                        .addRule()
-                        .when(XmlFile.matchesXpath("//hibernate-mapping").andDTDSystemId("http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"))
-                        .perform(new AbstractIterationOperation<WindupVertexFrame>() {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-                            {
-                                counterInner++;
-                            }
-                        });
+                    .begin()
+                    .addRule()
+                    .when(XmlFile.withDTDSystemId("http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"))
+                    .perform(new AbstractIterationOperation<WindupVertexFrame>() {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
+                            counterStatic++;
+                        }
+                    })
+                    .addRule()
+                    .when(XmlFile.matchesXpath("//hibernate-mapping").andDTDSystemId("http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"))
+                    .perform(new AbstractIterationOperation<WindupVertexFrame>() {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
+                            counterInner++;
+                        }
+                    });
         }
     }
 

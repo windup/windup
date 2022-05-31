@@ -1,5 +1,4 @@
 import javax.ejb.EntityBean;
-import java.rmi.*;
 
 public class EJB2EntityNotInEJBXML implements EntityBean {
 

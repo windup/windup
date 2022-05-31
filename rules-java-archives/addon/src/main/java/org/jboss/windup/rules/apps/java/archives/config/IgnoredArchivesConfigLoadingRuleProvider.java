@@ -1,8 +1,5 @@
 package org.jboss.windup.rules.apps.java.archives.config;
 
-import java.io.File;
-import java.util.logging.Logger;
-
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,6 +17,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.File;
+import java.util.logging.Logger;
+
 /**
  * Loads configuration for {@link SkipArchivesRuleProvider}.
  *
@@ -27,26 +27,19 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RuleMetadata(phase = InitializationPhase.class)
-public class IgnoredArchivesConfigLoadingRuleProvider extends AbstractRuleProvider
-{
+public class IgnoredArchivesConfigLoadingRuleProvider extends AbstractRuleProvider {
     private static final Logger log = Logging.get(IgnoredArchivesConfigLoadingRuleProvider.class);
 
     @Override
-    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext) {
         ConfigurationBuilder config = ConfigurationBuilder.begin();
-        config.addRule().perform(new GraphOperation()
-        {
-            public void perform(GraphRewrite event, EvaluationContext evCtx)
-            {
+        config.addRule().perform(new GraphOperation() {
+            public void perform(GraphRewrite event, EvaluationContext evCtx) {
                 Visitor<File> visitor = (file) -> {
-                    try
-                    {
+                    try {
                         log.info("Loading archive identification metadata from [" + file.getAbsolutePath() + "]");
                         SkippedArchives.load(file);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         throw new WindupException("Failed to load metadata from file [" + file + "]", e);
                     }
                 };

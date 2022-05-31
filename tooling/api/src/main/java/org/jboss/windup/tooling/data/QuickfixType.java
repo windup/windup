@@ -32,14 +32,12 @@ public enum QuickfixType {
 
     private String description;
 
-    private QuickfixType(String description)
-    {
+    private QuickfixType(String description) {
         this.description = description;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return description;
     }
 

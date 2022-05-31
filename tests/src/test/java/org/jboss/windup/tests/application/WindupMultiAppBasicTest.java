@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -25,35 +19,38 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class WindupMultiAppBasicTest extends WindupArchitectureTest
-{
+public class WindupMultiAppBasicTest extends WindupArchitectureTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupMedium() throws Exception
-    {
+    public void testRunWindupMedium() throws Exception {
         final String path1 = "../test-files/Windup1x-javaee-example.war";
         final String path2 = "../test-files/maven-info-missing.war";
         final String path3 = "../test-files/badly_named_app";
@@ -62,8 +59,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         paths.add(path2);
         paths.add(path3);
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, paths, false);
             checkEJBDescriptors(context);
             checkWebXmls(context);
@@ -72,8 +68,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
 
     }
 
-    private void validateApplicationList(GraphContext context)
-    {
+    private void validateApplicationList(GraphContext context) {
         Service<ReportModel> service = context.service(ReportModel.class);
         ReportModel report = service.getUniqueByProperty(ReportModel.TEMPLATE_PATH, CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
         Assert.assertNotNull(report);
@@ -88,8 +83,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         validateTagFiltering(util);
     }
 
-    private void validateTagFiltering(TestApplicationListUtil util)
-    {
+    private void validateTagFiltering(TestApplicationListUtil util) {
         List<String> applicationNames = util.getApplicationNames().stream()
                 .filter(util::isDisplayed)
                 .collect(Collectors.toList());
@@ -104,8 +98,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         Assert.assertEquals(2, applicationNames.size());
     }
 
-    private void validateSorting(TestApplicationListUtil util)
-    {
+    private void validateSorting(TestApplicationListUtil util) {
         List<String> presortedList = util.getApplicationNames();
 
         // Check that they are sorted by name
@@ -138,29 +131,24 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(2));
     }
 
-    private void checkEJBDescriptors(GraphContext context)
-    {
-        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
-        for (EjbDeploymentDescriptorModel ejbDeploymentDescriptorModel : ejbDescriptors.findAll())
-        {
+    private void checkEJBDescriptors(GraphContext context) {
+        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
+        for (EjbDeploymentDescriptorModel ejbDeploymentDescriptorModel : ejbDescriptors.findAll()) {
             Assert.assertTrue(1 >= getIterableSize(ejbDeploymentDescriptorModel.getLinksToTransformedFiles()));
         }
 
     }
 
-    private void checkWebXmls(GraphContext context)
-    {
-        GraphService<WebXmlModel> webXmls = new GraphService<>(context,WebXmlModel.class);
-        for (WebXmlModel webXml : webXmls.findAll())
-        {
+    private void checkWebXmls(GraphContext context) {
+        GraphService<WebXmlModel> webXmls = new GraphService<>(context, WebXmlModel.class);
+        for (WebXmlModel webXml : webXmls.findAll()) {
             Assert.assertTrue(1 >= getIterableSize(webXml.getLinksToTransformedFiles()));
         }
     }
 
     private int getIterableSize(Iterable<?> iterable) {
         int itemCount = 0;
-        for (Object o : iterable)
-        {
+        for (Object o : iterable) {
             itemCount++;
         }
         return itemCount;

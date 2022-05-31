@@ -1,16 +1,5 @@
 package org.jboss.windup.rules.xml;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -48,65 +37,66 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 /**
  * The scenarios in this file cover multiple parameterization scenarios involving a only xml files.
  */
 @RunWith(Arquillian.class)
-public class XmlFileParameterizedTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
+public class XmlFileParameterizedTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
-
     @Inject
     private TestParameterizedXmlRuleProvider provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+    }
+
     @Test
-    public void testXmlParams() throws IOException
-    {
+    public void testXmlParams() throws IOException {
         _doTestXmlParams(new DefaultResultValidator("Found value:"));
     }
 
     @Test
-    public void testXmlParamsDangling() throws IOException
-    {
+    public void testXmlParamsDangling() throws IOException {
         _doTestXmlParams(new DefaultResultValidator("Found dangling value:"));
     }
 
     @Test
-    public void testXmlParamsMultiCondition() throws IOException
-    {
+    public void testXmlParamsMultiCondition() throws IOException {
         _doTestXmlParams(new DefaultResultValidator("Found dual value:"));
     }
 
     @Test
-    public void testFilenameMatching() throws IOException
-    {
+    public void testFilenameMatching() throws IOException {
         _doTestXmlParams(new ResultValidator() {
             @Override
             public void validate(GraphContext context) {
                 boolean foundFile1 = false;
                 boolean foundFile2 = false;
 
-                for (String xmlFilename : provider.getFilenameMatchFilenames())
-                {
+                for (String xmlFilename : provider.getFilenameMatchFilenames()) {
                     if (xmlFilename.equals("file-suffix1.xml"))
                         foundFile1 = true;
                     else if (xmlFilename.equals("file-suffix2.xml"))
@@ -119,23 +109,128 @@ public class XmlFileParameterizedTest
         });
     }
 
-    private interface ResultValidator
-    {
+    public void _doTestXmlParams(ResultValidator validator) throws IOException {
+        try (GraphContext context = factory.create(true)) {
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
+            pm.setName("Main Project");
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
+            inputPath.setFilePath("src/test/resources/parameterizationtests");
+
+            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
+                    + UUID.randomUUID().toString());
+            FileUtils.deleteDirectory(outputPath.toFile());
+            Files.createDirectories(outputPath);
+
+            pm.addFileModel(inputPath);
+            pm.setRootFileModel(inputPath);
+
+            WindupConfiguration windupConfiguration = new WindupConfiguration()
+                    .setRuleProviderFilter(new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                    ))
+                    .setGraphContext(context);
+            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.setOutputDirectory(outputPath);
+            processor.execute(windupConfiguration);
+
+            validator.validate(context);
+        }
+    }
+
+    private interface ResultValidator {
         void validate(GraphContext context);
     }
 
-    private class DefaultResultValidator implements ResultValidator
-    {
+    @Singleton
+    public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider {
+        private final Set<FileLocationModel> xmlFileLocations = new HashSet<>();
+        private final Set<String> filenameMatchFilenames = new HashSet<>();
+
+        public TestParameterizedXmlRuleProvider() {
+            super(MetadataBuilder.forProvider(TestParameterizedXmlRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
+        }
+
+        // @formatter:off
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            // Using three separate instances as there is some mutable state in the implementations of these classes
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList1 = new AddTypeRefToListOperation();
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList2 = new AddTypeRefToListOperation();
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList3 = new AddTypeRefToListOperation();
+            AbstractIterationOperation<XmlFileModel> addModelToList = new AddFileNameToListOperation();
+
+            return ConfigurationBuilder
+                    .begin()
+                    .addRule()
+                    .when(XmlFile.matchesXpath(
+                                    "/root" +
+                                            "/row[windup:matches(index/text(), '{index}')]" +
+                                            "/@indexAtt[windup:matches(self::node(), '{index}')]"
+                            )
+                    )
+                    .perform(Hint.withText("Found value: {index}").withEffort(2)
+                            .and(addTypeRefToList1))
+
+
+                    .addRule()
+                    .when(
+                            XmlFile.matchesXpath(
+                                    "//row[windup:matches(index/text(), '{index}')]" +
+                                            "//@indexAtt[windup:matches(self::node(), '{index}')]"
+                            )
+                    )
+                    .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
+                            .and(addTypeRefToList2))
+
+                    .addRule()
+                    .when(
+                            XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]").as("1")
+                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]").as("2"))
+                    )
+                    .perform(
+                            Iteration.over("2").perform(
+                                    Hint.withText("Found dual value: {index}").withEffort(2).and(addTypeRefToList3)
+                            ).endIteration()
+                    )
+                    .addRule()
+                    .when(XmlFile.matchesXpath(null).inFile("file-{suffix}.xml"))
+                    .perform(addModelToList)
+                    .where("suffix").matches("(suffix1|suffix2)");
+        }
+
+        public Set<FileLocationModel> getXmlFileLocationMatches() {
+            return xmlFileLocations;
+        }
+
+        public Set<String> getFilenameMatchFilenames() {
+            return filenameMatchFilenames;
+        }
+        // @formatter:on
+
+        private class AddTypeRefToListOperation extends AbstractIterationOperation<FileLocationModel> {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
+                xmlFileLocations.add(payload);
+            }
+        }
+
+        private class AddFileNameToListOperation extends AbstractIterationOperation<XmlFileModel> {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
+                filenameMatchFilenames.add(payload.getFileName());
+            }
+        }
+    }
+
+    private class DefaultResultValidator implements ResultValidator {
         private final String prefix;
 
-        private DefaultResultValidator(String prefix)
-        {
+        private DefaultResultValidator(String prefix) {
             this.prefix = prefix;
         }
 
         @Override
-        public void validate(GraphContext context)
-        {
+        public void validate(GraphContext context) {
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             boolean found1 = false;
             boolean found2 = false;
@@ -148,52 +243,30 @@ public class XmlFileParameterizedTest
             boolean found8 = false;
             boolean found9 = false;
             boolean found10 = false;
-            for (InlineHintModel model : hintService.findAll())
-            {
+            for (InlineHintModel model : hintService.findAll()) {
                 String text = model.getHint();
                 Assert.assertNotNull(text);
-                if (text.equals(prefix + " 1"))
-                {
+                if (text.equals(prefix + " 1")) {
                     found1 = true;
-                }
-                else if (text.equals(prefix + " 2"))
-                {
+                } else if (text.equals(prefix + " 2")) {
                     found2 = true;
-                }
-                else if (text.equals(prefix + " 3"))
-                {
+                } else if (text.equals(prefix + " 3")) {
                     found3 = true;
-                }
-                else if (text.equals(prefix + " 4"))
-                {
+                } else if (text.equals(prefix + " 4")) {
                     found4 = true;
-                }
-                else if (text.equals(prefix + " wrongvalue"))
-                {
+                } else if (text.equals(prefix + " wrongvalue")) {
                     foundWrongValue = true;
-                }
-                else if (text.equals(prefix + " 5"))
-                {
+                } else if (text.equals(prefix + " 5")) {
                     found5 = true;
-                }
-                else if (text.equals(prefix + " 6"))
-                {
+                } else if (text.equals(prefix + " 6")) {
                     found6 = true;
-                }
-                else if (text.equals(prefix + " 7"))
-                {
+                } else if (text.equals(prefix + " 7")) {
                     found7 = true;
-                }
-                else if (text.equals(prefix + " 8"))
-                {
+                } else if (text.equals(prefix + " 8")) {
                     found8 = true;
-                }
-                else if (text.equals(prefix + " 9"))
-                {
+                } else if (text.equals(prefix + " 9")) {
                     found9 = true;
-                }
-                else if (text.equals(prefix + " 10"))
-                {
+                } else if (text.equals(prefix + " 10")) {
                     found10 = true;
                 }
                 System.out.println("Model: " + model.getHint() + ", full: " + model);
@@ -209,126 +282,6 @@ public class XmlFileParameterizedTest
             Assert.assertFalse(found8);
             Assert.assertTrue(found9);
             Assert.assertTrue(found10);
-        }
-    }
-
-    public void _doTestXmlParams(ResultValidator validator) throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
-            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
-            pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
-            inputPath.setFilePath("src/test/resources/parameterizationtests");
-
-            Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
-
-            pm.addFileModel(inputPath);
-            pm.setRootFileModel(inputPath);
-
-            WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(new NotPredicate(
-                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                                    ))
-                        .setGraphContext(context);
-            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
-            windupConfiguration.setOutputDirectory(outputPath);
-            processor.execute(windupConfiguration);
-
-            validator.validate(context);
-        }
-    }
-
-    @Singleton
-    public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider
-    {
-        private final Set<FileLocationModel> xmlFileLocations = new HashSet<>();
-        private final Set<String> filenameMatchFilenames = new HashSet<>();
-
-        public TestParameterizedXmlRuleProvider()
-        {
-            super(MetadataBuilder.forProvider(TestParameterizedXmlRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
-        }
-
-        private class AddTypeRefToListOperation extends AbstractIterationOperation<FileLocationModel>
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-            {
-                xmlFileLocations.add(payload);
-            }
-        }
-
-        private class AddFileNameToListOperation extends AbstractIterationOperation<XmlFileModel>
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-            {
-                filenameMatchFilenames.add(payload.getFileName());
-            }
-        }
-
-        // @formatter:off
-        @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            // Using three separate instances as there is some mutable state in the implementations of these classes
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList1 = new AddTypeRefToListOperation();
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList2 = new AddTypeRefToListOperation();
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList3 = new AddTypeRefToListOperation();
-            AbstractIterationOperation<XmlFileModel> addModelToList = new AddFileNameToListOperation();
-
-            return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath(
-                                        "/root" +
-                                        "/row[windup:matches(index/text(), '{index}')]" +
-                                        "/@indexAtt[windup:matches(self::node(), '{index}')]"
-                                    )
-                        )
-                        .perform(Hint.withText("Found value: {index}").withEffort(2)
-                                     .and(addTypeRefToList1))
-
-
-                        .addRule()
-                        .when(
-                                    XmlFile.matchesXpath(
-                                        "//row[windup:matches(index/text(), '{index}')]" +
-                                        "//@indexAtt[windup:matches(self::node(), '{index}')]"
-                                    )
-                        )
-                        .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
-                                     .and(addTypeRefToList2))
-
-                        .addRule()
-                        .when(
-                                    XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]").as("1")
-                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]").as("2"))
-                        )
-                        .perform(
-                                Iteration.over("2").perform(
-                                    Hint.withText("Found dual value: {index}").withEffort(2).and(addTypeRefToList3)
-                                ).endIteration()
-                        )
-                        .addRule()
-                        .when(XmlFile.matchesXpath(null).inFile("file-{suffix}.xml"))
-                        .perform(addModelToList)
-                        .where("suffix").matches("(suffix1|suffix2)");
-        }
-        // @formatter:on
-
-        public Set<FileLocationModel> getXmlFileLocationMatches()
-        {
-            return xmlFileLocations;
-        }
-
-        public Set<String> getFilenameMatchFilenames()
-        {
-            return filenameMatchFilenames;
         }
     }
 

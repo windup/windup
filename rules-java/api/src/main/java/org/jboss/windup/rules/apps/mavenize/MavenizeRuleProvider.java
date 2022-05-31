@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import java.util.Map;
-import java.util.logging.Logger;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -30,6 +28,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 
 /**
  * Creates a stub of Maven project structure, including pom.xml's and the proper directory structure and dependencies,
@@ -38,72 +39,101 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
 @RuleMetadata(after = {
-    ArchiveMetadataExtractionPhase.class,
-    ArchiveIdentificationConfigLoadingRuleProvider.class,
-    ArchiveExtractionPhase.class,
-    DiscoverMavenHierarchyRuleProvider.class,
-    DiscoverProjectStructurePhase.class
+        ArchiveMetadataExtractionPhase.class,
+        ArchiveIdentificationConfigLoadingRuleProvider.class,
+        ArchiveExtractionPhase.class,
+        DiscoverMavenHierarchyRuleProvider.class,
+        DiscoverProjectStructurePhase.class
 }, phase = DependentPhase.class)
-public class MavenizeRuleProvider extends AbstractRuleProvider
-{
-    private static final Logger LOG = Logging.get(MavenizeRuleProvider.class);
+public class MavenizeRuleProvider extends AbstractRuleProvider {
     public static final MavenCoord JBOSS_PARENT = new MavenCoord("org.jboss", "jboss-parent", "20");
     public static final MavenCoord JBOSS_BOM_JAVAEE6_WITH_ALL = new MavenCoord("org.jboss.bom", "jboss-javaee-6.0-with-all", "1.0.7.Final");
     public static final MavenCoord JBOSS_BOM_JAVAEE7_WITH_ALL = new MavenCoord("org.jboss.bom", "wildfly-javaee7-with-tools", "10.0.1.Final");
+    private static final Logger LOG = Logging.get(MavenizeRuleProvider.class);
 
-    // @formatter:off
-    @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        ConditionBuilder applicationProjectModels = Query.fromType(WindupConfigurationModel.class);
-
-        return ConfigurationBuilder.begin()
-        // Create the BOM frame
-        .addRule()
-        .perform(new GraphOperation() {
-            public void perform(GraphRewrite event, EvaluationContext context) {
-                if (!isPerformMavenization(event.getGraphContext()))
-                    return;
-
-                GlobalBomModel bom = event.getGraphContext().getFramed().addFramedVertex(GlobalBomModel.class);
-                ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addFramedVertex(ArchiveCoordinateModel.class);
-                copyTo(JBOSS_PARENT, jbossParent);
-                bom.setParent(jbossParent);
-            }
-        })
-        .withId("Mavenize-BOM-data-collection")
-
-        // For each IdentifiedArchive, add it to the global BOM.
-        .addRule()
-        .when(Query.fromType(IdentifiedArchiveModel.class))
-        .perform(new MavenizePutNewerVersionToGlobalBomOperation())
-        .withId("Mavenize-BOM-file-creation")
-
-        // For each application given to Windup as input, mavenize it.
-        .addRule()
-        .when(applicationProjectModels, SourceMode.isDisabled())
-        .perform(new MavenizeApplicationOperation())
-        .withId("Mavenize-projects-mavenization")
-        ;
+    private static void copyTo(MavenCoord from, ArchiveCoordinateModel to) {
+        to.setArtifactId(from.getArtifactId());
+        to.setGroupId(from.getGroupId());
+        to.setVersion(from.getVersion());
+        to.setClassifier(from.getClassifier());
+        to.setPackaging(from.getPackaging());
     }
     // @formatter:on
 
+    /**
+     * @return the value of the option with given name. null if the value was null.
+     * @throws IllegalStateException if the value is not Boolean.
+     */
+    public static Boolean getBooleanOption(GraphContext graphContext, String name) {
+        Map<String, Object> options = graphContext.getOptionMap();
+        final Object value = options.get(name);
+        if (value != null && !(value instanceof Boolean))
+            throw new IllegalStateException("Option value expected to be Boolean, but was: " + value.getClass());
+        return (Boolean) options.get(name);
+    }
+
+    /**
+     * @return the boolean value of the option with given name. Given default_ value if the value was null.
+     * @throws IllegalStateException if the value is not Boolean.
+     */
+    public static boolean getBooleanOption(GraphContext graphContext, String name, boolean default_) {
+        Boolean val = getBooleanOption(graphContext, name);
+        if (val == null)
+            return default_;
+        return val;
+    }
+
+    private static boolean isPerformMavenization(GraphContext graphContext) {
+        return getBooleanOption(graphContext, MavenizeOption.NAME, false);
+    }
+
+    // @formatter:off
+    @Override
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        ConditionBuilder applicationProjectModels = Query.fromType(WindupConfigurationModel.class);
+
+        return ConfigurationBuilder.begin()
+                // Create the BOM frame
+                .addRule()
+                .perform(new GraphOperation() {
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        if (!isPerformMavenization(event.getGraphContext()))
+                            return;
+
+                        GlobalBomModel bom = event.getGraphContext().getFramed().addFramedVertex(GlobalBomModel.class);
+                        ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addFramedVertex(ArchiveCoordinateModel.class);
+                        copyTo(JBOSS_PARENT, jbossParent);
+                        bom.setParent(jbossParent);
+                    }
+                })
+                .withId("Mavenize-BOM-data-collection")
+
+                // For each IdentifiedArchive, add it to the global BOM.
+                .addRule()
+                .when(Query.fromType(IdentifiedArchiveModel.class))
+                .perform(new MavenizePutNewerVersionToGlobalBomOperation())
+                .withId("Mavenize-BOM-file-creation")
+
+                // For each application given to Windup as input, mavenize it.
+                .addRule()
+                .when(applicationProjectModels, SourceMode.isDisabled())
+                .perform(new MavenizeApplicationOperation())
+                .withId("Mavenize-projects-mavenization")
+                ;
+    }
 
     /**
      * This operation puts the given IdentifiedArchiveModel to the global BOM frame.
      * If there's already one of such G:A:P, then the newer version is used.
      * Eventual version collisions are overridden in pom.xml's.
      */
-    class MavenizePutNewerVersionToGlobalBomOperation extends AbstractIterationOperation<IdentifiedArchiveModel>
-    {
+    class MavenizePutNewerVersionToGlobalBomOperation extends AbstractIterationOperation<IdentifiedArchiveModel> {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, IdentifiedArchiveModel archive)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context, IdentifiedArchiveModel archive) {
             if (!isPerformMavenization(event.getGraphContext()))
                 return;
 
-            if (archive.getCoordinate() == null)
-            {
+            if (archive.getCoordinate() == null) {
                 LOG.info("Warning: archive.getCoordinate() is null: " + archive.toPrettyString());
                 return;
             }
@@ -122,20 +152,16 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
      * Create a stub of Maven project structure, including pom.xml's and the proper directory structure and dependencies,
      * based on the project structure determined by prior Windup rules (nested deployments) and the libraries included in them.
      */
-    private class MavenizeApplicationOperation extends AbstractIterationOperation<WindupConfigurationModel>
-    {
-        public MavenizeApplicationOperation()
-        {
+    private class MavenizeApplicationOperation extends AbstractIterationOperation<WindupConfigurationModel> {
+        public MavenizeApplicationOperation() {
         }
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext evalContext, WindupConfigurationModel config)
-        {
+        public void perform(GraphRewrite event, EvaluationContext evalContext, WindupConfigurationModel config) {
             if (!isPerformMavenization(event.getGraphContext()))
                 return;
 
-            for (FileModel inputPath : config.getInputPaths())
-            {
+            for (FileModel inputPath : config.getInputPaths()) {
                 ProjectModel projectModel = inputPath.getProjectModel();
                 if (projectModel == null)
                     throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
@@ -143,45 +169,5 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
                 new MavenizationService(event.getGraphContext()).mavenizeApp(projectModel);
             }
         }
-    }
-
-
-    private static void copyTo(MavenCoord from, ArchiveCoordinateModel to)
-    {
-        to.setArtifactId(from.getArtifactId());
-        to.setGroupId(from.getGroupId());
-        to.setVersion(from.getVersion());
-        to.setClassifier(from.getClassifier());
-        to.setPackaging(from.getPackaging());
-    }
-
-    /**
-     * @return the value of the option with given name. null if the value was null.
-     * @throws IllegalStateException if the value is not Boolean.
-     */
-    public static Boolean getBooleanOption(GraphContext graphContext, String name)
-    {
-        Map<String, Object> options = graphContext.getOptionMap();
-        final Object value = options.get(name);
-        if ( value != null && !(value instanceof Boolean))
-            throw new IllegalStateException("Option value expected to be Boolean, but was: " + value.getClass());
-        return (Boolean) options.get(name);
-    }
-
-    /**
-     * @return the boolean value of the option with given name. Given default_ value if the value was null.
-     * @throws IllegalStateException if the value is not Boolean.
-     */
-    public static boolean getBooleanOption(GraphContext graphContext, String name, boolean default_)
-    {
-        Boolean val = getBooleanOption(graphContext, name);
-        if (val == null)
-            return default_;
-        return val;
-    }
-
-    private static boolean isPerformMavenization(GraphContext graphContext)
-    {
-        return getBooleanOption(graphContext, MavenizeOption.NAME, false);
     }
 }

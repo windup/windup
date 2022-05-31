@@ -1,44 +1,39 @@
 package org.jboss.windup.graph.model.comparator;
 
+import org.jboss.windup.util.ExecutionStatistics;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 
-import org.jboss.windup.util.ExecutionStatistics;
-
 /**
  * Sorts file paths according to their alphabetical order.
- * 
+ * <p>
  * For example:
  * <ul>
  * <li>/foo/bar/baz.class</li>
  * <li>/foo/car/caz.class</li>
  * <li>/foo/hat.class</li>
  * </ul>
- * 
+ * <p>
  * Would become:
  * <ul>
  * <li>/foo/hat.class</li>
  * <li>/foo/bar/baz.class</li>
  * <li>/foo/car/caz.class</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class FilePathComparator implements Comparator<String>
-{
+public class FilePathComparator implements Comparator<String> {
 
     @Override
-    public int compare(String o1, String o2)
-    {
+    public int compare(String o1, String o2) {
         ExecutionStatistics.get().begin("FilePathComparator");
-        try
-        {
+        try {
             // if they are exactly the same, just short circuit everything
             // and return 0
-            if (o1.equals(o2))
-            {
+            if (o1.equals(o2)) {
                 return 0;
             }
 
@@ -46,22 +41,17 @@ public class FilePathComparator implements Comparator<String>
             Path path1 = Paths.get(o1);
             Path path2 = Paths.get(o2);
 
-            if (path1.getNameCount() != path2.getNameCount())
-            {
+            if (path1.getNameCount() != path2.getNameCount()) {
                 // if there are differing number of path elements, compare based on number of segments
                 return path1.getNameCount() - path2.getNameCount();
-            }
-            else
-            {
+            } else {
                 // otherwise, compare each segment
-                for (int i = 0; i < path1.getNameCount(); i++)
-                {
+                for (int i = 0; i < path1.getNameCount(); i++) {
                     String o1Segment = path1.getName(i).toString();
                     String o2Segment = path2.getName(i).toString();
 
                     // if the segments are different, return the results of this comparison
-                    if (!o1Segment.equals(o2Segment))
-                    {
+                    if (!o1Segment.equals(o2Segment)) {
                         return o1Segment.compareTo(o2Segment);
                     }
                 }
@@ -69,9 +59,7 @@ public class FilePathComparator implements Comparator<String>
                 // no segments differed, so just return 0 (same path)
                 return 0;
             }
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end("FilePathComparator");
         }
     }

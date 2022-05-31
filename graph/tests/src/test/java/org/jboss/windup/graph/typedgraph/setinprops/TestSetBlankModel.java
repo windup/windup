@@ -1,14 +1,13 @@
 package org.jboss.windup.graph.typedgraph.setinprops;
 
-import java.util.Set;
-
 import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import java.util.Set;
+
 @TypeValue("SetInPropsBlankModel")
-public interface TestSetBlankModel extends WindupVertexFrame
-{
+public interface TestSetBlankModel extends WindupVertexFrame {
     @SetInProperties(propertyPrefix = "")
     Set<String> getNaturalSet();
 

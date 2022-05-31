@@ -1,18 +1,16 @@
 package org.jboss.windup.tooling.quickfix;
 
-import java.rmi.RemoteException;
-
-import javax.inject.Inject;
-
 import org.jboss.windup.reporting.quickfix.QuickfixTransformation;
 import org.jboss.windup.reporting.quickfix.QuickfixTransformationRegistry;
 import org.jboss.windup.util.exception.WindupException;
 
+import javax.inject.Inject;
+import java.rmi.RemoteException;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class QuickfixServiceImpl implements QuickfixService
-{
+public class QuickfixServiceImpl implements QuickfixService {
     @Inject
     private QuickfixTransformationRegistry transformationRegistry;
 

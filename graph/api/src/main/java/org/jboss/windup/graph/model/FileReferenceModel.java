@@ -1,19 +1,16 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * Isolated file reference interface from the other models.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @TypeValue(FileReferenceModel.TYPE)
-public interface FileReferenceModel extends WindupVertexFrame
-{
+public interface FileReferenceModel extends WindupVertexFrame {
     String TYPE = "FileReferenceModel";
     String FILE_MODEL = "file";
 

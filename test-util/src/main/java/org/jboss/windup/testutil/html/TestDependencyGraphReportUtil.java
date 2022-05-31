@@ -3,10 +3,10 @@
  */
 package org.jboss.windup.testutil.html;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 /**
  * Contains methods for testing the Dependency Graph report.
@@ -14,22 +14,18 @@ import org.openqa.selenium.WebElement;
  * @author mrizzi
  *
  */
-public class TestDependencyGraphReportUtil extends TestChromeDriverReportUtil
-{
-    public int getNumberOfArchivesInTheGraph()
-    {
+public class TestDependencyGraphReportUtil extends TestChromeDriverReportUtil {
+    public int getNumberOfArchivesInTheGraph() {
         List<WebElement> dependencies = getDriver().findElements(By.tagName("g"));
-        return (dependencies != null) ?  dependencies.size() : 0;
+        return (dependencies != null) ? dependencies.size() : 0;
     }
 
-    public long getNumberOfArchivesInTheGraphByName(String withName)
-    {
-        return  getDriver().findElements(By.tagName("title")).stream().filter(webElement -> withName.equals(webElement.getText())).count();
+    public long getNumberOfArchivesInTheGraphByName(String withName) {
+        return getDriver().findElements(By.tagName("title")).stream().filter(webElement -> withName.equals(webElement.getText())).count();
     }
 
-    public int getNumberOfRelationsInTheGraph()
-    {
+    public int getNumberOfRelationsInTheGraph() {
         List<WebElement> relations = getDriver().findElements(By.tagName("line"));
-        return (relations != null) ?  relations.size() : 0;
+        return (relations != null) ? relations.size() : 0;
     }
 }

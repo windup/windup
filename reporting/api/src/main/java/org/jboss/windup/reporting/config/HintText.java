@@ -1,19 +1,18 @@
 package org.jboss.windup.reporting.config;
 
-import java.util.Set;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
+import java.util.Set;
+
 /**
  * One of the builder interfaces of Hint operation.
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
- *
  */
-public interface HintText
-{
+public interface HintText {
 
     /**
      * Provide a link describing the topic more precisely

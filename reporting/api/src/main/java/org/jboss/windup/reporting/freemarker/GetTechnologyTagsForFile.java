@@ -1,8 +1,7 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.List;
-
-import com.google.common.collect.Iterables;
+import freemarker.ext.beans.StringModel;
+import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -10,37 +9,32 @@ import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.TemplateModelException;
+import java.util.List;
 
 /**
  * Gets all technology tags for the provided {@link FileModel} (eg, "EJB", "Web XML").
- * 
+ * <p>
  * Example call:
- * 
+ * <p>
  * getTechnologyTagsForFile(FileModel).
- * 
+ * <p>
  * The method will return an Iterable containing {@link TechnologyTagModel} instances.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
-{
+public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod {
     private static final String NAME = "getTechnologyTagsForFile";
     private GraphContext context;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.context = event.getGraphContext();
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (" + FileModel.class.getSimpleName() + ")");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
@@ -51,16 +45,14 @@ public class GetTechnologyTagsForFile implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + FileModel.class.getSimpleName()
-                    + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
-                    + "> containing the technology tags for this file.";
+                + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
+                + "> containing the technology tags for this file.";
     }
 }

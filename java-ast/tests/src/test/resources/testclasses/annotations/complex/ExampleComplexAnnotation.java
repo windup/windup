@@ -1,7 +1,6 @@
 package testclasses.annotations.complex;
 
-public @interface ExampleComplexAnnotation
-{
+public @interface ExampleComplexAnnotation {
     String key();
 
     ExampleNestedAnnotation nestedAnnotation();

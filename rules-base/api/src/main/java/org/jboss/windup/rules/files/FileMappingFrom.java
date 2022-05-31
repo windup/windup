@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FileMappingFrom
-{
+public interface FileMappingFrom {
     /**
      * Specifies the {@link WindupVertexFrame} type to which files matching the specified pattern should be mapped.
      */

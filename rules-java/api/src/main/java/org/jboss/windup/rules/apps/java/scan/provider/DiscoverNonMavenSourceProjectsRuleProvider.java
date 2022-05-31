@@ -22,28 +22,27 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = DiscoverNonMavenArchiveProjectsRuleProvider.class)
-public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new AddProjectInformation());
+                .addRule()
+                .perform(new AddProjectInformation());
     }
 
-    private class AddProjectInformation extends GraphOperation
-    {
+    @Override
+    public String toString() {
+        return "AddProjectInformation";
+    }
+
+    private class AddProjectInformation extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context) {
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            for (FileModel mainFileModel : configuration.getInputPaths())
-            {
+            for (FileModel mainFileModel : configuration.getInputPaths()) {
                 ProjectService projectModelService = new ProjectService(event.getGraphContext());
                 ProjectModel mainProjectModel = mainFileModel.getProjectModel();
-                if (mainProjectModel == null)
-                {
+                if (mainProjectModel == null) {
                     mainProjectModel = projectModelService.create();
                     mainProjectModel.setName(mainFileModel.getFileName());
                     mainProjectModel.setDescription("Source Directory");
@@ -56,21 +55,16 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
             }
         }
 
-        private void addProjectToChildFiles(FileModel fileModel, ProjectModel projectModel)
-        {
-            for (FileModel childFile : fileModel.getFilesInDirectory())
-            {
+        private void addProjectToChildFiles(FileModel fileModel, ProjectModel projectModel) {
+            for (FileModel childFile : fileModel.getFilesInDirectory()) {
                 boolean childHasProject = childFile.getProjectModel() != null;
                 // Also, if it is a duplicate, check the canonical archive
                 if (!childHasProject && childFile instanceof DuplicateArchiveModel)
-                    childHasProject = ((DuplicateArchiveModel)childFile).getCanonicalArchive().getProjectModel() != null;
+                    childHasProject = ((DuplicateArchiveModel) childFile).getCanonicalArchive().getProjectModel() != null;
 
-                if (!childHasProject)
-                {
+                if (!childHasProject) {
                     projectModel.addFileModel(childFile);
-                }
-                else if (childFile.getProjectModel() != null && childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
-                {
+                } else if (childFile.getProjectModel() != null && childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel)) {
                     // if the child has a project, but the project doesn't have a parent, associate it with the root
                     // project
                     childFile.getProjectModel().setParentProject(projectModel);
@@ -79,15 +73,8 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
             }
         }
 
-        public String toString()
-        {
+        public String toString() {
             return "ScanAsNonMavenProject";
         }
-    }
-
-    @Override
-    public String toString()
-    {
-        return "AddProjectInformation";
     }
 }

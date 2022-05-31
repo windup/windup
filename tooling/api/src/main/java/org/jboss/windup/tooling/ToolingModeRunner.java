@@ -1,5 +1,8 @@
 package org.jboss.windup.tooling;
 
+import io.vertx.core.json.JsonObject;
+
+import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
@@ -9,49 +12,39 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.LogRecord;
 
-import javax.inject.Inject;
-
-import io.vertx.core.json.JsonObject;
-
-public class ToolingModeRunner implements IProgressMonitorAdapter 
-{
+public class ToolingModeRunner implements IProgressMonitorAdapter {
     @Inject
     private ExecutionBuilder executionBuilder;
 
     private WindupToolingProgressMonitor progressMonitor;
 
-    public ToolingModeRunner() 
-    {
+    public ToolingModeRunner() {
         this.progressMonitor = new ProgressMonitorAdapter(this);
     }
 
-    public void setProgressMonitor(WindupToolingProgressMonitor monitor) 
-    {
+    public void setProgressMonitor(WindupToolingProgressMonitor monitor) {
         this.progressMonitor = monitor;
     }
 
     public ExecutionResults run(
-        Set<String> input,
-        String output,
-        boolean sourceMode,
-        boolean skipReports,
-        List<String> ignorePatterns,
-        String windupHome,
-        List<String> source,
-        List<String> target,
-        List<File> rulesDir,
-        List<String> packages,
-        List<String> excludePackages,
-        Map<String, Object> options) 
-    {
-        try 
-        {
+            Set<String> input,
+            String output,
+            boolean sourceMode,
+            boolean skipReports,
+            List<String> ignorePatterns,
+            String windupHome,
+            List<String> source,
+            List<String> target,
+            List<File> rulesDir,
+            List<String> packages,
+            List<String> excludePackages,
+            Map<String, Object> options) {
+        try {
             executionBuilder.setInput(input);
             executionBuilder.setOutput(output);
             executionBuilder.setOption(IOptionKeys.SOURCE_MODE, sourceMode);
             executionBuilder.setOption(IOptionKeys.SKIP_REPORTS, skipReports);
-            for (Iterator<String> iter = ignorePatterns.iterator(); iter.hasNext();) 
-            {
+            for (Iterator<String> iter = ignorePatterns.iterator(); iter.hasNext(); ) {
                 executionBuilder.ignore(iter.next());
             }
             executionBuilder.setWindupHome(windupHome);
@@ -69,21 +62,18 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
             results.serializeToXML(Paths.get(output + File.separatorChar + "results.xml"));
             System.out.println(":progress: {\"op\":\"complete\"}");
             return results;
-        } catch (RemoteException e) 
-        {
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private void log(String msg) 
-    {
+    private void log(String msg) {
         System.out.println(":progress: " + msg);
     }
 
     @Override
-    public void beginTask(String task, int totalWork)
-    {
+    public void beginTask(String task, int totalWork) {
         JsonObject load = new JsonObject();
         load.put("op", "beginTask");
         load.put("task", task);
@@ -92,27 +82,23 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
     }
 
     @Override
-    public void done()
-    {
+    public void done() {
         JsonObject load = new JsonObject();
         load.put("op", "done");
         this.log(load.toString());
     }
 
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return false;
     }
 
     @Override
-    public void setCancelled(boolean value)
-    {
+    public void setCancelled(boolean value) {
     }
 
     @Override
-    public void setTaskName(String name)
-    {
+    public void setTaskName(String name) {
         JsonObject load = new JsonObject();
         load.put("op", "setTaskName");
         load.put("value", name);
@@ -120,8 +106,7 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
     }
 
     @Override
-    public void subTask(String name)
-    {
+    public void subTask(String name) {
         JsonObject load = new JsonObject();
         load.put("op", "subTask");
         load.put("value", name);
@@ -129,8 +114,7 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
     }
 
     @Override
-    public void logMessage(LogRecord logRecord)
-    {
+    public void logMessage(LogRecord logRecord) {
         JsonObject load = new JsonObject();
         load.put("op", "logMessage");
         load.put("value", logRecord.getMessage());
@@ -138,8 +122,7 @@ public class ToolingModeRunner implements IProgressMonitorAdapter
     }
 
     @Override
-    public void worked(int work)
-    {
+    public void worked(int work) {
         JsonObject load = new JsonObject();
         load.put("op", "worked");
         load.put("value", work);

@@ -1,14 +1,13 @@
 package org.jboss.windup.reporting.model;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
 
 import java.util.List;
 
@@ -17,8 +16,7 @@ import java.util.List;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel
-{
+public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel {
     String TYPE = "InlineHintModel";
     String TYPE_PREFIX = TYPE + "-";
     String TITLE = TYPE_PREFIX + "title";
@@ -33,19 +31,13 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      * A short descriptive text describing the problem covered by this hint
      */
     @Property(TITLE)
-    void setTitle(String title);
+    String getTitle();
 
     /**
      * A short descriptive text describing the problem covered by this hint
      */
     @Property(TITLE)
-    String getTitle();
-
-    /**
-     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
-     */
-    @Property(ISSUE_DISPLAY_MODE)
-    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
+    void setTitle(String title);
 
     /**
      * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
@@ -54,10 +46,10 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     IssueDisplayMode getIssueDisplayMode();
 
     /**
-     * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
      */
-    @Property(HINT)
-    void setHint(String hint);
+    @Property(ISSUE_DISPLAY_MODE)
+    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
 
     /**
      * Get the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.
@@ -66,16 +58,22 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String getHint();
 
     /**
-     * Sets the original {@link FileLocationModel} associated with this {@link InlineHintModel}
+     * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.
      */
-    @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
-    void setFileLocationReference(FileLocationModel m);
+    @Property(HINT)
+    void setHint(String hint);
 
     /**
      * Gets the original{@link FileLocationModel} associated with this {@link InlineHintModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
     FileLocationModel getFileLocationReference();
+
+    /**
+     * Sets the original {@link FileLocationModel} associated with this {@link InlineHintModel}
+     */
+    @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
+    void setFileLocationReference(FileLocationModel m);
 
     /**
      * Add a related {@link Link} to this {@link InlineHintModel}
@@ -96,14 +94,14 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     List<QuickfixModel> getQuickfixes();
 
     /**
-     * Set the ID of the rule that triggered this particular blacklist entry
-     */
-    @Property(RULE_ID)
-    void setRuleID(String ruleID);
-
-    /**
      * Get the ID of the rule that triggered this particular blacklist entry
      */
     @Property(RULE_ID)
     String getRuleID();
+
+    /**
+     * Set the ID of the rule that triggered this particular blacklist entry
+     */
+    @Property(RULE_ID)
+    void setRuleID(String ruleID);
 }

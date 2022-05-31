@@ -1,11 +1,5 @@
 package org.jboss.windup.config.loader;
 
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.StreamSupport;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -33,27 +27,35 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
-public class RuleLoaderImpl implements RuleLoader
-{
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+public class RuleLoaderImpl implements RuleLoader {
     public static Logger LOG = Logger.getLogger(RuleLoaderImpl.class.getName());
 
     @Inject
     private Imported<RuleProviderLoader> loaders;
 
-    public RuleLoaderImpl()
-    {
+    public RuleLoaderImpl() {
     }
 
     @Override
-    public RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext) {
         return buildRegistry(ruleLoaderContext);
     }
 
-    private RuleProviderRegistry buildRegistry(RuleLoaderContext ruleLoaderContext)
-    {
+    private RuleProviderRegistry buildRegistry(RuleLoaderContext ruleLoaderContext) {
         List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see TODO: careful with this
 
         List<RuleProvider> providers = loadProviders(ruleLoaderContext);
@@ -64,10 +66,8 @@ public class RuleLoaderImpl implements RuleLoader
         Map<RuleKey, Rule> overrideRules = extractOverrideRules(providers);
 
         // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
-        for (RuleProvider provider : providers)
-        {
-            if (ruleLoaderContext.getRuleProviderFilter() != null)
-            {
+        for (RuleProvider provider : providers) {
+            if (ruleLoaderContext.getRuleProviderFilter() != null) {
                 boolean accepted = ruleLoaderContext.getRuleProviderFilter().accept(provider);
                 LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleLoaderContext.getRuleProviderFilter() + "]");
                 if (!accepted)
@@ -82,14 +82,12 @@ public class RuleLoaderImpl implements RuleLoader
             List<Rule> rules = overrideRules(cfg, overrideRules, provider);
             registry.addRulesForProvider(provider, rules);
 
-            for (int i = 0; i < rules.size(); i++)
-            {
+            for (int i = 0; i < rules.size(); i++) {
                 Rule rule = rules.get(i);
-                
+
                 AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
 
-                if (rule instanceof RuleBuilder && isBlank(rule.getId()))
-                {
+                if (rule instanceof RuleBuilder && isBlank(rule.getId())) {
                     ((RuleBuilder) rule).withId(generatedRuleID(provider, i + 1));
                 }
 
@@ -102,8 +100,7 @@ public class RuleLoaderImpl implements RuleLoader
         }
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
-        for (Rule rule : allRules)
-        {
+        for (Rule rule : allRules) {
             result.addRule(rule);
         }
 
@@ -112,8 +109,7 @@ public class RuleLoaderImpl implements RuleLoader
     }
 
 
-    private List<RuleProvider> loadProviders(RuleLoaderContext ruleLoaderContext)
-    {
+    private List<RuleProvider> loadProviders(RuleLoaderContext ruleLoaderContext) {
         LOG.info("Starting provider load...");
         List<RuleProvider> unsortedProviders = new ArrayList<>();
         StreamSupport.stream(loaders.spliterator(), false)
@@ -132,26 +128,20 @@ public class RuleLoaderImpl implements RuleLoader
         return Collections.unmodifiableList(sortedProviders);
     }
 
-    private void checkForDuplicateProviders(List<RuleProvider> providers)
-    {
+    private void checkForDuplicateProviders(List<RuleProvider> providers) {
         /*
          * We are using a map so that we can easily pull out the previous value later (in the case of a duplicate)
          */
         Map<RuleProvider, RuleProvider> duplicates = new HashMap<>(providers.size());
-        for (RuleProvider provider : providers)
-        {
+        for (RuleProvider provider : providers) {
             RuleProvider previousProvider = duplicates.get(provider);
-            if (previousProvider != null)
-            {
+            if (previousProvider != null) {
                 String typeMessage;
                 String currentProviderOrigin = provider.getMetadata().getOrigin();
                 String previousProviderOrigin = previousProvider.getMetadata().getOrigin();
-                if (previousProvider.getClass().equals(provider.getClass()))
-                {
+                if (previousProvider.getClass().equals(provider.getClass())) {
                     typeMessage = " (type: " + previousProviderOrigin + " and " + currentProviderOrigin + ")";
-                }
-                else
-                {
+                } else {
                     typeMessage = " (types: " + Proxies.unwrapProxyClassName(previousProvider.getClass()) + " at " + previousProviderOrigin
                             + " and " + Proxies.unwrapProxyClassName(provider.getClass()) + " at " + currentProviderOrigin + ")";
                 }
@@ -167,18 +157,15 @@ public class RuleLoaderImpl implements RuleLoader
      * before the entire {@link RuleProvider} list is sorted, as this will allow us to print the {@link RulePhase} list without the risk of
      * user-introduced cycles making the sort impossible.
      */
-    private void printRulePhases(List<RuleProvider> allProviders)
-    {
+    private void printRulePhases(List<RuleProvider> allProviders) {
         List<RuleProvider> unsortedPhases = new ArrayList<>();
-        for (RuleProvider provider : allProviders)
-        {
+        for (RuleProvider provider : allProviders) {
             if (provider instanceof RulePhase)
                 unsortedPhases.add(provider);
         }
         List<RuleProvider> sortedPhases = RuleProviderSorter.sort(unsortedPhases);
         StringBuilder rulePhaseSB = new StringBuilder();
-        for (RuleProvider phase : sortedPhases)
-        {
+        for (RuleProvider phase : sortedPhases) {
             Class<?> unproxiedClass = Proxies.unwrap(phase).getClass();
             rulePhaseSB.append("\tPhase: ").append(unproxiedClass.getSimpleName()).append(System.lineSeparator());
         }
@@ -204,8 +191,7 @@ public class RuleLoaderImpl implements RuleLoader
     private List<Rule> overrideRules(Configuration cfg, Map<RuleKey, Rule> overrideRules, RuleProvider provider) {
         List<Rule> rules = new ArrayList<>(cfg.getRules());
         ListIterator<Rule> ruleIterator = rules.listIterator();
-        while (ruleIterator.hasNext())
-        {
+        while (ruleIterator.hasNext()) {
             Rule rule = ruleIterator.next();
             Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
             Optional.ofNullable(overrideRule)
@@ -223,8 +209,7 @@ public class RuleLoaderImpl implements RuleLoader
             ParameterStore store = ((ParameterizedRule) rule).getParameterStore();
 
             if (names != null)
-                for (String name : names)
-                {
+                for (String name : names) {
                     Parameter<?> parameter = store.get(name, new DefaultParameter(name));
                     if (parameter instanceof ConfigurableParameter<?>)
                         ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));

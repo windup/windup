@@ -1,11 +1,5 @@
 package org.jboss.windup.config.parser;
 
-import java.io.File;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -32,49 +26,48 @@ import org.ocpsoft.rewrite.config.True;
 import org.ocpsoft.rewrite.param.Parameter;
 import org.ocpsoft.rewrite.param.RegexConstraint;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.util.List;
+import java.util.logging.Logger;
+
 @RunWith(Arquillian.class)
-public class XMLRuleProviderLoaderTest
-{
+public class XMLRuleProviderLoaderTest {
     private static final Logger LOG = Logger.getLogger(XMLRuleProviderLoaderTest.class.getName());
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/testxml/Test1.windup.xml"));
-    }
-
-    @Deployment(name = "rhamt,1")
-    public static AddonArchive getRhamtDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/testxml/Test2.rhamt.xml"));
-    }
-
-    @Deployment(name = "mta,1")
-    public static AddonArchive getMtaDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/testxml/Test3.mta.xml"));
-    }
-
     @Inject
     private XMLRuleProviderLoader loader;
     @Inject
     private GraphContextFactory graphContextFactory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/testxml/Test1.windup.xml"));
+    }
+
+    @Deployment(name = "rhamt,1")
+    public static AddonArchive getRhamtDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/testxml/Test2.rhamt.xml"));
+    }
+
+    @Deployment(name = "mta,1")
+    public static AddonArchive getMtaDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/testxml/Test3.mta.xml"));
+    }
+
     @Test
-    public void testGetProviders() throws Exception
-    {
+    public void testGetProviders() throws Exception {
         Assert.assertNotNull(loader);
 
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
@@ -134,32 +127,28 @@ public class XMLRuleProviderLoaderTest
         checkRule3(rule);
     }
 
-    private void checkWindupMetadata(RuleProvider provider)
-    {
+    private void checkWindupMetadata(RuleProvider provider) {
         String id = provider.getMetadata().getID();
         Assert.assertEquals("testruleprovider", id);
         Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
-     }
+    }
 
-    private void checkRhamtMetadata(RuleProvider provider)
-    {
+    private void checkRhamtMetadata(RuleProvider provider) {
         String id = provider.getMetadata().getID();
         Assert.assertEquals("testruleprovider2", id);
         Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/rhamt-1.*/Test2.rhamt.xml"));
-     }
+    }
 
-     private void checkMtaMetadata(RuleProvider provider)
-     {
-         String id = provider.getMetadata().getID();
-         Assert.assertEquals("testruleprovider3", id);
-         Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
-         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/mta-1.*/Test3.mta.xml"));
-      }
+    private void checkMtaMetadata(RuleProvider provider) {
+        String id = provider.getMetadata().getID();
+        Assert.assertEquals("testruleprovider3", id);
+        Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
+        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/mta-1.*/Test3.mta.xml"));
+    }
 
-    private void checkRule1(RuleBuilder rule)
-    {
+    private void checkRule1(RuleBuilder rule) {
         // check the conditions
         List<Condition> conditions = rule.getConditions();
         Assert.assertEquals(1, conditions.size());
@@ -175,8 +164,7 @@ public class XMLRuleProviderLoaderTest
         Assert.assertTrue(operations.get(0) instanceof DefaultOperationBuilder);
     }
 
-    private void checkRule2(RuleBuilder rule) throws Exception
-    {
+    private void checkRule2(RuleBuilder rule) throws Exception {
         LOG.info("Rule: " + rule);
 
         // check the conditions
@@ -205,8 +193,7 @@ public class XMLRuleProviderLoaderTest
         Assert.assertEquals(new RegexConstraint("\\d+"), foo.getConstraints().get(0));
     }
 
-    private void checkRule2_Otherwise(RuleBuilder rule) throws Exception
-    {
+    private void checkRule2_Otherwise(RuleBuilder rule) throws Exception {
         LOG.info("Rule: " + rule);
 
         // check the conditions
@@ -231,8 +218,7 @@ public class XMLRuleProviderLoaderTest
         Assert.assertTrue(opBuilderStr.contains("LOG[INFO, test rule {foo} otherwise]"));
     }
 
-    private void checkRule3(RuleBuilder rule)
-    {
+    private void checkRule3(RuleBuilder rule) {
         // check the conditions
         List<Condition> conditions = rule.getConditions();
         Assert.assertEquals(1, conditions.size());

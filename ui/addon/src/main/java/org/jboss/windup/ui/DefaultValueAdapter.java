@@ -1,42 +1,37 @@
 package org.jboss.windup.ui;
 
-import java.util.concurrent.Callable;
-
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.util.ThemeProvider;
 
+import java.util.concurrent.Callable;
+
 /**
  * An adapter between {@link ConfigurationOption#getDefaultValue()} default values, and
  * {@link UIInput#setDefaultValue(Callable)}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DefaultValueAdapter<T> implements Callable<T>
-{
+public class DefaultValueAdapter<T> implements Callable<T> {
     private ConfigurationOption option;
     private Class<T> expectedType;
 
-    public DefaultValueAdapter(ConfigurationOption option, Class<T> expectedType)
-    {
+    public DefaultValueAdapter(ConfigurationOption option, Class<T> expectedType) {
         this.option = option;
         this.expectedType = expectedType;
     }
 
-    public DefaultValueAdapter(ConfigurationOption option)
-    {
+    public DefaultValueAdapter(ConfigurationOption option) {
         this(option, null);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T call() throws Exception
-    {
+    public T call() throws Exception {
         Object val = this.option.getDefaultValue();
-        if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
-        {
+        if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass())) {
             throw new IllegalStateException(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " option " + option.getName() +
-                        " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
+                    " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
         }
         return (T) val;
     }

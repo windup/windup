@@ -7,8 +7,7 @@ package org.jboss.windup.rules.apps.mavenize;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public interface Dependency
-{
+public interface Dependency {
     MavenCoord getCoord();
 
     Role getRole();

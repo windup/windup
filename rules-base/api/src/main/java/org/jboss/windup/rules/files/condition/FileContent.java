@@ -1,18 +1,7 @@
 package org.jboss.windup.rules.files.condition;
 
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
+import com.github.rwitzel.streamflyer.core.Modifier;
+import com.github.rwitzel.streamflyer.core.ModifyingReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -40,8 +29,18 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
-import com.github.rwitzel.streamflyer.core.Modifier;
-import com.github.rwitzel.streamflyer.core.ModifyingReader;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Matches on file contents based upon parameterization.
@@ -54,24 +53,20 @@ import com.github.rwitzel.streamflyer.core.ModifyingReader;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FileContent extends ParameterizedGraphCondition implements FileContentMatches, FileContentFileName
-{
+public class FileContent extends ParameterizedGraphCondition implements FileContentMatches, FileContentFileName {
     private static Logger LOG = Logging.get(FileContent.class);
 
     private RegexParameterizedPatternParser contentPattern;
     private RegexParameterizedPatternParser filenamePattern;
 
-    public FileContent()
-    {
+    public FileContent() {
     }
 
-    public FileContent(String contentPattern)
-    {
+    public FileContent(String contentPattern) {
         this.contentPattern = new RegexParameterizedPatternParser(contentPattern);
     }
 
-    public static FileContentFrom from(String from)
-    {
+    public static FileContentFrom from(String from) {
         FileContentFromImpl f = new FileContentFromImpl(from);
         return f;
     }
@@ -79,16 +74,14 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     /**
      * Match file contents against the provided parameterized string.
      */
-    public static FileContentMatches matches(String contentPattern)
-    {
+    public static FileContentMatches matches(String contentPattern) {
         return new FileContent(contentPattern);
     }
 
     /**
      * Optionally specify the variable name to use for the output of this condition
      */
-    public ConditionBuilder as(String variable)
-    {
+    public ConditionBuilder as(String variable) {
         Assert.notNull(variable, "Variable name must not be null.");
         this.setOutputVariablesName(variable);
         return this;
@@ -97,21 +90,17 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     /**
      * Match filenames against the provided parameterized string.
      */
-    public FileContentFileName inFileNamed(String filenamePattern)
-    {
-        if (filenamePattern != null && !filenamePattern.isEmpty())
-        {
+    public FileContentFileName inFileNamed(String filenamePattern) {
+        if (filenamePattern != null && !filenamePattern.isEmpty()) {
             this.filenamePattern = new RegexParameterizedPatternParser(filenamePattern);
         }
         return this;
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
-        if (contentPattern != null)
-        {
+        if (contentPattern != null) {
             result.addAll(contentPattern.getRequiredParameterNames());
         }
         if (filenamePattern != null)
@@ -120,8 +109,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         if (contentPattern != null)
             contentPattern.setParameterStore(store);
         if (filenamePattern != null)
@@ -129,44 +117,37 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     @Override
-    protected String getVarname()
-    {
+    protected String getVarname() {
         return getOutputVariablesName();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext)
-    {
-        return evaluate(event, context, new EvaluationStrategy()
-        {
+    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext) {
+        return evaluate(event, context, new EvaluationStrategy() {
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
             @SuppressWarnings("rawtypes")
-            public void modelMatched()
-            {
+            public void modelMatched() {
                 this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 
             @Override
-            public void modelSubmitted(WindupVertexFrame model)
-            {
+            public void modelSubmitted(WindupVertexFrame model) {
                 Maps.addListValue(this.variables, getVarname(), model);
             }
 
             @Override
-            public void modelSubmissionRejected()
-            {
+            public void modelSubmissionRejected() {
                 frameCreationContext.rollback();
             }
         });
     }
 
     @Override
-    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext)
-    {
+    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext) {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
         if (result == false)
@@ -176,58 +157,48 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     private boolean evaluate(final GraphRewrite event, final EvaluationContext context,
-                final EvaluationStrategy evaluationStrategy)
-    {
+                             final EvaluationStrategy evaluationStrategy) {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
 
         // initialize the input
-       List<FileModel> fileModels = new ArrayList<>();
+        List<FileModel> fileModels = new ArrayList<>();
         fromInput(fileModels, event);
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
 
         final List<FileLocationModel> results = new ArrayList<>();
-        for (final FileModel fileModel : fileModels)
-        {
+        for (final FileModel fileModel : fileModels) {
             if (fileModel.isDirectory())
                 continue;
             ParameterizedPatternResult parsedFileNamePattern = null;
-            if (filenamePattern != null)
-            {
+            if (filenamePattern != null) {
                 parsedFileNamePattern = filenamePattern.parse(fileModel.getFileName());
-                if (!parsedFileNamePattern.matches())
-                {
+                if (!parsedFileNamePattern.matches()) {
                     continue;
                 }
             }
             //because it is used in the internal method definition
             final ParameterizedPatternResult parsedFileNamePattern2 = parsedFileNamePattern;
-            try
-            {
+            try {
                 Reader reader = new FileReader(fileModel.asFile());
 
                 Pattern fileContentsRegex = contentPattern.getCompiledPattern(store);
-                StreamRegexMatchListener matchListener = new StreamRegexMatchListener()
-                {
+                StreamRegexMatchListener matchListener = new StreamRegexMatchListener() {
 
                     @Override
-                    public void regexMatched(StreamRegexMatchedEvent matchEvent)
-                    {
+                    public void regexMatched(StreamRegexMatchedEvent matchEvent) {
                         String matchedStr = matchEvent.getMatch();
                         boolean passed = true;
                         ParameterizedPatternResult contentPatternResult = null;
-                        if (contentPattern != null)
-                        {
+                        if (contentPattern != null) {
                             contentPatternResult = contentPattern.parse(matchedStr);
                             passed = passed && contentPatternResult.matches();
                         }
-                        if (passed)
-                        {
+                        if (passed) {
                             evaluationStrategy.modelMatched();
                             if ((parsedFileNamePattern2 == null || parsedFileNamePattern2.submit(event, context))
-                                        && (contentPattern == null || contentPatternResult.submit(event, context)))
-                            {
+                                    && (contentPattern == null || contentPatternResult.submit(event, context))) {
                                 FileLocationModel fileLocationModel = fileLocationService.create();
                                 fileLocationModel.setFile(fileModel);
                                 fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
@@ -238,9 +209,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                                 fileLocationModel.setSourceSnippit(matchedStr);
                                 results.add(fileLocationModel);
                                 evaluationStrategy.modelSubmitted(fileLocationModel);
-                            }
-                            else
-                            {
+                            } else {
                                 evaluationStrategy.modelSubmissionRejected();
                             }
                         }
@@ -248,18 +217,15 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 };
 
                 Modifier regexModifier = StreamRegexMatcher.create(fileContentsRegex.pattern(), matchListener);
-                try (ModifyingReader modifyingReader = new ModifyingReader(reader, regexModifier))
-                {
+                try (ModifyingReader modifyingReader = new ModifyingReader(reader, regexModifier)) {
 
                     char[] buffer = new char[32768];
                     while (modifyingReader.read(buffer) != -1)
                         ; // consume the stream
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 LOG.log(Level.WARNING, "Error loading and matching contents for file: " + fileModel.getFilePath() + " due to: " + e.getMessage(),
-                            e);
+                        e);
             }
         }
 
@@ -267,8 +233,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         return !results.isEmpty();
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName());
         builder.append(".from(").append(getInputVariablesName()).append(")");
@@ -282,12 +247,9 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
      * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
      * specified in specific order. This method handles the {@link FileContent#from(String)} attribute.
      */
-    private void fromInput(List<FileModel> vertices, GraphRewrite event)
-    {
-        if (vertices.isEmpty() && StringUtils.isNotBlank(getInputVariablesName()))
-        {
-            for (WindupVertexFrame windupVertexFrame : Variables.instance(event).findVariable(getInputVariablesName()))
-            {
+    private void fromInput(List<FileModel> vertices, GraphRewrite event) {
+        if (vertices.isEmpty() && StringUtils.isNotBlank(getInputVariablesName())) {
+            for (WindupVertexFrame windupVertexFrame : Variables.instance(event).findVariable(getInputVariablesName())) {
                 if (windupVertexFrame instanceof FileModel)
                     vertices.add((FileModel) windupVertexFrame);
                 if (windupVertexFrame instanceof FileReferenceModel)
@@ -300,22 +262,16 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
      * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
      * specified in specific order. This method handles the {@link FileContent#inFileNamed(String)} attribute.
      */
-    private void fileNameInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
-    {
-        if (this.filenamePattern != null)
-        {
+    private void fileNameInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store) {
+        if (this.filenamePattern != null) {
             Pattern filenameRegex = filenamePattern.getCompiledPattern(store);
             //in case the filename is the first operation generating result, we can use the graph regex index. That's why we distinguish that in this clause
-            if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName()))
-            {
+            if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName())) {
                 FileService fileService = new FileService(event.getGraphContext());
-                for (FileModel fileModel : fileService.findByFilenameRegex(filenameRegex.pattern()))
-                {
+                for (FileModel fileModel : fileService.findByFilenameRegex(filenameRegex.pattern())) {
                     vertices.add(fileModel);
                 }
-            }
-            else
-            {
+            } else {
                 ListIterator<FileModel> fileModelIterator = vertices.listIterator();
                 vertices.removeIf(fileModel -> !filenameRegex.matcher(fileModel.getFileName()).matches());
             }
@@ -327,13 +283,10 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
      * based on the attribute specified in specific order. This method generates all the vertices if there is no other way how to handle
      * the input.
      */
-    private void allInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
-    {
-        if (StringUtils.isBlank(getInputVariablesName()) && this.filenamePattern == null)
-        {
+    private void allInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store) {
+        if (StringUtils.isBlank(getInputVariablesName()) && this.filenamePattern == null) {
             FileService fileModelService = new FileService(event.getGraphContext());
-            for (FileModel fileModel : fileModelService.findAll())
-            {
+            for (FileModel fileModel : fileModelService.findAll()) {
                 vertices.add(fileModel);
             }
         }

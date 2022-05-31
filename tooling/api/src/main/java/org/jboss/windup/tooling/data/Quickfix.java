@@ -6,8 +6,7 @@ import java.io.Serializable;
 /**
  * Contains a representation of a {@link QuickfixModel} for use by tooling (eg, Eclipse).
  */
-public interface Quickfix extends Serializable
-{
+public interface Quickfix extends Serializable {
     /**
      * Contains the type of the quickfix (eg, token substitution)..
      */
@@ -37,6 +36,6 @@ public interface Quickfix extends Serializable
      * Contains the implementation ID for transformation fixes.
      */
     String getTransformationID();
-    
+
     File getFile();
 }

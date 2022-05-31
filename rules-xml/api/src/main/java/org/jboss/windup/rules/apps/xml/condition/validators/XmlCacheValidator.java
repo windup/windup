@@ -12,26 +12,21 @@ import java.util.Set;
  * This may happen in the case of connecting multiple XmlFile conditions from which the first one
  * returns multiple places in an XmlFile.
  */
-public class XmlCacheValidator implements XmlFileValidator
-{
+public class XmlCacheValidator implements XmlFileValidator {
 
     Set<String> xmlCache = new HashSet<>();
 
-    @Override public boolean isValid(GraphRewrite event,EvaluationContext context, XmlFileModel model)
-    {
-        if (xmlCache.contains(model.getFilePath()))
-        {
+    @Override
+    public boolean isValid(GraphRewrite event, EvaluationContext context, XmlFileModel model) {
+        if (xmlCache.contains(model.getFilePath())) {
             return false;
-        }
-        else
-        {
+        } else {
             xmlCache.add(model.getFilePath());
         }
         return true;
     }
 
-    public void clear()
-    {
+    public void clear() {
         this.xmlCache.clear();
     }
 }

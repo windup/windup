@@ -1,29 +1,24 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.List;
-
+import freemarker.ext.beans.StringModel;
+import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.RulePhase;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.TemplateModelException;
+import java.util.List;
 
 /**
  * Returns true if the passed in object is a and instanceof {@link RulePhase}.<br/>
- * 
+ * <p>
  * isRulePhase(Object):boolean
- *
  */
-public class IsRulePhaseMethod implements WindupFreeMarkerMethod
-{
+public class IsRulePhaseMethod implements WindupFreeMarkerMethod {
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
-        if (arguments.size() != 1)
-        {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        if (arguments.size() != 1) {
             throw new TemplateModelException(
-                        "Error, method expects one argument (Object)");
+                    "Error, method expects one argument (Object)");
         }
         StringModel stringModel = (StringModel) arguments.get(0);
         Object object = stringModel.getWrappedObject();
@@ -31,20 +26,17 @@ public class IsRulePhaseMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return "isRulePhase";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Returns true if the passed in object is an instance of " + RulePhase.class.getSimpleName() + ".";
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
 
     }
 

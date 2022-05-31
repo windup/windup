@@ -1,14 +1,5 @@
 package org.jboss.windup.ast.java;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -60,6 +51,15 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
 import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.logging.Logger;
+
 /**
  * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
  * of all of the contained references. <b>Note: A new instance of this visitor should be constructed for each {@link CompilationUnit}</b>
@@ -67,8 +67,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ReferenceResolvingVisitor extends ASTVisitor
-{
+public class ReferenceResolvingVisitor extends ASTVisitor {
     private static final Logger LOG = Logger.getLogger(ReferenceResolvingVisitor.class.getName());
 
     private final WildcardImportResolver wildcardImportResolver;
@@ -79,8 +78,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     private String packageName;
     private String className;
 
-    public ReferenceResolvingVisitor(WildcardImportResolver importResolver, CompilationUnit compilationUnit, String path)
-    {
+    public ReferenceResolvingVisitor(WildcardImportResolver importResolver, CompilationUnit compilationUnit, String path) {
         this.state = new ReferenceResolvingVisitorState();
         this.wildcardImportResolver = importResolver;
         this.compilationUnit = compilationUnit;
@@ -89,8 +87,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         resolveCurrentTypeNames(compilationUnit);
     }
 
-    private void resolveCurrentTypeNames(CompilationUnit compilationUnit)
-    {
+    private void resolveCurrentTypeNames(CompilationUnit compilationUnit) {
         PackageDeclaration packageDeclaration = compilationUnit.getPackage();
         this.packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
@@ -99,29 +96,23 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         @SuppressWarnings("unchecked")
         List<ImportDeclaration> importDeclarations = (List<ImportDeclaration>) compilationUnit.imports();
 
-        for (ImportDeclaration importDeclaration : importDeclarations)
-        {
+        for (ImportDeclaration importDeclaration : importDeclarations) {
             processImport(importDeclaration);
         }
 
         String fqcn = null;
-        if (!types.isEmpty())
-        {
+        if (!types.isEmpty()) {
             AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) types.get(0);
             this.className = typeDeclaration.getName().getFullyQualifiedName();
 
-            if (packageName.isEmpty())
-            {
+            if (packageName.isEmpty()) {
                 fqcn = className;
-            }
-            else
-            {
+            } else {
                 fqcn = packageName + "." + className;
             }
 
             String typeLine = typeDeclaration.toString();
-            if (typeDeclaration.getJavadoc() != null)
-            {
+            if (typeDeclaration.getJavadoc() != null) {
                 typeLine = typeLine.substring(typeDeclaration.getJavadoc().toString().length());
             }
             ClassReference mainTypeClassReference = new ClassReference(fqcn, packageName, className, null, ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE,
@@ -131,17 +122,14 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             classReferences.add(mainTypeClassReference);
             processModifiers(mainTypeClassReference, typeDeclaration.modifiers());
 
-            if (typeDeclaration instanceof TypeDeclaration)
-            {
+            if (typeDeclaration instanceof TypeDeclaration) {
                 Type superclassType = ((TypeDeclaration) typeDeclaration).getSuperclassType();
                 ITypeBinding resolveBinding = null;
-                if (superclassType != null)
-                {
+                if (superclassType != null) {
                     resolveBinding = superclassType.resolveBinding();
                 }
 
-                if (resolveBinding == null && superclassType != null)
-                {
+                if (resolveBinding == null && superclassType != null) {
                     ResolveClassnameResult resolvedResult = resolveClassname(superclassType.toString());
                     PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(resolvedResult.result);
                     String superPackageName = packageAndClassName.packageName;
@@ -150,26 +138,24 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     ResolutionStatus superResolutionStatus = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
 
                     classReferences.add(new ClassReference(resolvedResult.result, superPackageName, superClassName, null,
-                                superResolutionStatus,
-                                TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
-                                compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
-                                compilationUnit.getLength(),
-                                extractDefinitionLine(typeDeclaration.toString())));
+                            superResolutionStatus,
+                            TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                            compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                            compilationUnit.getLength(),
+                            extractDefinitionLine(typeDeclaration.toString())));
                 }
 
-                while (resolveBinding != null)
-                {
-                    if (superclassType.resolveBinding() != null)
-                    {
+                while (resolveBinding != null) {
+                    if (superclassType.resolveBinding() != null) {
                         String superPackageName = resolveBinding.getPackage().getName();
                         String superClassName = resolveBinding.getName();
 
                         classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), superPackageName, superClassName, null,
-                                    ResolutionStatus.RESOLVED,
-                                    TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
-                                    compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
-                                    compilationUnit.getLength(),
-                                    extractDefinitionLine(typeDeclaration.toString())));
+                                ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                                compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                                compilationUnit.getLength(),
+                                extractDefinitionLine(typeDeclaration.toString())));
                     }
                     resolveBinding = resolveBinding.getSuperclass();
                 }
@@ -180,29 +166,24 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         state.getNameInstance().put("this", fqcn);
     }
 
-    private String extractDefinitionLine(String typeDeclaration)
-    {
+    private String extractDefinitionLine(String typeDeclaration) {
         String typeLine = "";
         String[] lines = typeDeclaration.split(System.lineSeparator());
-        for (String line : lines)
-        {
+        for (String line : lines) {
             typeLine = line;
-            if (line.contains("{"))
-            {
+            if (line.contains("{")) {
                 break;
             }
         }
         return typeLine;
     }
 
-    public List<ClassReference> getJavaClassReferences()
-    {
+    public List<ClassReference> getJavaClassReferences() {
         return this.classReferences;
     }
 
     private ClassReference processConstructor(ConstructorType interest, ResolutionStatus resolutionStatus, int lineNumber,
-                int columnNumber, int length, String line)
-    {
+                                              int columnNumber, int length, String line) {
         String text = interest.toString();
         ClassReference reference = new ClassReference(text, this.packageName, this.className, "<init>", resolutionStatus,
                 TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length,
@@ -212,8 +193,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     }
 
     private ClassReference processMethod(MethodType interest, ResolutionStatus resolutionStatus, TypeReferenceLocation location, int lineNumber,
-                int columnNumber, int length, String line)
-    {
+                                         int columnNumber, int length, String line) {
         String text = interest.toString();
         ClassReference reference = new ClassReference(text, interest.packageName, interest.className, interest.methodName, resolutionStatus, location,
                 lineNumber, columnNumber, length, line);
@@ -221,29 +201,24 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return reference;
     }
 
-    private void processImport(String interest, ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String line)
-    {
+    private void processImport(String interest, ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String line) {
         final PackageAndClassName packageAndClass;
-        if (!interest.contains("."))
-        {
+        if (!interest.contains(".")) {
             packageAndClass = new PackageAndClassName(interest, null);
-        }
-        else
-        {
+        } else {
             packageAndClass = PackageAndClassName.parseFromQualifiedName(interest);
         }
 
         this.classReferences
-                    .add(new ClassReference(interest, packageAndClass.packageName, packageAndClass.className, null, resolutionStatus,
-                                TypeReferenceLocation.IMPORT, lineNumber,
-                                columnNumber,
-                                length, line));
+                .add(new ClassReference(interest, packageAndClass.packageName, packageAndClass.className, null, resolutionStatus,
+                        TypeReferenceLocation.IMPORT, lineNumber,
+                        columnNumber,
+                        length, line));
     }
 
     private ClassReference processTypeBinding(ITypeBinding type, ResolutionStatus resolutionStatus,
-                TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
-                int length, String line)
-    {
+                                              TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber,
+                                              int length, String line) {
         if (type == null)
             return null;
         final String sourceString = getQualifiedName(type);
@@ -257,23 +232,20 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return processTypeAsString(sourceString, packageName, className, resolutionStatus, referenceLocation, lineNumber, columnNumber, length, line);
     }
 
-    private ClassReference processTypeAsEnum(ITypeBinding typeBinding, Expression expression, ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String line)
-    {
+    private ClassReference processTypeAsEnum(ITypeBinding typeBinding, Expression expression, ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String line) {
         if (expression == null)
             return null;
 
         String fullExpression = null;
         String enumPackage = null;
         String enumClassName = null;
-        if (typeBinding != null)
-        {
+        if (typeBinding != null) {
             fullExpression = typeBinding.getQualifiedName();
             enumPackage = typeBinding.getPackage().getName();
             enumClassName = typeBinding.getName();
         }
 
-        if (expression instanceof Name)
-        {
+        if (expression instanceof Name) {
             if (StringUtils.isNotBlank(fullExpression))
                 fullExpression += ".";
 
@@ -284,96 +256,82 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
 
         ClassReference reference = new ClassReference(fullExpression, enumPackage, enumClassName, null, resolutionStatus,
-                    TypeReferenceLocation.ENUM_CONSTANT,
-                    lineNumber,
-                    columnNumber,
-                    length,
-                    line);
+                TypeReferenceLocation.ENUM_CONSTANT,
+                lineNumber,
+                columnNumber,
+                length,
+                line);
         this.classReferences.add(reference);
         return reference;
     }
-    
+
     /**
      * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
     private ClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
-                String line)
-    {
+                                       String line) {
         if (type == null)
             return null;
 
         ITypeBinding resolveBinding = type.resolveBinding();
-        if (resolveBinding == null)
-        {
+        if (resolveBinding == null) {
             ResolveClassnameResult resolvedResult = resolveClassname(type.toString());
             ResolutionStatus status = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
             PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(resolvedResult.result);
 
             return processTypeAsString(resolvedResult.result, packageAndClassName.packageName, packageAndClassName.className, status,
-                        typeReferenceLocation, lineNumber,
-                        columnNumber, length, line);
-        }
-        else
-        {
+                    typeReferenceLocation, lineNumber,
+                    columnNumber, length, line);
+        } else {
             return processTypeBinding(type.resolveBinding(), ResolutionStatus.RESOLVED, typeReferenceLocation, lineNumber,
-                        columnNumber, length, line);
+                    columnNumber, length, line);
         }
 
     }
 
     private ClassReference processTypeAsString(String sourceString, String packageName, String className, ResolutionStatus resolutionStatus,
-                TypeReferenceLocation referenceLocation,
-                int lineNumber,
-                int columnNumber, int length, String line)
-    {
+                                               TypeReferenceLocation referenceLocation,
+                                               int lineNumber,
+                                               int columnNumber, int length, String line) {
         if (sourceString == null)
             return null;
         line = line.replaceAll("(\\n)|(\\r)", "");
         ClassReference typeRef = new ClassReference(sourceString, packageName, className, null, resolutionStatus, referenceLocation, lineNumber,
-                    columnNumber,
-                    length,
-                    line);
+                columnNumber,
+                length,
+                line);
         this.classReferences.add(typeRef);
         return typeRef;
     }
 
     @Override
-    public boolean visit(MethodDeclaration node)
-    {
+    public boolean visit(MethodDeclaration node) {
         // register method return type
         final ResolutionStatus resolutionStatus;
         IMethodBinding resolveBinding = node.resolveBinding();
         ITypeBinding returnType = null;
-        if (resolveBinding != null)
-        {
+        if (resolveBinding != null) {
             resolutionStatus = ResolutionStatus.RESOLVED;
             returnType = node.resolveBinding().getReturnType();
-        }
-        else
-        {
+        } else {
             resolutionStatus = ResolutionStatus.RECOVERED;
         }
 
-        if (returnType != null)
-        {
+        if (returnType != null) {
             processTypeBinding(returnType, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE,
-                        compilationUnit.getLineNumber(node.getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
-        }
-        else
-        {
+                    compilationUnit.getLineNumber(node.getStartPosition()),
+                    compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+        } else {
             Type methodReturnType = node.getReturnType2();
             processType(methodReturnType, TypeReferenceLocation.RETURN_TYPE, compilationUnit.getLineNumber(node.getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+                    compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
         }
         // register parameters and register them for next processing
         List<String> qualifiedArguments = new ArrayList<>();
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> parameters = node.parameters();
-        if (parameters != null)
-        {
-            for (SingleVariableDeclaration type : parameters)
-            {
+        if (parameters != null) {
+            for (SingleVariableDeclaration type : parameters) {
                 state.getNames().add(type.getName().toString());
                 String typeName = type.getType().toString();
                 typeName = resolveClassname(typeName).result;
@@ -381,74 +339,65 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 state.getNameInstance().put(type.getName().toString(), typeName);
 
                 ClassReference parameterClassReference = processType(type.getType(), TypeReferenceLocation.METHOD_PARAMETER, compilationUnit.getLineNumber(node.getStartPosition()),
-                            compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
                 processModifiers(parameterClassReference, type.modifiers());
             }
         }
         // register thow declarations
         @SuppressWarnings("unchecked")
         List<Type> throwsTypes = node.thrownExceptionTypes();
-        if (throwsTypes != null)
-        {
-            for (Type type : throwsTypes)
-            {
+        if (throwsTypes != null) {
+            for (Type type : throwsTypes) {
                 processType(type, TypeReferenceLocation.THROWS_METHOD_DECLARATION,
-                            compilationUnit.getLineNumber(node.getStartPosition()),
-                            compilationUnit.getColumnNumber(type.getStartPosition()), type.getLength(), extractDefinitionLine(node.toString()));
+                        compilationUnit.getLineNumber(node.getStartPosition()),
+                        compilationUnit.getColumnNumber(type.getStartPosition()), type.getLength(), extractDefinitionLine(node.toString()));
             }
         }
 
         // register method declaration
         MethodType methodCall = new MethodType(state.getNameInstance().get("this"), this.packageName, this.className, node.getName().toString(),
-                    qualifiedArguments);
+                qualifiedArguments);
         ClassReference methodReference = processMethod(methodCall, resolutionStatus, TypeReferenceLocation.METHOD, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                    compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
-                    extractDefinitionLine(node.toString()));
+                compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(),
+                extractDefinitionLine(node.toString()));
         processModifiers(methodReference, node.modifiers());
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(InstanceofExpression node)
-    {
+    public boolean visit(InstanceofExpression node) {
         Type type = node.getRightOperand();
         processType(type, TypeReferenceLocation.INSTANCE_OF, compilationUnit.getLineNumber(node.getStartPosition()),
-                    compilationUnit.getColumnNumber(type.getStartPosition()), type.getLength(), node.toString());
+                compilationUnit.getColumnNumber(type.getStartPosition()), type.getLength(), node.toString());
 
         return super.visit(node);
     }
 
-    public boolean visit(org.eclipse.jdt.core.dom.ThrowStatement node)
-    {
-        if (node.getExpression() instanceof ClassInstanceCreation)
-        {
+    public boolean visit(org.eclipse.jdt.core.dom.ThrowStatement node) {
+        if (node.getExpression() instanceof ClassInstanceCreation) {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
             Type type = cic.getType();
             processType(type, TypeReferenceLocation.THROW_STATEMENT, compilationUnit.getLineNumber(node.getStartPosition()),
-                        compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
+                    compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
         }
 
         return super.visit(node);
     }
 
-    public boolean visit(org.eclipse.jdt.core.dom.CatchClause node)
-    {
+    public boolean visit(org.eclipse.jdt.core.dom.CatchClause node) {
         Type catchType = node.getException().getType();
         processType(catchType, TypeReferenceLocation.CATCH_EXCEPTION_STATEMENT, compilationUnit.getLineNumber(node.getStartPosition()),
-                    compilationUnit.getColumnNumber(catchType.getStartPosition()), catchType.getLength(), node.toString());
+                compilationUnit.getColumnNumber(catchType.getStartPosition()), catchType.getLength(), node.toString());
 
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(ReturnStatement node)
-    {
-        if (node.getExpression() instanceof ClassInstanceCreation)
-        {
+    public boolean visit(ReturnStatement node) {
+        if (node.getExpression() instanceof ClassInstanceCreation) {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
             ITypeBinding typeBinding = cic.getType().resolveBinding();
-            if (typeBinding == null)
-            {
+            if (typeBinding == null) {
                 String qualifiedClass = cic.getType().toString();
                 ResolveClassnameResult result = resolveClassname(qualifiedClass);
                 qualifiedClass = result.result;
@@ -456,46 +405,39 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(qualifiedClass);
 
                 processTypeAsString(qualifiedClass, packageAndClassName.packageName, packageAndClassName.className, resolutionStatus,
-                            TypeReferenceLocation.CONSTRUCTOR_CALL,
-                            compilationUnit.getLineNumber(node.getStartPosition()),
-                            compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
-            }
-            else
-            {
+                        TypeReferenceLocation.CONSTRUCTOR_CALL,
+                        compilationUnit.getLineNumber(node.getStartPosition()),
+                        compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
+            } else {
                 processTypeBinding(typeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.CONSTRUCTOR_CALL,
-                            compilationUnit.getLineNumber(node.getStartPosition()),
-                            compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
+                        compilationUnit.getLineNumber(node.getStartPosition()),
+                        compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
             }
         }
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(AnonymousClassDeclaration node)
-    {
+    public boolean visit(AnonymousClassDeclaration node) {
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(FieldDeclaration node)
-    {
-        for (int i = 0; i < node.fragments().size(); ++i)
-        {
+    public boolean visit(FieldDeclaration node) {
+        for (int i = 0; i < node.fragments().size(); ++i) {
             String nodeType = node.getType().toString();
             nodeType = resolveClassname(nodeType).result;
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             Expression expression = frag.getInitializer();
-            
+
             final int lineNumber = compilationUnit.getLineNumber(node.getStartPosition());
             final int columnNumber = compilationUnit.getColumnNumber(node.getStartPosition());
             final ITypeBinding resolveBinding = node.getType().resolveBinding();
-            
-            if (expression instanceof Name)
-            {
+
+            if (expression instanceof Name) {
                 Name expressionName = (Name) expression;
                 IBinding binding = expressionName.resolveBinding();
-                if (binding == null)
-                {
+                if (binding == null) {
                     ResolveClassnameResult result = resolveClassname(expressionName.getFullyQualifiedName());
                     ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
                     // when dealing with FieldDeclaration with an initializer Expression of type Name (SimpleName or QualifiedName [1])
@@ -506,24 +448,21 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedNameWithConstant(result.result);
 
                     processTypeAsString(result.result,
-                                packageAndClassName.packageName,
-                                packageAndClassName.className,
-                                status,
-                                TypeReferenceLocation.VARIABLE_INITIALIZER,
-                                lineNumber,
-                                columnNumber, node.getLength(), node.toString());
-                }
-                else
-                {   
+                            packageAndClassName.packageName,
+                            packageAndClassName.className,
+                            status,
+                            TypeReferenceLocation.VARIABLE_INITIALIZER,
+                            lineNumber,
+                            columnNumber, node.getLength(), node.toString());
+                } else {
                     //additionally add Enum Constant type reference
-                    if (resolveBinding.isEnum())
-                    {
+                    if (resolveBinding.isEnum()) {
                         processTypeAsEnum(resolveBinding, expressionName, ResolutionStatus.RESOLVED, lineNumber, columnNumber, node.getLength(), extractDefinitionLine(node.toString()));
                     }
-                    
+
                     processTypeBinding(resolveBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.VARIABLE_INITIALIZER,
-                                lineNumber,
-                                columnNumber, node.getLength(), node.toString());
+                            lineNumber,
+                            columnNumber, node.getLength(), node.toString());
                 }
             }
 
@@ -532,14 +471,11 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
             ITypeBinding resolvedTypeBinding = resolveBinding;
             ClassReference reference;
-            if (resolvedTypeBinding != null)
-            {
+            if (resolvedTypeBinding != null) {
                 reference = processTypeBinding(resolvedTypeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.FIELD_DECLARATION,
                         lineNumber,
                         columnNumber, node.getLength(), node.toString());
-            }
-            else
-            {
+            } else {
                 ResolveClassnameResult result = resolveClassname(node.getType().toString());
                 ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
 
@@ -557,107 +493,76 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return true;
     }
 
-    private AnnotationValue getAnnotationValueForExpression(ClassReference annotatedReference, Expression expression)
-    {
+    private AnnotationValue getAnnotationValueForExpression(ClassReference annotatedReference, Expression expression) {
         AnnotationValue value;
         if (expression instanceof BooleanLiteral)
             value = new AnnotationLiteralValue(boolean.class, ((BooleanLiteral) expression).booleanValue());
         else if (expression instanceof CharacterLiteral)
             value = new AnnotationLiteralValue(char.class, ((CharacterLiteral) expression).charValue());
-        else if (expression instanceof NumberLiteral)
-        {
+        else if (expression instanceof NumberLiteral) {
             ITypeBinding binding = expression.resolveTypeBinding();
-            if (binding == null)
-            {
+            if (binding == null) {
                 value = new AnnotationLiteralValue(String.class, expression.toString());
-            }
-            else
-            {
+            } else {
                 value = new AnnotationLiteralValue(resolveLiteralType(binding), ((NumberLiteral) expression).resolveConstantExpressionValue());
             }
-        }
-        else if (expression instanceof TypeLiteral)
-        {
+        } else if (expression instanceof TypeLiteral) {
             Object literalValue = ((TypeLiteral) expression).resolveConstantExpressionValue();
-            if (literalValue == null)
-            {
+            if (literalValue == null) {
                 Type type = ((TypeLiteral) expression).getType();
                 literalValue = type == null ? null : type.toString();
             }
             value = new AnnotationLiteralValue(Class.class, literalValue);
-        }
-        else if (expression instanceof StringLiteral)
+        } else if (expression instanceof StringLiteral)
             value = new AnnotationLiteralValue(String.class, ((StringLiteral) expression).getLiteralValue());
         else if (expression instanceof NormalAnnotation)
             value = processAnnotation(annotatedReference, (NormalAnnotation) expression);
-        else if (expression instanceof ArrayInitializer)
-        {
+        else if (expression instanceof ArrayInitializer) {
             ArrayInitializer arrayInitializer = (ArrayInitializer) expression;
             List<AnnotationValue> arrayValues = new ArrayList<>(arrayInitializer.expressions().size());
-            for (Object arrayExpression : arrayInitializer.expressions())
-            {
+            for (Object arrayExpression : arrayInitializer.expressions()) {
                 arrayValues.add(getAnnotationValueForExpression(annotatedReference, (Expression) arrayExpression));
             }
             value = new AnnotationArrayValue(arrayValues);
-        }
-        else if (expression instanceof QualifiedName)
-        {
+        } else if (expression instanceof QualifiedName) {
             QualifiedName qualifiedName = (QualifiedName) expression;
             Object expressionValue = qualifiedName.resolveConstantExpressionValue();
-            if (expressionValue == null)
-            {
+            if (expressionValue == null) {
                 value = new AnnotationLiteralValue(String.class, qualifiedName.toString());
-            }
-            else
-            {
+            } else {
                 Class<?> expressionType = expressionValue.getClass();
                 value = new AnnotationLiteralValue(expressionType, expressionValue);
             }
-        }
-        else if (expression instanceof CastExpression)
-        {
+        } else if (expression instanceof CastExpression) {
             CastExpression cast = (CastExpression) expression;
             AnnotationValue castExpressionValue = getAnnotationValueForExpression(annotatedReference, cast.getExpression());
-            if (castExpressionValue instanceof AnnotationLiteralValue)
-            {
+            if (castExpressionValue instanceof AnnotationLiteralValue) {
                 AnnotationLiteralValue literalValue = (AnnotationLiteralValue) castExpressionValue;
                 ITypeBinding binding = cast.getType().resolveBinding();
-                if (binding == null)
-                {
+                if (binding == null) {
                     value = new AnnotationLiteralValue(String.class, literalValue.getLiteralValue());
-                }
-                else
-                {
+                } else {
                     Class<?> type = resolveLiteralType(cast.getType().resolveBinding());
                     value = new AnnotationLiteralValue(type, literalValue.getLiteralValue());
                 }
-            }
-            else
-            {
+            } else {
                 value = castExpressionValue;
             }
-        }
-        else if (expression instanceof SimpleName)
-        {
+        } else if (expression instanceof SimpleName) {
             SimpleName simpleName = (SimpleName) expression;
             ITypeBinding binding = simpleName.resolveTypeBinding();
-            if (binding == null)
-            {
+            if (binding == null) {
                 value = new AnnotationLiteralValue(String.class, simpleName.toString());
-            }
-            else
-            {
+            } else {
                 Object expressionValue = simpleName.resolveConstantExpressionValue();
                 Class<?> expressionType = expressionValue == null ? null : expressionValue.getClass();
                 value = new AnnotationLiteralValue(expressionType, expressionValue);
             }
-        } else if (expression instanceof NullLiteral)
-        {
+        } else if (expression instanceof NullLiteral) {
             return new AnnotationLiteralValue(Object.class, null);
-        } else
-        {
+        } else {
             LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in type: " + this.path
-                        + " just attempting to use it as a string value");
+                    + " just attempting to use it as a string value");
             value = new AnnotationLiteralValue(String.class, expression == null ? null : expression.toString());
         }
         return value;
@@ -670,21 +575,16 @@ public class ReferenceResolvingVisitor extends ASTVisitor
      * @param typeRef
      * @param node
      */
-    private void addAnnotationValues(ClassReference annotatedReference, AnnotationClassReference typeRef, Annotation node)
-    {
+    private void addAnnotationValues(ClassReference annotatedReference, AnnotationClassReference typeRef, Annotation node) {
         Map<String, AnnotationValue> annotationValueMap = new HashMap<>();
-        if (node instanceof SingleMemberAnnotation)
-        {
+        if (node instanceof SingleMemberAnnotation) {
             SingleMemberAnnotation singleMemberAnnotation = (SingleMemberAnnotation) node;
             AnnotationValue value = getAnnotationValueForExpression(annotatedReference, singleMemberAnnotation.getValue());
             annotationValueMap.put("value", value);
-        }
-        else if (node instanceof NormalAnnotation)
-        {
+        } else if (node instanceof NormalAnnotation) {
             @SuppressWarnings("unchecked")
             List<MemberValuePair> annotationValues = ((NormalAnnotation) node).values();
-            for (MemberValuePair annotationValue : annotationValues)
-            {
+            for (MemberValuePair annotationValue : annotationValues) {
                 String key = annotationValue.getName().toString();
                 Expression expression = annotationValue.getValue();
                 AnnotationValue value = getAnnotationValueForExpression(annotatedReference, expression);
@@ -694,48 +594,42 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         typeRef.setAnnotationValues(annotationValueMap);
     }
 
-    private Class<?> resolveLiteralType(ITypeBinding binding)
-    {
-        switch (binding.getName())
-        {
-        case "byte":
-            return byte.class;
-        case "short":
-            return short.class;
-        case "int":
-            return int.class;
-        case "long":
-            return long.class;
-        case "float":
-            return float.class;
-        case "double":
-            return double.class;
-        case "boolean":
-            return boolean.class;
-        case "char":
-            return char.class;
-        default:
-            throw new ASTException("Unrecognized literal type: " + binding.getName());
+    private Class<?> resolveLiteralType(ITypeBinding binding) {
+        switch (binding.getName()) {
+            case "byte":
+                return byte.class;
+            case "short":
+                return short.class;
+            case "int":
+                return int.class;
+            case "long":
+                return long.class;
+            case "float":
+                return float.class;
+            case "double":
+                return double.class;
+            case "boolean":
+                return boolean.class;
+            case "char":
+                return char.class;
+            default:
+                throw new ASTException("Unrecognized literal type: " + binding.getName());
         }
     }
 
-    private AnnotationClassReference processAnnotation(ClassReference annotatedReference, Annotation node)
-    {
+    private AnnotationClassReference processAnnotation(ClassReference annotatedReference, Annotation node) {
         final ITypeBinding typeBinding = node.resolveTypeBinding();
         final AnnotationClassReference reference;
         final String qualifiedName;
         final String packageName;
         final String className;
         final ResolutionStatus status;
-        if (typeBinding != null)
-        {
+        if (typeBinding != null) {
             status = ResolutionStatus.RESOLVED;
             qualifiedName = typeBinding.getQualifiedName();
             packageName = typeBinding.getPackage().getName();
             className = typeBinding.getName();
-        }
-        else
-        {
+        } else {
             ResolveClassnameResult result = resolveClassname(node.getTypeName().toString());
             status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
             qualifiedName = result.result;
@@ -746,48 +640,38 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
 
         reference = new AnnotationClassReference(
-                    annotatedReference,
-                    qualifiedName,
-                    packageName,
-                    className,
-                    status,
-                    compilationUnit.getLineNumber(node.getStartPosition()),
-                    compilationUnit.getColumnNumber(node.getStartPosition()),
-                    node.getLength(),
-                    node.toString());
+                annotatedReference,
+                qualifiedName,
+                packageName,
+                className,
+                status,
+                compilationUnit.getLineNumber(node.getStartPosition()),
+                compilationUnit.getColumnNumber(node.getStartPosition()),
+                node.getLength(),
+                node.toString());
 
         addAnnotationValues(annotatedReference, reference, node);
 
         return reference;
     }
 
-    private void processModifiers(ClassReference originalReference, List<?> modifiers)
-    {
-        for (Object modifier : modifiers)
-        {
-            if (modifier instanceof NormalAnnotation)
-            {
-                AnnotationClassReference reference = processAnnotation(originalReference, (NormalAnnotation)modifier);
+    private void processModifiers(ClassReference originalReference, List<?> modifiers) {
+        for (Object modifier : modifiers) {
+            if (modifier instanceof NormalAnnotation) {
+                AnnotationClassReference reference = processAnnotation(originalReference, (NormalAnnotation) modifier);
                 this.classReferences.add(reference);
-            }
-            else if (modifier instanceof SingleMemberAnnotation)
-            {
-                AnnotationClassReference reference = processAnnotation(originalReference, (SingleMemberAnnotation)modifier);
+            } else if (modifier instanceof SingleMemberAnnotation) {
+                AnnotationClassReference reference = processAnnotation(originalReference, (SingleMemberAnnotation) modifier);
                 this.classReferences.add(reference);
-            }
-            else if (modifier instanceof MarkerAnnotation)
-            {
-                AnnotationClassReference reference = processAnnotation(originalReference, (MarkerAnnotation)modifier);
+            } else if (modifier instanceof MarkerAnnotation) {
+                AnnotationClassReference reference = processAnnotation(originalReference, (MarkerAnnotation) modifier);
                 this.classReferences.add(reference);
-            } else if (modifier instanceof Modifier)
-            {
+            } else if (modifier instanceof Modifier) {
                 // throw if this is an annotation (as we should be processing all of those), ignore otherwise
-                if (((Modifier)modifier).isAnnotation())
+                if (((Modifier) modifier).isAnnotation())
                     throw new RuntimeException("Failed due to unexpected Modifier that is also an annotation: " + modifier.getClass().getCanonicalName());
 
-            }
-            else
-            {
+            } else {
                 throw new RuntimeException("Failed due to unexpected type: " + modifier.getClass().getCanonicalName());
             }
         }
@@ -819,62 +703,50 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 //        return false;
 //    }
 
-    public boolean visit(TypeDeclaration node)
-    {
+    public boolean visit(TypeDeclaration node) {
         Object clzInterfaces = node.getStructuralProperty(TypeDeclaration.SUPER_INTERFACE_TYPES_PROPERTY);
         Object clzSuperClasses = node.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
 
-        if (clzInterfaces != null)
-        {
-            if (List.class.isAssignableFrom(clzInterfaces.getClass()))
-            {
+        if (clzInterfaces != null) {
+            if (List.class.isAssignableFrom(clzInterfaces.getClass())) {
                 TypeReferenceLocation typeReferenceLocation = node.isInterface() ? TypeReferenceLocation.INHERITANCE
-                            : TypeReferenceLocation.IMPLEMENTS_TYPE;
+                        : TypeReferenceLocation.IMPLEMENTS_TYPE;
 
                 List<?> clzInterfacesList = (List<?>) clzInterfaces;
-                for (Object clzInterface : clzInterfacesList)
-                {
+                for (Object clzInterface : clzInterfacesList) {
                     ParameterizedType parameterizedType = null;
-                    if (clzInterface instanceof ParameterizedType)
-                    {
+                    if (clzInterface instanceof ParameterizedType) {
                         parameterizedType = (ParameterizedType) clzInterface;
                         clzInterface = parameterizedType.getType();
                     }
 
-                    if (clzInterface instanceof SimpleType)
-                    {
+                    if (clzInterface instanceof SimpleType) {
                         SimpleType simpleType = (SimpleType) clzInterface;
                         ITypeBinding resolvedSuperInterface = simpleType.resolveBinding();
-                        if (resolvedSuperInterface == null)
-                        {
+                        if (resolvedSuperInterface == null) {
                             ResolveClassnameResult result = resolveClassname(simpleType.getName().toString());
                             ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
                             PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
                             processTypeAsString(result.result, packageAndClassName.packageName, packageAndClassName.className, status,
-                                        typeReferenceLocation,
-                                        compilationUnit.getLineNumber(node.getStartPosition()),
-                                        compilationUnit.getColumnNumber(node.getStartPosition()),
-                                        node.getLength(), extractDefinitionLine(node.toString()));
-                        }
-                        else
-                        {
+                                    typeReferenceLocation,
+                                    compilationUnit.getLineNumber(node.getStartPosition()),
+                                    compilationUnit.getColumnNumber(node.getStartPosition()),
+                                    node.getLength(), extractDefinitionLine(node.toString()));
+                        } else {
                             /*
                              * Register all the implemented interfaces (even super interfaces, if we are able to resolve them.)
                              */
                             Stack<ITypeBinding> stack = new Stack<>();
                             stack.push(resolvedSuperInterface);
-                            while (!stack.isEmpty())
-                            {
+                            while (!stack.isEmpty()) {
                                 resolvedSuperInterface = stack.pop();
                                 processTypeBinding(resolvedSuperInterface, ResolutionStatus.RESOLVED, typeReferenceLocation,
-                                            compilationUnit.getLineNumber(node.getStartPosition()),
-                                            compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
-                                            extractDefinitionLine(node.toString()));
-                                if (resolvedSuperInterface != null)
-                                {
+                                        compilationUnit.getLineNumber(node.getStartPosition()),
+                                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
+                                        extractDefinitionLine(node.toString()));
+                                if (resolvedSuperInterface != null) {
                                     ITypeBinding[] interfaces = resolvedSuperInterface.getInterfaces();
-                                    for (ITypeBinding oneInterface : interfaces)
-                                    {
+                                    for (ITypeBinding oneInterface : interfaces) {
                                         stack.push(oneInterface);
                                     }
                                 }
@@ -884,37 +756,32 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 }
             }
         }
-        if (clzSuperClasses != null)
-        {
-            if (clzSuperClasses instanceof SimpleType)
-            {
+        if (clzSuperClasses != null) {
+            if (clzSuperClasses instanceof SimpleType) {
                 ITypeBinding resolvedSuperClass = ((SimpleType) clzSuperClasses).resolveBinding();
 
-                if (resolvedSuperClass == null)
-                {
+                if (resolvedSuperClass == null) {
                     ResolveClassnameResult result = resolveClassname(((SimpleType) clzSuperClasses).getName().toString());
                     ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
                     PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
                     processTypeAsString(result.result, packageAndClassName.packageName, packageAndClassName.className, status,
-                                TypeReferenceLocation.INHERITANCE,
-                                compilationUnit.getLineNumber(node.getStartPosition()),
-                                compilationUnit.getColumnNumber(node.getStartPosition()),
-                                node.getLength(), extractDefinitionLine(node.toString()));
+                            TypeReferenceLocation.INHERITANCE,
+                            compilationUnit.getLineNumber(node.getStartPosition()),
+                            compilationUnit.getColumnNumber(node.getStartPosition()),
+                            node.getLength(), extractDefinitionLine(node.toString()));
                 }
 
                 // register all the superClasses up to Object
-                while (resolvedSuperClass != null && !resolvedSuperClass.getQualifiedName().equals("java.lang.Object"))
-                {
+                while (resolvedSuperClass != null && !resolvedSuperClass.getQualifiedName().equals("java.lang.Object")) {
                     processTypeBinding(resolvedSuperClass, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
-                                compilationUnit.getLineNumber(node.getStartPosition()),
-                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+                            compilationUnit.getLineNumber(node.getStartPosition()),
+                            compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
 
-                    for (ITypeBinding iface : resolvedSuperClass.getInterfaces())
-                    {
+                    for (ITypeBinding iface : resolvedSuperClass.getInterfaces()) {
                         processTypeBinding(iface, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPLEMENTS_TYPE,
-                                    compilationUnit.getLineNumber(node.getStartPosition()),
-                                    compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
-                                    extractDefinitionLine(node.toString()));
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
+                                extractDefinitionLine(node.toString()));
                     }
                     resolvedSuperClass = resolvedSuperClass.getSuperclass();
                 }
@@ -928,10 +795,8 @@ public class ReferenceResolvingVisitor extends ASTVisitor
      * Declaration of the variable within a block
      */
     @Override
-    public boolean visit(VariableDeclarationStatement node)
-    {
-        for (int i = 0; i < node.fragments().size(); ++i)
-        {
+    public boolean visit(VariableDeclarationStatement node) {
+        for (int i = 0; i < node.fragments().size(); ++i) {
             String nodeType = node.getType().toString();
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             state.getNames().add(frag.getName().getIdentifier());
@@ -939,23 +804,20 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
 
         processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
-                    compilationUnit.getLineNumber(node.getStartPosition()),
-                    compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                compilationUnit.getLineNumber(node.getStartPosition()),
+                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         return super.visit(node);
     }
 
-    private void processImport(ImportDeclaration node)
-    {
+    private void processImport(ImportDeclaration node) {
         String name = node.getName().toString();
-        if (node.isOnDemand())
-        {
+        if (node.isOnDemand()) {
             state.getWildcardImports().add(name);
 
             String[] resolvedNames = this.wildcardImportResolver.resolve(name);
-            for (String resolvedName : resolvedNames)
-            {
+            for (String resolvedName : resolvedNames) {
                 processImport(resolvedName, ResolutionStatus.RESOLVED, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                            compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
+                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
             }
 
             /*
@@ -963,26 +825,22 @@ public class ReferenceResolvingVisitor extends ASTVisitor
              * may be contained in that wildcard
              */
             processImport(name + ".*", ResolutionStatus.RESOLVED, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
-        }
-        else
-        {
+                    compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
+        } else {
             String clzName = StringUtils.substringAfterLast(name, ".");
             state.getClassNameLookedUp().add(clzName);
             state.getClassNameToFQCN().put(clzName, name);
             ResolutionStatus status = node.resolveBinding() != null ? ResolutionStatus.RESOLVED : ResolutionStatus.RECOVERED;
             processImport(name, status, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
+                    compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
         }
     }
 
     /***
      * Takes the MethodInvocation, and attempts to resolve the types of objects passed into the method invocation.
      */
-    public boolean visit(MethodInvocation node)
-    {
-        if (!StringUtils.contains(node.toString(), "."))
-        {
+    public boolean visit(MethodInvocation node) {
+        if (!StringUtils.contains(node.toString(), ".")) {
             // it must be a local method. ignore.
             return true;
         }
@@ -993,21 +851,17 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         final ResolutionStatus resolutionStatus;
         int columnNumber = compilationUnit.getColumnNumber(node.getName().getStartPosition());
         int length = node.getName().getLength();
-        if (resolveTypeBinding != null)
-        {
+        if (resolveTypeBinding != null) {
             resolutionStatus = ResolutionStatus.RESOLVED;
             ITypeBinding[] argumentTypeBindings = resolveTypeBinding.getParameterTypes();
             List<Expression> arguments = node.arguments();
             int index = 0;
-            for (ITypeBinding type : argumentTypeBindings)
-            {
+            for (ITypeBinding type : argumentTypeBindings) {
                 argumentsQualified.add(type.getQualifiedName());
 
-                if (type.isEnum())
-                {
+                if (type.isEnum()) {
                     // there is different number of passed arguments and possible arguments from declaration
-                    if (arguments.size() > index)
-                    {
+                    if (arguments.size() > index) {
                         Expression expression = arguments.get(index);
                         processTypeAsEnum(type, expression, resolutionStatus,
                                 compilationUnit.getLineNumber(node.getName().getStartPosition()),
@@ -1019,28 +873,21 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
 
             // find the interface declaring the method
-            if (resolveTypeBinding != null && resolveTypeBinding.getDeclaringClass() != null)
-            {
+            if (resolveTypeBinding != null && resolveTypeBinding.getDeclaringClass() != null) {
                 ITypeBinding declaringClass = resolveTypeBinding.getDeclaringClass();
                 qualifiedInstances.add(declaringClass.getQualifiedName());
                 ITypeBinding[] interfaces = declaringClass.getInterfaces();
                 // Now find all the implemented interfaces having the method called.
-                for (ITypeBinding possibleInterface : interfaces)
-                {
+                for (ITypeBinding possibleInterface : interfaces) {
                     IMethodBinding[] declaredMethods = possibleInterface.getDeclaredMethods();
-                    if (declaredMethods.length != 0)
-                    {
-                        for (IMethodBinding interfaceMethod : declaredMethods)
-                        {
-                            if (interfaceMethod.getName().equals(node.getName().toString()))
-                            {
+                    if (declaredMethods.length != 0) {
+                        for (IMethodBinding interfaceMethod : declaredMethods) {
+                            if (interfaceMethod.getName().equals(node.getName().toString())) {
                                 List<String> interfaceMethodArguments = new ArrayList<>();
-                                for (ITypeBinding type : interfaceMethod.getParameterTypes())
-                                {
+                                for (ITypeBinding type : interfaceMethod.getParameterTypes()) {
                                     interfaceMethodArguments.add(type.getQualifiedName());
                                 }
-                                if (interfaceMethodArguments.equals(argumentsQualified))
-                                {
+                                if (interfaceMethodArguments.equals(argumentsQualified)) {
                                     qualifiedInstances.add(possibleInterface.getQualifiedName());
                                 }
                             }
@@ -1049,40 +896,31 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 }
             }
 
-        }
-        else
-        {
+        } else {
             resolutionStatus = ResolutionStatus.RECOVERED;
             String nodeName = StringUtils.removeStart(node.toString(), "this.");
             String objRef = StringUtils.substringBefore(nodeName, "." + node.getName().toString());
-            if (state.getNameInstance().containsKey(objRef))
-            {
+            if (state.getNameInstance().containsKey(objRef)) {
                 objRef = state.getNameInstance().get(objRef);
             }
             objRef = resolveClassname(objRef).result;
 
             @SuppressWarnings("unchecked")
             List<Expression> arguments = node.arguments();
-            for (Expression expression : arguments)
-            {
+            for (Expression expression : arguments) {
                 ITypeBinding argumentBinding = expression.resolveTypeBinding();
-                if (argumentBinding != null)
-                {
+                if (argumentBinding != null) {
                     argumentsQualified.add(argumentBinding.getQualifiedName());
 
-                    if (argumentBinding.isEnum())
-                    {
+                    if (argumentBinding.isEnum()) {
                         // FIXME -- Test
                         String constantEnum = expression.toString();
-                        if (constantEnum != null)
-                        {
+                        if (constantEnum != null) {
                             processTypeAsEnum(argumentBinding, expression, ResolutionStatus.RESOLVED, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                                     columnNumber, length, extractDefinitionLine(node.toString()));
                         }
                     }
-                }
-                else
-                {
+                } else {
                     PackageAndClassName argumentQualifiedGuess = PackageAndClassName.parseFromQualifiedName(expression.toString());
                     argumentsQualified.add(argumentQualifiedGuess.toString());
                 }
@@ -1090,44 +928,37 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             qualifiedInstances.add(objRef);
         }
 
-        for (String qualifiedInstance : qualifiedInstances)
-        {
+        for (String qualifiedInstance : qualifiedInstances) {
             PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(qualifiedInstance);
             MethodType methodCall = new MethodType(qualifiedInstance, packageAndClassName.packageName, packageAndClassName.className,
-                        node.getName().toString(), argumentsQualified);
+                    node.getName().toString(), argumentsQualified);
             processMethod(methodCall, resolutionStatus, TypeReferenceLocation.METHOD_CALL,
-                        compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        columnNumber, length, node.toString());
+                    compilationUnit.getLineNumber(node.getName().getStartPosition()),
+                    columnNumber, length, node.toString());
         }
 
         return super.visit(node);
     }
 
     @Override
-    public boolean visit(PackageDeclaration node)
-    {
+    public boolean visit(PackageDeclaration node) {
         return super.visit(node);
     }
 
-    private String getQualifiedName(ITypeBinding typeBinding)
-    {
+    private String getQualifiedName(ITypeBinding typeBinding) {
         if (typeBinding == null)
             return null;
 
         String qualifiedName = typeBinding.getQualifiedName();
 
-        if (StringUtils.isEmpty(qualifiedName))
-        {
-            if (typeBinding.isAnonymous())
-            {
+        if (StringUtils.isEmpty(qualifiedName)) {
+            if (typeBinding.isAnonymous()) {
                 if (typeBinding.getSuperclass() != null)
                     qualifiedName = getQualifiedName(typeBinding.getSuperclass());
-                else if (typeBinding instanceof AnonymousClassDeclaration)
-                {
+                else if (typeBinding instanceof AnonymousClassDeclaration) {
                     qualifiedName = ((AnonymousClassDeclaration) typeBinding).toString();
                 }
-            }
-            else if (StringUtils.isEmpty(qualifiedName) && typeBinding.isNested())
+            } else if (StringUtils.isEmpty(qualifiedName) && typeBinding.isNested())
                 qualifiedName = typeBinding.getName();
         }
 
@@ -1135,8 +966,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     }
 
     @Override
-    public boolean visit(ClassInstanceCreation node)
-    {
+    public boolean visit(ClassInstanceCreation node) {
         final int lineNumber = compilationUnit.getLineNumber(node.getType().getStartPosition());
         final int columnNumber = compilationUnit.getColumnNumber(node.getType().getStartPosition());
         final int length = node.getType().getLength();
@@ -1144,21 +974,17 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         IMethodBinding constructorBinding = node.resolveConstructorBinding();
         String qualifiedClass = "";
         List<String> constructorMethodQualifiedArguments = new ArrayList<>();
-        if (constructorBinding != null && constructorBinding.getDeclaringClass() != null)
-        {
+        if (constructorBinding != null && constructorBinding.getDeclaringClass() != null) {
             ITypeBinding declaringClass = constructorBinding.getDeclaringClass();
             qualifiedClass = getQualifiedName(declaringClass);
 
             @SuppressWarnings("unchecked")
             List<Expression> arguments = node.arguments();
             int index = 0;
-            for (ITypeBinding type : constructorBinding.getParameterTypes())
-            {
-                if (type.isEnum())
-                {
+            for (ITypeBinding type : constructorBinding.getParameterTypes()) {
+                if (type.isEnum()) {
                     // there is different number of passed arguments and possible arguments from declaration
-                    if (arguments.size() > index)
-                    {
+                    if (arguments.size() > index) {
                         Expression argument = arguments.get(index);
                         processTypeAsEnum(type, argument, ResolutionStatus.RESOLVED, lineNumber, columnNumber, length, extractDefinitionLine(node.toString()));
                     }
@@ -1166,27 +992,21 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 index++;
 
                 String qualifiedArgumentClass = type.getQualifiedName();
-                if (qualifiedArgumentClass != null)
-                {
+                if (qualifiedArgumentClass != null) {
                     constructorMethodQualifiedArguments.add(qualifiedArgumentClass);
                 }
             }
         }
 
-        if (constructorMethodQualifiedArguments.isEmpty() && !node.arguments().isEmpty())
-        {
+        if (constructorMethodQualifiedArguments.isEmpty() && !node.arguments().isEmpty()) {
             @SuppressWarnings("unchecked")
             List<Expression> arguments = node.arguments();
             arguments.get(0).resolveTypeBinding();
-            for (Expression type : arguments)
-            {
+            for (Expression type : arguments) {
                 ITypeBinding argumentBinding = type.resolveTypeBinding();
-                if (argumentBinding != null)
-                {
+                if (argumentBinding != null) {
                     constructorMethodQualifiedArguments.add(argumentBinding.getQualifiedName());
-                }
-                else
-                {
+                } else {
                     List<String> guessedParam = methodParameterGuesser(Collections.singletonList(type));
                     constructorMethodQualifiedArguments.addAll(guessedParam);
                 }
@@ -1197,15 +1017,12 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         /*
          * Qualified class may not be resolved in case of anonymous classes
          */
-        if (qualifiedClass == null || qualifiedClass.isEmpty())
-        {
+        if (qualifiedClass == null || qualifiedClass.isEmpty()) {
             qualifiedClass = node.getType().toString();
             ResolveClassnameResult result = resolveClassname(qualifiedClass);
             qualifiedClass = result.result;
             resolutionStatus = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
-        }
-        else
-        {
+        } else {
             resolutionStatus = ResolutionStatus.RESOLVED;
         }
 
@@ -1215,208 +1032,142 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
-    private List<String> methodParameterGuesser(List<?> arguments)
-    {
+    private List<String> methodParameterGuesser(List<?> arguments) {
         List<String> resolvedParams = new ArrayList<>(arguments.size());
-        for (Object o : arguments)
-        {
-            if (o instanceof SimpleName)
-            {
+        for (Object o : arguments) {
+            if (o instanceof SimpleName) {
                 String name = state.getNameInstance().get(o.toString());
-                if (name != null)
-                {
+                if (name != null) {
                     resolvedParams.add(name);
-                }
-                else
-                {
+                } else {
                     resolvedParams.add("Undefined");
                 }
-            }
-            else if (o instanceof StringLiteral)
-            {
+            } else if (o instanceof StringLiteral) {
                 resolvedParams.add("java.lang.String");
-            }
-            else if (o instanceof FieldAccess)
-            {
+            } else if (o instanceof FieldAccess) {
                 String field = ((FieldAccess) o).getName().toString();
-                if (state.getNames().contains(field))
-                {
+                if (state.getNames().contains(field)) {
                     resolvedParams.add(state.getNameInstance().get(field));
-                }
-                else
-                {
+                } else {
                     resolvedParams.add("Undefined");
                 }
-            }
-            else if (o instanceof CastExpression)
-            {
+            } else if (o instanceof CastExpression) {
                 String type = ((CastExpression) o).getType().toString();
                 type = qualifyType(type);
                 resolvedParams.add(type);
-            }
-            else if (o instanceof MethodInvocation)
-            {
+            } else if (o instanceof MethodInvocation) {
                 String on = ((MethodInvocation) o).getName().toString();
-                if (StringUtils.equals(on, "toString"))
-                {
-                    if (((MethodInvocation) o).arguments().size() == 0)
-                    {
+                if (StringUtils.equals(on, "toString")) {
+                    if (((MethodInvocation) o).arguments().size() == 0) {
                         resolvedParams.add("java.lang.String");
                     }
-                }
-                else
-                {
+                } else {
                     resolvedParams.add("Undefined");
                 }
-            }
-            else if (o instanceof NumberLiteral)
-            {
-                if (StringUtils.endsWith(o.toString(), "L"))
-                {
+            } else if (o instanceof NumberLiteral) {
+                if (StringUtils.endsWith(o.toString(), "L")) {
                     resolvedParams.add("long");
-                }
-                else if (StringUtils.endsWith(o.toString(), "f"))
-                {
+                } else if (StringUtils.endsWith(o.toString(), "f")) {
                     resolvedParams.add("float");
-                }
-                else if (StringUtils.endsWith(o.toString(), "d"))
-                {
+                } else if (StringUtils.endsWith(o.toString(), "d")) {
                     resolvedParams.add("double");
-                }
-                else
-                {
+                } else {
                     resolvedParams.add("int");
                 }
-            }
-            else if (o instanceof BooleanLiteral)
-            {
+            } else if (o instanceof BooleanLiteral) {
                 resolvedParams.add("boolean");
-            }
-            else if (o instanceof ClassInstanceCreation)
-            {
+            } else if (o instanceof ClassInstanceCreation) {
                 String nodeType = ((ClassInstanceCreation) o).getType().toString();
                 nodeType = resolveClassname(nodeType).result;
                 resolvedParams.add(nodeType);
-            }
-            else if (o instanceof org.eclipse.jdt.core.dom.CharacterLiteral)
-            {
+            } else if (o instanceof org.eclipse.jdt.core.dom.CharacterLiteral) {
                 resolvedParams.add("char");
-            }
-            else if (o instanceof InfixExpression)
-            {
+            } else if (o instanceof InfixExpression) {
                 String expression = o.toString();
-                if (StringUtils.contains(expression, "\""))
-                {
+                if (StringUtils.contains(expression, "\"")) {
                     resolvedParams.add("java.lang.String");
-                }
-                else
-                {
+                } else {
                     resolvedParams.add("Undefined");
                 }
-            }
-            else if (o instanceof QualifiedName)
-            {
+            } else if (o instanceof QualifiedName) {
                 String paramGuessed = ((QualifiedName) o).getFullyQualifiedName();
                 PackageAndClassName qualifiedParam = PackageAndClassName.parseFromQualifiedName(paramGuessed);
                 resolvedParams.add(qualifiedParam.toString());
-            }
-            else
-            {
+            } else {
                 resolvedParams.add("Undefined");
             }
         }
         return resolvedParams;
     }
 
-    private ResolveClassnameResult resolveClassname(String sourceClassname)
-    {
+    private ResolveClassnameResult resolveClassname(String sourceClassname) {
         /*
          * If the type contains a "." assume that it is fully qualified.
          *
          * FIXME - This is a carryover from the original Windup code, and I don't think that this assumption is valid.
          */
-        if (!StringUtils.contains(sourceClassname, "."))
-        {
-            if (state.getClassNameLookedUp().contains(sourceClassname))
-            {
+        if (!StringUtils.contains(sourceClassname, ".")) {
+            if (state.getClassNameLookedUp().contains(sourceClassname)) {
                 String qualifiedName = state.getClassNameToFQCN().get(sourceClassname);
-                if (qualifiedName != null)
-                {
+                if (qualifiedName != null) {
                     return new ResolveClassnameResult(true, qualifiedName);
-                }
-                else
-                {
+                } else {
                     return new ResolveClassnameResult(false, sourceClassname);
                 }
-            }
-            else
-            {
+            } else {
                 state.getClassNameLookedUp().add(sourceClassname);
                 String resolvedClassName = this.wildcardImportResolver.resolve(this.state.getWildcardImports(), sourceClassname);
-                if (resolvedClassName != null)
-                {
+                if (resolvedClassName != null) {
                     state.getClassNameToFQCN().put(sourceClassname, resolvedClassName);
                     return new ResolveClassnameResult(true, resolvedClassName);
                 }
                 return new ResolveClassnameResult(false, sourceClassname);
             }
-        }
-        else
-        {
+        } else {
             return new ResolveClassnameResult(true, sourceClassname);
         }
     }
 
-    private String qualifyType(String objRef)
-    {
+    private String qualifyType(String objRef) {
         /*
          * Temporarily remove '[]' to resolve array types.
          */
         objRef = StringUtils.removeEnd(objRef, "[]");
-        if (state.getNameInstance().containsKey(objRef))
-        {
+        if (state.getNameInstance().containsKey(objRef)) {
             objRef = state.getNameInstance().get(objRef);
         }
         objRef = resolveClassname(objRef).result;
         return objRef;
     }
 
-    private static class MethodType
-    {
+    private static class MethodType {
         private final String qualifiedName;
         private final String packageName;
         private final String className;
         private final String methodName;
         private final List<String> qualifiedParameters;
 
-        MethodType(String qualifiedName, String packageName, String className, String methodName, List<String> qualifiedParameters)
-        {
+        MethodType(String qualifiedName, String packageName, String className, String methodName, List<String> qualifiedParameters) {
             this.qualifiedName = qualifiedName;
             this.packageName = packageName;
             this.className = className;
             this.methodName = methodName;
 
-            if (qualifiedParameters != null)
-            {
+            if (qualifiedParameters != null) {
                 this.qualifiedParameters = qualifiedParameters;
-            }
-            else
-            {
+            } else {
                 this.qualifiedParameters = new LinkedList<>();
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(qualifiedName).append(".").append(methodName);
             builder.append("(");
 
-            for (int i = 0, j = qualifiedParameters.size(); i < j; i++)
-            {
-                if (i > 0)
-                {
+            for (int i = 0, j = qualifiedParameters.size(); i < j; i++) {
+                if (i > 0) {
                     builder.append(", ");
                 }
                 String param = qualifiedParameters.get(i);
@@ -1428,36 +1179,28 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
     }
 
-    private static class ConstructorType
-    {
+    private static class ConstructorType {
         private final String qualifiedName;
         private final List<String> qualifiedParameters;
 
-        public ConstructorType(String qualifiedName, List<String> qualifiedParameters)
-        {
+        public ConstructorType(String qualifiedName, List<String> qualifiedParameters) {
             this.qualifiedName = qualifiedName;
-            if (qualifiedParameters != null)
-            {
+            if (qualifiedParameters != null) {
                 this.qualifiedParameters = qualifiedParameters;
-            }
-            else
-            {
+            } else {
                 this.qualifiedParameters = new LinkedList<>();
             }
 
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(qualifiedName);
             builder.append("(");
 
-            for (int i = 0, j = qualifiedParameters.size(); i < j; i++)
-            {
-                if (i > 0)
-                {
+            for (int i = 0, j = qualifiedParameters.size(); i < j; i++) {
+                if (i > 0) {
                     builder.append(", ");
                 }
                 String param = qualifiedParameters.get(i);
@@ -1469,51 +1212,29 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
     }
 
-    private static class PackageAndClassName
-    {
+    private static class PackageAndClassName {
         private String packageName;
         private String className;
 
-        public PackageAndClassName(String packageName, String className)
-        {
+        public PackageAndClassName(String packageName, String className) {
             this.packageName = packageName;
             this.className = className;
         }
-        
-        public String toString()
-        {
-            StringBuffer sb = new StringBuffer();
-            if (this.packageName != null)
-            {
-                sb.append(this.packageName).append(".");
-            }
-            if (this.className != null)
-                sb.append(this.className);
 
-            return sb.toString();
-        }
-        
-        public static PackageAndClassName parseFromQualifiedName(String qualifiedName)
-        {
+        public static PackageAndClassName parseFromQualifiedName(String qualifiedName) {
             final String packageName;
             final String className;
 
             // remove the .* if this was a package import
-            if (qualifiedName.contains(".*"))
-            {
+            if (qualifiedName.contains(".*")) {
                 packageName = qualifiedName.replace(".*", "");
                 className = null;
-            }
-            else
-            {
+            } else {
                 int lastDot = qualifiedName.lastIndexOf('.');
-                if (lastDot == -1)
-                {
+                if (lastDot == -1) {
                     packageName = null;
                     className = qualifiedName;
-                }
-                else
-                {
+                } else {
                     packageName = qualifiedName.substring(0, lastDot);
                     className = qualifiedName.substring(lastDot + 1);
                 }
@@ -1521,20 +1242,28 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             return new PackageAndClassName(packageName, className);
         }
 
-        private static PackageAndClassName parseFromQualifiedNameWithConstant(String qualifiedName)
-        {
+        private static PackageAndClassName parseFromQualifiedNameWithConstant(String qualifiedName) {
             int lastDot = qualifiedName.lastIndexOf('.');
             return lastDot > -1 ? parseFromQualifiedName(qualifiedName.substring(0, lastDot)) : parseFromQualifiedName(qualifiedName);
         }
+
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            if (this.packageName != null) {
+                sb.append(this.packageName).append(".");
+            }
+            if (this.className != null)
+                sb.append(this.className);
+
+            return sb.toString();
+        }
     }
 
-    private class ResolveClassnameResult
-    {
+    private class ResolveClassnameResult {
         private boolean found;
         private String result;
 
-        public ResolveClassnameResult(boolean found, String result)
-        {
+        public ResolveClassnameResult(boolean found, String result) {
             this.found = found;
             this.result = result;
         }

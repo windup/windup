@@ -1,9 +1,5 @@
 package org.jboss.windup.project.handlers;
 
-import static org.joox.JOOX.$;
-
-import java.util.List;
-
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -13,18 +9,19 @@ import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
 import org.w3c.dom.Element;
 
+import java.util.List;
+
+import static org.joox.JOOX.$;
+
 @NamespaceElementHandler(elementName = "project", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class ProjectHandler implements ElementHandler<Project>
-{
+public class ProjectHandler implements ElementHandler<Project> {
 
     @Override
     public Project processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         List<Element> children = $(element).children("artifact").get();
         Artifact artifact = null;
-        for (Element child : children)
-        {
+        for (Element child : children) {
             artifact = handlerManager.processElement(child);
         }
 

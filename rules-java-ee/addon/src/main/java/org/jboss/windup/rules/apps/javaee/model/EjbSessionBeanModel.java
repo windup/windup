@@ -1,23 +1,21 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import java.util.Map;
-
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.MapInProperties;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
+import java.util.Map;
 
 /**
  * Contains EJB Session Bean information and related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbSessionBeanModel.TYPE)
-public interface EjbSessionBeanModel extends EjbBeanBaseModel
-{
+public interface EjbSessionBeanModel extends EjbBeanBaseModel {
 
     String TYPE = "EjbSessionBeanModel";
 
@@ -48,19 +46,13 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      * Contains the Session bean's local interface
      */
     @Adjacency(label = EJB_LOCAL, direction = Direction.OUT)
-    void setEjbLocal(JavaClassModel ejbLocal);
+    JavaClassModel getEjbLocal();
 
     /**
      * Contains the Session bean's local interface
      */
     @Adjacency(label = EJB_LOCAL, direction = Direction.OUT)
-    JavaClassModel getEjbLocal();
-
-    /**
-     * Contains the Session bean's remote interface
-     */
-    @Adjacency(label = EJB_REMOTE, direction = Direction.OUT)
-    void setEjbRemote(JavaClassModel ejbRemote);
+    void setEjbLocal(JavaClassModel ejbLocal);
 
     /**
      * Contains the Session bean's remote interface
@@ -69,10 +61,10 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     JavaClassModel getEjbRemote();
 
     /**
-     * Contains the Session bean's local home
+     * Contains the Session bean's remote interface
      */
-    @Adjacency(label = EJB_LOCAL_HOME, direction = Direction.OUT)
-    void setEjbLocalHome(JavaClassModel ejbLocalHome);
+    @Adjacency(label = EJB_REMOTE, direction = Direction.OUT)
+    void setEjbRemote(JavaClassModel ejbRemote);
 
     /**
      * Contains the Session bean's local home
@@ -81,16 +73,22 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     JavaClassModel getEjbLocalHome();
 
     /**
-     * Contains the Session bean's home interface
+     * Contains the Session bean's local home
      */
-    @Adjacency(label = EJB_HOME, direction = Direction.OUT)
-    void setEjbHome(JavaClassModel ejbHome);
+    @Adjacency(label = EJB_LOCAL_HOME, direction = Direction.OUT)
+    void setEjbLocalHome(JavaClassModel ejbLocalHome);
 
     /**
      * Contains the Session bean's home interface
      */
     @Adjacency(label = EJB_HOME, direction = Direction.OUT)
     JavaClassModel getEjbHome();
+
+    /**
+     * Contains the Session bean's home interface
+     */
+    @Adjacency(label = EJB_HOME, direction = Direction.OUT)
+    void setEjbHome(JavaClassModel ejbHome);
 
     /**
      * References the Deployment Descriptor containing EJB.
@@ -102,7 +100,19 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      * Contains the global jndi location for this resource.
      */
     @Adjacency(label = GLOBAL_JNDI, direction = Direction.OUT)
+    JNDIResourceModel getGlobalJndiReference();
+
+    /**
+     * Contains the global jndi location for this resource.
+     */
+    @Adjacency(label = GLOBAL_JNDI, direction = Direction.OUT)
     void setGlobalJndiReference(JNDIResourceModel jndi);
+
+    /**
+     * Contains the module jndi location for this resource.
+     */
+    @Adjacency(label = MODULE_JNDI, direction = Direction.OUT)
+    JNDIResourceModel getModuleJndiReference();
 
     /**
      * Contains the module jndi location for this resource.
@@ -114,25 +124,13 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      * Contains the app jndi location for this resource.
      */
     @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
-    void setLocalJndiReference(JNDIResourceModel jndi);
-
-    /**
-     * Contains the global jndi location for this resource.
-     */
-    @Adjacency(label = GLOBAL_JNDI, direction = Direction.OUT)
-    JNDIResourceModel getGlobalJndiReference();
-
-    /**
-     * Contains the module jndi location for this resource.
-     */
-    @Adjacency(label = MODULE_JNDI, direction = Direction.OUT)
-    JNDIResourceModel getModuleJndiReference();
+    JNDIResourceModel getLocalJndiReference();
 
     /**
      * Contains the app jndi location for this resource.
      */
     @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
-    JNDIResourceModel getLocalJndiReference();
+    void setLocalJndiReference(JNDIResourceModel jndi);
 
     /**
      * Timeouts for each method pattern in seconds, * is wildcard
@@ -150,11 +148,11 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      * References the thread pool, if defined.
      */
     @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
-    void setThreadPool(ThreadPoolModel threadPool);
+    ThreadPoolModel getThreadPool();
 
     /**
      * References the thread pool, if defined.
      */
     @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
-    ThreadPoolModel getThreadPool();
+    void setThreadPool(ThreadPoolModel threadPool);
 }

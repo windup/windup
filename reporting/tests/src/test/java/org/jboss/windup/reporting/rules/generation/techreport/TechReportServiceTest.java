@@ -1,14 +1,8 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian; 
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -29,38 +23,39 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class TechReportServiceTest
-{
+public class TechReportServiceTest {
     @Inject
     private GraphContextFactory factory;
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-    }
-
     @Inject
     private TagServiceHolder tagServiceHolder;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML();
+    }
+
     @Test
-    public void testTechReportService() throws Exception
-    {
+    public void testTechReportService() throws Exception {
         Path graphPath = null;
-        try (GraphContext graphContext = factory.create(true))
-        {
+        try (GraphContext graphContext = factory.create(true)) {
             graphPath = graphContext.getGraphDirectory();
             final TagGraphService tagService = new TagGraphService(graphContext);
             tagService.feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
@@ -87,22 +82,20 @@ public class TechReportServiceTest
             TechReportService.TechUsageStatSum statSumJavaEE = techStatsMatrix.get("techrow:java-ee", "techbox:ejb", Long.valueOf(0), "mejb");
             Assert.assertNotNull(statSumJavaEE);
             Assert.assertEquals("mejb", statSumJavaEE.getName());
-            Assert.assertEquals(1, statSumJavaEE.getOccurrenceCount());            
-            
+            Assert.assertEquals(1, statSumJavaEE.getOccurrenceCount());
+
             TechReportService.TechUsageStatSum statSumValidation = techStatsMatrix.get("techrow:java-ee", "techbox:validation", Long.valueOf(0), "beanvalidation");
             Assert.assertNotNull(statSumValidation);
             Assert.assertEquals("beanvalidation", statSumValidation.getName());
-            Assert.assertEquals(1, statSumValidation.getOccurrenceCount());            
-            
+            Assert.assertEquals(1, statSumValidation.getOccurrenceCount());
+
             TechReportService.TechUsageStatSum statSumBinding = techStatsMatrix.get("techrow:java-ee", "techbox:binding", Long.valueOf(0), "jsonb");
             Assert.assertNotNull(statSumBinding);
             Assert.assertEquals("jsonb", statSumBinding.getName());
             Assert.assertEquals(1, statSumBinding.getOccurrenceCount());
-            
-            
-        }
-        finally
-        {
+
+
+        } finally {
             if (graphPath != null)
                 FileUtils.deleteDirectory(graphPath.toFile());
         }
@@ -110,23 +103,22 @@ public class TechReportServiceTest
 
     /**
      * Creates a project structure like this:
-     * 
+     *
      * <pre>
      *     - application1
      *      - child1 - Archive
      *          - TechnologyUsageStatisticsModel - count 1
-    *          - child2 - DuplicateArchive
+     *          - child2 - DuplicateArchive
      *          - TechnologyUsageStatisticsModel - count 1
      *     - Shared
-    *          - Canonical child2
+     *          - Canonical child2
      *          - TechnologyUsageStatisticsModel - count 1
      * </pre>
      *
      * @param graphContext
      * @return
      */
-    private ArchiveModel createArchiveHierarchy(GraphContext graphContext)
-    {
+    private ArchiveModel createArchiveHierarchy(GraphContext graphContext) {
         GraphService<DuplicateArchiveModel> duplicateArchiveService = new GraphService<>(graphContext, DuplicateArchiveModel.class);
         GraphService<MavenProjectModel> mavenProjectModelService = new GraphService<>(graphContext, MavenProjectModel.class);
         GraphService<DuplicateProjectModel> duplicateProjectService = new GraphService<>(graphContext, DuplicateProjectModel.class);
@@ -173,8 +165,7 @@ public class TechReportServiceTest
         return root;
     }
 
-    private TechnologyUsageStatisticsModel createTechnologyStats(GraphContext graphContext, String name, ProjectModel project, String row, String column, String sector)
-    {
+    private TechnologyUsageStatisticsModel createTechnologyStats(GraphContext graphContext, String name, ProjectModel project, String row, String column, String sector) {
         GraphService<TechnologyUsageStatisticsModel> service = new GraphService<>(graphContext, TechnologyUsageStatisticsModel.class);
         TechnologyUsageStatisticsModel model = service.create();
         model.setComputed(new Date());
@@ -191,8 +182,7 @@ public class TechReportServiceTest
         return model;
     }
 
-    private ArchiveModel createArchive(GraphContext graphContext, String name)
-    {
+    private ArchiveModel createArchive(GraphContext graphContext, String name) {
         GraphService<ArchiveModel> archiveService = new GraphService<>(graphContext, ArchiveModel.class);
         ArchiveModel fileModel = archiveService.create();
         fileModel.setFilePath("/test/path/to/" + name + ".jar");

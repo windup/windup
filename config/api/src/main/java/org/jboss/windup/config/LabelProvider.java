@@ -1,8 +1,8 @@
 package org.jboss.windup.config;
 
+import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderData;
 import org.jboss.windup.config.metadata.LabelProviderMetadata;
-import org.jboss.windup.config.metadata.Label;
 
 /**
  * An instance of {@link LabelProvider} should represent a single 'LabelSet'. A 'LabelSet' is composed by 'Metadata' and 'Data'; 'Metadata' represents
@@ -11,8 +11,7 @@ import org.jboss.windup.config.metadata.Label;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelProvider
-{
+public interface LabelProvider {
     LabelProviderMetadata getMetadata();
 
     LabelProviderData getData();

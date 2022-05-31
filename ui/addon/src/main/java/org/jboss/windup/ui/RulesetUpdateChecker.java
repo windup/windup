@@ -1,11 +1,10 @@
 package org.jboss.windup.ui;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.event.PostStartup;
-import org.jboss.windup.util.Util;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
 /**
@@ -15,13 +14,11 @@ import org.jboss.windup.util.Util;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Singleton
-public class RulesetUpdateChecker
-{
+public class RulesetUpdateChecker {
     @Inject
     Furnace furnace;
 
-    public void perform(/*@Observes*/ PostStartup event)
-    {
+    public void perform(/*@Observes*/ PostStartup event) {
         return;
         /* temporary disabled all impl
  

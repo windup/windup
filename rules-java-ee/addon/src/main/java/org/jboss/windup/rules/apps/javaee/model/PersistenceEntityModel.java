@@ -33,18 +33,6 @@ public interface PersistenceEntityModel extends WindupVertexFrame, HasApplicatio
     List<ProjectModel> getApplications();
 
     /**
-     * Contains the entity name
-     */
-    @Property(value = ENTITY_NAME)
-    String getEntityName();
-
-    /**
-     * Contains the entity class
-     */
-    @Adjacency(label = JPA_ENTITY_CLASS, direction = Direction.OUT)
-    JavaClassModel getJavaClass();
-
-    /**
      * Contains the application in which this JPA entity was discovered.
      */
     @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
@@ -54,7 +42,19 @@ public interface PersistenceEntityModel extends WindupVertexFrame, HasApplicatio
      * Contains the entity name
      */
     @Property(value = ENTITY_NAME)
+    String getEntityName();
+
+    /**
+     * Contains the entity name
+     */
+    @Property(value = ENTITY_NAME)
     void setEntityName(String entityName);
+
+    /**
+     * Contains the entity class
+     */
+    @Adjacency(label = JPA_ENTITY_CLASS, direction = Direction.OUT)
+    JavaClassModel getJavaClass();
 
     /**
      * Contains the entity class

@@ -2,19 +2,16 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 
 import com.syncleus.ferma.annotations.InVertex;
 import com.syncleus.ferma.annotations.OutVertex;
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.WindupEdgeFrame;
-
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupEdgeFrame;
 
 /**
  * @author mnovotny
- *
  */
 @TypeValue(DependencyReportToArchiveEdgeModel.TYPE)
-public interface DependencyReportToArchiveEdgeModel extends WindupEdgeFrame
-{
+public interface DependencyReportToArchiveEdgeModel extends WindupEdgeFrame {
     String TYPE = "DependencyReportToArchiveEdgeModel";
 
     String FULL_PATH = "fullPath";

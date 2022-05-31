@@ -1,30 +1,25 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.List;
-
-import org.jboss.windup.config.GraphRewrite;
-
 import freemarker.template.SimpleNumber;
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.config.GraphRewrite;
+
+import java.util.List;
 
 /**
  * Converts from a number of effort points (story points) to a Css class.<br/>
- * 
+ * <p>
  * 0 == info<br/>
  * 0-7 == warning<br/>
  * 8-13 == severe<br/>
  * >13 == critical<br/>
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class EffortPointsToCssClass implements WindupFreeMarkerMethod
-{
+public class EffortPointsToCssClass implements WindupFreeMarkerMethod {
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
-        if (arguments.size() != 1)
-        {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (int)");
         }
         SimpleNumber freemarkerArg = (SimpleNumber) arguments.get(0);
@@ -40,20 +35,17 @@ public class EffortPointsToCssClass implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return "effortPointsToCssClass";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Converts from effort points to a CSS class";
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 
 }

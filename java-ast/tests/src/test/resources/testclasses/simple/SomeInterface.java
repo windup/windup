@@ -1,7 +1,6 @@
 package testclasses.simple;
 
-public interface SomeInterface
-{
+public interface SomeInterface {
 
     void interfaceMethod();
 }

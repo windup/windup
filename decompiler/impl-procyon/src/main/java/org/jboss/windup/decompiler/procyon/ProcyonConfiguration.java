@@ -1,53 +1,46 @@
 package org.jboss.windup.decompiler.procyon;
 
-import java.util.EnumSet;
-
 import com.strobel.decompiler.DecompilerSettings;
+
+import java.util.EnumSet;
 
 /**
  * Procyon-specific configuration.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ProcyonConfiguration
-{
+public class ProcyonConfiguration {
     private DecompilerSettings decompilerSettings = new DecompilerSettings();
 
     private EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions = EnumSet
-                .noneOf(LineNumberFormatter.LineNumberOption.class);
+            .noneOf(LineNumberFormatter.LineNumberOption.class);
 
     private boolean includeNested = true;
 
-    public boolean isIncludeNested()
-    {
+    public boolean isIncludeNested() {
         return includeNested;
     }
 
-    public ProcyonConfiguration setIncludeNested(boolean includeNested)
-    {
+    public ProcyonConfiguration setIncludeNested(boolean includeNested) {
         this.includeNested = includeNested;
         return this;
     }
 
-    public DecompilerSettings getDecompilerSettings()
-    {
+    public DecompilerSettings getDecompilerSettings() {
         return decompilerSettings;
     }
 
-    public ProcyonConfiguration setDecompilerSettings(DecompilerSettings decompilerSettings)
-    {
+    public ProcyonConfiguration setDecompilerSettings(DecompilerSettings decompilerSettings) {
         this.decompilerSettings = decompilerSettings;
         return this;
     }
 
-    public EnumSet<LineNumberFormatter.LineNumberOption> getLineNumberOptions()
-    {
+    public EnumSet<LineNumberFormatter.LineNumberOption> getLineNumberOptions() {
         return lineNumberOptions;
     }
 
-    public ProcyonConfiguration setLineNumberOptions(EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions)
-    {
+    public ProcyonConfiguration setLineNumberOptions(EnumSet<LineNumberFormatter.LineNumberOption> lineNumberOptions) {
         this.lineNumberOptions = lineNumberOptions;
         return this;
     }

@@ -1,13 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -30,41 +22,44 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class WindupArchitectureCatchallTest extends WindupArchitectureTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class);
-    }
+public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
 
     @Inject
     private JspRulesProvider provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class);
+    }
+
     @Test
-    public void testRunWindupJsp() throws Exception
-    {
+    public void testRunWindupJsp() throws Exception {
         final String path = "../test-files/catchalltest";
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, path, true);
 
             validateReports(context);
@@ -74,8 +69,7 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
     /**
      * Validate that the report pages were generated correctly
      */
-    private void validateReports(GraphContext context)
-    {
+    private void validateReports(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel mainApplicationReportModel = getMainApplicationReport(context);
         Path mainAppReport = reportService.getReportDirectory().resolve(mainApplicationReportModel.getReportFilename());
@@ -96,17 +90,14 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
     }
 
     @Singleton
-    public static class JspRulesProvider extends AbstractRuleProvider
-    {
-        public JspRulesProvider()
-        {
+    public static class JspRulesProvider extends AbstractRuleProvider {
+        public JspRulesProvider() {
             super(MetadataBuilder.forProvider(JspRulesProvider.class)
-                        .setHaltOnException(true));
+                    .setHaltOnException(true));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             Set<String> catchallTags = Collections.singleton("catchall");
             Set<String> otherTags = new HashSet<>();
             otherTags.add("tag1");
@@ -114,17 +105,17 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
             otherTags.add("tag3");
 
             return ConfigurationBuilder.begin()
-            .addRule()
-            .when(JavaClass.references("java.util.{*}"))
-            .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
+                    .addRule()
+                    .when(JavaClass.references("java.util.{*}"))
+                    .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
 
-            .addRule()
-            .when(JavaClass.references("java.net.URL"))
-            .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags))
+                    .addRule()
+                    .when(JavaClass.references("java.net.URL"))
+                    .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags))
 
-            .addRule()
-            .when(JavaClass.references("java.util.HashMap"))
-            .perform(Hint.titled("java.util.HashMap").withText("Java Net URL is here (no catchall").withEffort(42));
+                    .addRule()
+                    .when(JavaClass.references("java.util.HashMap"))
+                    .perform(Hint.titled("java.util.HashMap").withText("Java Net URL is here (no catchall").withEffort(42));
         }
     }
 

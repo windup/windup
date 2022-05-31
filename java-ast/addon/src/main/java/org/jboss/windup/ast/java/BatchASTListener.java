@@ -1,17 +1,16 @@
 package org.jboss.windup.ast.java;
 
+import org.jboss.windup.ast.java.data.ClassReference;
+
 import java.nio.file.Path;
 import java.util.List;
-
-import org.jboss.windup.ast.java.data.ClassReference;
 
 /**
  * Provides a callback to indicate that processing has completed for a particular file.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface BatchASTListener
-{
+public interface BatchASTListener {
     /**
      * Called to indicate that processing has completed on the specified file.
      */

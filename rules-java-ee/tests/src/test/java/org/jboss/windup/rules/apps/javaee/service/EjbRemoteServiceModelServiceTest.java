@@ -1,10 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import java.nio.file.Path;
-import java.util.Collections;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.junit.Arquillian;
@@ -22,7 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Iterables;
+import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.Collections;
 
 /**
  * Tests the {@link EjbRemoteServiceModelService}.
@@ -30,8 +28,7 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class EjbRemoteServiceModelServiceTest extends AbstractTest
-{
+public class EjbRemoteServiceModelServiceTest extends AbstractTest {
     @Inject
     private GraphContextFactory factory;
 
@@ -41,8 +38,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
     private EjbRemoteServiceModelService serviceModelService;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         this.graphPath = getDefaultPath();
         this.context = this.factory.create(graphPath, true);
         this.javaClassService = new JavaClassService(this.context);
@@ -50,15 +46,13 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         this.context.clear();
         FileUtils.deleteDirectory(this.graphPath.toFile());
     }
 
     @Test
-    public void testGetOrCreate_CreationRequired() throws Exception
-    {
+    public void testGetOrCreate_CreationRequired() throws Exception {
         JavaClassModel interfaceClass = javaClassService.create("com.example.MyServiceInterface");
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -75,8 +69,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByInterface() throws Exception
-    {
+    public void testGetOrCreate_FindByInterface() throws Exception {
         JavaClassModel interfaceClass = javaClassService.create("com.example.MyServiceInterface");
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -97,8 +90,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByImplementation() throws Exception
-    {
+    public void testGetOrCreate_FindByImplementation() throws Exception {
         JavaClassModel interfaceClass = javaClassService.create("com.example.MyServiceInterface");
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -119,8 +111,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByInterfaceAndImplementation() throws Exception
-    {
+    public void testGetOrCreate_FindByInterfaceAndImplementation() throws Exception {
         JavaClassModel interfaceClass = javaClassService.create("com.example.MyServiceInterface");
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -140,9 +131,8 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
     }
 
-    Path getDefaultPath()
-    {
+    Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

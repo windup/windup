@@ -1,17 +1,15 @@
 package org.jboss.windup.graph.model.comparator;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-public class FilePathComparatorTest
-{
+public class FilePathComparatorTest {
     @Test
-    public void testPathComparator()
-    {
+    public void testPathComparator() {
         List<String> expectedFilePaths = new ArrayList<>();
         expectedFilePaths.add("/a/foo");
         expectedFilePaths.add("/c/a/");

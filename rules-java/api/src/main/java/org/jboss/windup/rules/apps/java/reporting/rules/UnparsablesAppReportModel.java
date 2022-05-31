@@ -3,9 +3,8 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.reporting.model.ApplicationReportModel;
-
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import java.util.List;
 
@@ -15,8 +14,7 @@ import java.util.List;
  * @author Ondrej Zizka
  */
 @TypeValue(UnparsablesAppReportModel.TYPE)
-public interface UnparsablesAppReportModel extends ApplicationReportModel
-{
+public interface UnparsablesAppReportModel extends ApplicationReportModel {
     String TYPE = "UnparsablesAppReportModel";
     String ALL_SUB_PROJECTS = "allSubProjects";
 

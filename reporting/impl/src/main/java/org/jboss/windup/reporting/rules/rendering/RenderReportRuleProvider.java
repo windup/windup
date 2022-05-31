@@ -1,18 +1,5 @@
 package org.jboss.windup.reporting.rules.rendering;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.forge.furnace.Furnace;
@@ -40,15 +27,25 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Queue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * This renders the ApplicationReport, along with all of its subapplications via freemarker.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 @RuleMetadata(phase = ReportRenderingPhase.class)
-public class RenderReportRuleProvider extends AbstractRuleProvider
-{
+public class RenderReportRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(RenderReportRuleProvider.class);
 
     @Inject
@@ -56,51 +53,47 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder
-        .begin()
-        .addRule()
-        .when(Query.fromType(ReportModel.class).withProperty(ReportModel.TEMPLATE_TYPE, TemplateType.FREEMARKER.toString()))
-        .perform(new FreeMarkerThreadedRenderer(furnace))
+                .begin()
+                .addRule()
+                .when(Query.fromType(ReportModel.class).withProperty(ReportModel.TEMPLATE_TYPE, TemplateType.FREEMARKER.toString()))
+                .perform(new FreeMarkerThreadedRenderer(furnace))
 
-        .addRule()
-        .when(Query.fromType(ReportResourceFileModel.class))
-        .perform(new AbstractIterationOperation<ReportResourceFileModel>() {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, ReportResourceFileModel payload) {
-                ReportService reportService = new ReportService(event.getGraphContext());
-                Path outputDir = reportService.getReportDirectory();
+                .addRule()
+                .when(Query.fromType(ReportResourceFileModel.class))
+                .perform(new AbstractIterationOperation<ReportResourceFileModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, ReportResourceFileModel payload) {
+                        ReportService reportService = new ReportService(event.getGraphContext());
+                        Path outputDir = reportService.getReportDirectory();
 
-                File directory = outputDir.toFile();
-                File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));
+                        File directory = outputDir.toFile();
+                        File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));
 
-                try {
-                    FileUtils.forceMkdir(fullPath.getParentFile());
-                    FileUtils.copyFile(payload.asFile(), fullPath);
-                    LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
-                } catch (IOException e) {
-                    LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + ", due to: " + e.getMessage());
-                }
-            }
-        });
+                        try {
+                            FileUtils.forceMkdir(fullPath.getParentFile());
+                            FileUtils.copyFile(payload.asFile(), fullPath);
+                            LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
+                        } catch (IOException e) {
+                            LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + ", due to: " + e.getMessage());
+                        }
+                    }
+                });
     }
     // @formatter:on
 
-    private class FreeMarkerThreadedRenderer extends GraphOperation
-    {
+    private class FreeMarkerThreadedRenderer extends GraphOperation {
         private final Furnace furnace;
 
-        public FreeMarkerThreadedRenderer(Furnace furnace)
-        {
+        public FreeMarkerThreadedRenderer(Furnace furnace) {
             this.furnace = furnace;
         }
 
         @Override
-        public void perform(final GraphRewrite event, final EvaluationContext context)
-        {
+        public void perform(final GraphRewrite event, final EvaluationContext context) {
             Iterable<? extends WindupVertexFrame> reportModelsIterable = Variables.instance(event)
-                        .findVariable(Iteration.DEFAULT_VARIABLE_LIST_STRING);
+                    .findVariable(Iteration.DEFAULT_VARIABLE_LIST_STRING);
             final Queue<WindupVertexFrame> reportModels = new ConcurrentLinkedDeque<>();
             for (WindupVertexFrame frame : reportModelsIterable)
                 reportModels.add(frame);
@@ -114,29 +107,22 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
             event.getRewriteContext().put(Iteration.DEFAULT_VARIABLE_LIST_STRING, reportModels);
             iterationProgress.perform(event, context);
 
-            for (int i = 0; i < threadCount; i++)
-            {
-                executorService.submit(new Callable<Void>()
-                {
+            for (int i = 0; i < threadCount; i++) {
+                executorService.submit(new Callable<Void>() {
                     @Override
-                    public Void call() throws Exception
-                    {
-                        while (true)
-                        {
+                    public Void call() throws Exception {
+                        while (true) {
                             final ReportModel reportModel;
                             WindupVertexFrame reportModelObject = reportModels.remove();
                             if (reportModelObject == null)
                                 return null;
                             reportModel = (ReportModel) reportModelObject;
 
-                            try
-                            {
+                            try {
                                 Thread.currentThread().setName(reportModel.getTemplatePath() + "_" + reportModel.getReportFilename());
                                 iterationProgress.perform(event, context);
                                 freeMarkerIterationOperation.perform(event, context, reportModel);
-                            }
-                            catch (Throwable t)
-                            {
+                            } catch (Throwable t) {
                                 LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + System.lineSeparator() + t.getMessage(), t);
                             }
                         }
@@ -144,12 +130,9 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                 });
             }
             executorService.shutdown();
-            try
-            {
+            try {
                 executorService.awaitTermination(2, TimeUnit.DAYS);
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 throw new WindupException("Failed to render reports due to a timeout: " + e.getMessage(), e);
             }
 

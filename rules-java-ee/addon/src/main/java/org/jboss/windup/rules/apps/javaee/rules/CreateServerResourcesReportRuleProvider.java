@@ -1,10 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -35,30 +30,29 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Creates a report of Server Resources within the application (eg, datasources, jms resources).
  */
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Server Resources Report")
-public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all server resources (for example, JNDI resources) in the input application.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        GraphOperation addReport = new GraphOperation()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        GraphOperation addReport = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                for (FileModel inputPath : windupConfiguration.getInputPaths())
-                {
+                for (FileModel inputPath : windupConfiguration.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
-                    if (application == null)
-                    {
+                    if (application == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createServerResourcesReport(event.getGraphContext(), application);
@@ -66,19 +60,17 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateServerResourcesReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(addReport);
+                .addRule()
+                .perform(addReport);
     }
 
-    private void createServerResourcesReport(GraphContext context, ProjectModel application)
-    {
+    private void createServerResourcesReport(GraphContext context, ProjectModel application) {
         JNDIResourceService jndiResourceService = new JNDIResourceService(context);
         GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(context, ThreadPoolModel.class);
 
@@ -88,37 +80,28 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
         List<JNDIResourceModel> otherJndiList = new ArrayList<>();
         List<ThreadPoolModel> threadPoolList = new ArrayList<>();
 
-        for (JNDIResourceModel jndi : jndiResourceService.findAll())
-        {
+        for (JNDIResourceModel jndi : jndiResourceService.findAll()) {
             if (!jndi.isAssociatedWithApplication(application))
                 continue;
 
-            if (jndi instanceof DataSourceModel)
-            {
+            if (jndi instanceof DataSourceModel) {
                 datasourceList.add((DataSourceModel) jndi);
-            }
-            else if (jndi instanceof JmsDestinationModel)
-            {
+            } else if (jndi instanceof JmsDestinationModel) {
                 jmsList.add((JmsDestinationModel) jndi);
-            }
-            else if (jndi instanceof JmsConnectionFactoryModel)
-            {
+            } else if (jndi instanceof JmsConnectionFactoryModel) {
                 jmsConnectionFactoryList.add((JmsConnectionFactoryModel) jndi);
-            }
-            else
-            {
+            } else {
                 otherJndiList.add(jndi);
             }
         }
 
-        for (ThreadPoolModel tp : threadPoolService.findAll())
-        {
+        for (ThreadPoolModel tp : threadPoolService.findAll()) {
             if (Iterables.contains(tp.getApplications(), application))
                 threadPoolList.add(tp);
         }
 
         if (datasourceList.isEmpty() && jmsList.isEmpty() && jmsConnectionFactoryList.isEmpty() && otherJndiList.isEmpty()
-                    && threadPoolList.isEmpty())
+                && threadPoolList.isEmpty())
             return;
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);

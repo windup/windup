@@ -1,10 +1,9 @@
 package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.ToFileModelTransformable;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -21,8 +20,7 @@ import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MOD
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel
-{
+public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel {
     String TYPE = "ClassificationModel";
     String TYPE_PREFIX = TYPE + "-";
     String RULE_ID = TYPE_PREFIX + "ruleID";
@@ -45,23 +43,17 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     List<FileModel> getFileModels();
 
     /**
-     * Set text of this {@link ClassificationModel}.
-     */
-    @Indexed
-    @Property(CLASSIFICATION)
-    void setClassification(String classification);
-
-    /**
      * Get text of this {@link ClassificationModel}.
      */
     @Property(CLASSIFICATION)
     String getClassification();
 
     /**
-     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
+     * Set text of this {@link ClassificationModel}.
      */
-    @Property(ISSUE_DISPLAY_MODE)
-    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
+    @Indexed
+    @Property(CLASSIFICATION)
+    void setClassification(String classification);
 
     /**
      * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
@@ -70,10 +62,10 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     IssueDisplayMode getIssueDisplayMode();
 
     /**
-     * Set the description text of this {@link ClassificationModel}.
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
      */
-    @Property(DESCRIPTION)
-    void setDescription(String description);
+    @Property(ISSUE_DISPLAY_MODE)
+    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
 
     /**
      * Get the description text of this {@link ClassificationModel}.
@@ -82,16 +74,22 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     String getDescription();
 
     /**
-     * Set ID of the {@link Rule} that added this {@link ClassificationModel}.
+     * Set the description text of this {@link ClassificationModel}.
      */
-    @Property(RULE_ID)
-    void setRuleID(String ruleID);
+    @Property(DESCRIPTION)
+    void setDescription(String description);
 
     /**
      * Get ID of the {@link Rule} that added this {@link ClassificationModel}.
      */
     @Property(RULE_ID)
     String getRuleID();
+
+    /**
+     * Set ID of the {@link Rule} that added this {@link ClassificationModel}.
+     */
+    @Property(RULE_ID)
+    void setRuleID(String ruleID);
 
     @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
     void addQuickfix(QuickfixModel quickfixModel);
@@ -100,8 +98,7 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     List<QuickfixModel> getQuickfixes();
 
     @Override
-    default List<FileModel> transformToFileModel()
-    {
+    default List<FileModel> transformToFileModel() {
         return this.getFileModels();
     }
 }

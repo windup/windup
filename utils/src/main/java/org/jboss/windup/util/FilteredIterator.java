@@ -2,16 +2,14 @@ package org.jboss.windup.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
 
 /**
  * Wraps the underlying iterator and returns only the matching items.
  */
-public class FilteredIterator<E> implements Iterator<E>
-{
+public class FilteredIterator<E> implements Iterator<E> {
 
-    private Iterator<? extends E> iterator;
     private final Filter<E> filter;
+    private Iterator<? extends E> iterator;
     private E nextElement;
     private boolean hasNext;
 
@@ -35,14 +33,12 @@ public class FilteredIterator<E> implements Iterator<E>
         return iterateToNextMatch();
     }
 
-    private E iterateToNextMatch()
-    {
+    private E iterateToNextMatch() {
         E oldMatch = nextElement;
 
         while (iterator.hasNext()) {
             E candidate = iterator.next();
-            if (filter.accept(candidate))
-            {
+            if (filter.accept(candidate)) {
                 hasNext = true;
                 nextElement = candidate;
                 return oldMatch;
@@ -58,16 +54,16 @@ public class FilteredIterator<E> implements Iterator<E>
         throw new UnsupportedOperationException(FilteredIterator.class.getSimpleName() + " can't remove underlying iterator's items as it may be few steps ahead.");
     }
 
-    public static final class AcceptAllFilter<T> implements Filter<T> {
-        public boolean accept(final T item) {
-            return true;
-        }
-    }
-
     public interface Filter<T> {
         /**
          * @return {@code true} if the element matches the filter, otherwise {@code false}
          */
         boolean accept(T item);
+    }
+
+    public static final class AcceptAllFilter<T> implements Filter<T> {
+        public boolean accept(final T item) {
+            return true;
+        }
     }
 }

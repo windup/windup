@@ -16,29 +16,25 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 @RunWith(Arquillian.class)
-public class DefaultValueTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(DefaultValueTestModel.class);
-        return archive;
-    }
-
+public class DefaultValueTest {
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addClasses(DefaultValueTestModel.class);
+        return archive;
+    }
+
     @Test
-    public void testDefaultValue() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testDefaultValue() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
             DefaultValueTestModel initialModelType = context.getFramed().addFramedVertex(DefaultValueTestModel.class);
             Assert.assertFalse(initialModelType.getDefaultFalseValue());

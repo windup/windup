@@ -1,29 +1,27 @@
 package org.jboss.windup.graph.model;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.resource.FileModel;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.resource.FileModel;
-
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
-
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
  * binary based.
- *
+ * <p>
  * Additional models may extend this to support additional project types (eg, Maven-based projects).
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
-public interface ProjectModel extends WindupVertexFrame, HasApplications
-{
+public interface ProjectModel extends WindupVertexFrame, HasApplications {
     String TYPE = "ProjectModel";
     String CSV_FILENAME = "projectModelCsvFilename";
     String DEPENDENCY = "dependency";
@@ -51,14 +49,10 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     FileModel getRootFileModelInternal();
 
-    default FileModel getRootFileModel()
-    {
-        try
-        {
+    default FileModel getRootFileModel() {
+        try {
             return getRootFileModelInternal();
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             return null;
         }
     }
@@ -187,26 +181,22 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     ProjectModel getParentProjectNotNullSafe();
 
+    /*
+     * FIXME TP3 - Should be removed when a new version of ferma is available
+     */
+    default ProjectModel getParentProject() {
+        try {
+            return getParentProjectNotNullSafe();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
     /**
      * The parent ProjectModel, or null if no parent is present.
      */
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     void setParentProject(ProjectModel maven);
-
-    /*
-     * FIXME TP3 - Should be removed when a new version of ferma is available
-     */
-    default ProjectModel getParentProject()
-    {
-        try
-        {
-            return getParentProjectNotNullSafe();
-        }
-        catch (NoSuchElementException e)
-        {
-            return null;
-        }
-    }
 
     /**
      * A list of child projects
@@ -247,8 +237,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Gets all contained files that are not directories
      */
-    default List<FileModel> getFileModelsNoDirectories()
-    {
+    default List<FileModel> getFileModelsNoDirectories() {
         List<FileModel> result = new ArrayList<>();
         getFileModels().forEach(fileModel -> {
             if (!fileModel.isDirectory())
@@ -260,8 +249,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Gets all contained files that unparsable
      */
-    default List<FileModel> getUnparsableFiles()
-    {
+    default List<FileModel> getUnparsableFiles() {
         List<FileModel> result = new ArrayList<>();
         getFileModels().forEach(fileModel -> {
             if (fileModel.getParseError() != null)
@@ -272,23 +260,18 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
 
     /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
-     *
+     * <p>
      * Note: This may be the synthetic shared-libs project in some cases.
      *
      * @return ProjectModel representing the whole application
      */
-    default ProjectModel getRootProjectModel()
-    {
+    default ProjectModel getRootProjectModel() {
         ProjectModel projectModel = this;
-        try
-        {
-            while (projectModel.getParentProject() != null)
-            {
+        try {
+            while (projectModel.getParentProject() != null) {
                 projectModel = projectModel.getParentProject();
             }
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             // Ignore... this just means that the parent didn't exist.
             // Ferma tends to throw a NoSuchElementException instead of just returning null
         }
@@ -299,16 +282,13 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Returns all applications that this project is a part of. This could be multiple applications if this project is included multiple times.
      */
-    default List<ProjectModel> getApplications()
-    {
+    default List<ProjectModel> getApplications() {
         return new ArrayList<>(this.getApplications(this));
     }
 
-    default Set<ProjectModel> getApplications(ProjectModel project)
-    {
+    default Set<ProjectModel> getApplications(ProjectModel project) {
         Set<ProjectModel> applications = new HashSet<>();
-        for (ProjectModel duplicate : project.getDuplicateProjects())
-        {
+        for (ProjectModel duplicate : project.getDuplicateProjects()) {
             duplicate.getApplications().forEach(applications::add);
         }
 
@@ -325,8 +305,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Returns this project model as well as all of its children, recursively.
      */
-    default Set<ProjectModel> getAllProjectModels()
-    {
+    default Set<ProjectModel> getAllProjectModels() {
         Set<ProjectModel> result = new HashSet<>();
         result.add(this);
         for (ProjectModel child : getChildProjects())

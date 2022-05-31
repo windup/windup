@@ -1,12 +1,5 @@
 package org.jboss.windup.rules.apps.xml.condition;
 
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.xml.xpath.XPathFunction;
-import javax.xml.xpath.XPathFunctionException;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.xml.XmlUtil;
@@ -17,8 +10,13 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.w3c.dom.NodeList;
 
-public class XmlFileMatchesXPathFunction implements XPathFunction
-{
+import javax.xml.xpath.XPathFunction;
+import javax.xml.xpath.XPathFunctionException;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+public class XmlFileMatchesXPathFunction implements XPathFunction {
     private static final Logger LOG = Logging.get(XmlFileMatchesXPathFunction.class);
 
     private final EvaluationContext context;
@@ -27,8 +25,7 @@ public class XmlFileMatchesXPathFunction implements XPathFunction
     private final GraphRewrite event;
 
     public XmlFileMatchesXPathFunction(EvaluationContext context, ParameterStore store, XmlFileParameterMatchCache paramMatchCache,
-                GraphRewrite event)
-    {
+                                       GraphRewrite event) {
         this.context = context;
         this.store = store;
         this.paramMatchCache = paramMatchCache;
@@ -36,8 +33,7 @@ public class XmlFileMatchesXPathFunction implements XPathFunction
     }
 
     @Override
-    public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException
-    {
+    public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException {
         int frameIdx = ((Double) args.get(0)).intValue();
         NodeList arg1 = (NodeList) args.get(1);
         String nodeText = XmlUtil.nodeListToString(arg1);
@@ -48,28 +44,23 @@ public class XmlFileMatchesXPathFunction implements XPathFunction
         ParameterizedPatternResult referenceResult = paramPattern.parse(nodeText);
 
         boolean refMatches = referenceResult.isValid(event, context);
-        if (!refMatches)
-        {
+        if (!refMatches) {
             return false;
         }
         boolean refSubmitOk = true;
-        for (Map.Entry<Parameter<?>, String> paramEntry : referenceResult.getParameters(context).entrySet())
-        {
+        for (Map.Entry<Parameter<?>, String> paramEntry : referenceResult.getParameters(context).entrySet()) {
             String name = paramEntry.getKey().getName();
-            if (!paramMatchCache.checkVariable(frameIdx, name, paramEntry.getValue()))
-            {
+            if (!paramMatchCache.checkVariable(frameIdx, name, paramEntry.getValue())) {
                 refSubmitOk = false;
                 break;
             }
         }
 
-        if (!refSubmitOk)
-        {
+        if (!refSubmitOk) {
             return false;
         }
 
-        for (Map.Entry<Parameter<?>, String> paramEntry : referenceResult.getParameters(context).entrySet())
-        {
+        for (Map.Entry<Parameter<?>, String> paramEntry : referenceResult.getParameters(context).entrySet()) {
             String name = paramEntry.getKey().getName();
             String value = paramEntry.getValue();
             paramMatchCache.addVariable(frameIdx, name, value);

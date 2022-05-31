@@ -1,16 +1,5 @@
 package org.jboss.windup.addon.ui;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -46,58 +35,59 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class WindupCommandRuleFilteringTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML()
-                    .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar");
-    }
+public class WindupCommandRuleFilteringTest {
 
     @Inject
     private UITestHarness uiTestHarness;
-
     @Inject
     private Tag1SourceGlassfishRuleProvider tag1SourceGlassfishRuleProvider;
-
     @Inject
     private Tag1SourceGlassfishTargetFooRuleProvider tag1SourceGlassfishTargetFooRuleProvider;
-
     @Inject
     private Tag2SourceGlassfishTargetJBossRuleProvider tag2SourceGlassfishTargetJBossRuleProvider;
-
     @Inject
     private Tag3SourceOrionServerRuleProvider tag3SourceOrionServerRuleProvider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML()
+                .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar");
+    }
+
     @Before
-    public void beforeTest()
-    {
-        if (System.getProperty("forge.home") == null)
-        {
+    public void beforeTest() {
+        if (System.getProperty("forge.home") == null) {
             String defaultForgeHomePath = Paths.get(OperatingSystemUtils.getTempDirectory().getAbsolutePath())
-                        .resolve("Windup")
-                        .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
+                    .resolve("Windup")
+                    .resolve("fakeforgehome_" + RandomStringUtils.randomAlphanumeric(6)).toString();
             System.setProperty("forge.home", defaultForgeHomePath);
         }
     }
 
     @Test
-    public void testRuleFilteringSourceGlassfish() throws Exception
-    {
+    public void testRuleFilteringSourceGlassfish() throws Exception {
         setupAndRun(null, null, Collections.singleton("glassfish"), Collections.singleton("jboss"));
         Assert.assertTrue(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertFalse(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
@@ -106,8 +96,7 @@ public class WindupCommandRuleFilteringTest
     }
 
     @Test
-    public void testRuleFilteringSourceGlassfishTargetJBoss() throws Exception
-    {
+    public void testRuleFilteringSourceGlassfishTargetJBoss() throws Exception {
         setupAndRun(null, null, Collections.singleton("glassfish"), Collections.singleton("jboss"));
         Assert.assertTrue(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertFalse(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
@@ -116,8 +105,7 @@ public class WindupCommandRuleFilteringTest
     }
 
     @Test
-    public void testRuleFilteringExcludeTag3() throws Exception
-    {
+    public void testRuleFilteringExcludeTag3() throws Exception {
         setupAndRun(null, Collections.singleton("tag3"), Collections.singleton("glassfish"), Collections.singleton("foo"));
         Assert.assertFalse(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertTrue(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
@@ -126,8 +114,7 @@ public class WindupCommandRuleFilteringTest
     }
 
     @Test
-    public void testRuleFilteringIncludeTag2() throws Exception
-    {
+    public void testRuleFilteringIncludeTag2() throws Exception {
         setupAndRun(Collections.singleton("tag2"), null, null, Collections.singleton("jboss"));
         Assert.assertFalse(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertFalse(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
@@ -135,8 +122,7 @@ public class WindupCommandRuleFilteringTest
         Assert.assertFalse(this.tag3SourceOrionServerRuleProvider.executed);
     }
 
-    private void setupAndRun(Set<String> includeTags, Set<String> excludeTags, Set<String> sources, Set<String> targets) throws Exception
-    {
+    private void setupAndRun(Set<String> includeTags, Set<String> excludeTags, Set<String> sources, Set<String> targets) throws Exception {
         Assert.assertNotNull(uiTestHarness);
 
         this.tag1SourceGlassfishRuleProvider.executed = false;
@@ -144,23 +130,19 @@ public class WindupCommandRuleFilteringTest
         this.tag2SourceGlassfishTargetJBossRuleProvider.executed = false;
         this.tag3SourceOrionServerRuleProvider.executed = false;
 
-        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class))
-        {
+        try (CommandController controller = uiTestHarness.createCommandController(WindupCommand.class)) {
             File outputFile = File.createTempFile("windupwizardtest", ".jar");
             outputFile.deleteOnExit();
             File inputFile = File.createTempFile("windupwizardtest", ".jar");
             inputFile.deleteOnExit();
-            try (InputStream iStream = getClass().getResourceAsStream("/test.jar"))
-            {
-                try (OutputStream oStream = new FileOutputStream(outputFile))
-                {
+            try (InputStream iStream = getClass().getResourceAsStream("/test.jar")) {
+                try (OutputStream oStream = new FileOutputStream(outputFile)) {
                     IOUtils.copy(iStream, oStream);
                 }
             }
 
             File reportPath = new File(inputFile.getAbsoluteFile() + "_output");
-            try
-            {
+            try {
                 reportPath.mkdirs();
 
                 controller.initialize();
@@ -171,23 +153,19 @@ public class WindupCommandRuleFilteringTest
 
                 controller.setValueFor(OutputPathOption.NAME, outputFile);
 
-                if (includeTags != null)
-                {
+                if (includeTags != null) {
                     controller.setValueFor(IncludeTagsOption.NAME, includeTags);
                 }
 
-                if (excludeTags != null)
-                {
+                if (excludeTags != null) {
                     controller.setValueFor(ExcludeTagsOption.NAME, excludeTags);
                 }
 
-                if (sources != null)
-                {
+                if (sources != null) {
                     controller.setValueFor(SourceOption.NAME, sources);
                 }
 
-                if (targets != null)
-                {
+                if (targets != null) {
                     controller.setValueFor(TargetOption.NAME, targets);
                 }
                 Assert.assertTrue(controller.canExecute());
@@ -195,9 +173,7 @@ public class WindupCommandRuleFilteringTest
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
-            }
-            finally
-            {
+            } finally {
                 inputFile.delete();
                 FileUtils.deleteDirectory(reportPath);
             }
@@ -205,122 +181,102 @@ public class WindupCommandRuleFilteringTest
     }
 
     @Singleton
-    public static class Tag1SourceGlassfishRuleProvider extends AbstractRuleProvider
-    {
+    public static class Tag1SourceGlassfishRuleProvider extends AbstractRuleProvider {
         private boolean executed = false;
 
-        public Tag1SourceGlassfishRuleProvider()
-        {
+        public Tag1SourceGlassfishRuleProvider() {
             super(MetadataBuilder.forProvider(Tag1SourceGlassfishRuleProvider.class)
-                        .addTag("tag1")
-                        .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
-                        .addTargetTechnology(new TechnologyReference("jboss", "[1.0,)")));
+                    .addTag("tag1")
+                    .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
+                    .addTargetTechnology(new TechnologyReference("jboss", "[1.0,)")));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin().addRule()
-                        .perform(
-                                    new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            executed = true;
-                                        }
-                                    }
-                        );
+                    .perform(
+                            new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    executed = true;
+                                }
+                            }
+                    );
         }
     }
 
     @Singleton
-    public static class Tag1SourceGlassfishTargetFooRuleProvider extends AbstractRuleProvider
-    {
+    public static class Tag1SourceGlassfishTargetFooRuleProvider extends AbstractRuleProvider {
         private boolean executed = false;
 
-        public Tag1SourceGlassfishTargetFooRuleProvider()
-        {
+        public Tag1SourceGlassfishTargetFooRuleProvider() {
             super(MetadataBuilder.forProvider(Tag1SourceGlassfishTargetFooRuleProvider.class)
-                        .addTag("tag1")
-                        .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
-                        .addTargetTechnology(new TechnologyReference("foo", "[1.0,)")));
+                    .addTag("tag1")
+                    .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
+                    .addTargetTechnology(new TechnologyReference("foo", "[1.0,)")));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin().addRule()
-                        .perform(
-                                    new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            executed = true;
-                                        }
-                                    }
-                        );
+                    .perform(
+                            new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    executed = true;
+                                }
+                            }
+                    );
         }
     }
 
     @Singleton
-    public static class Tag2SourceGlassfishTargetJBossRuleProvider extends AbstractRuleProvider
-    {
+    public static class Tag2SourceGlassfishTargetJBossRuleProvider extends AbstractRuleProvider {
         private boolean executed = false;
 
-        public Tag2SourceGlassfishTargetJBossRuleProvider()
-        {
+        public Tag2SourceGlassfishTargetJBossRuleProvider() {
             super(MetadataBuilder.forProvider(Tag2SourceGlassfishTargetJBossRuleProvider.class)
-                        .addTag("tag2")
-                        .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
-                        .addTargetTechnology(new TechnologyReference("jboss", "[1.0,)")));
+                    .addTag("tag2")
+                    .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
+                    .addTargetTechnology(new TechnologyReference("jboss", "[1.0,)")));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin().addRule()
-                        .perform(
-                                    new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            executed = true;
-                                        }
-                                    }
-                        );
+                    .perform(
+                            new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    executed = true;
+                                }
+                            }
+                    );
         }
     }
 
     @Singleton
-    public static class Tag3SourceOrionServerRuleProvider extends AbstractRuleProvider
-    {
+    public static class Tag3SourceOrionServerRuleProvider extends AbstractRuleProvider {
         private boolean executed = false;
 
-        public Tag3SourceOrionServerRuleProvider()
-        {
+        public Tag3SourceOrionServerRuleProvider() {
             super(MetadataBuilder.forProvider(Tag3SourceOrionServerRuleProvider.class)
-                        .addTag("tag3")
-                        .addSourceTechnology(new TechnologyReference("orion", "[1.0,)"))
-                        .addTargetTechnology(new TechnologyReference("foo", "[1.0,)")));
+                    .addTag("tag3")
+                    .addSourceTechnology(new TechnologyReference("orion", "[1.0,)"))
+                    .addTargetTechnology(new TechnologyReference("foo", "[1.0,)")));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin().addRule()
-                        .perform(
-                                    new GraphOperation()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context)
-                                        {
-                                            executed = true;
-                                        }
-                                    }
-                        );
+                    .perform(
+                            new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    executed = true;
+                                }
+                            }
+                    );
         }
     }
 }

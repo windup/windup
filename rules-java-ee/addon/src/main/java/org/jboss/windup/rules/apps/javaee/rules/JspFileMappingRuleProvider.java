@@ -15,16 +15,14 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ClassifyFileTypesPhase.class)
-public class JspFileMappingRuleProvider extends AbstractRuleProvider
-{
+public class JspFileMappingRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule(FileMapping.from(".*\\.jsp$").to(JspSourceFileModel.class))
-                    .addRule(FileMapping.from(".*\\.jspx$").to(JspSourceFileModel.class))
-                    .addRule(FileMapping.from(".*\\.tag$").to(JspSourceFileModel.class))
-                    .addRule(FileMapping.from(".*\\.tagx$").to(JspSourceFileModel.class))
-                    ;
+                .addRule(FileMapping.from(".*\\.jsp$").to(JspSourceFileModel.class))
+                .addRule(FileMapping.from(".*\\.jspx$").to(JspSourceFileModel.class))
+                .addRule(FileMapping.from(".*\\.tag$").to(JspSourceFileModel.class))
+                .addRule(FileMapping.from(".*\\.tagx$").to(JspSourceFileModel.class))
+                ;
     }
 }

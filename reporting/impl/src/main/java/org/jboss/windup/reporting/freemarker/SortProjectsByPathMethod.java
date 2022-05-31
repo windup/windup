@@ -1,19 +1,18 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.template.TemplateModelException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Takes a list of ProjectModels and orders them according to their path.
- *
+ * <p>
  * For example, ProjectModels with this structure:
  *
  * <ul>
@@ -21,7 +20,7 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/AProject</li>
  * </ul>
- *
+ * <p>
  * Will be returned as:
  *
  * <ul>
@@ -29,38 +28,31 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/CProject</li>
  * </ul>
- *
  */
-public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
-{
+public class SortProjectsByPathMethod implements WindupFreeMarkerMethod {
     private static final String NAME = "sortProjectsByPathAscending";
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes an Iterable<" + ProjectModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModel>)");
         }
 
         @SuppressWarnings("unchecked")
         Iterable<ProjectModel> projectModelIterable = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
         List<ProjectModel> projectModelList = new ArrayList<>();
-        for (ProjectModel pm : projectModelIterable)
-        {
+        for (ProjectModel pm : projectModelIterable) {
             projectModelList.add(pm);
         }
         Collections.sort(projectModelList, new ProjectModelByRootFileComparator());
@@ -69,7 +61,6 @@ public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 }

@@ -1,13 +1,5 @@
 package org.jboss.windup.rules.java;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,36 +23,38 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+
 /**
  * Tests the {@link JavaClass} condition along with along with the has-classification condition
  */
 @RunWith(Arquillian.class)
-public class JavaClassWithoutClassificationTest
-{
-    @Deployment
-    @AddonDependencies
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("org/jboss/windup/rules/java/javaclass-withoutclassification.windup.xml");
-    }
-
+public class JavaClassWithoutClassificationTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource("org/jboss/windup/rules/java/javaclass-withoutclassification.windup.xml");
+    }
+
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -93,13 +87,12 @@ public class JavaClassWithoutClassificationTest
             processor.execute(processorConfig);
 
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                        JavaTypeReferenceModel.class);
+                    JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
 
             boolean foundJBossForgeSnippit = false;
             boolean foundJavaClassTestFileSnippit = false;
-            for (JavaTypeReferenceModel ref : typeReferences)
-            {
+            for (JavaTypeReferenceModel ref : typeReferences) {
                 String sourceSnippit = ref.getResolvedSourceSnippit();
                 if (sourceSnippit.contains("org.jboss.forge"))
                     foundJBossForgeSnippit = true;
@@ -113,31 +106,27 @@ public class JavaClassWithoutClassificationTest
             Iterable<ClassificationModel> classifications = classificationService.findAll();
 
             int count = 0;
-            for (ClassificationModel cModel : classifications)
-            {
+            for (ClassificationModel cModel : classifications) {
                 count++;
             }
             Assert.assertEquals(2, count);
 
             count = 0;
-            for (ClassificationModel cModel : classifications)
-            {
+            for (ClassificationModel cModel : classifications) {
                 if (cModel.getClassification().contains("Rule1"))
                     count++;
             }
             Assert.assertEquals(1, count);
 
             count = 0;
-            for (ClassificationModel cModel : classifications)
-            {
+            for (ClassificationModel cModel : classifications) {
                 if (cModel.getClassification().contains("Rule2"))
                     count++;
             }
             Assert.assertEquals(0, count);
 
             count = 0;
-            for (ClassificationModel cModel : classifications)
-            {
+            for (ClassificationModel cModel : classifications) {
                 if (cModel.getClassification().contains("Rule3") && cModel.getFileModels().iterator().next().getFileName().contains("File1"))
                     count++;
             }
@@ -145,9 +134,8 @@ public class JavaClassWithoutClassificationTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

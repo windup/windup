@@ -1,43 +1,39 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import java.util.logging.Logger;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.util.Logging;
 
+import java.util.logging.Logger;
+
 /**
  * Adds the appropriate API dependencies to Maven POMs based on features found in the project.
- *
+ * <p>
  * This is in a prototyping stage. Far away from final implementation.
  * It could be rule-based in the future, so the users could write their own mapping.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
-{
+class FeatureBasedApiDependenciesDeducer implements DependencyDeducer {
     private static final Logger LOG = Logging.get(FeatureBasedApiDependenciesDeducer.class);
 
     private MavenizationService.MavenizationContext mavCtx;
 
-    FeatureBasedApiDependenciesDeducer(MavenizationService.MavenizationContext mavCtx)
-    {
+    FeatureBasedApiDependenciesDeducer(MavenizationService.MavenizationContext mavCtx) {
         this.mavCtx = mavCtx;
     }
 
 
     @Override
-    public void addAppropriateDependencies(ProjectModel projectModel, Pom modulePom)
-    {
+    public void addAppropriateDependencies(ProjectModel projectModel, Pom modulePom) {
         addDeploymentTypeBasedDependencies(projectModel, modulePom);
         addHardcodedRecognitionDependencies(projectModel, modulePom);
         addIndexBasedDependencies(projectModel, modulePom);
     }
 
 
-    private void addIndexBasedDependencies(ProjectModel projectModel, Pom modulePom)
-    {
+    private void addIndexBasedDependencies(ProjectModel projectModel, Pom modulePom) {
         PackagesToContainingMavenArtifactsIndex packageIndex = new PackagesToContainingMavenArtifactsIndex(mavCtx.getGraphContext());
-        for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS)
-        {
+        for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS) {
             if (packageIndex.moduleContainsPackagesFromAPI(projectModel, apiCoords))
                 modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, apiCoords));
         }
@@ -49,11 +45,10 @@ class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
      * This is not accurate and doesn't cover the real needs of the project.
      * Basically it's just to have "something" for the initial implementation.
      */
-    private boolean addDeploymentTypeBasedDependencies(ProjectModel projectModel, Pom modulePom)
-    {
+    private boolean addDeploymentTypeBasedDependencies(ProjectModel projectModel, Pom modulePom) {
         if (projectModel.getProjectType() == null)
             return true;
-        switch (projectModel.getProjectType()){
+        switch (projectModel.getProjectType()) {
             case "ear":
                 break;
             case "war":
@@ -76,8 +71,7 @@ class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
      * This is, theoretically, slightly better than addDeploymentTypeBasedDependencies(),
      * but we don't have any of the has*() methods implemented yet, so it does nothing.
      */
-    private void addHardcodedRecognitionDependencies(ProjectModel projectModel, Pom modulePom)
-    {
+    private void addHardcodedRecognitionDependencies(ProjectModel projectModel, Pom modulePom) {
         // TODO: Create a mapping from API occurence in the module into use of
         if (hasJpaEntities(projectModel))
             modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_JPA_21));
@@ -90,24 +84,20 @@ class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
     }
 
 
-     private boolean hasJpaEntities(ProjectModel projectModel)
-    {
+    private boolean hasJpaEntities(ProjectModel projectModel) {
         return false;
     }
 
-    private boolean hasJsf(ProjectModel projectModel)
-    {
+    private boolean hasJsf(ProjectModel projectModel) {
         return false;
     }
 
-    private boolean hasJaxrs(ProjectModel projectModel)
-    {
+    private boolean hasJaxrs(ProjectModel projectModel) {
         return false;
     }
 
 
-    private boolean moduleContainsClassesFromAPI(ProjectModel projectModel, MavenCoord apiCoords)
-    {
+    private boolean moduleContainsClassesFromAPI(ProjectModel projectModel, MavenCoord apiCoords) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

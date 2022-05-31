@@ -1,55 +1,50 @@
 package org.jboss.windup.reporting;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.ProjectService;
-import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
-import org.jboss.windup.reporting.service.ApplicationReportService;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class ApplicationReportIndexModelServiceTest
-{
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
 
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
-        return archive;
-    }
+@RunWith(Arquillian.class)
+public class ApplicationReportIndexModelServiceTest {
 
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/reports"));
+        return archive;
+    }
+
     @Test
-    public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel projectModel = new ProjectService(context).create();
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
@@ -82,7 +77,7 @@ public class ApplicationReportIndexModelServiceTest
             m4.setProjectModel(projectModel);
 
             ApplicationReportIndexModel result = applicationReportIndexService
-                        .getApplicationReportIndexForProjectModel(projectModel);
+                    .getApplicationReportIndexForProjectModel(projectModel);
             Assert.assertNotNull(result);
             Assert.assertEquals(idx1.getElement().id(), result.getElement().id());
         }

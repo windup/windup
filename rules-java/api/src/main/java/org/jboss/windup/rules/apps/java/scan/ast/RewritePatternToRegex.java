@@ -5,25 +5,21 @@ import java.util.regex.Pattern;
 /**
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class RewritePatternToRegex
-{
+public class RewritePatternToRegex {
     private final String rewritePattern;
     private final Pattern compiledRegex;
 
-    public String getRewritePattern()
-    {
+    public RewritePatternToRegex(String rewritePattern, Pattern compiledRegex) {
+        this.rewritePattern = rewritePattern;
+        this.compiledRegex = compiledRegex;
+    }
+
+    public String getRewritePattern() {
         return rewritePattern;
     }
 
-    public Pattern getCompiledRegex()
-    {
+    public Pattern getCompiledRegex() {
         return compiledRegex;
-    }
-
-    public RewritePatternToRegex(String rewritePattern, Pattern compiledRegex)
-    {
-        this.rewritePattern = rewritePattern;
-        this.compiledRegex = compiledRegex;
     }
 
 }

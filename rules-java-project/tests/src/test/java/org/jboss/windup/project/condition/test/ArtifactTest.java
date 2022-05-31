@@ -1,7 +1,6 @@
 package org.jboss.windup.project.condition.test;
 
 import org.jboss.windup.project.condition.Artifact;
-import org.jboss.windup.project.condition.Project;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,6 +21,6 @@ public class ArtifactTest {
         Set<String> parameters = new HashSet<>();
         Collections.addAll(parameters, artifactIdParam);
 
-        Assert.assertEquals(parameters , art.getRequiredParameterNames());
+        Assert.assertEquals(parameters, art.getRequiredParameterNames());
     }
 }

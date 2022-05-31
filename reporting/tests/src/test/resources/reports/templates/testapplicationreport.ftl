@@ -1,3 +1,3 @@
 Application Name:
-  ${applicationReport.applicationName}
+${applicationReport.applicationName}
 

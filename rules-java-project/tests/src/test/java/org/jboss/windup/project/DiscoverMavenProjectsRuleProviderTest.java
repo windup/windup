@@ -40,6 +40,16 @@ import java.util.List;
 
 @RunWith(Arquillian.class)
 public class DiscoverMavenProjectsRuleProviderTest {
+    private static int dependencyCount = 0;
+    @Inject
+    ProjectWithPluginDependencyTestRuleProvider provider;
+
+    @Inject
+    private WindupProcessor processor;
+
+    @Inject
+    private GraphContextFactory factory;
+
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -52,15 +62,6 @@ public class DiscoverMavenProjectsRuleProviderTest {
     public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
-
-    @Inject
-    ProjectWithPluginDependencyTestRuleProvider provider;
-
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContextFactory factory;
 
     @Test
     public void testPluginDependencies() throws IOException, InstantiationException, IllegalAccessException {
@@ -85,8 +86,6 @@ public class DiscoverMavenProjectsRuleProviderTest {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
                 .resolve("windupgraph_discovermavenprojectsruleprovidertest" + RandomStringUtils.randomAlphanumeric(6));
     }
-
-    private static int dependencyCount = 0;
 
     @After
     public void after() {

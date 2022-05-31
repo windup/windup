@@ -1,12 +1,12 @@
 /**
  * Copyright 2004 - 2017 Syncleus, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,9 +15,6 @@
  */
 package org.jboss.windup.graph;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.framefactories.annotation.AdjacencyMethodHandler;
 import com.syncleus.ferma.framefactories.annotation.InVertexMethodHandler;
@@ -25,6 +22,9 @@ import com.syncleus.ferma.framefactories.annotation.IncidenceMethodHandler;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import com.syncleus.ferma.framefactories.annotation.OutVertexMethodHandler;
 import com.syncleus.ferma.framefactories.annotation.PropertyMethodHandler;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AnnotationFrameFactory extends AbstractAnnotationFrameFactory {
 
@@ -60,7 +60,7 @@ public class AnnotationFrameFactory extends AbstractAnnotationFrameFactory {
         final IncidenceMethodHandler incidenceHandler = new IncidenceMethodHandler();
         methodHandlers.add(incidenceHandler);
 
-        if(additionalHandlers != null)
+        if (additionalHandlers != null)
             methodHandlers.addAll(additionalHandlers);
 
         return methodHandlers;

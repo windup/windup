@@ -1,60 +1,52 @@
 package org.jboss.windup.rules.java;
 
-import java.nio.file.Path;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Iterators;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.graph.model.resource.FileModel;
+
+import java.nio.file.Path;
 
 @RunWith(Arquillian.class)
-public class JavaClassTestFile1
-{
+public class JavaClassTestFile1 {
+    @Inject
+    TestJavaClassTestRuleProvider provider;
+    @Inject
+    private WindupProcessor processor;
+    @Inject
+    private GraphContextFactory factory;
+
     @Deployment
     @Dependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
-    {
+    public static ForgeArchive getDeployment() {
         final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addClass(TestJavaClassTestRuleProvider.class)
-                    .addClass(JavaClassTest.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                .addBeansXML()
+                .addClass(TestJavaClassTestRuleProvider.class)
+                .addClass(JavaClassTest.class)
+                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                        AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                        AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                        AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                );
 
         return archive;
     }
 
-    @Inject
-    TestJavaClassTestRuleProvider provider;
-
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContextFactory factory;
-
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(getDefaultPath()))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(getDefaultPath())) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -87,9 +79,9 @@ public class JavaClassTestFile1
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        TestJavaClassTestRuleProvider.class));
+                    TestJavaClassTestRuleProvider.class));
             processorConfig.setGraphContext(context).setRuleProviderFilter(
-                        new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
+                    new RuleProviderWithDependenciesPredicate(TestJavaClassTestRuleProvider.class));
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
@@ -97,7 +89,7 @@ public class JavaClassTestFile1
             processor.execute(processorConfig);
 
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                        JavaTypeReferenceModel.class);
+                    JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
@@ -106,9 +98,8 @@ public class JavaClassTestFile1
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

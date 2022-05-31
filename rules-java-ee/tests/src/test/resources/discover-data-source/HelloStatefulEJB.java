@@ -1,5 +1,5 @@
-import javax.annotation.sql.DataSourceDefinitions;
 import javax.annotation.sql.DataSourceDefinition;
+import javax.annotation.sql.DataSourceDefinitions;
 
 @DataSourceDefinitions(
         value = {

@@ -1,12 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Represents an &lt;env-ref&gt; entry from a Java deployment descriptor (eg, web.xml).
@@ -14,8 +13,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EnvironmentReferenceModel.TYPE)
-public interface EnvironmentReferenceModel extends WindupVertexFrame
-{
+public interface EnvironmentReferenceModel extends WindupVertexFrame {
     String TYPE = "EnvironmentReferenceModel";
 
     String REFERENCE_TYPE = "referenceType";

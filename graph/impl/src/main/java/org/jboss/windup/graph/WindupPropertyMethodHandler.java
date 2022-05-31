@@ -1,14 +1,9 @@
 package org.jboss.windup.graph;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import com.syncleus.ferma.framefactories.annotation.AbstractMethodHandler;
-
 import com.syncleus.ferma.ElementFrame;
+import com.syncleus.ferma.framefactories.annotation.AbstractMethodHandler;
 import com.syncleus.ferma.framefactories.annotation.CachesReflection;
 import com.syncleus.ferma.framefactories.annotation.ReflectionUtility;
-
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Argument;
@@ -19,20 +14,28 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class WindupPropertyMethodHandler extends AbstractMethodHandler
-{
+public class WindupPropertyMethodHandler extends AbstractMethodHandler {
+    private static Enum getValueAsEnum(final Method method, final Object value) {
+        final Class<Enum> en = (Class<Enum>) method.getReturnType();
+        if (value != null)
+            return Enum.valueOf(en, value.toString());
+
+        return null;
+    }
+
     @Override
-    public Class<Property> getAnnotationType()
-    {
+    public Class<Property> getAnnotationType() {
         return Property.class;
     }
 
     @Override
-    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         final java.lang.reflect.Parameter[] arguments = method.getParameters();
 
         if (ReflectionUtility.isSetMethod(method))
@@ -54,11 +57,10 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
                 throw new IllegalStateException(method.getName() + " was annotated with @Property but had some arguments.");
         else
             throw new IllegalStateException(
-                        method.getName() + " was annotated with @Property but did not begin with either of the following keywords: add, get");
+                    method.getName() + " was annotated with @Property but did not begin with either of the following keywords: add, get");
     }
 
-    private <E> DynamicType.Builder<E> setProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    private <E> DynamicType.Builder<E> setProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(WindupPropertyMethodHandler.SetPropertyInterceptor.class));
     }
 
@@ -66,17 +68,8 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
         return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(WindupPropertyMethodHandler.GetPropertyInterceptor.class));
     }
 
-    private <E> DynamicType.Builder<E> removeProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    private <E> DynamicType.Builder<E> removeProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(WindupPropertyMethodHandler.RemovePropertyInterceptor.class));
-    }
-
-    private static Enum getValueAsEnum(final Method method, final Object value) {
-        final Class<Enum> en = (Class<Enum>) method.getReturnType();
-        if (value != null)
-            return Enum.valueOf(en, value.toString());
-
-        return null;
     }
 
     public static final class GetPropertyInterceptor {
@@ -95,11 +88,9 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
         }
     }
 
-    public static final class SetPropertyInterceptor
-    {
+    public static final class SetPropertyInterceptor {
         @RuntimeType
-        public static void setProperty(@This final ElementFrame thiz, @Origin final Method method, @RuntimeType @Argument(0) final Object obj)
-        {
+        public static void setProperty(@This final ElementFrame thiz, @Origin final Method method, @RuntimeType @Argument(0) final Object obj) {
             assert thiz instanceof CachesReflection;
             final Property annotation = ((CachesReflection) thiz).getReflectionCache().getAnnotation(method, Property.class);
             final String propertyName = annotation.value();
@@ -109,8 +100,7 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
             else
                 propertyValue = obj;
 
-            if (propertyValue == null)
-            {
+            if (propertyValue == null) {
                 RemovePropertyInterceptor.removeProperty(thiz, method);
                 return;
             }
@@ -123,11 +113,9 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
         }
     }
 
-    public static final class RemovePropertyInterceptor
-    {
+    public static final class RemovePropertyInterceptor {
 
-        public static void removeProperty(@This final ElementFrame thiz, @Origin final Method method)
-        {
+        public static void removeProperty(@This final ElementFrame thiz, @Origin final Method method) {
             assert thiz instanceof CachesReflection;
             final Property annotation = ((CachesReflection) thiz).getReflectionCache().getAnnotation(method, Property.class);
             final String propertyName = annotation.value();

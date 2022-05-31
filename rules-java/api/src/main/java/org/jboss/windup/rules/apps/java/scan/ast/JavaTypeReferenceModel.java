@@ -1,19 +1,18 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.FileLocationModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
-import org.jboss.windup.graph.model.TypeValue;
 
 import java.util.List;
 
@@ -21,8 +20,7 @@ import java.util.List;
  * This references a particular location within a Java source file, as well as the contents of that location.
  */
 @TypeValue(JavaTypeReferenceModel.TYPE)
-public interface JavaTypeReferenceModel extends FileLocationModel
-{
+public interface JavaTypeReferenceModel extends FileLocationModel {
 
     String TYPE = "JavaTypeReferenceModel";
     String REFERENCE_TYPE = "referenceType";
@@ -43,18 +41,18 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     AbstractJavaSourceModel getFile();
 
     /**
+     * Gets the snippit referenced by this {@link FileLocationModel}.
+     */
+    @Property(RESOLVED_SOURCE_SNIPPIT)
+    String getResolvedSourceSnippit();
+
+    /**
      * Sets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(RESOLVED_SOURCE_SNIPPIT)
     @Indexed(IndexType.SEARCH)
     void setResolvedSourceSnippit(String source);
 
-    /**
-     * Gets the snippit referenced by this {@link FileLocationModel}.
-     */
-    @Property(RESOLVED_SOURCE_SNIPPIT)
-    String getResolvedSourceSnippit();
-    
     /**
      * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
      */
@@ -84,8 +82,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     /**
      * Gets a human readable description of the location in the file
      */
-    default String getDescription()
-    {
+    default String getDescription() {
         TypeReferenceLocation location = getReferenceLocation();
 
         return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";

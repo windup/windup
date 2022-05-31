@@ -1,16 +1,14 @@
 package org.jboss.windup.tooling.data;
 
-import java.io.File;
-
 import javax.xml.bind.annotation.XmlElement;
+import java.io.File;
 
 /**
  * Correlates files in the input application with the related source report file.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ReportLinkImpl implements ReportLink
-{
+public class ReportLinkImpl implements ReportLink {
     private static final long serialVersionUID = 1L;
 
     private File inputFile;
@@ -21,16 +19,14 @@ public class ReportLinkImpl implements ReportLink
      */
     @Override
     @XmlElement(name = "input-file")
-    public File getInputFile()
-    {
+    public File getInputFile() {
         return inputFile;
     }
 
     /**
      * Contains the File path of the file in the input application.
      */
-    public void setInputFile(File inputFile)
-    {
+    public void setInputFile(File inputFile) {
         this.inputFile = inputFile;
     }
 
@@ -39,16 +35,14 @@ public class ReportLinkImpl implements ReportLink
      */
     @Override
     @XmlElement(name = "report-file")
-    public File getReportFile()
-    {
+    public File getReportFile() {
         return reportFile;
     }
 
     /**
      * Contains the File path of the report.
      */
-    public void setReportFile(File reportFile)
-    {
+    public void setReportFile(File reportFile) {
         this.reportFile = reportFile;
     }
 }

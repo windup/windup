@@ -1,15 +1,13 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Iterator;
-import java.util.logging.Logger;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -19,54 +17,49 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
-import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
-import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+import java.util.logging.Logger;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public class ClassificationService extends GraphService<ClassificationModel>
-{
+public class ClassificationService extends GraphService<ClassificationModel> {
     public static final Logger LOG = Logger.getLogger(ClassificationService.class.getName());
 
-    public ClassificationService(GraphContext context)
-    {
+    public ClassificationService(GraphContext context) {
         super(context, ClassificationModel.class);
     }
 
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
-    {
+    public int getMigrationEffortPoints(FileModel fileModel) {
         GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(EffortReportModel.EFFORT, P.gt(0));
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
 
         int classificationEffort = 0;
-        for (Vertex v : classificationPipeline.toList())
-        {
+        for (Vertex v : classificationPipeline.toList()) {
             Property<Integer> migrationEffort = v.property(ClassificationModel.EFFORT);
-            if (migrationEffort.isPresent())
-            {
+            if (migrationEffort.isPresent()) {
                 classificationEffort += migrationEffort.value();
             }
         }
@@ -76,8 +69,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance.
      */
-    public Iterable<ClassificationModel> getClassifications(FileModel model)
-    {
+    public Iterable<ClassificationModel> getClassifications(FileModel model) {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
@@ -87,8 +79,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance with a specific classification name.
      */
-    public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName)
-    {
+    public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName) {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
@@ -110,13 +101,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                                                             Set<String> issueCategoryIDs,
-                                                            boolean recursive, boolean includeZero)
-    {
-        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction()
-        {
-            public Integer vertexToKey(Vertex effortReportVertex)
-            {
-                Integer migrationEffort = (Integer)effortReportVertex.property(EffortReportModel.EFFORT).value();
+                                                            boolean recursive, boolean includeZero) {
+        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction() {
+            public Integer vertexToKey(Vertex effortReportVertex) {
+                Integer migrationEffort = (Integer) effortReportVertex.property(EffortReportModel.EFFORT).value();
                 return migrationEffort;
             }
         };
@@ -128,18 +116,14 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
      */
     public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event,
-        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs, boolean recursive)
-    {
-        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator =  new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
-        {
-            public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
-            {
+                                                                         ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs, boolean recursive) {
+        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator = new MapSumEffortAccumulatorFunction<IssueCategoryModel>() {
+            public IssueCategoryModel vertexToKey(Vertex effortReportVertex) {
                 return frame(effortReportVertex).getIssueCategory();
             }
 
             @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
+            public void accumulate(Vertex effortReportVertex) {
                 /*
                  * If it is a detail only issue, then summaries should not include it in the count.
                  */
@@ -155,22 +139,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                                            Set<String> issueCategoryIDs, boolean recursive, boolean includeZero,
-                                           EffortAccumulatorFunction accumulatorFunction)
-    {
-        LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+                                           EffortAccumulatorFunction accumulatorFunction) {
+        LOG.log(Level.INFO, String.format(System.lineSeparator() + "\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
         GraphTraversal<Vertex, Vertex> pipeline = this.getGraphContext().getGraph().traversal().V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
-        if (!includeZero)
-        {
+        if (!includeZero) {
             pipeline.has(EffortReportModel.EFFORT, P.gt(0));
             pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
-        }
-        else
-        {
+        } else {
             pipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
         }
         pipeline.as("classification");
@@ -182,10 +162,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         FileService fileService = new FileService(getGraphContext());
-        for (Vertex v : pipeline.toSet())
-        {
-            if (checkTags || !issueCategoryIDs.isEmpty())
-            {
+        for (Vertex v : pipeline.toSet()) {
+            if (checkTags || !issueCategoryIDs.isEmpty()) {
                 ClassificationModel classificationModel = frame(v);
 
                 // only check tags if we have some passed in
@@ -201,8 +179,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             // TODO: This could be all done just within the query (provided that the tags would be taken care of).
             //       Accumulate could be a PipeFunction.
             Iterator<Vertex> fileVertexIterator = v.vertices(Direction.OUT, ClassificationModel.FILE_MODEL);
-            while (fileVertexIterator.hasNext())
-            {
+            while (fileVertexIterator.hasNext()) {
                 Vertex fileVertex = fileVertexIterator.next();
 
                 // Make sure that this file is actually in an accepted project. The pipeline condition will return
@@ -218,24 +195,21 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
      * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String classificationText, String description)
-    {
+    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String classificationText, String description) {
         return attachClassification(event, rule, fileModel, IssueCategoryRegistry.DEFAULT, classificationText, description);
     }
 
     /**
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
      * If an existing Model exists with the provided classificationText, that one will be used instead.
-     *
+     * <p>
      * The classification is looked up by name and created only if not found.
      * That means that the new description is discarded. FIXME
      */
-    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String categoryId, String classificationTitle, String description)
-    {
+    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String categoryId, String classificationTitle, String description) {
         Traversal<?, ?> classificationTraversal = getQuery().traverse(g -> g.has(ClassificationModel.CLASSIFICATION, classificationTitle)).getRawTraversal();
         ClassificationModel classification = getUnique(classificationTraversal);
-        if (classification == null)
-        {
+        if (classification == null) {
             classification = create();
             classification.setClassification(classificationTitle);
             classification.setDescription(description);
@@ -245,8 +219,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             classification.setIssueCategory(cat);
 
             classification.setRuleID(rule.getId());
-            if (fileModel instanceof DuplicateArchiveModel)
-            {
+            if (fileModel instanceof DuplicateArchiveModel) {
                 fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
             }
             classification.addFileModel(fileModel);
@@ -255,14 +228,12 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
             ClassificationServiceCache.cacheClassificationFileModel(event, classification, fileModel, true);
             return classification;
-        }
-        else
-        {
+        } else {
             if (!StringUtils.equals(description, classification.getDescription()))
                 LOG.warning("The description of the newly attached classification differs from the same-titled existing one, so the old description is being changed."
-                        + System.lineSeparator()+"   Clsf title: " + classification.getClassification()
-                        + System.lineSeparator()+"   Old desc: " + classification.getDescription()
-                        + System.lineSeparator()+"   New desc: " + description);
+                        + System.lineSeparator() + "   Clsf title: " + classification.getClassification()
+                        + System.lineSeparator() + "   Old desc: " + classification.getDescription()
+                        + System.lineSeparator() + "   New desc: " + description);
             classification.setDescription(description);
         }
 
@@ -273,19 +244,16 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
      * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String classificationText, String description)
-    {
+    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String classificationText, String description) {
         return attachClassification(event, context, fileModel, IssueCategoryRegistry.DEFAULT, classificationText, description);
     }
 
-    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String categoryId, String classificationText, String description)
-    {
+    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String categoryId, String classificationText, String description) {
         Rule rule = (Rule) context.get(Rule.class);
         return attachClassification(event, rule, fileModel, categoryId, classificationText, description);
     }
 
-    private boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
-    {
+    private boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel) {
         return ClassificationServiceCache.isClassificationLinkedToFileModel(event, classificationModel, fileModel);
     }
 
@@ -293,15 +261,12 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * This method just attaches the {@link ClassificationModel} to the {@link FileModel}.
      * It will only do so if this link is not already present.
      */
-    public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
-    {
-        if (fileModel instanceof DuplicateArchiveModel)
-        {
+    public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel) {
+        if (fileModel instanceof DuplicateArchiveModel) {
             fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
         }
 
-        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel))
-        {
+        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel)) {
             classificationModel.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
                 ((SourceFileModel) fileModel).setGenerateSourceReport(true);
@@ -314,12 +279,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Attach the given link to the classification, while checking for duplicates.
      */
-    public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel)
-    {
-        for (LinkModel existing : classificationModel.getLinks())
-        {
-            if (StringUtils.equals(existing.getLink(), linkModel.getLink()))
-            {
+    public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel) {
+        for (LinkModel existing : classificationModel.getLinks()) {
+            if (StringUtils.equals(existing.getLink(), linkModel.getLink())) {
                 return classificationModel;
             }
         }

@@ -45,52 +45,46 @@ import java.util.UUID;
  * Tests the toFileModel condition
  */
 @RunWith(Arquillian.class)
-public class ToFileModelTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
-    }
-
+public class ToFileModelTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
-
     @Inject
     private ToFileModelTestRuleProvider provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML();
+        return archive;
+    }
+
     @Test
-    public void testToFileModelTransformation() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testToFileModelTransformation() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
-                        MigrationRulesPhase.class));
+                    MigrationRulesPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
@@ -101,33 +95,30 @@ public class ToFileModelTest
     }
 
     @Singleton
-    public static class ToFileModelTestRuleProvider extends AbstractRuleProvider
-    {
+    public static class ToFileModelTestRuleProvider extends AbstractRuleProvider {
         public int count = 0;
 
 
-        public ToFileModelTestRuleProvider()
-        {
+        public ToFileModelTestRuleProvider() {
             super(MetadataBuilder.forProvider(ToFileModelTestRuleProvider.class)
-                        .setPhase(PostMigrationRulesPhase.class));
+                    .setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
 
             return ConfigurationBuilder.begin()
-            .addRule()
-            .when(ToFileModel.withWrappedCondition((FileContent)FileContent.matches("file {*}.").inFileNamed("{*}.txt")))
-            .perform(new AbstractIterationOperation<FileModel>() {
+                    .addRule()
+                    .when(ToFileModel.withWrappedCondition((FileContent) FileContent.matches("file {*}.").inFileNamed("{*}.txt")))
+                    .perform(new AbstractIterationOperation<FileModel>() {
 
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
-                {
-                    count++;
-                }});
-         }
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, FileModel payload) {
+                            count++;
+                        }
+                    });
+        }
         // @formatter:on
     }
 

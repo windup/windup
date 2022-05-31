@@ -1,9 +1,5 @@
 package org.jboss.windup.reporting.rules.generation;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
@@ -26,19 +22,20 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Stores information about executed rules into graph
  *
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 @RuleMetadata(phase = PostFinalizePhase.class)
-public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        GraphOperation addRuleReports = new GraphOperation()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        GraphOperation addRuleReports = new GraphOperation() {
             Map<String, ExecutionPhaseModel> phaseModelMap;
 
             GraphContext graphContext;
@@ -47,8 +44,7 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
             RuleExecutionService ruleExecutionService;
             ExecutionPhaseService executionPhaseService;
 
-            private void initialize(GraphContext graphContext)
-            {
+            private void initialize(GraphContext graphContext) {
                 this.graphContext = graphContext;
                 this.ruleProviderService = new RuleProviderService(this.graphContext);
                 this.ruleExecutionService = new RuleExecutionService(this.graphContext);
@@ -58,16 +54,13 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 this.initialize(event.getGraphContext());
 
                 List<RuleProvider> ruleProviderList = RuleProviderRegistry.instance(event).getProviders();
 
-                for (RuleProvider ruleProvider : ruleProviderList)
-                {
-                    if (ruleProvider instanceof RulePhase)
-                    {
+                for (RuleProvider ruleProvider : ruleProviderList) {
+                    if (ruleProvider instanceof RulePhase) {
                         this.addPhase(ruleProvider.getMetadata().getID());
                         continue;
                     }
@@ -81,8 +74,7 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
                     List<RuleExecutionInformation> ruleProviderInfo = RuleExecutionResultsListener.instance(event)
                             .getRuleExecutionInformation((AbstractRuleProvider) ruleProvider);
 
-                    for (RuleExecutionInformation ruleInfo : ruleProviderInfo)
-                    {
+                    for (RuleExecutionInformation ruleInfo : ruleProviderInfo) {
                         if (ruleInfo == null)
                             continue;
 
@@ -95,24 +87,20 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
                 this.graphContext.commit();
             }
 
-            private void addPhase(String name)
-            {
-                if (!this.phaseModelMap.containsKey(name))
-                {
+            private void addPhase(String name) {
+                if (!this.phaseModelMap.containsKey(name)) {
                     ExecutionPhaseModel phaseModel = executionPhaseService.create();
                     phaseModel.setName(name);
                     this.phaseModelMap.put(name, phaseModel);
                 }
             }
 
-            private ExecutionPhaseModel getPhaseModel(RuleProvider ruleProvider)
-            {
+            private ExecutionPhaseModel getPhaseModel(RuleProvider ruleProvider) {
                 Class<? extends RulePhase> phase = ruleProvider.getMetadata().getPhase();
 
                 String name = phase.getSimpleName();
 
-                if (!this.phaseModelMap.containsKey(name))
-                {
+                if (!this.phaseModelMap.containsKey(name)) {
                     ExecutionPhaseModel phaseModel = executionPhaseService.create();
                     phaseModel.setName(name);
                     this.phaseModelMap.put(name, phaseModel);
@@ -124,14 +112,13 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "AddRuleReports";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(addRuleReports);
+                .addRule()
+                .perform(addRuleReports);
     }
 }

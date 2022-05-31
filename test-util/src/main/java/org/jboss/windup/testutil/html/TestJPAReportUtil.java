@@ -11,13 +11,11 @@ public class TestJPAReportUtil extends TestChromeDriverReportUtil {
     /**
      * Checks that an EJB of the given type and classname is listed with given columns in the table
      */
-    public boolean checkEntityInReport(String... columns)
-    {
+    public boolean checkEntityInReport(String... columns) {
         String tableID = "jpaEntityTable";
 
         WebElement element = getDriver().findElement(By.id(tableID));
-        if (element == null)
-        {
+        if (element == null) {
             throw new CheckFailedException("Unable to find ejb beans table element");
         }
         return checkValueInTable(element, columns);

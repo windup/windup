@@ -1,13 +1,5 @@
 package org.jboss.windup.exec.updater;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -24,36 +16,35 @@ import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * Encloses the functionality of updating the rulesets.
  *
  * @author mbriskar
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class RulesetsUpdater
-{
-    private static final Logger LOG = Logger.getLogger( RulesetsUpdater.class.getName() );
-
+public class RulesetsUpdater {
+    public static final String RULESET_CORE_DIRECTORY = "migration-core";
+    private static final Logger LOG = Logger.getLogger(RulesetsUpdater.class.getName());
     private static final String RULESETS_ARTIFACT_ID = "windup-rulesets";
     private static final String RULES_GROUP_ID = "org.jboss.windup.rules";
-    public static final String RULESET_CORE_DIRECTORY = "migration-core";
-
-    @Inject
-    private Furnace furnace;
-
-    @Inject
-    private DependencyResolver depsResolver;
-
     @Inject
     ResourceFactory factory;
-
-
+    @Inject
+    private Furnace furnace;
+    @Inject
+    private DependencyResolver depsResolver;
 
     // This may be called (and print the message) twice - first in RulesetUpdateChecker, then here.
     // TODO: This should be redesigned - first, do a query for current and latest version.
     //       Then use the result to print and to compare, as needed.
-    public boolean rulesetsNeedUpdate(boolean printVersions)
-    {
+    public boolean rulesetsNeedUpdate(boolean printVersions) {
         return false;
         /* Temporary disabled
         SingleVersion latest =  getLatestCoreRulesetVersion();
@@ -76,8 +67,7 @@ public class RulesetsUpdater
         */
     }
 
-    private SingleVersion getCurrentCoreRulesetsVersion()
-    {
+    private SingleVersion getCurrentCoreRulesetsVersion() {
         Path windupRulesDir = getRulesetsDir();
         Path coreRulesPomPath = windupRulesDir.resolve(RULESET_CORE_DIRECTORY + "/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml");
         File pomXml = coreRulesPomPath.toFile();
@@ -87,8 +77,7 @@ public class RulesetsUpdater
         return SingleVersion.valueOf(pom.getCurrentModel().getVersion());
     }
 
-    public void printRulesetsVersions(SingleVersion installed, SingleVersion latest)
-    {
+    public void printRulesetsVersions(SingleVersion installed, SingleVersion latest) {
         final String msg = "Core rulesets version: Installed: " + installed + " Latest release: " + latest;
         LOG.info(msg);
         System.out.println(msg); // Print to both to have the info in the log too.
@@ -97,15 +86,13 @@ public class RulesetsUpdater
     /**
      * @return The directory which this updater works with.
      */
-    public Path getRulesetsDir()
-    {
+    public Path getRulesetsDir() {
         Path windupRulesDir = PathUtil.getWindupRulesDir();
         return windupRulesDir;
     }
 
 
-    public String replaceRulesetsDirectoryWithLatestReleaseIfAny() throws IOException, DependencyException
-    {
+    public String replaceRulesetsDirectoryWithLatestReleaseIfAny() throws IOException, DependencyException {
         if (!this.rulesetsNeedUpdate(false))
             return null;
 
@@ -113,7 +100,7 @@ public class RulesetsUpdater
         Path coreRulesetsDir = windupRulesDir.resolve(RULESET_CORE_DIRECTORY);
 
         Coordinate rulesetsCoord = getLatestReleaseOf(RULES_GROUP_ID, RULESETS_ARTIFACT_ID);
-        if(rulesetsCoord == null)
+        if (rulesetsCoord == null)
             throw new WindupException("No Windup rulesets release found.");
 
         FileUtils.deleteDirectory(coreRulesetsDir.toFile());
@@ -123,8 +110,7 @@ public class RulesetsUpdater
     }
 
 
-    public void extractArtifact(Coordinate artifactCoords, File targetDir) throws IOException, DependencyException
-    {
+    public void extractArtifact(Coordinate artifactCoords, File targetDir) throws IOException, DependencyException {
         final DependencyQueryBuilder query = DependencyQueryBuilder.create(artifactCoords);
         Dependency dependency = depsResolver.resolveArtifact(query);
         FileResource<?> artifact = dependency.getArtifact();
@@ -133,10 +119,10 @@ public class RulesetsUpdater
 
     /**
      * A convenience method.
+     *
      * @return Finds the latest non-SNAPSHOT of given artifact.
      */
-    public Coordinate getLatestReleaseOf(String groupId, String artifactId)
-    {
+    public Coordinate getLatestReleaseOf(String groupId, String artifactId) {
         final CoordinateBuilder coord = CoordinateBuilder.create()
                 .setGroupId(groupId)
                 .setArtifactId(artifactId);
@@ -147,17 +133,15 @@ public class RulesetsUpdater
     /**
      * @return Finds the latest non-SNAPSHOT of given artifact.
      */
-    public Coordinate getLatestReleaseOf(final CoordinateBuilder coord)
-    {
+    public Coordinate getLatestReleaseOf(final CoordinateBuilder coord) {
         List<Coordinate> availableVersions = depsResolver.resolveVersions(DependencyQueryBuilder.create(coord));
 
         // Find the latest non-SNAPSHOT and non-CR version.
-        for(int i = availableVersions.size()-1; i >= 0; i--)
-        {
+        for (int i = availableVersions.size() - 1; i >= 0; i--) {
             Coordinate availableCoord = availableVersions.get(i);
             String versionStr = availableCoord.getVersion();
 
-            if(versionStr != null && !availableCoord.isSnapshot() && !versionStr.matches(".*CR[0-9]$"))
+            if (versionStr != null && !availableCoord.isSnapshot() && !versionStr.matches(".*CR[0-9]$"))
                 return availableCoord;
         }
         return null;
@@ -167,8 +151,7 @@ public class RulesetsUpdater
     /**
      * Connects to a repository and returns the version of the latest windup-distribution.
      */
-    public Coordinate queryLatestWindupRelease()
-    {
+    public Coordinate queryLatestWindupRelease() {
         final CoordinateBuilder coords = CoordinateBuilder.create()
                 .setGroupId("org.jboss.windup")
                 .setArtifactId("windup-distribution")
@@ -181,13 +164,11 @@ public class RulesetsUpdater
     /**
      * @return The version of this running instance of Windup. Takes the windup-exec addon version as authoritative.
      */
-    public String getCurrentRunningWindupVersion()
-    {
+    public String getCurrentRunningWindupVersion() {
         return getClass().getPackage().getImplementationVersion();
     }
 
-    private SingleVersion getLatestCoreRulesetVersion()
-    {
+    private SingleVersion getLatestCoreRulesetVersion() {
         Coordinate lastRelease = this.getLatestReleaseOf(RULES_GROUP_ID, RULESETS_ARTIFACT_ID);
         if (lastRelease == null)
             return null;

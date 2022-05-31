@@ -1,26 +1,23 @@
 package org.jboss.windup.reporting.model;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
 
 import java.util.List;
 
 /**
  * Represents a technology that is used or implemented by a particular file. For example, this might indicate that a file uses "EJB" or that the file
  * is a Hibernate Configuration File.
- * 
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TechnologyTagModel.TYPE)
-public interface TechnologyTagModel extends WindupVertexFrame
-{
+public interface TechnologyTagModel extends WindupVertexFrame {
     String TYPE = "TechnologyTagModel";
 
     String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";

@@ -9,7 +9,8 @@
     <dd><a href="https://developer.jboss.org/en/windup?view=discussions">https://developer.jboss.org/en/windup</a></dd>
 
     <dt>Mailing List</dt>
-    <dd><a href="https://lists.jboss.org/mailman/listinfo/windup-dev">https://lists.jboss.org/mailman/listinfo/windup-dev</a></dd>
+    <dd><a href="https://lists.jboss.org/mailman/listinfo/windup-dev">https://lists.jboss.org/mailman/listinfo/windup-dev</a>
+    </dd>
 
     <dt>Issues Tracking</dt>
     <dd><a href="https://issues.jboss.org/browse/WINDUP">https://issues.jboss.org/browse/WINDUP</a></dd>

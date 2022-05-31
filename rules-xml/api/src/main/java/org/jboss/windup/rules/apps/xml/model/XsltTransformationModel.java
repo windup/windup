@@ -1,20 +1,18 @@
 package org.jboss.windup.rules.apps.xml.model;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
-
 /**
  * Contains metadata regarding the result of an XSLT Transformation
  */
 @TypeValue(XsltTransformationModel.TYPE)
-public interface XsltTransformationModel extends WindupVertexFrame
-{
+public interface XsltTransformationModel extends WindupVertexFrame {
     public static final String TYPE = "XsltTransformationModel";
     public static final String LOCATION = TYPE + "-location";
     public static final String EXTENSION = TYPE + "-extension";

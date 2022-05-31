@@ -2,17 +2,16 @@ package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
-
-import java.util.Map;
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.Map;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(TechReportModel.TYPE)
-public interface TechReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
-{
+public interface TechReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel {
     String TYPE = "TechReportModel";
     String EDGE_TAG_SECTORS = "techreport-sectors:"; // Also a tag name.
     String EDGE_TAG_ROWS = "techreport-rows:";       // Also a tag name.
@@ -36,10 +35,10 @@ public interface TechReportModel extends ApplicationReportModel, IncludeAndExclu
     void setRowsHolderTag(TagModel tag);
 
     @MapInAdjacentVertices(label = "appProjectIdToReportMap")
-    void setAppProjectIdToReportMap(Map<String, TechReportModel> values);
+    Map<String, TechReportModel> getAppProjectIdToReportMap();
 
     @MapInAdjacentVertices(label = "appProjectIdToReportMap")
-    Map<String, TechReportModel> getAppProjectIdToReportMap();
+    void setAppProjectIdToReportMap(Map<String, TechReportModel> values);
 
 
     /*

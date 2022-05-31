@@ -1,9 +1,5 @@
 package org.jboss.windup.config.parser.xml.perform;
 
-import static org.joox.JOOX.$;
-
-import java.util.List;
-
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -14,16 +10,17 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.config.Operations;
 import org.w3c.dom.Element;
 
+import java.util.List;
+
+import static org.joox.JOOX.$;
+
 @NamespaceElementHandler(elementName = "otherwise", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class OtherwiseHandler implements ElementHandler<Operation>
-{
+public class OtherwiseHandler implements ElementHandler<Operation> {
     @Override
-    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         OperationBuilder result = Operations.create();
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Operation operation = handlerManager.processElement(child);
             result = result.and(operation);
         }

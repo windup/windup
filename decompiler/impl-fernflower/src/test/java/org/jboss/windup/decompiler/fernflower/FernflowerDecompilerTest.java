@@ -1,15 +1,5 @@
 package org.jboss.windup.decompiler.fernflower;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.jboss.windup.decompiler.DecompilerTestBase;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationException;
@@ -20,22 +10,28 @@ import org.jboss.windup.decompiler.util.ZipUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
- * 
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FernflowerDecompilerTest extends DecompilerTestBase
-{
+public class FernflowerDecompilerTest extends DecompilerTestBase {
     @Override
-    protected Decompiler getDecompiler()
-    {
+    protected Decompiler getDecompiler() {
         return new FernflowerDecompiler();
     }
 
     @Override
-    protected boolean isResultValid(DecompilationResult res)
-    {
+    protected boolean isResultValid(DecompilationResult res) {
         return (res.getFailures().size() == 1);
     }
 
@@ -43,8 +39,7 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
      * Tests the {@link FernflowerDecompiler#decompileClassFiles(Collection, DecompilationListener)} method.
      */
     @Test
-    public void testDecompileClassFiles() throws DecompilationException, IOException
-    {
+    public void testDecompileClassFiles() throws DecompilationException, IOException {
         final Decompiler dec = this.getDecompiler();
 
         Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
@@ -68,30 +63,25 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
         requests.add(new ClassDecompileRequest(unzipDir, classFile5, decompDir));
 
         final AtomicInteger numberDecompiled = new AtomicInteger(0);
-        DecompilationListener listener = new DecompilationListener()
-        {
+        DecompilationListener listener = new DecompilationListener() {
             @Override
-            public void fileDecompiled(List<String> inputPath, String outputPath)
-            {
+            public void fileDecompiled(List<String> inputPath, String outputPath) {
                 Assert.assertNotNull("Results object was returned.", outputPath);
                 numberDecompiled.incrementAndGet();
             }
 
             @Override
-            public void decompilationFailed(List<String> inputPath, String message)
-            {
+            public void decompilationFailed(List<String> inputPath, String message) {
                 System.out.println("Failed for input: " + inputPath + " due to: " + message);
             }
 
             @Override
-            public void decompilationProcessComplete()
-            {
+            public void decompilationProcessComplete() {
                 System.out.println("Decompilation complete!");
             }
 
             @Override
-            public boolean isCancelled()
-            {
+            public boolean isCancelled() {
                 return false;
             }
         };
@@ -102,8 +92,7 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
     }
 
     @Test
-    public void testDecompileClassFileWithGeneric() throws DecompilationException, IOException
-    {
+    public void testDecompileClassFileWithGeneric() throws DecompilationException, IOException {
         final Decompiler dec = this.getDecompiler();
 
         Path decompDir = testTempDir.resolve("decompiled");
@@ -113,18 +102,14 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
 
         final AtomicBoolean lineWithGenericFound = new AtomicBoolean(false);
         final AtomicBoolean lineWithoutGenericFound = new AtomicBoolean(false);
-        DecompilationListener listener = new DecompilationListener()
-        {
+        DecompilationListener listener = new DecompilationListener() {
             @Override
-            public void fileDecompiled(List<String> inputPath, String outputPath)
-            {
+            public void fileDecompiled(List<String> inputPath, String outputPath) {
                 Assert.assertNotNull("Results object was returned.", outputPath);
                 String content = "";
-                try
-                {
+                try {
                     content = new String(Files.readAllBytes(Paths.get(outputPath)));
-                } catch (IOException ioe)
-                {
+                } catch (IOException ioe) {
                     Assert.fail("Unable to open and read file " + outputPath);
                 }
                 lineWithGenericFound.set(content.contains("Optional<String> optional = list.stream().filter((str) ->"));
@@ -132,20 +117,17 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
             }
 
             @Override
-            public void decompilationFailed(List<String> inputPath, String message)
-            {
+            public void decompilationFailed(List<String> inputPath, String message) {
                 System.out.println("Failed for input: " + inputPath + " due to: " + message);
             }
 
             @Override
-            public void decompilationProcessComplete()
-            {
+            public void decompilationProcessComplete() {
                 System.out.println("Decompilation complete!");
             }
 
             @Override
-            public boolean isCancelled()
-            {
+            public boolean isCancelled() {
                 return false;
             }
         };

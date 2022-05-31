@@ -12,8 +12,7 @@ import java.util.List;
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(OrganizationModel.TYPE)
-public interface OrganizationModel extends WindupVertexFrame
-{
+public interface OrganizationModel extends WindupVertexFrame {
     String TYPE = "OrganizationModel";
     String TYPE_PREFIX = TYPE + "-";
     String NAME = TYPE_PREFIX + "name";
@@ -45,16 +44,16 @@ public interface OrganizationModel extends WindupVertexFrame
     List<LinkModel> getLinks();
 
     /**
-     * Set the description text of this {@link OrganizationModel}.
-     */
-    @Property(NAME)
-    void setName(String name);
-
-    /**
      * Get the description text of this {@link OrganizationModel}.
      */
     @Property(NAME)
     String getName();
+
+    /**
+     * Set the description text of this {@link OrganizationModel}.
+     */
+    @Property(NAME)
+    void setName(String name);
 
 
 }

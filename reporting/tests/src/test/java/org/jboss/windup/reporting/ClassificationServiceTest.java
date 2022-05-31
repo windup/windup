@@ -1,12 +1,5 @@
 package org.jboss.windup.reporting;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -28,38 +21,40 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class ClassificationServiceTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
-    }
+import javax.inject.Inject;
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
+@RunWith(Arquillian.class)
+public class ClassificationServiceTest {
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/reports"));
+    }
+
     @Test
-    public void testClassificationEffort() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testClassificationEffort() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ClassificationService classificationService = new ClassificationService(context);
 
             ProjectModel projectModel = fillData(context)[0];
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
             final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, emptySet, true,
-                        true);
+                    true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();
@@ -68,16 +63,12 @@ public class ClassificationServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
-            {
-                if (fm.getFilePath().equals("/f1"))
-                {
+            for (FileModel fm : projectModel.getFileModels()) {
+                if (fm.getFilePath().equals("/f1")) {
                     int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(140, fileEffort);
                     foundF1Effort = true;
-                }
-                else if (fm.getFilePath().equals("/f2"))
-                {
+                } else if (fm.getFilePath().equals("/f2")) {
                     int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
@@ -92,10 +83,8 @@ public class ClassificationServiceTest
      * This tests covers the case where a single {@link ClassificationModel} crosses more than one project boundary.
      */
     @Test
-    public void testClassificationAcrossProjectBoundaries() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testClassificationAcrossProjectBoundaries() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ClassificationService classificationService = new ClassificationService(context);
 
             ProjectModel projectModel = fillData(context)[1];
@@ -113,10 +102,8 @@ public class ClassificationServiceTest
     }
 
     @Test
-    public void testClassificationAlreadyAttached() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testClassificationAlreadyAttached() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             GraphRewrite event = new GraphRewrite(context);
             ClassificationService classificationService = new ClassificationService(context);
             FileService fileService = new FileService(context);
@@ -141,8 +128,7 @@ public class ClassificationServiceTest
         }
     }
 
-    private ProjectModel[] fillData(GraphContext context)
-    {
+    private ProjectModel[] fillData(GraphContext context) {
         ClassificationService classificationService = new ClassificationService(context);
         FileService fileService = new FileService(context);
         ProjectService projectService = new ProjectService(context);

@@ -28,112 +28,97 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class LabelLoaderTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
-    }
+public class LabelLoaderTest {
 
     @Inject
     private LabelLoader loader;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML();
+        return archive;
+    }
+
     @Test
-    public void testLabelProviderWithFilter()
-    {
+    public void testLabelProviderWithFilter() {
         Predicate<LabelProvider> predicate = (provider) -> false;
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), null, predicate);
 
         LabelProviderRegistry labelProviderRegistry = loader.loadConfiguration(ruleLoaderContext);
         List<Label> labels = labelProviderRegistry.getProviders()
-                    .stream()
-                    .map(labelProviderRegistry::getLabels)
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(labelProviderRegistry::getLabels)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
         Assert.assertTrue(labels.isEmpty());
     }
 
     @Test
-    public void testLoadLabelWithoutDescription()
-    {
+    public void testLoadLabelWithoutDescription() {
         Predicate<LabelProvider> predicate = (provider) -> provider.getMetadata().getID().equals("labelSet1ID");
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), null, predicate);
 
         LabelProviderRegistry labelProviderRegistry = loader.loadConfiguration(ruleLoaderContext);
         List<Label> labels = labelProviderRegistry.getProviders()
-                    .stream()
-                    .map(labelProviderRegistry::getLabels)
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(labelProviderRegistry::getLabels)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         Assert.assertEquals(1, labels.size());
     }
 
     @Test
-    public void testLoadLabelWithoutName()
-    {
+    public void testLoadLabelWithoutName() {
         Predicate<LabelProvider> predicate = (provider) -> provider.getMetadata().getID().equals("labelSet2ID");
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), null, predicate);
 
         // Should throw exception since 'name' is mandatory
-        try
-        {
+        try {
             LabelProviderRegistry labelProviderRegistry = loader.loadConfiguration(ruleLoaderContext);
             List<Label> labels = labelProviderRegistry.getProviders()
-                        .stream()
-                        .map(labelProviderRegistry::getLabels)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
-        }
-        catch (RuntimeException e)
-        {
+                    .stream()
+                    .map(labelProviderRegistry::getLabels)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
             Assert.assertTrue(true);
         }
     }
 
     @Test
-    public void testLoadLabelWithBlankName()
-    {
+    public void testLoadLabelWithBlankName() {
         Predicate<LabelProvider> predicate = (provider) -> provider.getMetadata().getID().equals("labelSet3ID");
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), null, predicate);
 
         // Should throw exception since 'name' can not be empty
-        try
-        {
+        try {
             LabelProviderRegistry labelProviderRegistry = loader.loadConfiguration(ruleLoaderContext);
             List<Label> labels = labelProviderRegistry.getProviders()
-                        .stream()
-                        .map(labelProviderRegistry::getLabels)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
-        }
-        catch (RuntimeException e)
-        {
+                    .stream()
+                    .map(labelProviderRegistry::getLabels)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
             Assert.assertTrue(true);
         }
     }
 
     @Singleton
-    public static class TestLabelWithoutDescriptionProvider implements LabelProviderLoader
-    {
+    public static class TestLabelWithoutDescriptionProvider implements LabelProviderLoader {
         @Override
-        public boolean isFileBased()
-        {
+        public boolean isFileBased() {
             return false;
         }
 
         @Override
-        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
-        {
+        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext) {
             LabelProviderData data = () -> {
                 String labelID = TestLabelWithoutDescriptionProvider.class.getSimpleName();
                 Label label = new Label(labelID, "label1Name");
@@ -148,17 +133,14 @@ public class LabelLoaderTest
     }
 
     @Singleton
-    public static class TestLabelWithoutNameProvider implements LabelProviderLoader
-    {
+    public static class TestLabelWithoutNameProvider implements LabelProviderLoader {
         @Override
-        public boolean isFileBased()
-        {
+        public boolean isFileBased() {
             return false;
         }
 
         @Override
-        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
-        {
+        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext) {
             LabelProviderData data = () -> {
                 String labelID = TestLabelWithoutNameProvider.class.getSimpleName();
                 Label label = new Label(labelID, null);
@@ -173,17 +155,14 @@ public class LabelLoaderTest
     }
 
     @Singleton
-    public static class TestLabelWithBlankNameProvider implements LabelProviderLoader
-    {
+    public static class TestLabelWithBlankNameProvider implements LabelProviderLoader {
         @Override
-        public boolean isFileBased()
-        {
+        public boolean isFileBased() {
             return false;
         }
 
         @Override
-        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext)
-        {
+        public List<LabelProvider> getProviders(RuleLoaderContext ruleLoaderContext) {
             LabelProviderData data = () -> {
                 String labelID = TestLabelWithBlankNameProvider.class.getSimpleName();
                 Label label = new Label(labelID, "    ");

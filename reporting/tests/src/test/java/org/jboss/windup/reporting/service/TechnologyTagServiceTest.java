@@ -1,10 +1,5 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -24,32 +19,32 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class TechnologyTagServiceTest
-{
+import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
 
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
-    }
+@RunWith(Arquillian.class)
+public class TechnologyTagServiceTest {
 
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML();
+        return archive;
+    }
+
     @Test
-    public void testFindTechnologyTagsByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFindTechnologyTagsByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             TechnologyTagService techTagService = new TechnologyTagService(context);
             FileService fileService = new FileService(context);
@@ -90,8 +85,7 @@ public class TechnologyTagServiceTest
 
             Set<TechnologyTagModel> foundTags = new HashSet<>();
             ProjectModelTraversal traversal = new ProjectModelTraversal(parent);
-            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(traversal))
-            {
+            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(traversal)) {
                 foundTags.add(techTag);
             }
 

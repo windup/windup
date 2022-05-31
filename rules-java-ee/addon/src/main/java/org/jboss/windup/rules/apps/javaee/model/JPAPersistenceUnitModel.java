@@ -1,29 +1,25 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInAdjacentProperties;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Contains metadata related to JPA Persistence Units.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- *
  */
 @TypeValue(JPAPersistenceUnitModel.TYPE)
-public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplications
-{
+public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplications {
     String TYPE = "JPAPersistenceUnitModel";
 
     String DATASOURCE = "datasource";
@@ -92,15 +88,12 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplicati
     @Override
     boolean belongsToProject(ProjectModel projectModel);
 
-    class Impl
-    {
-        public List<ProjectModel> getApplications(JPAPersistenceUnitModel model)
-        {
+    class Impl {
+        public List<ProjectModel> getApplications(JPAPersistenceUnitModel model) {
             return model.getJPAConfigurationFileModel().getApplications();
         }
 
-        public boolean belongsToProject(JPAPersistenceUnitModel model, ProjectModel projectModel)
-        {
+        public boolean belongsToProject(JPAPersistenceUnitModel model, ProjectModel projectModel) {
             return model.getJPAConfigurationFileModel().belongsToProject(projectModel);
         }
     }

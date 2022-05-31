@@ -1,15 +1,11 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import freemarker.template.Configuration;
 import freemarker.template.DefaultIterableAdapter;
 import freemarker.template.DefaultListAdapter;
 import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.SimpleScalar;
+import freemarker.template.SimpleSequence;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,20 +16,20 @@ import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 
-import freemarker.template.SimpleScalar;
-import freemarker.template.SimpleSequence;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class contains several useful utility functions that can be used for rendering a freemarker template within Windup.
- *
  */
-public class FreeMarkerUtil
-{
+public class FreeMarkerUtil {
     /**
      * Gets the default configuration for Freemarker within Windup.
      */
-    public static Configuration getDefaultFreemarkerConfiguration()
-    {
+    public static Configuration getDefaultFreemarkerConfiguration() {
         freemarker.template.Configuration configuration = new freemarker.template.Configuration(Configuration.VERSION_2_3_26);
         DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_26);
         objectWrapperBuilder.setUseAdaptersForContainers(true);
@@ -48,30 +44,21 @@ public class FreeMarkerUtil
 
     /**
      * Converts a FreeMarker {@link SimpleSequence} to a {@link Set}.
-     *
      */
-    public static Set<String> simpleSequenceToSet(SimpleSequence simpleSequence)
-    {
+    public static Set<String> simpleSequenceToSet(SimpleSequence simpleSequence) {
         if (simpleSequence == null)
             return Collections.emptySet();
 
         Set<String> result = new HashSet<>();
-        for (int i = 0; i < simpleSequence.size(); i++)
-        {
-            try
-            {
+        for (int i = 0; i < simpleSequence.size(); i++) {
+            try {
                 Object sequenceEntry = simpleSequence.get(i);
-                if (sequenceEntry instanceof SimpleScalar)
-                {
+                if (sequenceEntry instanceof SimpleScalar) {
                     result.add(((SimpleScalar) sequenceEntry).getAsString());
-                }
-                else
-                {
+                } else {
                     result.add(simpleSequence.get(i).toString());
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -81,34 +68,29 @@ public class FreeMarkerUtil
     /**
      * Gets freemarker extensions (eg, custom functions) provided by furnace addons
      */
-    public static Map<String, Object> findFreeMarkerExtensions(Furnace furnace, GraphRewrite event)
-    {
+    public static Map<String, Object> findFreeMarkerExtensions(Furnace furnace, GraphRewrite event) {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
         Imported<WindupFreeMarkerMethod> freeMarkerMethods = furnace.getAddonRegistry().getServices(
-                    WindupFreeMarkerMethod.class);
+                WindupFreeMarkerMethod.class);
         Map<String, Object> results = new HashMap<>();
 
-        for (WindupFreeMarkerMethod freeMarkerMethod : freeMarkerMethods)
-        {
+        for (WindupFreeMarkerMethod freeMarkerMethod : freeMarkerMethods) {
             freeMarkerMethod.setContext(event);
-            if (results.containsKey(freeMarkerMethod.getMethodName()))
-            {
+            if (results.containsKey(freeMarkerMethod.getMethodName())) {
                 throw new WindupException(theme.getBrandNameAcronym() + " contains two freemarker extension providing the same name: "
-                            + freeMarkerMethod.getMethodName());
+                        + freeMarkerMethod.getMethodName());
             }
             results.put(freeMarkerMethod.getMethodName(), freeMarkerMethod);
         }
 
         Imported<WindupFreeMarkerTemplateDirective> freeMarkerDirectives = furnace.getAddonRegistry().getServices(
-                    WindupFreeMarkerTemplateDirective.class);
-        for (WindupFreeMarkerTemplateDirective freeMarkerDirective : freeMarkerDirectives)
-        {
+                WindupFreeMarkerTemplateDirective.class);
+        for (WindupFreeMarkerTemplateDirective freeMarkerDirective : freeMarkerDirectives) {
             freeMarkerDirective.setContext(event);
-            if (results.containsKey(freeMarkerDirective.getDirectiveName()))
-            {
+            if (results.containsKey(freeMarkerDirective.getDirectiveName())) {
                 throw new WindupException(theme.getBrandNameAcronym() + " contains two freemarker extension providing the same name: "
-                            + freeMarkerDirective.getDirectiveName());
+                        + freeMarkerDirective.getDirectiveName());
             }
             results.put(freeMarkerDirective.getDirectiveName(), freeMarkerDirective);
         }
@@ -118,34 +100,25 @@ public class FreeMarkerUtil
 
     /**
      * Finds all variables in the context with the given names, and also attaches all WindupFreeMarkerMethods from all addons into the map.
-     *
+     * <p>
      * This allows external addons to extend the capabilities in the freemarker reporting system.
      */
-    public static Map<String, Object> findFreeMarkerContextVariables(Variables variables, String... varNames)
-    {
+    public static Map<String, Object> findFreeMarkerContextVariables(Variables variables, String... varNames) {
         Map<String, Object> results = new HashMap<>();
 
-        for (String varName : varNames)
-        {
+        for (String varName : varNames) {
             WindupVertexFrame payload = null;
-            try
-            {
+            try {
                 payload = Iteration.getCurrentPayload(variables, null, varName);
-            }
-            catch (IllegalStateException | IllegalArgumentException e)
-            {
+            } catch (IllegalStateException | IllegalArgumentException e) {
                 // oh well
             }
 
-            if (payload != null)
-            {
+            if (payload != null) {
                 results.put(varName, payload);
-            }
-            else
-            {
+            } else {
                 Iterable<? extends WindupVertexFrame> var = variables.findVariable(varName);
-                if (var != null)
-                {
+                if (var != null) {
                     results.put(varName, var);
                 }
             }
@@ -153,19 +126,15 @@ public class FreeMarkerUtil
         return results;
     }
 
-    public static Iterable freemarkerWrapperToIterable(Object object)
-    {
+    public static Iterable freemarkerWrapperToIterable(Object object) {
         if (object == null)
             throw new WindupException("Illegal null passed to freemarkerWrapperToIterable method!");
 
-        if (object instanceof DefaultListAdapter)
-        {
-            return (Iterable)((DefaultListAdapter) object).getWrappedObject();
-        } else if (object instanceof DefaultIterableAdapter)
-        {
-            return (Iterable)((DefaultIterableAdapter) object).getWrappedObject();
-        } else
-        {
+        if (object instanceof DefaultListAdapter) {
+            return (Iterable) ((DefaultListAdapter) object).getWrappedObject();
+        } else if (object instanceof DefaultIterableAdapter) {
+            return (Iterable) ((DefaultIterableAdapter) object).getWrappedObject();
+        } else {
             throw new WindupException("Unrecognized type: " + object.getClass());
         }
     }

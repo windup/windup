@@ -1,15 +1,9 @@
 package org.jboss.windup.config.metadata;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -29,69 +23,62 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class TagsMetadataTest
-{
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addPackage(EnumeratedRuleProviderPredicate.class.getPackage());
-        return archive;
-    }
+public class TagsMetadataTest {
 
     @Inject
     private GraphContextFactory factory;
-
     @Inject
     private RuleLoader loader;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+    })
+    public static AddonArchive getDeployment() {
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addPackage(EnumeratedRuleProviderPredicate.class.getPackage());
+        return archive;
+    }
+
     @Test
-    public void testUnsetTags() throws Exception
-    {
+    public void testUnsetTags() throws Exception {
         testProvider(TestTagsUnsetRuleProvider.class);
     }
 
     @Test
-    public void testNoTags() throws Exception
-    {
+    public void testNoTags() throws Exception {
         testProvider(TestTagsEmptyRuleProvider.class);
     }
 
     @Test
-    public void test1Tags() throws Exception
-    {
+    public void test1Tags() throws Exception {
         testProvider(TestTags1RuleProvider.class, "Foo");
     }
 
     @Test
-    public void test2Tags() throws Exception
-    {
+    public void test2Tags() throws Exception {
         testProvider(TestTags2RuleProvider.class, "Foo", "Bar");
     }
 
-    private void testProvider(final Class<? extends RuleProvider> provider, final String... expectedTags) throws Exception
-    {
+    private void testProvider(final Class<? extends RuleProvider> provider, final String... expectedTags) throws Exception {
         Set<String> expected;
-        if (expectedTags == null)
-        {
+        if (expectedTags == null) {
             expected = new HashSet<>();
-        }
-        else
-        {
+        } else {
             expected = new HashSet<>();
-            for (String t : expectedTags)
-            {
+            for (String t : expectedTags) {
                 expected.add(t);
             }
         }
@@ -111,8 +98,7 @@ public class TagsMetadataTest
         Assert.assertNotNull(tags);
         Assert.assertTrue(tags instanceof Set);
         Assert.assertEquals(expected.size(), tags.size());
-        for (String tag : expected)
-        {
+        for (String tag : expected) {
             Assert.assertTrue(tags.contains(tag));
         }
     }
@@ -120,70 +106,55 @@ public class TagsMetadataTest
     /*
      * Test RuleProviders
      */
-    public static class TestTagsUnsetRuleProvider extends TestTagsRuleProviderBase
-    {
-        public TestTagsUnsetRuleProvider()
-        {
+    public static class TestTagsUnsetRuleProvider extends TestTagsRuleProviderBase {
+        public TestTagsUnsetRuleProvider() {
             super(MetadataBuilder.forProvider(TestTagsUnsetRuleProvider.class));
         }
     }
 
-    public static class TestTagsEmptyRuleProvider extends TestTagsRuleProviderBase
-    {
-        public TestTagsEmptyRuleProvider()
-        {
+    public static class TestTagsEmptyRuleProvider extends TestTagsRuleProviderBase {
+        public TestTagsEmptyRuleProvider() {
             super(MetadataBuilder.forProvider(TestTagsEmptyRuleProvider.class).addTags("", "", ""));
         }
     }
 
-    public static class TestTags1RuleProvider extends TestTagsRuleProviderBase
-    {
-        public TestTags1RuleProvider()
-        {
+    public static class TestTags1RuleProvider extends TestTagsRuleProviderBase {
+        public TestTags1RuleProvider() {
             super(MetadataBuilder.forProvider(TestTags1RuleProvider.class).addTags("Foo"));
         }
     }
 
-    public static class TestTags2RuleProvider extends TestTagsRuleProviderBase
-    {
-        public TestTags2RuleProvider()
-        {
+    public static class TestTags2RuleProvider extends TestTagsRuleProviderBase {
+        public TestTags2RuleProvider() {
             super(MetadataBuilder.forProvider(TestTags2RuleProvider.class).addTags("Foo", "Bar"));
         }
     }
 
-    public abstract static class TestTagsRuleProviderBase extends AbstractRuleProvider
-    {
-        public TestTagsRuleProviderBase(RuleProviderMetadata metadata)
-        {
+    public abstract static class TestTagsRuleProviderBase extends AbstractRuleProvider {
+        public TestTagsRuleProviderBase(RuleProviderMetadata metadata) {
             super(metadata);
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                        .addRule(new Rule()
-                        {
+                    .addRule(new Rule() {
 
-                            @Override
-                            public String getId()
-                            {
-                                return this.getClass().getSimpleName();
-                            }
+                        @Override
+                        public String getId() {
+                            return this.getClass().getSimpleName();
+                        }
 
-                            @Override
-                            public boolean evaluate(Rewrite rewrite, EvaluationContext context)
-                            {
-                                return true;
-                            }
+                        @Override
+                        public boolean evaluate(Rewrite rewrite, EvaluationContext context) {
+                            return true;
+                        }
 
-                            @Override
-                            public void perform(Rewrite rewrite, EvaluationContext context)
-                            {
-                            }
+                        @Override
+                        public void perform(Rewrite rewrite, EvaluationContext context) {
+                        }
 
-                        });
+                    });
         }
     }
 

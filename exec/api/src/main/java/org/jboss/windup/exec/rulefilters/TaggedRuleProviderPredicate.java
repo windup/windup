@@ -1,13 +1,13 @@
 package org.jboss.windup.exec.rulefilters;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.RuleProvider;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.RuleProvider;
 
 /**
  * Accepts the given provider if it has any or all of requested include tags, or has not all or any of the requested
@@ -15,8 +15,7 @@ import org.jboss.windup.config.RuleProvider;
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>, ozizka@redhat.com
  */
-public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
-{
+public class TaggedRuleProviderPredicate implements Predicate<RuleProvider> {
     private final Set<String> includeTags;
     private final Set<String> excludeTags;
     private boolean requireAllIncludeTags = false;
@@ -25,8 +24,7 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
     /**
      * Creates the {@link TaggedRuleProviderPredicate} with the given include and excludes.
      */
-    public TaggedRuleProviderPredicate(Collection<String> includeTags, Collection<String> excludeTags)
-    {
+    public TaggedRuleProviderPredicate(Collection<String> includeTags, Collection<String> excludeTags) {
         Set<String> emptySet = Collections.emptySet();
         this.includeTags = includeTags == null ? emptySet : new HashSet<>(includeTags);
         this.excludeTags = excludeTags == null ? emptySet : new HashSet<>(excludeTags);
@@ -36,11 +34,10 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
      * Sets the rule to require all of the include tags. If this value is true, then a {@link RuleProvider} must have
      * all of the tags in the include list in order to be matched. If it is false, then having a single tag match is
      * sufficient.
-     *
+     * <p>
      * The default value is false.
      */
-    public TaggedRuleProviderPredicate setRequireAllIncludeTags(boolean requireAll)
-    {
+    public TaggedRuleProviderPredicate setRequireAllIncludeTags(boolean requireAll) {
         this.requireAllIncludeTags = requireAll;
         return this;
     }
@@ -54,28 +51,24 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
      * If this value is true, then it will reject only providers that have all of the tags in the exclude list.
      * </p>
      */
-    public TaggedRuleProviderPredicate setRequireAllExcludeTags(boolean requireAll)
-    {
+    public TaggedRuleProviderPredicate setRequireAllExcludeTags(boolean requireAll) {
         this.requireAllExcludeTags = requireAll;
         return this;
     }
 
     @Override
-    public boolean accept(RuleProvider provider)
-    {
+    public boolean accept(RuleProvider provider) {
         Set<String> tags = provider.getMetadata().getTags();
 
         boolean result = true;
-        if (!includeTags.isEmpty())
-        {
+        if (!includeTags.isEmpty()) {
             if (requireAllIncludeTags)
                 result = tags.containsAll(includeTags);
             else
                 result = CollectionUtils.containsAny(tags, includeTags);
         }
 
-        if (result && !excludeTags.isEmpty())
-        {
+        if (result && !excludeTags.isEmpty()) {
             if (requireAllExcludeTags)
                 result = !tags.containsAll(excludeTags);
             else
@@ -87,8 +80,7 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return TaggedRuleProviderPredicate.class.getSimpleName() + "{incl " + includeTags.size() + ", excl " + excludeTags.size() + ", requireAllIncl=" + requireAllIncludeTags + ", requireAllExcl=" + requireAllExcludeTags + '}';
     }
 

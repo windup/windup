@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -36,39 +30,40 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RunWith(Arquillian.class)
-public class WindupArchitectureJspTest extends WindupArchitectureTest
-{
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.nio.file.Path;
 
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/xml/XmlExample.windup.xml"))
-                    .addClass(WindupArchitectureTest.class);
-    }
+@RunWith(Arquillian.class)
+public class WindupArchitectureJspTest extends WindupArchitectureTest {
 
     @Inject
     private JspRulesProvider provider;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/xml/XmlExample.windup.xml"))
+                .addClass(WindupArchitectureTest.class);
+    }
+
     @Test
-    public void testRunWindupJsp() throws Exception
-    {
+    public void testRunWindupJsp() throws Exception {
         final String path = "../test-files/jsptest";
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, path, false);
 
             Assert.assertEquals(2, provider.taglibsFound);
@@ -82,21 +77,18 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     /**
      * Validates JavaClassModel classes belonging to .jsp files
      */
-    private void validateClassModels(GraphContext context)
-    {
+    private void validateClassModels(GraphContext context) {
         Iterable<JspSourceFileModel> jspFiles = context.service(JspSourceFileModel.class).findAll();
 
         int countJspFiles = 0;
-        
-        for (JspSourceFileModel jspFile : jspFiles)
-        {
+
+        for (JspSourceFileModel jspFile : jspFiles) {
             countJspFiles++;
             int countClasses = 0;
-            
-            for (JavaClassModel classModel : jspFile.getJavaClasses())
-            {
+
+            for (JavaClassModel classModel : jspFile.getJavaClasses()) {
                 countClasses++;
-                
+
                 Assert.assertTrue(classModel.getClassName().endsWith(".jsp") || classModel.getClassName().endsWith(".tag"));
                 Assert.assertEquals(jspFile.getFileName(), classModel.getClassName());
                 Assert.assertEquals(jspFile.getFileName(), classModel.getQualifiedName());
@@ -114,18 +106,17 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
                 Assert.assertNotNull(sourceModel);
                 Assert.assertTrue(sourceModel instanceof JspSourceFileModel);
             }
-            
+
             Assert.assertEquals(1, countClasses);
         }
-        
+
         Assert.assertEquals(5, countJspFiles);
     }
 
     /**
      * Validate that the report pages were generated correctly
      */
-    private void validateReports(GraphContext context)
-    {
+    private void validateReports(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = super.getMainApplicationReport(context);
         Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
@@ -136,48 +127,41 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     }
 
     @Singleton
-    public static class JspRulesProvider extends AbstractRuleProvider
-    {
+    public static class JspRulesProvider extends AbstractRuleProvider {
         private int taglibsFound = 0;
         private int enumerationRuleHitCount = 0;
 
-        public JspRulesProvider()
-        {
+        public JspRulesProvider() {
             super(MetadataBuilder.forProvider(JspRulesProvider.class)
-                        .setHaltOnException(true));
+                    .setHaltOnException(true));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(JavaClass.references("http://www.example.com/custlib").at(TypeReferenceLocation.TAGLIB_IMPORT))
-                        .perform(
-                                    new AbstractIterationOperation<JavaTypeReferenceModel>()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                                        {
-                                            FileModel source = payload.getFile();
-                                            if (!(source instanceof JspSourceFileModel))
-                                                Assert.fail("File was not a jsp file!");
-                                            taglibsFound++;
-                                        }
-                                    })
-                        .addRule()
-                        .when(JavaClass.references("java.util.Enumeration").at(TypeReferenceLocation.IMPORT))
-                        .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                        {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                            {
-                                FileModel source = payload.getFile();
-                                if (!(source instanceof JspSourceFileModel))
-                                    Assert.fail("File was not a jsp file!");
-                                enumerationRuleHitCount++;
-                            }
-                        });
+                    .addRule()
+                    .when(JavaClass.references("http://www.example.com/custlib").at(TypeReferenceLocation.TAGLIB_IMPORT))
+                    .perform(
+                            new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    FileModel source = payload.getFile();
+                                    if (!(source instanceof JspSourceFileModel))
+                                        Assert.fail("File was not a jsp file!");
+                                    taglibsFound++;
+                                }
+                            })
+                    .addRule()
+                    .when(JavaClass.references("java.util.Enumeration").at(TypeReferenceLocation.IMPORT))
+                    .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                            FileModel source = payload.getFile();
+                            if (!(source instanceof JspSourceFileModel))
+                                Assert.fail("File was not a jsp file!");
+                            enumerationRuleHitCount++;
+                        }
+                    });
         }
     }
 }

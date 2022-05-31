@@ -1,14 +1,9 @@
 package org.jboss.windup.config;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -22,29 +17,29 @@ import org.ocpsoft.rewrite.config.Subset;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
-@RunWith(Arquillian.class)
-public class ReadXMLConfigurationTest
-{
+import javax.inject.Inject;
+import java.io.File;
+import java.nio.file.Path;
 
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
+@RunWith(Arquillian.class)
+public class ReadXMLConfigurationTest {
 
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+    }
+
     @Test
-    public void testRunWindup() throws Exception
-    {
+    public void testRunWindup() throws Exception {
         final Path folder = File.createTempFile("windupGraph", "").toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
             final ConfigurationLoader loader = ConfigurationLoader.create(ruleLoaderContext);
             final Configuration configuration = loader.loadConfiguration(ruleLoaderContext);

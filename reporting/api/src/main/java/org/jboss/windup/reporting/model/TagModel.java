@@ -1,24 +1,21 @@
 package org.jboss.windup.reporting.model;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.jboss.windup.graph.Adjacency;
-
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.graph.JavaHandler;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.MapInProperties;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import org.jboss.windup.graph.Property;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Holds information about a tag, as per the definition from tags.xml files.
  * The TagSetModel and TaggableModel work directly with strings for the sake of simplicity.
  * This is different from {@link TechnologyTagModel}.
- *
+ * <p>
  * Check the current implementation to see whether or not the whole tag structure is within the graph.
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
@@ -49,8 +46,7 @@ public interface TagModel extends WindupVertexFrame {
     @Property("title")
     void setTitle(String title);
 
-    default String getTitleOrName()
-    {
+    default String getTitleOrName() {
         return StringUtils.defaultString(this.getTitle(), this.getName());
     }
 
@@ -61,6 +57,7 @@ public interface TagModel extends WindupVertexFrame {
      */
     @Property("prime")
     boolean isPrime();
+
     @Property("prime")
     void setPrime(boolean isPrime);
 
@@ -69,6 +66,7 @@ public interface TagModel extends WindupVertexFrame {
      */
     @Property("root")
     boolean isRoot();
+
     @Property("root")
     void setRoot(boolean isRoot);
 
@@ -76,11 +74,12 @@ public interface TagModel extends WindupVertexFrame {
      * Pseudo tags serve as grouping for contained tags, but are not suitable to be a root tag.
      * They are also suitable for tagging related tags. In the XML files definition, such pseudo tags are often referred to by the parents="..." attribute.
      * For instance, "framework:" or "application-server:" is a suitable pseudo tag, which can demarcate tags like "wicket" or "jboss-eap".
-     *
+     * <p>
      * By convention, the names are lower case, singular, and end with a colon.
      */
     @Property("pseudo")
     boolean isPseudo();
+
     @Property("pseudo")
     void setPseudo(boolean isPseudo);
 
@@ -89,6 +88,7 @@ public interface TagModel extends WindupVertexFrame {
      */
     @Property("color")
     String getColor();
+
     @Property("color")
     void setColor(String color);
 
@@ -97,8 +97,10 @@ public interface TagModel extends WindupVertexFrame {
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     List<TagModel> getDesignatedTags();
+
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     void setDesignatedTags(List<TagModel> tags);
+
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     void addDesignatedTag(TagModel tag);
 
@@ -107,6 +109,7 @@ public interface TagModel extends WindupVertexFrame {
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
     List<TagModel> getDesignatedByTags();
+
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
     void setDesignatedByTags(List<TagModel> tags);
 

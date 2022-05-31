@@ -8,9 +8,10 @@
  *
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
-*/
+ */
 package org.jboss.windup.util.xml;
 
+import javax.xml.namespace.NamespaceContext;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,65 +20,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.NamespaceContext;
-
 /**
  * A simple map-based implementation of NamespaceContext.
  */
-public class NamespaceMapContext implements NamespaceContext
-{
-	private final Map<String, String> context = new HashMap<>();
+public class NamespaceMapContext implements NamespaceContext {
+    private final Map<String, String> context = new HashMap<>();
 
-	public NamespaceMapContext() {
+    public NamespaceMapContext() {
 
-	}
+    }
 
-	public NamespaceMapContext(Map<String, String> in) {
-		if (in != null && in.size() > 0) {
-			context.putAll(in);
-		}
-	}
+    public NamespaceMapContext(Map<String, String> in) {
+        if (in != null && in.size() > 0) {
+            context.putAll(in);
+        }
+    }
 
-	public void addNamespaceEntry(NamespaceEntry entry) {
-		context.put(entry.getPrefix(), entry.getNamespaceURI());
-	}
+    public void addNamespaceEntry(NamespaceEntry entry) {
+        context.put(entry.getPrefix(), entry.getNamespaceURI());
+    }
 
-	public void addPrefix(String prefix, String namespaceURI) {
-		context.put(prefix, namespaceURI);
-	}
+    public void addPrefix(String prefix, String namespaceURI) {
+        context.put(prefix, namespaceURI);
+    }
 
-	public Set<String> getNamespaceURIs() {
-		return new HashSet<>(context.values());
-	}
+    public Set<String> getNamespaceURIs() {
+        return new HashSet<>(context.values());
+    }
 
-	public String getNamespaceURI(String prefix) {
-		return context.get(prefix);
-	}
+    public String getNamespaceURI(String prefix) {
+        return context.get(prefix);
+    }
 
-	public String getPrefix(String namespaceURI) {
-		Iterator<String> prefixIterator = getPrefixes(namespaceURI);
+    public String getPrefix(String namespaceURI) {
+        Iterator<String> prefixIterator = getPrefixes(namespaceURI);
 
-		if (prefixIterator.hasNext()) {
-			return getPrefixes(namespaceURI).next();
-		}
-		return null;
-	}
+        if (prefixIterator.hasNext()) {
+            return getPrefixes(namespaceURI).next();
+        }
+        return null;
+    }
 
-	public Iterator<String> getPrefixes(String namespaceURI) {
-		List<String> prefixes = new LinkedList<>();
+    public Iterator<String> getPrefixes(String namespaceURI) {
+        List<String> prefixes = new LinkedList<>();
 
-		for (String key : context.keySet()) {
-			// slow but works.
-			if (namespaceURI.equals(context.get(key))) {
-				prefixes.add(key);
-			}
-		}
+        for (String key : context.keySet()) {
+            // slow but works.
+            if (namespaceURI.equals(context.get(key))) {
+                prefixes.add(key);
+            }
+        }
 
-		return prefixes.iterator();
-	}
+        return prefixes.iterator();
+    }
 
-	@Override
-	public String toString() {
-		return "NamespaceMapContext [context=" + context + "]";
-	}
+    @Override
+    public String toString() {
+        return "NamespaceMapContext [context=" + context + "]";
+    }
 }

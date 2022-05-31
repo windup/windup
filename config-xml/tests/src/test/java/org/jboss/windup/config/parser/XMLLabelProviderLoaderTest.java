@@ -21,46 +21,40 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 @RunWith(Arquillian.class)
-public class XMLLabelProviderLoaderTest
-{
+public class XMLLabelProviderLoaderTest {
     private static final Logger LOG = Logger.getLogger(XMLLabelProviderLoaderTest.class.getName());
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/labeltestxml/Test1.windup.label.xml"));
-    }
-
-    @Deployment(name = "rhamt,1")
-    public static AddonArchive getRhamtDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/labeltestxml/Test2.rhamt.label.xml"));
-    }
-
-    @Deployment(name = "mta,1")
-    public static AddonArchive getMtaDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/labeltestxml/Test3.mta.label.xml"));
-    }
-
     @Inject
     private LabelProviderLoader loader;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/labeltestxml/Test1.windup.label.xml"));
+    }
+
+    @Deployment(name = "rhamt,1")
+    public static AddonArchive getRhamtDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/labeltestxml/Test2.rhamt.label.xml"));
+    }
+
+    @Deployment(name = "mta,1")
+    public static AddonArchive getMtaDeployment() {
+        return ShrinkWrap.create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/labeltestxml/Test3.mta.label.xml"));
+    }
+
     @Test
-    public void testGetProviders() throws Exception
-    {
+    public void testGetProviders() throws Exception {
         Assert.assertNotNull(loader);
 
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
@@ -117,8 +111,7 @@ public class XMLLabelProviderLoaderTest
         checkLabel2(label);
     }
 
-    private void checkWindupMetadata(LabelProvider provider)
-    {
+    private void checkWindupMetadata(LabelProvider provider) {
         String id = provider.getMetadata().getID();
         Assert.assertEquals("testlabelprovider1", id);
         Assert.assertNull(provider.getMetadata().getDescription());
@@ -126,24 +119,21 @@ public class XMLLabelProviderLoaderTest
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.label.xml"));
     }
 
-    private void checkRhamtMetadata(LabelProvider provider)
-    {
+    private void checkRhamtMetadata(LabelProvider provider) {
         String id = provider.getMetadata().getID();
         Assert.assertEquals("testlabelprovider2", id);
         Assert.assertNull(provider.getMetadata().getDescription());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/rhamt-1.*/Test2.rhamt.label.xml"));
     }
 
-    private void checkMtaMetadata(LabelProvider provider)
-    {
+    private void checkMtaMetadata(LabelProvider provider) {
         String id = provider.getMetadata().getID();
         Assert.assertEquals("testlabelprovider3", id);
         Assert.assertNull(provider.getMetadata().getDescription());
         Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/mta-1.*/Test3.mta.label.xml"));
     }
 
-    private void checkLabel1(Label label)
-    {
+    private void checkLabel1(Label label) {
         Set<String> supported = label.getSupported();
         Assert.assertEquals(1, supported.size());
 
@@ -154,8 +144,7 @@ public class XMLLabelProviderLoaderTest
         Assert.assertEquals(3, neutral.size());
     }
 
-    private void checkLabel2(Label label)
-    {
+    private void checkLabel2(Label label) {
         Set<String> supported = label.getSupported();
         Assert.assertEquals(1, supported.size());
 

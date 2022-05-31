@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.javaee.model;
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
 
 
 /**
@@ -14,8 +13,7 @@ import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(JdbcDatasourceModel.TYPE)
-public interface JdbcDatasourceModel extends WindupVertexFrame
-{
+public interface JdbcDatasourceModel extends WindupVertexFrame {
     String TYPE = "JdbcDatasourceModel";
 
     String NAME = TYPE + "-name";

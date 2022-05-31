@@ -1,12 +1,7 @@
 package org.jboss.windup.tests.bootstrap.migrate;
 
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.Assert.assertTrue;
 

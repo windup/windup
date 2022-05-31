@@ -1,16 +1,5 @@
 package org.jboss.windup.reporting.handlers;
 
-import static org.joox.JOOX.$;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -20,9 +9,9 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,54 +19,57 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.joox.JOOX.$;
+
 @RunWith(Arquillian.class)
-public class HintHandlerTest
-{
+public class HintHandlerTest {
 
     private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hint.windup.xml";
     private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hint.rhamt.xml";
     private static final String HINT_XML_MTA_FILE = "src/test/resources/handler/hint.mta.xml";
-
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML();
-    }
-
     @Inject
     private Furnace furnace;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML();
+    }
+
     @Test
-    public void testWindupHintHandler() throws Exception
-    {
+    public void testWindupHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_WINDUP_FILE);
         testHintHandler(fXmlFile);
     }
 
     @Test
-    public void testRhamtHintHandler() throws Exception
-    {
+    public void testRhamtHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
         testHintHandler(fXmlFile);
     }
 
     @Test
-    public void testMtaHintHandler() throws Exception
-    {
+    public void testMtaHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_MTA_FILE);
         testHintHandler(fXmlFile);
     }
 
-    public void testHintHandler(File fXmlFile) throws Exception
-    {
+    public void testHintHandler(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -125,28 +117,24 @@ public class HintHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testWindupXmlFileWithoutPublidIdAndXpath() throws Exception
-    {
+    public void testWindupXmlFileWithoutPublidIdAndXpath() throws Exception {
         File fXmlFile = new File(HINT_XML_WINDUP_FILE);
         testXmlFileWithoutPublidIdAndXpath(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception
-    {
+    public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
         testXmlFileWithoutPublidIdAndXpath(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testMtaXmlFileWithoutPublidIdAndXpath() throws Exception
-    {
+    public void testMtaXmlFileWithoutPublidIdAndXpath() throws Exception {
         File fXmlFile = new File(HINT_XML_MTA_FILE);
         testXmlFileWithoutPublidIdAndXpath(fXmlFile);
     }
 
-    public void testXmlFileWithoutPublidIdAndXpath(File fXmlFile) throws Exception
-    {
+    public void testXmlFileWithoutPublidIdAndXpath(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -155,6 +143,6 @@ public class HintHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> hintList = $(doc).children("hint").get();
         Element firstHint = hintList.get(2);
-        parser.<Hint> processElement(firstHint);
+        parser.<Hint>processElement(firstHint);
     }
 }

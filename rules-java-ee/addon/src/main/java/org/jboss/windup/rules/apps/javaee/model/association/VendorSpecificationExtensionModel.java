@@ -1,15 +1,13 @@
 package org.jboss.windup.rules.apps.javaee.model.association;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-
 @TypeValue(VendorSpecificationExtensionModel.TYPE)
-public interface VendorSpecificationExtensionModel extends FileModel, SourceFileModel
-{
+public interface VendorSpecificationExtensionModel extends FileModel, SourceFileModel {
     String TYPE = "VendorSpecificationExtensionModel";
     String REF = "vendorSpecification";
 

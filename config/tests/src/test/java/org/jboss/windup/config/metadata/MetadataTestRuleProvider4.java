@@ -6,13 +6,13 @@
  */
 package org.jboss.windup.config.metadata;
 
-import java.util.Set;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.ruleprovider.SingleRuleProvider;
 import org.junit.Assert;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import java.util.Set;
 
 /**
  * Test for {@link RuleMetadata}.
@@ -21,21 +21,19 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @RuleMetadata(id = "myRule2",
-            phase = DependentPhase.class,
-            after = { MetadataTestRuleProvider1.class },
-            before = { MetadataTestRuleProvider2.class },
-            tags = { "java", "security" },
-            sourceTechnologies = {
-                        @Technology(id = "ejb", versionRange = "[1,2)")
-            },
-            targetTechnologies = {
-                        @Technology(id = "ejb", versionRange = "[3,)")
-            })
-public class MetadataTestRuleProvider4 extends SingleRuleProvider
-{
+        phase = DependentPhase.class,
+        after = {MetadataTestRuleProvider1.class},
+        before = {MetadataTestRuleProvider2.class},
+        tags = {"java", "security"},
+        sourceTechnologies = {
+                @Technology(id = "ejb", versionRange = "[1,2)")
+        },
+        targetTechnologies = {
+                @Technology(id = "ejb", versionRange = "[3,)")
+        })
+public class MetadataTestRuleProvider4 extends SingleRuleProvider {
     @Override
-    public void perform(GraphRewrite event, EvaluationContext evCtx)
-    {
+    public void perform(GraphRewrite event, EvaluationContext evCtx) {
         ExecutedProviders.executedProvider(this);
         Assert.assertEquals("myRule2", this.getId());
         Assert.assertEquals(DependentPhase.class.getName(), getMetadata().getPhase().getName());

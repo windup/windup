@@ -1,10 +1,5 @@
 package org.jboss.windup.config;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -24,9 +19,12 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+
 @RunWith(Arquillian.class)
-public class RuleProviderOverrideTest
-{
+public class RuleProviderOverrideTest {
 
     @Inject
     private GraphContextFactory factory;
@@ -35,23 +33,20 @@ public class RuleProviderOverrideTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Test
-    public void testOverride() throws IOException
-    {
+    public void testOverride() throws IOException {
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
         Configuration configuration = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
         int count = 0;
-        for (Rule rule : configuration.getRules())
-        {
+        for (Rule rule : configuration.getRules()) {
             count++;
             Assert.assertTrue("Override", rule.toString().contains("RuleOverride"));
         }
@@ -59,33 +54,26 @@ public class RuleProviderOverrideTest
     }
 
     @Singleton
-    public static class TestOriginalProvider extends AbstractRuleProvider
-    {
-        public TestOriginalProvider()
-        {
+    public static class TestOriginalProvider extends AbstractRuleProvider {
+        public TestOriginalProvider() {
             super(MetadataBuilder.forProvider(TestOriginalProvider.class, "TestRuleProvider"));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                    .addRule(new Rule()
-                    {
+                    .addRule(new Rule() {
                         @Override
-                        public void perform(Rewrite event, EvaluationContext context)
-                        {
+                        public void perform(Rewrite event, EvaluationContext context) {
                         }
 
                         @Override
-                        public boolean evaluate(Rewrite event, EvaluationContext context)
-                        {
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
                             return true;
                         }
 
                         @Override
-                        public String getId()
-                        {
+                        public String getId() {
                             return TestOriginalProvider.class.getSimpleName();
                         }
 

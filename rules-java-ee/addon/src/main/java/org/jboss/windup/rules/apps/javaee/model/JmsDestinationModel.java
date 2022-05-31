@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
-
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
@@ -9,8 +8,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Represents a JMS Message destination.
  */
 @TypeValue(JmsDestinationModel.TYPE)
-public interface JmsDestinationModel extends JNDIResourceModel
-{
+public interface JmsDestinationModel extends JNDIResourceModel {
     public static final String JMS_DESTINATION = "jmsDestination";
     public static final String TYPE = "JmsDestinationModel";
     public static final String DESTINATION_TYPE = "destinationType";

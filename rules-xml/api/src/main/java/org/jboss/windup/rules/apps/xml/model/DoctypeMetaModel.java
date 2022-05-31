@@ -1,18 +1,16 @@
 package org.jboss.windup.rules.apps.xml.model;
 
-import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import java.util.List;
 
 @TypeValue(DoctypeMetaModel.TYPE_ID)
-public interface DoctypeMetaModel extends WindupVertexFrame
-{
+public interface DoctypeMetaModel extends WindupVertexFrame {
     String TYPE_ID = "DoctypeMetaModel";
     String TYPE_PREFIX = TYPE_ID + "-";
 

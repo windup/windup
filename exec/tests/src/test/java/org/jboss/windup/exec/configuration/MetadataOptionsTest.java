@@ -1,9 +1,5 @@
 package org.jboss.windup.exec.configuration;
 
-import java.util.Collection;
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -24,27 +20,14 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+import javax.inject.Inject;
+import java.util.Collection;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class MetadataOptionsTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML();
-
-        return archive;
-    }
-
+public class MetadataOptionsTest {
     @Inject
     private SourceOption sourceOption;
     @Inject
@@ -54,9 +37,22 @@ public class MetadataOptionsTest
     @Inject
     private ExcludeTagsOption excludeTagsOption;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML();
+
+        return archive;
+    }
+
     @Test
-    public void testSourceOption() throws Exception
-    {
+    public void testSourceOption() throws Exception {
         Object[] availableValues = sourceOption.getAvailableValues().toArray();
 
         Assert.assertEquals("sourceTech1", availableValues[0]);
@@ -64,8 +60,7 @@ public class MetadataOptionsTest
     }
 
     @Test
-    public void testTargetOption() throws Exception
-    {
+    public void testTargetOption() throws Exception {
         Object[] availableValues = targetOption.getAvailableValues().toArray();
 
         Assert.assertEquals("targetTech1", availableValues[0]);
@@ -73,8 +68,7 @@ public class MetadataOptionsTest
     }
 
     @Test
-    public void testIncludeTags() throws Exception
-    {
+    public void testIncludeTags() throws Exception {
         Collection<?> availableValues = includeTagsOption.getAvailableValues();
 
         Assert.assertTrue(availableValues.contains("tag1"));
@@ -83,8 +77,7 @@ public class MetadataOptionsTest
     }
 
     @Test
-    public void testExcludeTags() throws Exception
-    {
+    public void testExcludeTags() throws Exception {
         Collection<?> availableValues = excludeTagsOption.getAvailableValues();
 
         Assert.assertTrue(availableValues.contains("tag1"));
@@ -93,20 +86,18 @@ public class MetadataOptionsTest
     }
 
     @RuleMetadata(
-                sourceTechnologies = {
-                            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
-                            @Technology(id = "sourceTech2", versionRange = "[0, ]")
-                },
-                targetTechnologies = {
-                            @Technology(id = "targetTech1", versionRange = "[0, ]"),
-                            @Technology(id = "targetTech2", versionRange = "[0, ]")
-                },
-                tags = { "tag1", "tag2", "tag3" })
-    public static class MetadataRuleProvider extends AbstractRuleProvider
-    {
+            sourceTechnologies = {
+                    @Technology(id = "sourceTech1", versionRange = "[0, ]"),
+                    @Technology(id = "sourceTech2", versionRange = "[0, ]")
+            },
+            targetTechnologies = {
+                    @Technology(id = "targetTech1", versionRange = "[0, ]"),
+                    @Technology(id = "targetTech2", versionRange = "[0, ]")
+            },
+            tags = {"tag1", "tag2", "tag3"})
+    public static class MetadataRuleProvider extends AbstractRuleProvider {
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin();
         }
     }

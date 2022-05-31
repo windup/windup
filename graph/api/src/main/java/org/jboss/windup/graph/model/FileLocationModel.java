@@ -1,10 +1,9 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
-
-import org.jboss.windup.graph.Property;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,22 +23,16 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     int MAX_DESC_WIDTH = 90;
 
     /**
-     * Set the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
-     */
-    @Property(LINE_NUMBER)
-    void setLineNumber(int lineNumber);
-
-    /**
      * Get the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
     @Property(LINE_NUMBER)
     int getLineNumber();
 
     /**
-     * Set the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
+     * Set the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
-    @Property(COLUMN_NUMBER)
-    void setColumnNumber(int startPosition);
+    @Property(LINE_NUMBER)
+    void setLineNumber(int lineNumber);
 
     /**
      * Get the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
@@ -48,10 +41,10 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     int getColumnNumber();
 
     /**
-     * Set the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
+     * Set the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
-    @Property(LENGTH)
-    void setLength(int length);
+    @Property(COLUMN_NUMBER)
+    void setColumnNumber(int startPosition);
 
     /**
      * Get the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
@@ -60,10 +53,10 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     int getLength();
 
     /**
-     * Gets the snippit referenced by this {@link FileLocationModel}.
+     * Set the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
      */
-    @Property(SOURCE_SNIPPIT)
-    void setSourceSnippit(String source);
+    @Property(LENGTH)
+    void setLength(int length);
 
     /**
      * Sets the snippit referenced by this {@link FileLocationModel}.
@@ -72,10 +65,15 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     String getSourceSnippit();
 
     /**
+     * Gets the snippit referenced by this {@link FileLocationModel}.
+     */
+    @Property(SOURCE_SNIPPIT)
+    void setSourceSnippit(String source);
+
+    /**
      * Gets a human readable description of the location in the file
      */
-    default String getDescription()
-    {
+    default String getDescription() {
         if (null == getSourceSnippit())
             return "";
         return StringEscapeUtils.escapeHtml4(
@@ -83,8 +81,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     }
 
     @Override
-    default List<FileModel> transformToFileModel()
-    {
+    default List<FileModel> transformToFileModel() {
         return Collections.singletonList(getFile());
     }
 }

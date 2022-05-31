@@ -1,8 +1,8 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.List;
-import java.util.Set;
-
+import freemarker.ext.beans.StringModel;
+import freemarker.template.SimpleSequence;
+import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.TagUtil;
@@ -10,15 +10,13 @@ import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleSequence;
-import freemarker.template.TemplateModelException;
+import java.util.List;
+import java.util.Set;
 
 /**
- *
  * This determines whether or not the given file is interesting to report on. This is based on whether there is an available source report as well as
  * whether or not the file has classifications or hints that pass the tag filter.
- *
+ * <p>
  * It can be called as follows:
  *
  * <pre>
@@ -26,40 +24,32 @@ import freemarker.template.TemplateModelException;
  * </pre>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public class IsReportableFile implements WindupFreeMarkerMethod
-{
+public class IsReportableFile implements WindupFreeMarkerMethod {
     public static final String NAME = "isReportableFile";
     private SourceReportService sourceReportService;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.sourceReportService = new SourceReportService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + FileModel.class.getSimpleName()
-                    + " and a set of tags to include and exclude as parameters, and whether or not this file should appear in overview reports";
+                + " and a set of tags to include and exclude as parameters, and whether or not this file should appear in overview reports";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        try
-        {
-            if (arguments.size() != 3)
-            {
+        try {
+            if (arguments.size() != 3) {
                 throw new TemplateModelException("Error, method expects one argument (FileModel, includeTags:Set<String>, excludeTags:Set<String>)");
             }
             StringModel stringModelArg = (StringModel) arguments.get(0);
@@ -74,9 +64,7 @@ public class IsReportableFile implements WindupFreeMarkerMethod
                 return false;
 
             return TagUtil.hasHintsOrClassificationsWithRelevantTags(result.getSourceFileModel(), includeTags, excludeTags);
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end(NAME);
         }
     }

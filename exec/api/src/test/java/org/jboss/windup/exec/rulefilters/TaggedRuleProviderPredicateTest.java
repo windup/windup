@@ -1,8 +1,5 @@
 package org.jboss.windup.exec.rulefilters;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -14,15 +11,15 @@ import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
- *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class TaggedRuleProviderPredicateTest
-{
+public class TaggedRuleProviderPredicateTest {
     @Test
-    public void testAccept()
-    {
+    public void testAccept() {
         TestTagsARules rulesA = new TestTagsARules();
         TestTagsBRules rulesB = new TestTagsBRules();
         TestTagsA1B1Rules rulesA1B1 = new TestTagsA1B1Rules();
@@ -40,37 +37,31 @@ public class TaggedRuleProviderPredicateTest
     }
 
     private boolean isProviderAcceptedByTags(RuleProvider ruleProvider,
-                Collection<String> includeTags, boolean requireAllIncludes,
-                Collection<String> excludeTags, boolean requireAllExcludes)
-    {
+                                             Collection<String> includeTags, boolean requireAllIncludes,
+                                             Collection<String> excludeTags, boolean requireAllExcludes) {
         TaggedRuleProviderPredicate filter = new TaggedRuleProviderPredicate(includeTags, excludeTags);
         filter.setRequireAllIncludeTags(requireAllIncludes);
         filter.setRequireAllExcludeTags(requireAllExcludes);
         return filter.accept(ruleProvider);
     }
 
-    @RuleMetadata(tags = { "tagA1", "tagA2", "tagA3" })
-    public static class TestTagsARules extends NoopRuleProvider
-    {
+    @RuleMetadata(tags = {"tagA1", "tagA2", "tagA3"})
+    public static class TestTagsARules extends NoopRuleProvider {
     }
 
-    @RuleMetadata(tags = { "tagB1", "tagB2", "tagB3" })
-    public static class TestTagsBRules extends NoopRuleProvider
-    {
+    @RuleMetadata(tags = {"tagB1", "tagB2", "tagB3"})
+    public static class TestTagsBRules extends NoopRuleProvider {
     }
 
-    @RuleMetadata(tags = { "tagA1", "tagB1" })
-    public static class TestTagsA1B1Rules extends NoopRuleProvider
-    {
+    @RuleMetadata(tags = {"tagA1", "tagB1"})
+    public static class TestTagsA1B1Rules extends NoopRuleProvider {
     }
 
-    public abstract static class NoopRuleProvider extends AbstractRuleProvider
-    {
+    public abstract static class NoopRuleProvider extends AbstractRuleProvider {
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin().addRule()
-                        .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));
+                    .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));
         }
     }
 

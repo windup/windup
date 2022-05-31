@@ -1,19 +1,8 @@
 package org.jboss.windup.rules.java.ip;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -36,49 +25,54 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverHardcodedIPAddressTest
-{
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
+public class DiscoverHardcodedIPAddressTest {
     @Inject
     private WindupProcessor processor;
-
     @Inject
     private GraphContextFactory factory;
 
+    @Deployment
+    @AddonDependencies({
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+    })
+    public static AddonArchive getDeployment() {
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+    }
+
     @Test
-    public void testStaticIPScanner() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testStaticIPScanner() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/staticip");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
@@ -109,10 +103,8 @@ public class DiscoverHardcodedIPAddressTest
     }
 
     @Test
-    public void testStaticIPScannerInBinary() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testStaticIPScannerInBinary() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/staticip/sample.jar");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -147,22 +139,17 @@ public class DiscoverHardcodedIPAddressTest
         Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
         int numberFound = 0;
 
-        for (InlineHintModel hint : service.findAll())
-        {
-            if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
-            {
+        for (InlineHintModel hint : service.findAll()) {
+            if (StringUtils.equals("Hard-coded IP address", hint.getTitle())) {
                 Matcher matcher = ipExtractor.matcher(hint.getHint());
-                if (matcher.find())
-                {
+                if (matcher.find()) {
                     String ip = matcher.group(1);
                     if (unexpectedIPs.contains(ip))
                         Assert.fail("This IP (" + ip + ") should not have been marked valid");
                     else if (!expectedIPs.contains(ip))
                         Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
                     numberFound++;
-                }
-                else
-                {
+                } else {
                     Assert.fail("Hint format not recognized: " + hint.getHint());
                 }
             }

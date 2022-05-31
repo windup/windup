@@ -1,18 +1,8 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.lock.LockMode;
 import org.jboss.windup.config.GraphRewrite;
@@ -28,18 +18,25 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
- *
  */
-public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel>
-{
+public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel> {
     private static final Logger LOG = Logger.getLogger(FreeMarkerIterationOperation.class.getName());
     private static final String DEFAULT_ITERATION_PAYLOAD_NAME = "reportModel";
     private static final String FM_VAR_EVENT = "event";
@@ -51,25 +48,21 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     private final Set<String> variableNames = new HashSet<>();
     private final boolean useDefaultPayloadVariableName;
 
-    protected FreeMarkerIterationOperation(Furnace furnace, String... varNames)
-    {
+    protected FreeMarkerIterationOperation(Furnace furnace, String... varNames) {
         super();
         this.furnace = furnace;
         useDefaultPayloadVariableName = true;
-        if (varNames != null)
-        {
+        if (varNames != null) {
             variableNames.addAll(Arrays.asList(varNames));
         }
     }
 
-    protected FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames)
-    {
+    protected FreeMarkerIterationOperation(Furnace furnace, String iterationVarName, String... varNames) {
         super(iterationVarName);
         this.furnace = furnace;
         useDefaultPayloadVariableName = false;
         variableNames.add(iterationVarName);
-        if (varNames != null)
-        {
+        if (varNames != null) {
             variableNames.addAll(Arrays.asList(varNames));
         }
     }
@@ -78,20 +71,17 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
      * Create a FreeMarkerIterationOperation with the provided furnace instance, the provided iteration var, as well as any other associated variables
      * (based upon variables in the Variables object).
      */
-    public static FreeMarkerIterationOperation create(Furnace furnace, String... varNames)
-    {
+    public static FreeMarkerIterationOperation create(Furnace furnace, String... varNames) {
         return new FreeMarkerIterationOperation(furnace, varNames);
     }
 
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext evalCtx, final ReportModel payload)
-    {
+    public void perform(final GraphRewrite event, final EvaluationContext evalCtx, final ReportModel payload) {
         String templatePath = payload.getTemplatePath().replace('\\', '/');
         String outputFilename = payload.getReportFilename();
 
         ExecutionStatistics.get().begin("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
-        try
-        {
+        try {
             final GraphContext grCtx = event.getGraphContext();
             ReportService reportService = new ReportService(grCtx);
 
@@ -110,8 +100,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             Map<String, Object> freeMarkerTemplateVariables = FreeMarkerUtil.findFreeMarkerContextVariables(
                     windupVarStack, variableNames.toArray(new String[variableNames.size()]));
 
-            if (useDefaultPayloadVariableName)
-            {
+            if (useDefaultPayloadVariableName) {
                 freeMarkerTemplateVariables.put(DEFAULT_ITERATION_PAYLOAD_NAME, payload);
             }
 
@@ -125,11 +114,9 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             // Also, extension functions (these are kept separate from freeMarkerTemplateVariables in order to prevent them
             // from being stored in the associated data with the reportmodel)
             final Map<String, Object> freeMarkerExtensions;
-            freeMarkerExtensions = furnace.getLockManager().performLocked(LockMode.WRITE, new Callable<Map<String, Object>>()
-            {
+            freeMarkerExtensions = furnace.getLockManager().performLocked(LockMode.WRITE, new Callable<Map<String, Object>>() {
                 @Override
-                public Map<String, Object> call() throws Exception
-                {
+                public Map<String, Object> call() throws Exception {
                     return FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
                 }
             });
@@ -137,27 +124,21 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             Map<String, Object> objects = new HashMap<>(freeMarkerTemplateVariables);
             objects.putAll(freeMarkerExtensions);
 
-            try (FileWriter fw = new FileWriter(outputPath.toFile()))
-            {
+            try (FileWriter fw = new FileWriter(outputPath.toFile())) {
                 template.process(objects, fw);
             }
-        }
-        catch (IOException | TemplateException e)
-        {
+        } catch (IOException | TemplateException e) {
             LOG.log(Level.WARNING,
-                  System.lineSeparator()+"   Failed to write template: " + templatePath
-                + System.lineSeparator()+"   To: " + outputFilename
-                + System.lineSeparator()+"   Due to: " + e.getMessage(), e);
-        }
-        finally
-        {
+                    System.lineSeparator() + "   Failed to write template: " + templatePath
+                            + System.lineSeparator() + "   To: " + outputFilename
+                            + System.lineSeparator() + "   Due to: " + e.getMessage(), e);
+        } finally {
             ExecutionStatistics.get().end("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RenderFreeMarkerTemplate";
     }
 }

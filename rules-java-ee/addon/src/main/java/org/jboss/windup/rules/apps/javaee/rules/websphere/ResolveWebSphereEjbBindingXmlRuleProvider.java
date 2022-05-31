@@ -1,14 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
-import static org.joox.JOOX.$;
-
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
@@ -17,7 +13,6 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
-import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -41,31 +36,32 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.Set;
+import java.util.logging.Logger;
+
+import static org.joox.JOOX.$;
+
 /**
  * Discovers WebSphere EJB XML files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:mnovotny@redhat.com">Marek Novotny</a>
- * 
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover WebSphere EJB XML Files")
-public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(ResolveWebSphereEjbBindingXmlRuleProvider.class.getName());
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
 
         return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-bnd.xmi")
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarBinding");
+                .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarBinding");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         GraphContext graphContext = event.getGraphContext();
-        
+
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(graphContext);
 
         XmlFileService xmlFileService = new XmlFileService(graphContext);
@@ -77,8 +73,8 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         // Not Removed as per WINDUPRULE-214 - it duplicated GenerateJBossEjbDescriptorRuleProvider which reacts to associateAsVendorExtension() below.
         ClassificationService classificationService = new ClassificationService(graphContext);
         ClassificationModel classification = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY, "WebSphere EJB binding descriptor (ibm-ejb-jar-bnd)",
-                    "WebSphere Enterprise Java Bean Binding XML Descriptor describes how to bind enterprise beans or its resources. For instance EJB JNDI or data sources for entity beans."
-                    + " \n Red Hat JBoss EAP uses standard Java EE annotations or deployment descriptors like `ejb-jar.xml` or `jboss-ejb3.xml`. Please read JBoss EAP 7 documentation.");
+                "WebSphere Enterprise Java Bean Binding XML Descriptor describes how to bind enterprise beans or its resources. For instance EJB JNDI or data sources for entity beans."
+                        + " \n Red Hat JBoss EAP uses standard Java EE annotations or deployment descriptors like `ejb-jar.xml` or `jboss-ejb3.xml`. Please read JBoss EAP 7 documentation.");
         classification.setEffort(3);
         IssueCategoryModel cat = IssueCategoryRegistry.loadFromGraph(graphContext, IssueCategoryRegistry.MANDATORY);
         classification.setIssueCategory(cat);
@@ -93,7 +89,7 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         eap7Link.setDescription("EAP 7 - Developing EJB Applications");
         eap7Link.setLink("https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/developing_ejb_applications/");
         classificationService.attachLink(classification, eap7Link);
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB", TechnologyTagLevel.IMPORTANT);
 
@@ -108,8 +104,7 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(graphContext, payload.getProjectModel());
 
         // register beans to JNDI
-        for (Element resourceRef : $(doc).find("ejbBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("ejbBindings").get()) {
             String href = $(resourceRef).child("enterpriseBean").attr("href");
             String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
             String jndiLocation = $(resourceRef).attr("jndiName");
@@ -118,53 +113,43 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
             String type = $(resourceRef).child("enterpriseBean").attr("type");
             LOG.info("enterpriseBean type: " + type);
 
-            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
-            {
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId)) {
                 JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceId);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-                {
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
                     envRefService.associateEnvironmentToJndi(resource, ref);
                 }
 
-                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_ID, resourceId))
-                {
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_ID, resourceId)) {
                     ejb.setGlobalJndiReference(resource);
                 }
             }
         }
 
         // register beans to JNDI
-        for (Element resourceRef : $(doc).find("resRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("resRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingResourceRef");
         }
-        for (Element resourceRef : $(doc).find("ejbRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("ejbRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingEjbRef");
         }
-        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingMessageDestinationRef");
         }
 
         // Bind MDBs to Destinations
-        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get()) {
             String jndiLocation = $(resourceRef).attr("jndiName");
 
             // get the parent, as that has the reference to the MDB...
             String mdbRef = $(resourceRef).siblings("enterpriseBean").attr("href");
             String mdbId = StringUtils.substringAfterLast(mdbRef, "ejb-jar.xml#");
 
-            if (StringUtils.isNotBlank(mdbId))
-            {
-                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_ID, mdbId))
-                {
+            if (StringUtils.isNotBlank(mdbId)) {
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_ID, mdbId)) {
                     String destination = jndiLocation;
-                    if (StringUtils.isNotBlank(destination))
-                    {
+                    if (StringUtils.isNotBlank(destination)) {
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }
@@ -175,19 +160,16 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
     }
 
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Set<ProjectModel> applications,
-                Element resourceRef, String tagName)
-    {
+                                Element resourceRef, String tagName) {
         String href = $(resourceRef).child(tagName).attr("href");
         String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
         String jndiLocation = $(resourceRef).attr("jndiName");
 
-        if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
-        {
+        if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId)) {
             JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
             LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceId);
             // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-            {
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
                 envRefService.associateEnvironmentToJndi(resource, ref);
             }
         }

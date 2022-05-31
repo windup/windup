@@ -1,27 +1,24 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.jboss.windup.graph.Adjacency;
-import org.jboss.windup.graph.Property;
-
 import java.util.List;
 
 /**
  * Contains metadata used by all specializations of EJBs (eg, environment references)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(EjbBeanBaseModel.TYPE)
-public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
-{
+public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications {
     String TYPE = "EjbBeanBaseModel";
 
     String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";
@@ -111,13 +108,13 @@ public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
      * Contains the bean's implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    void setEjbClass(JavaClassModel ejbHome);
+    JavaClassModel getEjbClass();
 
     /**
      * Contains the bean's implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    JavaClassModel getEjbClass();
+    void setEjbClass(JavaClassModel ejbHome);
 
     /**
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file

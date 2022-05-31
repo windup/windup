@@ -1,9 +1,7 @@
 package org.jboss.windup.exec;
 
-import javax.enterprise.inject.Vetoed;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jboss.windup.config.AbstractRuleProvider;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleUtils;
@@ -14,31 +12,28 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.enterprise.inject.Vetoed;
+
 /**
- *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Vetoed
-class DefaultRuleLifecycleListener implements RuleLifecycleListener
-{
+class DefaultRuleLifecycleListener implements RuleLifecycleListener {
 
     private final WindupProgressMonitor progressMonitor;
     private final Configuration configuration;
     private String lastRuleProgressMessage = null;
 
-    public DefaultRuleLifecycleListener(WindupProgressMonitor progressMonitor, Configuration configuration)
-    {
+    public DefaultRuleLifecycleListener(WindupProgressMonitor progressMonitor, Configuration configuration) {
         this.progressMonitor = progressMonitor;
         this.configuration = configuration;
     }
 
     @Override
-    public void beforeExecution(GraphRewrite event)
-    {
+    public void beforeExecution(GraphRewrite event) {
         final org.apache.commons.lang3.mutable.MutableInt count = new MutableInt(0);
         // Only count rulesets that are not disabled.
-        for (Rule rule : configuration.getRules())
-        {
+        for (Rule rule : configuration.getRules()) {
             count.increment();
             Context ruleContext = rule instanceof Context ? (Context) rule : null;
             if (rule == null)
@@ -47,30 +42,26 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
             if (ruleProvider == null)
                 return;
             if (ruleProvider.getMetadata().isDisabled())
-            count.decrement();
+                count.decrement();
         }
         progressMonitor.beginTask("Executing " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym(), count.intValue());
         progressMonitor.worked(1);
     }
 
     @Override
-    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
-    {
+    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context) {
         progressMonitor.subTask(RuleUtils.prettyPrintRule(rule));
         return progressMonitor.isCancelled();
     }
 
     @Override
-    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
-    {
+    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds) {
         String timeRemaining = formatTimeRemaining(timeRemainingInSeconds);
         int percentage = (int) (100 * ((double) currentPosition / (double) total));
         String newProgressMessage = "(" + percentage + "%) " + name + ", Estimated time until next Rule: " + timeRemaining;
         // don't redisplay it if nothing has changed
-        if (!newProgressMessage.equals(lastRuleProgressMessage))
-        {
-            if (lastRuleProgressMessage != null && lastRuleProgressMessage.length() > newProgressMessage.length())
-            {
+        if (!newProgressMessage.equals(lastRuleProgressMessage)) {
+            if (lastRuleProgressMessage != null && lastRuleProgressMessage.length() > newProgressMessage.length()) {
                 newProgressMessage = String.format("%1$-" + lastRuleProgressMessage.length() + "s", newProgressMessage);
             }
             lastRuleProgressMessage = newProgressMessage;
@@ -79,8 +70,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
         return progressMonitor.isCancelled();
     }
 
-    private String formatTimeRemaining(int timeRemainingInSeconds)
-    {
+    private String formatTimeRemaining(int timeRemainingInSeconds) {
         int hours = timeRemainingInSeconds / 60 / 60;
         int minutes = (timeRemainingInSeconds - (hours * 60 * 60)) / 60;
         int seconds = timeRemainingInSeconds % 60;
@@ -95,40 +85,33 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     }
 
     @Override
-    public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result)
-    {
-        if (result == false)
-        {
+    public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result) {
+        if (result == false) {
             progressMonitor.worked(1);
         }
     }
 
     @Override
-    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-    {
+    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule) {
         return progressMonitor.isCancelled();
     }
 
     @Override
-    public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-    {
+    public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule) {
         progressMonitor.worked(1);
     }
 
     @Override
-    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause)
-    {
+    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause) {
     }
 
     @Override
-    public void afterExecution(GraphRewrite event)
-    {
+    public void afterExecution(GraphRewrite event) {
         progressMonitor.done();
     }
 
     @Override
-    public boolean shouldWindupStop()
-    {
+    public boolean shouldWindupStop() {
         return progressMonitor.isCancelled();
     }
 }

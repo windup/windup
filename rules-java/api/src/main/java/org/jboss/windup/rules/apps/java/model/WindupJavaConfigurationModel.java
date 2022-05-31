@@ -1,26 +1,24 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.syncleus.ferma.ElementFrame;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configuration options that are specific to the Java Ruleset
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupJavaConfigurationModel.TYPE)
-public interface WindupJavaConfigurationModel extends WindupVertexFrame, ElementFrame
-{
+public interface WindupJavaConfigurationModel extends WindupVertexFrame, ElementFrame {
     String TYPE = "WindupJavaConfigurationModel";
     String SOURCE_MODE = "sourceMode";
     String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
@@ -33,13 +31,13 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      * Specifies which Java packages should be scanned by windup
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
-    void setScanJavaPackages(Iterable<PackageModel> scanJavaPackage);
+    List<PackageModel> getScanJavaPackages();
 
     /**
      * Specifies which Java packages should be scanned by windup
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
-    List<PackageModel> getScanJavaPackages();
+    void setScanJavaPackages(Iterable<PackageModel> scanJavaPackage);
 
     /**
      * Add a file that will be ignored during the migration.
@@ -56,14 +54,12 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
     /**
      * Specifies which Java packages should be scanned by windup
      */
-    default void setScanJavaPackageList(Iterable<String> pkgs)
-    {
+    default void setScanJavaPackageList(Iterable<String> pkgs) {
         setScanJavaPackages(new ArrayList<PackageModel>());
         if (pkgs == null)
             return;
 
-        for (String pkg : pkgs)
-        {
+        for (String pkg : pkgs) {
             PackageModel m = getGraph().addFramedVertex(PackageModel.class);
             m.setPackageName(pkg);
             addScanJavaPackages(m);
@@ -77,22 +73,14 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
     void addScanJavaPackages(PackageModel scanJavaPackage);
 
     /**
-     * Specifies which Java packages should be scanned by windup
-     */
-    @Adjacency(label = EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
-    void setExcludeJavaPackages(Iterable<PackageModel> scanJavaPackage);
-
-    /**
      * What Java packages to exclude during scanning of applications.
      */
-    default void setExcludeJavaPackageList(Iterable<String> pkgs)
-    {
+    default void setExcludeJavaPackageList(Iterable<String> pkgs) {
         setExcludeJavaPackages(new ArrayList<PackageModel>());
         if (pkgs == null)
             return;
 
-        for (String pkg : pkgs)
-        {
+        for (String pkg : pkgs) {
             PackageModel m = getGraph().addFramedVertex(PackageModel.class);
             m.setPackageName(pkg);
             addExcludeJavaPackage(m);
@@ -110,6 +98,12 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      */
     @Adjacency(label = EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
     List<PackageModel> getExcludeJavaPackages();
+
+    /**
+     * Specifies which Java packages should be scanned by windup
+     */
+    @Adjacency(label = EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
+    void setExcludeJavaPackages(Iterable<PackageModel> scanJavaPackage);
 
     /**
      * Used to determine whether to scan as source or to do decompilation

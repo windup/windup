@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import javax.inject.Inject;
-
+import com.google.common.collect.Iterables;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -13,22 +12,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Iterables;
+import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class HibernateConfigurationFileServiceTest extends AbstractTest
-{
+public class HibernateConfigurationFileServiceTest extends AbstractTest {
     @Inject
     GraphContextFactory factory;
 
     @Test
-    public void testHibernateConfigurationFindByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testHibernateConfigurationFindByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();
             app1.setName("app1");

@@ -1,12 +1,5 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.logging.Logger;
 import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,22 +15,58 @@ import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.util.Logging;
 
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.logging.Logger;
+
 /**
  * Performs the actions needed to mavenize an application.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
-public class MavenizationService
-{
-    private static final Logger LOG = Logging.get(MavenizationService.class);
+public class MavenizationService {
     public static final String OUTPUT_SUBDIR_MAVENIZED = "mavenized";
-
+    private static final Logger LOG = Logging.get(MavenizationService.class);
     private final GraphContext grCtx;
 
 
-    MavenizationService(GraphContext graphContext)
-    {
+    MavenizationService(GraphContext graphContext) {
         this.grCtx = graphContext;
+    }
+
+    /**
+     * Normalizes the name so it can be used as Maven artifactId or groupId.
+     */
+    private static String normalizeDirName(String name) {
+        if (name == null)
+            return null;
+        return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "-");
+    }
+
+    /**
+     * Tries to guess the packaging of the archive - whether it's an EAR, WAR, JAR.
+     * Maybe not needed as we can rely on the suffix?
+     */
+    private static String guessPackaging(ProjectModel projectModel) {
+        String projectType = projectModel.getProjectType();
+        if (projectType != null)
+            return projectType;
+
+        LOG.warning("WINDUP-983 getProjectType() returned null for: " + projectModel.getRootFileModel().getPrettyPath());
+
+        String suffix = StringUtils.substringAfterLast(projectModel.getRootFileModel().getFileName(), ".");
+        if ("jar war ear sar har ".contains(suffix + " ")) {
+            projectModel.setProjectType(suffix); // FIXME: Remove when WINDUP-983 is fixed.
+            return suffix;
+        }
+
+        // Should we try something more? Used APIs? What if it's a source?
+
+        return "unknown";
     }
 
     /**
@@ -59,8 +88,7 @@ public class MavenizationService
      *     +~~~ WAR submodule
      * </pre>
      */
-    void mavenizeApp(ProjectModel projectModel)
-    {
+    void mavenizeApp(ProjectModel projectModel) {
         LOG.info("Mavenizing ProjectModel " + projectModel.toPrettyString());
         MavenizationContext mavCtx = new MavenizationContext();
         mavCtx.graphContext = grCtx;
@@ -94,7 +122,7 @@ public class MavenizationService
         mavCtx.bom = bom;
 
         // BOM - dependencyManagement dependencies
-        for( ArchiveCoordinateModel dep : grCtx.getUnique(GlobalBomModel.class).getDependencies() ){
+        for (ArchiveCoordinateModel dep : grCtx.getUnique(GlobalBomModel.class).getDependencies()) {
             LOG.info("Adding dep to BOM: " + dep.toPrettyString());
             bom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(dep)));
         }
@@ -109,15 +137,13 @@ public class MavenizationService
         new MavenStructureRenderer(mavCtx).createMavenProjectDirectoryTree();
     }
 
-
     /**
      * Mavenizes the particular project module, i.e. single pom.xml.
      * Then continues recursively to submodules.
      *
      * @return null if the project can't be processed for some reason, e.g. is from an unparsable jar.
      */
-    private Pom mavenizeModule(MavenizationContext mavCtx, ProjectModel projectModel, Pom containingModule)
-    {
+    private Pom mavenizeModule(MavenizationContext mavCtx, ProjectModel projectModel, Pom containingModule) {
         LOG.info("Mavenizing submodule ProjectModel " + projectModel.toPrettyString());
         LOG.info("    Root file: " + projectModel.getRootFileModel().toPrettyString());
         LOG.info("    Containing module: " + containingModule);
@@ -128,14 +154,13 @@ public class MavenizationService
         // Known library -> add as a dependency and skip.
 
         // SHA1 identified archive?
-        if (projectModel.getRootFileModel() instanceof IdentifiedArchiveModel)
-        {
-            final IdentifiedArchiveModel idArch = (IdentifiedArchiveModel)projectModel.getRootFileModel();
+        if (projectModel.getRootFileModel() instanceof IdentifiedArchiveModel) {
+            final IdentifiedArchiveModel idArch = (IdentifiedArchiveModel) projectModel.getRootFileModel();
             if (idArch == null)
                 LOG.warning("Project's IdentifiedArchiveModel getRootFileModel() returned null.");
             else if (idArch.getCoordinate() == null)
                 LOG.warning("Project's IdentifiedArchiveModel getRootFileModel().getCoordinate() returned null.");
-            else if(containingModule == null)
+            else if (containingModule == null)
                 LOG.warning("containingModule is null."); // IllegalStateEx?
             else
                 containingModule.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(idArch.getCoordinate())));
@@ -145,16 +170,13 @@ public class MavenizationService
         }
 
         // ArchiveModel's organizations contain a known org, like Apache.
-        if (projectModel.getRootFileModel() instanceof ArchiveModel)
-        {
+        if (projectModel.getRootFileModel() instanceof ArchiveModel) {
             Set<String> skipOrganizations = new HashSet(Arrays.asList("Apache Sun Iona IBM Codehaus Spring Sonatype JBoss Oracle".toLowerCase().split("")));
 
-            final ArchiveModel arch = (ArchiveModel)projectModel.getRootFileModel();
-            for (OrganizationModel org : arch.getOrganizationModels())
-            {
-                if (skipOrganizations.contains(org.getName().toLowerCase()))
-                {
-                    LOG.info("Library from 3rd party vendor ("+org.getName()+"), skipping recursive mavenization: " + arch.getFilePath());
+            final ArchiveModel arch = (ArchiveModel) projectModel.getRootFileModel();
+            for (OrganizationModel org : arch.getOrganizationModels()) {
+                if (skipOrganizations.contains(org.getName().toLowerCase())) {
+                    LOG.info("Library from 3rd party vendor (" + org.getName() + "), skipping recursive mavenization: " + arch.getFilePath());
                     return null;
                 }
             }
@@ -163,12 +185,11 @@ public class MavenizationService
         // A MavenProject.
         // TODO: This covers both app modules and libraries with pom.xml inside. Need to diferentiate - skip only libraries.
         // TODO: This should disappear after WINDUP-981
-        if (false && projectModel instanceof MavenProjectModel)
-        {
-            final MavenProjectModel mvnProject = (MavenProjectModel)projectModel;
+        if (false && projectModel instanceof MavenProjectModel) {
+            final MavenProjectModel mvnProject = (MavenProjectModel) projectModel;
             if (mvnProject.getMavenIdentifier() == null)
                 LOG.warning("MavenProject's getMavenIdentifier() returned null.");
-            else if(containingModule == null)
+            else if (containingModule == null)
                 LOG.warning("containingModule is null."); // IllegalStateEx?
             else if (true /* isLibraryAndNotProjectModule() */)
                 containingModule.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.fromGAVPC(mvnProject.getMavenIdentifier())));
@@ -190,19 +211,18 @@ public class MavenizationService
 
 
         // Set up the dependency of the containing module on the contained module. E.g. EAR depends on WAR.
-        if(containingModule != null)
+        if (containingModule != null)
             containingModule.dependencies.add(modulePom);
 
         // Nested archives
         // For now, only count with the modules of this app. There are likely more in the other apps.
         Set<ArchiveModel> nestedModules = new HashSet<>();
-        for (FileModel file : projectModel.getFileModelsNoDirectories())
-        {
-            if(!(file instanceof ArchiveModel)) //  TODO: Query for ArchiveModel directly.
+        for (FileModel file : projectModel.getFileModelsNoDirectories()) {
+            if (!(file instanceof ArchiveModel)) //  TODO: Query for ArchiveModel directly.
                 continue;
 
             // Known library -> simple dependency.
-            if(file instanceof IdentifiedArchiveModel){
+            if (file instanceof IdentifiedArchiveModel) {
                 IdentifiedArchiveModel artifact = (IdentifiedArchiveModel) file;
                 modulePom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(artifact.getCoordinate())));
             }
@@ -213,8 +233,7 @@ public class MavenizationService
         }
 
         // Nested modules already identified as ProjectModel
-        for (ProjectModel subProject : projectModel.getChildProjects())
-        {
+        for (ProjectModel subProject : projectModel.getChildProjects()) {
             Pom subModulePom = mavenizeModule(mavCtx, subProject, modulePom);
             if (subModulePom == null)
                 continue;
@@ -222,8 +241,7 @@ public class MavenizationService
         }
 
         // Nested module candidates.
-        for (ArchiveModel nestedModule : nestedModules)
-        {
+        for (ArchiveModel nestedModule : nestedModules) {
             // TODO: Is it a submodule or a library? Does it appear in multiple applications?
             //Pom subModulePom = mavenizeModule(mavCtx, nestedModule, containingModule);
             //modulePom.dependencies.add(subModulePom.identification);
@@ -242,46 +260,11 @@ public class MavenizationService
         return modulePom;
     }
 
-
-    /**
-     * Normalizes the name so it can be used as Maven artifactId or groupId.
-     */
-    private static String normalizeDirName(String name)
-    {
-        if(name == null)
-            return null;
-        return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "-");
-    }
-
-    /**
-     * Tries to guess the packaging of the archive - whether it's an EAR, WAR, JAR.
-     * Maybe not needed as we can rely on the suffix?
-     */
-    private static String guessPackaging(ProjectModel projectModel)
-    {
-        String projectType = projectModel.getProjectType();
-        if (projectType != null)
-            return projectType;
-
-        LOG.warning("WINDUP-983 getProjectType() returned null for: " + projectModel.getRootFileModel().getPrettyPath());
-
-        String suffix = StringUtils.substringAfterLast(projectModel.getRootFileModel().getFileName(), ".");
-        if ("jar war ear sar har ".contains(suffix+" ")){
-            projectModel.setProjectType(suffix); // FIXME: Remove when WINDUP-983 is fixed.
-            return suffix;
-        }
-
-        // Should we try something more? Used APIs? What if it's a source?
-
-        return "unknown";
-    }
-
-
-    String deriveAppropriateArtifactId(ProjectModel projectModel)
-    {
+    String deriveAppropriateArtifactId(ProjectModel projectModel) {
         String resultName = null;
         String name = projectModel.getName();
-        name: {
+        name:
+        {
             if (name == null)
                 break name;
             if (name.length() > 40)
@@ -291,8 +274,7 @@ public class MavenizationService
             resultName = name;
         }
 
-        if (resultName == null)
-        {
+        if (resultName == null) {
             resultName = projectModel.getRootFileModel().getFileName();
         }
 
@@ -304,7 +286,7 @@ public class MavenizationService
 
         // See WINDUP-1015
         if (resultName.length() > 40)
-            resultName = resultName.substring(0,40) + "-" + RandomStringUtils.randomAlphanumeric(4);
+            resultName = resultName.substring(0, 40) + "-" + RandomStringUtils.randomAlphanumeric(4);
 
 
         return resultName;
@@ -314,9 +296,8 @@ public class MavenizationService
     /**
      * Remove 1.0.0 from foo-1.0.0.jar
      */
-    String removeVersion(String resultName)
-    {
-        if(resultName == null)
+    String removeVersion(String resultName) {
+        if (resultName == null)
             return null;
 
         // Regex test at http://fiddle.re/dnwhca
@@ -328,27 +309,37 @@ public class MavenizationService
      * Sorts the submodules of given Pom so that their cross-dependencies are satisfied if built in that order.
      * TODO - MIGR-236.
      */
-    private OrderedMap<String, Pom> sortSubmodulesToReflectDependencies(Pom pom)
-    {
+    private OrderedMap<String, Pom> sortSubmodulesToReflectDependencies(Pom pom) {
         Set<MavenCoord> dependenciesMet = new HashSet();
         dependenciesMet.add(pom.coord);
 
         SortedSet<MavenCoord> dependenciesSatisfied = new TreeSet<>();
 
-        for (Dependency dep : pom.dependencies)
-        {
+        for (Dependency dep : pom.dependencies) {
             // Traverse the tree, depth-first, take items at node exit.
         }
 
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    /**
+     * Used to determine which BOM to take.
+     * Currently we only have these tags: eap, eap7.
+     */
+    private Set<String> getTargetTechnologies() {
+        WindupConfigurationModel wc = grCtx.getUnique(WindupConfigurationModel.class);
+        Iterable<TechnologyReferenceModel> targetTechnologies = wc.getTargetTechnologies();
+        Set<String> techs = new HashSet<>();
+        for (TechnologyReferenceModel tech : targetTechnologies) {
+            techs.add(tech.getTechnologyID());
+        }
+        return techs;
+    }
 
     /**
      * Context of the mavenization - things to carry around.
      */
-    static class MavenizationContext
-    {
+    static class MavenizationContext {
         private Path mavenizedBaseDir;
         private Pom rootPom;
         private Set<Pom> knownSubmodules = new HashSet<>();
@@ -392,31 +383,13 @@ public class MavenizationService
             return graphContext;
         }
 
-        public Pom getRootAppPom()
-        {
+        public Pom getRootAppPom() {
             return rootAppPom;
         }
 
-        public void setRootAppPom(Pom rootAppPom)
-        {
+        public void setRootAppPom(Pom rootAppPom) {
             this.rootAppPom = rootAppPom;
         }
-    }
-
-    /**
-     * Used to determine which BOM to take.
-     * Currently we only have these tags: eap, eap7.
-     */
-    private Set<String> getTargetTechnologies()
-    {
-        WindupConfigurationModel wc = grCtx.getUnique(WindupConfigurationModel.class);
-        Iterable<TechnologyReferenceModel> targetTechnologies = wc.getTargetTechnologies();
-        Set<String> techs = new HashSet<>();
-        for (TechnologyReferenceModel tech : targetTechnologies)
-        {
-            techs.add(tech.getTechnologyID());
-        }
-        return techs;
     }
 
 }

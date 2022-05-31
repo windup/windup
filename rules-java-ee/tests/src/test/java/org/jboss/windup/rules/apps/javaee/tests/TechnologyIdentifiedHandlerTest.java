@@ -27,33 +27,28 @@ import java.util.List;
 import static org.joox.JOOX.$;
 
 @RunWith(Arquillian.class)
-public class TechnologyIdentifiedHandlerTest
-{
+public class TechnologyIdentifiedHandlerTest {
 
     private static final String TECHNOLOGY_IDENTIFIED_XML_WINDUP_FILE = "src/test/resources/technology-identified/technology-identified.windup.xml";
+    @Inject
+    private Furnace furnace;
 
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static AddonArchive getDeployment()
-    {
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
-    @Inject
-    private Furnace furnace;
-
     @Test
-    public void testParsing() throws Exception
-    {
+    public void testParsing() throws Exception {
         File fXmlFile = new File(TECHNOLOGY_IDENTIFIED_XML_WINDUP_FILE);
         testTechnologyIdentifiedHandler(fXmlFile);
     }
 
-    public void testTechnologyIdentifiedHandler(File fXmlFile) throws Exception
-    {
+    public void testTechnologyIdentifiedHandler(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

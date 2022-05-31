@@ -1,23 +1,20 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import java.util.List;
 
 /**
  * Contains metadata associated with EJB deployment descriptors.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(EjbDeploymentDescriptorModel.TYPE)
-public interface EjbDeploymentDescriptorModel extends XmlFileModel
-{
+public interface EjbDeploymentDescriptorModel extends XmlFileModel {
 
     String MESSAGE_DRIVEN = "messageDriven";
     String EJB_ENTITY_BEAN = "ejbEntityBean";

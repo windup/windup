@@ -1,15 +1,5 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -36,13 +26,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.logging.Logger;
+
 /**
- *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @RunWith(Arquillian.class)
-public class MavenizeRuleProviderTest
-{
+public class MavenizeRuleProviderTest {
     private static final Logger LOG = Logger.getLogger(MavenizeRuleProviderTest.class.getName());
     @Inject
     MavenizeRuleProvider provider;
@@ -55,30 +52,28 @@ public class MavenizeRuleProviderTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         // See https://github.com/shrinkwrap/resolver/blob/master/README.asciidoc
         JavaArchive[] archives = Maven.resolver().resolve("org.jboss.windup.maven:nexus-indexer-data:zip:5").withoutTransitivity()
-                    .as(JavaArchive.class);
+                .as(JavaArchive.class);
         Assert.assertEquals("maven-indexer-data found", 1, archives.length);
         AddonArchive deployment = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
         for (JavaArchive archive : archives)
             deployment.merge(archive);
         return deployment;
     }
 
-    private static void checkPomExistence(Path base, String subdirName, boolean shouldExist)
-    {
+    private static void checkPomExistence(Path base, String subdirName, boolean shouldExist) {
         Path pomPath = base.resolve(subdirName).resolve("pom.xml");
         if (shouldExist)
             Assert.assertTrue("Exists: " + pomPath, pomPath.toFile().exists());
@@ -87,8 +82,7 @@ public class MavenizeRuleProviderTest
     }
 
     @Before
-    public void addMavenCoordsData()
-    {
+    public void addMavenCoordsData() {
         InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
         inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", "log4j:log4j:1.2.6");
         inMemoryIdentifier.addMapping("b0236b252e86419eef20c31a44579d2aee2f0a69", "commons-lang:commons-lang:2.5");
@@ -96,10 +90,8 @@ public class MavenizeRuleProviderTest
     }
 
     @Test
-    public void testMavenizeRuleProvider() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext graphContext = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
-        {
+    public void testMavenizeRuleProvider() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext graphContext = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true)) {
             final String inputDir = "../../test-files/jee-example-app-1.0.0.ear"; // rules-java/api
             final Class<MavenizeRuleProvider> ruleToRunUpTo = MavenizeRuleProvider.class;
 
@@ -128,8 +120,7 @@ public class MavenizeRuleProviderTest
     }
 
     private Path executeWindupAgainstAppUntilRule(final String inputDir, final GraphContext grCtx, final Class<MavenizeRuleProvider> ruleToRunUpTo)
-                throws IOException, IllegalAccessException, InstantiationException
-    {
+            throws IOException, IllegalAccessException, InstantiationException {
         Assume.assumeTrue("Exists: " + inputDir, new File(inputDir).exists());
 
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup-Mavenization-output");

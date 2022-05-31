@@ -1,12 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import static org.joox.JOOX.$;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -36,14 +29,20 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import static org.joox.JOOX.$;
+
 /**
  * Discovers web.xml files, parses them, and places relevant metadata into the graph.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover web.xml files")
-public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getName());
 
     private static final String TECH_TAG = "Web XML";
@@ -52,59 +51,46 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private static final String REGEX_DTD = "(?i).*web.application.*";
 
     @Override
-    public ConditionBuilder when()
-    {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app").withProperty(XmlFileModel.FILE_NAME, QueryPropertyComparisonType.NOT_EQUALS,  "geronimo-web.xml");
+    public ConditionBuilder when() {
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app").withProperty(XmlFileModel.FILE_NAME, QueryPropertyComparisonType.NOT_EQUALS, "geronimo-web.xml");
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
-        if (doc != null && isWebXml(payload, doc))
-        {
+        if (doc != null && isWebXml(payload, doc)) {
             addWebXmlMetadata(event, context, event.getGraphContext(), payload, doc);
         }
     }
 
-    private boolean isWebXml(XmlFileModel xml, Document doc)
-    {
+    private boolean isWebXml(XmlFileModel xml, Document doc) {
         // check it's doctype against the known doctype.
         return !(xml.getDoctype() != null && !processDoctypeMatches(xml.getDoctype()));
     }
 
-    private String getVersion(XmlFileModel xml, Document doc)
-    {
+    private String getVersion(XmlFileModel xml, Document doc) {
         String version = null;
 
         // check it's doctype against the known doctype.
-        if (xml.getDoctype() != null)
-        {
+        if (xml.getDoctype() != null) {
             // if it isn't matching doctype, then continue.
-            if (processDoctypeMatches(xml.getDoctype()))
-            {
+            if (processDoctypeMatches(xml.getDoctype())) {
                 version = processDoctypeVersion(xml.getDoctype());
             }
-        }
-        else
-        {
+        } else {
             // if there is no doctype, check the XSD..
             version = $(doc).attr("version");
 
             // if the version attribute isn't found, then grab it from the XSD name if we can.
-            if (StringUtils.isBlank(version))
-            {
+            if (StringUtils.isBlank(version)) {
                 // get the first tag's namespace...
                 String namespace = $(doc).find("web-app").namespaceURI();
-                if (StringUtils.isBlank(namespace))
-                {
+                if (StringUtils.isBlank(namespace)) {
                     namespace = doc.getFirstChild().getNamespaceURI();
                 }
                 // find that namespace, and try and pull the version from the XSD name...
-                for (NamespaceMetaModel ns : xml.getNamespaces())
-                {
-                    if (StringUtils.equals(ns.getURI(), namespace))
-                    {
+                for (NamespaceMetaModel ns : xml.getNamespaces()) {
+                    if (StringUtils.equals(ns.getURI(), namespace)) {
                         version = NamespaceUtils.extractVersion(ns.getSchemaLocation());
                         break;
                     }
@@ -115,12 +101,11 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         return version;
     }
 
-    private void addWebXmlMetadata(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, XmlFileModel xml, Document doc)
-    {
+    private void addWebXmlMetadata(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, XmlFileModel xml, Document doc) {
         ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
 
-        classificationService.attachClassification(event, evaluationContext, xml,  IssueCategoryRegistry.INFORMATION, "Web XML", " Web Application Deployment Descriptors");
+        classificationService.attachClassification(event, evaluationContext, xml, IssueCategoryRegistry.INFORMATION, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
@@ -130,8 +115,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         WebXmlModel webXml = webXmlService.addTypeToModel(xml);
 
         // change "_" in the version to "."
-        if (StringUtils.isNotBlank(webXmlVersion))
-        {
+        if (StringUtils.isNotBlank(webXmlVersion)) {
             webXmlVersion = StringUtils.replace(webXmlVersion, "_", ".");
             webXml.setSpecificationVersion(webXmlVersion);
 
@@ -141,33 +125,26 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
 
         String displayName = $(doc).child("display-name").text();
         displayName = StringUtils.trimToNull(displayName);
-        if (StringUtils.isNotBlank(displayName))
-        {
+        if (StringUtils.isNotBlank(displayName)) {
             webXml.setDisplayName(displayName);
         }
 
         // extract references.
         List<EnvironmentReferenceModel> refs = processEnvironmentReference(context, doc.getDocumentElement());
-        for (EnvironmentReferenceModel ref : refs)
-        {
+        for (EnvironmentReferenceModel ref : refs) {
             webXml.addEnvironmentReference(ref);
         }
     }
 
-    private boolean processDoctypeMatches(DoctypeMetaModel doctypeMetaModel)
-    {
-        if (StringUtils.isNotBlank(doctypeMetaModel.getPublicId()))
-        {
-            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getPublicId()))
-            {
+    private boolean processDoctypeMatches(DoctypeMetaModel doctypeMetaModel) {
+        if (StringUtils.isNotBlank(doctypeMetaModel.getPublicId())) {
+            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getPublicId())) {
                 return true;
             }
         }
 
-        if (StringUtils.isNotBlank(doctypeMetaModel.getSystemId()))
-        {
-            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getSystemId()))
-            {
+        if (StringUtils.isNotBlank(doctypeMetaModel.getSystemId())) {
+            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getSystemId())) {
                 return true;
             }
 
@@ -175,8 +152,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         return false;
     }
 
-    private String processDoctypeVersion(DoctypeMetaModel entry)
-    {
+    private String processDoctypeVersion(DoctypeMetaModel entry) {
         String publicId = entry.getPublicId();
         String systemId = entry.getSystemId();
 
@@ -185,33 +161,27 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         return versionInformation;
     }
 
-    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element)
-    {
+    private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element) {
         EnvironmentReferenceService environmentReferenceService = new EnvironmentReferenceService(context);
         List<EnvironmentReferenceModel> resources = new ArrayList<>();
 
         // find JMS references...
-        for (Element resourceRef : $(element).find("resource-ref").get())
-        {
-            processElement(environmentReferenceService, resources, resourceRef, "res-type", "res-ref-name",  EnvironmentReferenceTagType.RESOURCE_REF);
+        for (Element resourceRef : $(element).find("resource-ref").get()) {
+            processElement(environmentReferenceService, resources, resourceRef, "res-type", "res-ref-name", EnvironmentReferenceTagType.RESOURCE_REF);
         }
-        for (Element resourceRef : $(element).find("ejb-ref").get())
-        {
+        for (Element resourceRef : $(element).find("ejb-ref").get()) {
             processElement(environmentReferenceService, resources, resourceRef, "ejb-ref-type", "ejb-ref-name", EnvironmentReferenceTagType.EJB_REF);
         }
-        for (Element resourceRef : $(element).find("ejb-local-ref").get())
-        {
+        for (Element resourceRef : $(element).find("ejb-local-ref").get()) {
             processElement(environmentReferenceService, resources, resourceRef, "ejb-ref-type", "ejb-ref-name", EnvironmentReferenceTagType.EJB_LOCAL_REF);
         }
-        for (Element resourceRef : $(element).find("message-destination-ref").get())
-        {
+        for (Element resourceRef : $(element).find("message-destination-ref").get()) {
             processElement(environmentReferenceService, resources, resourceRef, "message-destination-type", "message-destination-ref-name", EnvironmentReferenceTagType.MSG_DESTINATION_REF);
         }
         return resources;
     }
 
-    private void processElement(EnvironmentReferenceService environmentReferenceService, List<EnvironmentReferenceModel> resources, Element element, String typeLocation, String nameLocation, EnvironmentReferenceTagType refType)
-    {
+    private void processElement(EnvironmentReferenceService environmentReferenceService, List<EnvironmentReferenceModel> resources, Element element, String typeLocation, String nameLocation, EnvironmentReferenceTagType refType) {
         String id = $(element).attr("id");
         String type = $(element).child(typeLocation).text();
         String name = $(element).child(nameLocation).text();
@@ -220,18 +190,16 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         name = StringUtils.trim(name);
 
         EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, refType);
-        if (ref == null)
-        {
+        if (ref == null) {
             ref = environmentReferenceService.create();
             ref.setName(name);
             ref.setReferenceType(type);
             ref.setReferenceTagType(refType);
 
-            LOG.info("Added: "+ref);
-        }
-        else {
-            if(ref.getReferenceTagType() != null && (ref.getReferenceTagType() != refType)) {
-                LOG.warning("Expected type: "+EnvironmentReferenceTagType.RESOURCE_REF +" but actually: "+ref.getReferenceType());
+            LOG.info("Added: " + ref);
+        } else {
+            if (ref.getReferenceTagType() != null && (ref.getReferenceTagType() != refType)) {
+                LOG.warning("Expected type: " + EnvironmentReferenceTagType.RESOURCE_REF + " but actually: " + ref.getReferenceType());
             }
         }
 
