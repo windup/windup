@@ -124,4 +124,4 @@ jobs:
       - name: Build windup-rulesets
         working-directory: windup-rulesets
         run: |
-          mvn install
+          mvn install -Dsurefire-argLine="-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m"
