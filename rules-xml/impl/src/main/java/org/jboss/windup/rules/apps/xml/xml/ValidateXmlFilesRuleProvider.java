@@ -82,7 +82,6 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
 
                 final SAXParser parser = factory.newSAXParser();
                 parser.setProperty(JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                parser.setProperty("false", XMLConstants.FEATURE_SECURE_PROCESSING);
 
                 ValidateXmlHandler handler = new ValidateXmlHandler(onlineMode);
 
