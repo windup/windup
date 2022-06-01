@@ -125,4 +125,3 @@ jobs:
         working-directory: windup-rulesets
         run: |
           mvn install
-
