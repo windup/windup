@@ -85,11 +85,6 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     @SuppressWarnings("rawtypes")
     public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
-
-        inputPaths.stream().forEach(
-                input -> LOG.log(Level.INFO, "[Jandepora] input.toString())")
-        );
-
         if (inputPaths == null)
         {
             return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
