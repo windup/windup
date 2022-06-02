@@ -19,7 +19,11 @@
             <artifactId>freemarker</artifactId>
             <version>${version.freemarker}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
