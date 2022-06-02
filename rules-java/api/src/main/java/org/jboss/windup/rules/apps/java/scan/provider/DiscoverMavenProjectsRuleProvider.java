@@ -41,6 +41,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -329,59 +330,64 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             mavenProjectModel.setParentMavenPOM(parent);
         }
 
-        NodeList nodes = XmlUtil.xpathNodeList(document, getDependenciesXpath(), namespaces);
-        for (int i = 0, j = nodes.getLength(); i < j; i++)
+        for (String xpath : getDependenciesXpath())
         {
-            Node node = nodes.item(i);
-            String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId | ./groupId", namespaces);
-            String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId | ./artifactId", namespaces);
-            String dependencyVersion = XmlUtil.xpathExtract(node, "./pom:version | ./version", namespaces);
-
-            String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier | ./classifier", namespaces);
-            String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope | ./scope", namespaces);
-            String dependencyType = XmlUtil.xpathExtract(node, "./pom:type | ./type", namespaces);
-            String dependencyOptional = XmlUtil.xpathExtract(node, "./pom:optional | ./optional", namespaces);
-
-            dependencyGroupId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyGroupId, version);
-            dependencyArtifactId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyArtifactId, version);
-            dependencyVersion = mavenElementValueResolver.resolveValue(document, namespaces, dependencyVersion, version);
-
-            // optional check introduced with WINDUP-2771
-            if (StringUtils.isNotBlank(dependencyGroupId) && !Boolean.parseBoolean(dependencyOptional))
+            NodeList nodes = XmlUtil.xpathNodeList(document, xpath, namespaces);
+            for (int i = 0, j = nodes.getLength(); i < j; i++)
             {
-                MavenProjectModel dependency = getMavenProject(mavenProjectService, dependencyGroupId, dependencyArtifactId, dependencyVersion);
-                if (dependency == null)
+                Node node = nodes.item(i);
+                String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId | ./groupId", namespaces);
+                String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId | ./artifactId", namespaces);
+                String dependencyVersion = XmlUtil.xpathExtract(node, "./pom:version | ./version", namespaces);
+
+                String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier | ./classifier", namespaces);
+                String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope | ./scope", namespaces);
+                String dependencyType = XmlUtil.xpathExtract(node, "./pom:type | ./type", namespaces);
+                String dependencyOptional = XmlUtil.xpathExtract(node, "./pom:optional | ./optional", namespaces);
+
+                dependencyGroupId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyGroupId, version);
+                dependencyArtifactId = mavenElementValueResolver.resolveValue(document, namespaces, dependencyArtifactId, version);
+                dependencyVersion = mavenElementValueResolver.resolveValue(document, namespaces, dependencyVersion, version);
+
+                // optional check introduced with WINDUP-2771
+                if (StringUtils.isNotBlank(dependencyGroupId) && !Boolean.parseBoolean(dependencyOptional))
                 {
-                    dependency = mavenProjectService.createMavenStub(dependencyGroupId, dependencyArtifactId,
+                    MavenProjectModel dependency = getMavenProject(mavenProjectService, dependencyGroupId, dependencyArtifactId, dependencyVersion);
+                    if (dependency == null)
+                    {
+                        dependency = mavenProjectService.createMavenStub(dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion);
-                    dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
+                        dependency.setName(getReadableNameForProject(null, dependencyGroupId, dependencyArtifactId,
                                 dependencyVersion));
+                    }
+
+                    DependencyLocation dependencyLocation = mavenProjectDependencyLocationExtractor.extractDependencyLocation(node);
+
+                    ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
+                    projectDep.setClassifier(dependencyClassifier);
+                    projectDep.setScope(dependencyScope);
+                    projectDep.setType(dependencyType);
+                    projectDep.setProject(dependency);
+                    projectDep.setDependencyLocation(dependencyLocation);
+
+                    List<FileLocationModel> fileLocationList = extractFileLocations(event, xmlFileModel, node);
+                    projectDep.setFileLocationReference(fileLocationList);
+                    mavenProjectModel.addDependency(projectDep);
                 }
-
-                DependencyLocation dependencyLocation = mavenProjectDependencyLocationExtractor.extractDependencyLocation(node);
-
-                ProjectDependencyModel projectDep = new GraphService<>(event.getGraphContext(), ProjectDependencyModel.class).create();
-                projectDep.setClassifier(dependencyClassifier);
-                projectDep.setScope(dependencyScope);
-                projectDep.setType(dependencyType);
-                projectDep.setProject(dependency);
-                projectDep.setDependencyLocation(dependencyLocation);
-
-                List<FileLocationModel> fileLocationList = extractFileLocations(event, xmlFileModel, node);
-                projectDep.setFileLocationReference(fileLocationList);
-                mavenProjectModel.addDependency(projectDep);
             }
         }
+
         return mavenProjectModel;
     }
 
-    private String getDependenciesXpath() {
+    private List<String> getDependenciesXpath() {
         String parent               = "/pom:project/pom:parent | /project/parent";
         String dependencies         = "/pom:project/pom:dependencies/pom:dependency  | /project/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencies/pom:dependency  | /project/profiles/profile/dependencies/dependency";
         String pluginDependencies   = "/pom:project/pom:build/pom:plugins/pom:plugin | /project/build/plugins/plugin    | /pom:project/pom:profiles/pom:profile/pom:build/pom:plugins/pom:plugin | /project/profiles/profile/build/plugins/plugin";
         String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/profiles/profile/dependencyManagement/dependencies/dependency";
         String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/build/pluginManagement/plugins/plugin        | /pom:project/pom:profiles/pom:profile/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/profiles/profile/build/pluginManagement/plugins/plugin";
-        return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
+        return Arrays.asList(parent, dependencies, pluginDependencies, dependencyManagement, pluginManagement);
+//        return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
     }
 
     private List<FileLocationModel> extractFileLocations(GraphRewrite event, XmlFileModel xmlFileModel, Node node) {
