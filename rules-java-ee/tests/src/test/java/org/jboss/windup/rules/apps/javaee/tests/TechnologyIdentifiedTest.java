@@ -139,8 +139,6 @@ public class TechnologyIdentifiedTest
             Files.createDirectories(reportPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
-//            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-//                    TechnologyIdentifiedRuleProvider.class));
             processorConfig.setGraphContext(context);
             for (String inputPath : inputPaths)
             {
@@ -148,7 +146,7 @@ public class TechnologyIdentifiedTest
             }
             processorConfig.setOutputDirectory(reportPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
-            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(SourceModeOption.NAME, false);
             processorConfig.setOptionValue(KeepWorkDirsOption.NAME, true);
 
             processor.execute(processorConfig);

@@ -74,7 +74,7 @@ public class DiscoverAdditionalProjectDetailsTest
         try (GraphContext context = factory.create(outputPath, true))
         {
             final WindupConfiguration processorConfig = new WindupConfiguration();
-            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(SourceModeOption.NAME, false);
 
             Predicate<RuleProvider> ruleFilter = new AndPredicate(new RuleProviderWithDependenciesPredicate(MigrationRulesPhase.class),
                         new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class,
