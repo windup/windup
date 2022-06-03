@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.rules.api;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.LabelProvider;
 import org.jboss.windup.config.loader.LabelLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -36,8 +37,8 @@ public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
     }
 
     @Override
-    public Object getData(GraphContext context) {
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
+    public Object getData(GraphRewrite event) {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         List<Path> userLabelPaths = cfg.getUserLabelsPaths().stream()
                 .map(fileModel -> fileModel.asFile().toPath())
                 .collect(Collectors.toList());

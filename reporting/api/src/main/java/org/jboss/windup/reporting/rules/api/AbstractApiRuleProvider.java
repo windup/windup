@@ -33,7 +33,7 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
                 .perform(new GraphOperation() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context) {
-                        performProcess(event.getGraphContext());
+                        performProcess(event);
                     }
                 });
     }
@@ -41,10 +41,11 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
     public abstract String getOutputFilename();
 
-    public abstract Object getData(GraphContext context);
+    public abstract Object getData(GraphRewrite event);
 
-    private void performProcess(GraphContext context) {
-        Object object = getData(context);
+    private void performProcess(GraphRewrite event) {
+        GraphContext context = event.getGraphContext();
+        Object object = getData(event);
 
         String json;
         try {
