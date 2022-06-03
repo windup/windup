@@ -67,8 +67,8 @@ public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
         public String id;
         public String name;
         public String description;
-        public Set<String> supported = new HashSet<>();
-        public Set<String> unsuitable = new HashSet<>();
-        public Set<String> neutral = new HashSet<>();
+        public Set<String> supported;
+        public Set<String> unsuitable;
+        public Set<String> neutral;
     }
 }
