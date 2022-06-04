@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -6,6 +6,7 @@ import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.reporting.data.dto.RuleDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 
@@ -30,29 +31,29 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
 
     @Override
     public Object getData(GraphRewrite event) {
-        Map<String, List<RuleData>> result = new HashMap<>();
+        Map<String, List<RuleDto>> result = new HashMap<>();
 
         RuleProviderRegistry.instance(event).getProviders().forEach(ruleProvider -> {
             if (ruleProvider instanceof AbstractRuleProvider) {
                 String phase = ruleProvider.getMetadata().getPhase().getSimpleName();
-                List<RuleData> rules = RuleExecutionResultsListener.instance(event)
+                List<RuleDto> rules = RuleExecutionResultsListener.instance(event)
                         .getRuleExecutionInformation((AbstractRuleProvider) ruleProvider)
                         .stream()
                         .filter(Objects::nonNull)
                         .map(ruleExecutionInformation -> {
-                            RuleData ruleData = new RuleData();
+                            RuleDto ruleDto = new RuleDto();
 
-                            ruleData.id = ruleExecutionInformation.getRule().getId();
-                            ruleData.content = RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0);
-                            ruleData.verticesAdded = ruleExecutionInformation.getVertexIDsAdded();
-                            ruleData.edgesAdded = ruleExecutionInformation.getEdgeIDsAdded();
-                            ruleData.verticesRemoved = ruleExecutionInformation.getVertexIDsRemoved();
-                            ruleData.edgesRemoved = ruleExecutionInformation.getEdgeIDsRemoved();
-                            ruleData.executed = ruleExecutionInformation.isExecuted();
-                            ruleData.failed = ruleExecutionInformation.isFailed();
-                            ruleData.failureMessage = ruleExecutionInformation.getFailureCause() != null && ruleExecutionInformation.getFailureCause().getMessage() != null ? ruleExecutionInformation.getFailureCause().getMessage() : null;
+                            ruleDto.id = ruleExecutionInformation.getRule().getId();
+                            ruleDto.content = RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0);
+                            ruleDto.verticesAdded = ruleExecutionInformation.getVertexIDsAdded();
+                            ruleDto.edgesAdded = ruleExecutionInformation.getEdgeIDsAdded();
+                            ruleDto.verticesRemoved = ruleExecutionInformation.getVertexIDsRemoved();
+                            ruleDto.edgesRemoved = ruleExecutionInformation.getEdgeIDsRemoved();
+                            ruleDto.executed = ruleExecutionInformation.isExecuted();
+                            ruleDto.failed = ruleExecutionInformation.isFailed();
+                            ruleDto.failureMessage = ruleExecutionInformation.getFailureCause() != null && ruleExecutionInformation.getFailureCause().getMessage() != null ? ruleExecutionInformation.getFailureCause().getMessage() : null;
 
-                            return ruleData;
+                            return ruleDto;
                         })
                         .collect(Collectors.toList());
 
@@ -64,17 +65,5 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
         });
 
         return result;
-    }
-
-    static class RuleData {
-        public String id;
-        public String content;
-        public Integer verticesAdded;
-        public Integer verticesRemoved;
-        public Integer edgesAdded;
-        public Integer edgesRemoved;
-        public boolean executed;
-        public boolean failed;
-        public String failureMessage;
     }
 }

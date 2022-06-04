@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.LabelProvider;
@@ -8,9 +8,9 @@ import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.reporting.data.dto.LabelDto;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 
 import javax.inject.Inject;
@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
@@ -51,25 +50,16 @@ public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
         }
 
         return labels.stream().map(label -> {
-            Data data = new Data();
+            LabelDto labelDto = new LabelDto();
 
-            data.id = label.getId();
-            data.name = label.getName();
-            data.description = label.getDescription();
-            data.supported = new HashSet<>(label.getSupported());
-            data.unsuitable = new HashSet<>(label.getUnsuitable());
-            data.neutral = new HashSet<>(label.getNeutral());
+            labelDto.id = label.getId();
+            labelDto.name = label.getName();
+            labelDto.description = label.getDescription();
+            labelDto.supported = new HashSet<>(label.getSupported());
+            labelDto.unsuitable = new HashSet<>(label.getUnsuitable());
+            labelDto.neutral = new HashSet<>(label.getNeutral());
 
-            return data;
+            return labelDto;
         }).collect(Collectors.toList());
-    }
-
-    static class Data {
-        public String id;
-        public String name;
-        public String description;
-        public Set<String> supported;
-        public Set<String> unsuitable;
-        public Set<String> neutral;
     }
 }

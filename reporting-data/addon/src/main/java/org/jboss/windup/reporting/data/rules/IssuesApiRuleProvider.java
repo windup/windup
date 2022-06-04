@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -9,6 +9,11 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.data.dto.ApplicationIssueDto;
+import org.jboss.windup.reporting.data.dto.IssueAffectedFilesDto;
+import org.jboss.windup.reporting.data.dto.IssueDto;
+import org.jboss.windup.reporting.data.dto.IssueFileDto;
+import org.jboss.windup.reporting.data.dto.LinkDto;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
@@ -64,47 +69,47 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
             }
 
             // Fill Data
-            ApplicationIssuesData applicationIssuesData = new ApplicationIssuesData();
-            applicationIssuesData.applicationId = projectModel.getId().toString();
-            applicationIssuesData.issues = new HashMap<>();
+            ApplicationIssueDto applicationIssueDto = new ApplicationIssueDto();
+            applicationIssueDto.applicationId = projectModel.getId().toString();
+            applicationIssueDto.issues = new HashMap<>();
 
             for (Map.Entry<String, List<ProblemSummary>> entry : primarySummariesByString.entrySet()) {
                 String key = entry.getKey();
-                List<IssueData> value = entry.getValue().stream().map(problemSummary -> {
-                    IssueData issueData = new IssueData();
+                List<IssueDto> value = entry.getValue().stream().map(problemSummary -> {
+                    IssueDto issueData = new IssueDto();
 
                     issueData.id = problemSummary.getId().toString();
                     issueData.ruleId = problemSummary.getRuleID();
                     issueData.levelOfEffort = EffortReportService.getEffortLevelDescription(EffortReportService.Verbosity.VERBOSE, problemSummary.getEffortPerIncident());
                     issueData.name = problemSummary.getIssueName();
                     issueData.links = problemSummary.getLinks().stream().map(link -> {
-                        IssueLinkData issueLinkData = new IssueLinkData();
-                        issueLinkData.title = link.getTitle();
-                        issueLinkData.href = link.getLink();
-                        return issueLinkData;
+                        LinkDto linkDto = new LinkDto();
+                        linkDto.title = link.getTitle();
+                        linkDto.href = link.getLink();
+                        return linkDto;
                     }).collect(Collectors.toList());
                     issueData.affectedFiles = StreamSupport.stream(problemSummary.getDescriptions().spliterator(), false)
                             .map(description -> {
-                                IssueAffectedFilesData issueAffectedFilesData = new IssueAffectedFilesData();
-                                issueAffectedFilesData.description = description;
-                                issueAffectedFilesData.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
-                                    IssueFileData issueFileData = new IssueFileData();
-                                    issueFileData.id = fileSummary.getFile().getId().toString();
-                                    issueFileData.fileName = fileSummary.getFile().getPrettyPath();
-                                    issueFileData.occurrences = fileSummary.getOccurrences();
-                                    return issueFileData;
+                                IssueAffectedFilesDto issueAffectedFilesDto = new IssueAffectedFilesDto();
+                                issueAffectedFilesDto.description = description;
+                                issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
+                                    IssueFileDto issueFileDto = new IssueFileDto();
+                                    issueFileDto.id = fileSummary.getFile().getId().toString();
+                                    issueFileDto.fileName = fileSummary.getFile().getPrettyPath();
+                                    issueFileDto.occurrences = fileSummary.getOccurrences();
+                                    return issueFileDto;
                                 }).collect(Collectors.toList());
-                                return issueAffectedFilesData;
+                                return issueAffectedFilesDto;
                             })
                             .collect(Collectors.toList());
 
                     return issueData;
                 }).collect(Collectors.toList());
 
-                applicationIssuesData.issues.put(key.toLowerCase().replaceAll("migration ", ""), value);
+                applicationIssueDto.issues.put(key.toLowerCase().replaceAll("migration ", ""), value);
             }
 
-            return applicationIssuesData;
+            return applicationIssueDto;
         }).collect(Collectors.toList());
     }
 
@@ -115,35 +120,5 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
         ProjectModelTraversal traversal = new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy());
         return traversal.getAllProjects(true);
-    }
-
-    static class ApplicationIssuesData {
-        public String applicationId;
-        public Map<String, List<IssueData>> issues;
-    }
-
-    static class IssueData {
-        public String id;
-        public String name;
-        public String ruleId;
-        public String levelOfEffort;
-        public List<IssueLinkData> links;
-        public List<IssueAffectedFilesData> affectedFiles;
-    }
-
-    static class IssueAffectedFilesData {
-        public String description;
-        public List<IssueFileData> files;
-    }
-
-    static class IssueFileData {
-        public String id;
-        public String fileName;
-        public int occurrences;
-    }
-
-    static class IssueLinkData {
-        public String title;
-        public String href;
     }
 }

@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
@@ -10,6 +10,9 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.data.dto.FileDto;
+import org.jboss.windup.reporting.data.dto.HintDto;
+import org.jboss.windup.reporting.data.dto.LinkDto;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.model.source.SourceReportToProjectEdgeModel;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
@@ -50,30 +53,30 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                 .collect(Collectors.toList());
     }
 
-    private List<FileData> getFileSources(GraphRewrite event, ProjectModelTraversal projectModelTraversal) {
-        List<FileData> result = new ArrayList<>();
+    private List<FileDto> getFileSources(GraphRewrite event, ProjectModelTraversal projectModelTraversal) {
+        List<FileDto> result = new ArrayList<>();
 
         for (FileModel fileModel : projectModelTraversal.getCanonicalProject().getFileModels()) {
             if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport()) {
-                FileData sourceFileData = getSourceFileData(event, fileModel);
-                result.add(sourceFileData);
+                FileDto filesDto = getSourceFileData(event, fileModel);
+                result.add(filesDto);
             }
         }
 
         for (ProjectModelTraversal child : projectModelTraversal.getChildren()) {
-            List<FileData> childrenSourceFiles = getFileSources(event, child);
+            List<FileDto> childrenSourceFiles = getFileSources(event, child);
             result.addAll(childrenSourceFiles);
         }
 
         return result;
     }
 
-    private FileData getSourceFileData(GraphRewrite event, FileModel sourceFile) {
+    private FileDto getSourceFileData(GraphRewrite event, FileModel sourceFile) {
         SourceReportService sourceReportService = new SourceReportService(event.getGraphContext());
         SourceReportModel reportModel = sourceReportService.getSourceReportForFileModel(sourceFile);
 
         // Fill Data
-        FileData result = new FileData();
+        FileDto result = new FileDto();
 
         result.id = sourceFile.getId().toString();
         result.fullPath = reportModel.getProjectEdges().stream()
@@ -84,22 +87,22 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
         result.fileContent = reportModel.getSourceBody();
         result.hints = reportModel.getSourceFileModel().getInlineHints().stream()
                 .map(inlineHintModel -> {
-                    HintData hintData = new HintData();
+                    HintDto hintDto = new HintDto();
 
-                    hintData.ruleId = inlineHintModel.getRuleID();
-                    hintData.line = inlineHintModel.getLineNumber();
-                    hintData.title = inlineHintModel.getTitle();
-                    hintData.content = inlineHintModel.getHint();
-                    hintData.links = inlineHintModel.getLinks().stream()
+                    hintDto.ruleId = inlineHintModel.getRuleID();
+                    hintDto.line = inlineHintModel.getLineNumber();
+                    hintDto.title = inlineHintModel.getTitle();
+                    hintDto.content = inlineHintModel.getHint();
+                    hintDto.links = inlineHintModel.getLinks().stream()
                             .map(linkModel -> {
-                                LinkData linkData = new LinkData();
-                                linkData.title = linkModel.getDescription();
-                                linkData.href = linkModel.getLink();
-                                return linkData;
+                                LinkDto linkDto = new LinkDto();
+                                linkDto.title = linkModel.getDescription();
+                                linkDto.href = linkModel.getLink();
+                                return linkDto;
                             })
                             .collect(Collectors.toList());
 
-                    return hintData;
+                    return hintDto;
                 })
                 .collect(Collectors.toList());
 
@@ -114,27 +117,5 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
             }
         }
         return "unknown";
-    }
-
-    static class FileData {
-        public String id;
-        public String fullPath;
-        public String prettyPath;
-        public String sourceType;
-        public String fileContent;
-        public List<HintData> hints;
-    }
-
-    static class HintData {
-        public int line;
-        public String title;
-        public String ruleId;
-        public String content;
-        public List<LinkData> links;
-    }
-
-    static class LinkData {
-        public String title;
-        public String href;
     }
 }

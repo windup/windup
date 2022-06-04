@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

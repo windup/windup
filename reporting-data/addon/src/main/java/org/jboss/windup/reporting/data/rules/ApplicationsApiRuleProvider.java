@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.api;
+package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -8,6 +8,7 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.AllTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.data.dto.ApplicationDto;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -43,8 +44,6 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
         InlineHintService inlineHintService = new InlineHintService(context);
 
         return new ProjectService(context).getRootProjectModels().stream().map(projectModel -> {
-            Data data = new Data();
-
             AllTraversalStrategy traversalStrategy = new AllTraversalStrategy();
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel, traversalStrategy);
 
@@ -83,13 +82,15 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
             }
 
             // Fill result
-            data.id = projectModel.getId().toString();
-            data.name = projectModel.getName();
-            data.tags = tags;
-            data.storyPoints = storyPoints;
-            data.incidents = incidents;
+            ApplicationDto applicationDto = new ApplicationDto();
 
-            return data;
+            applicationDto.id = projectModel.getId().toString();
+            applicationDto.name = projectModel.getName();
+            applicationDto.tags = tags;
+            applicationDto.storyPoints = storyPoints;
+            applicationDto.incidents = incidents;
+
+            return applicationDto;
         }).collect(Collectors.toList());
     }
 
@@ -130,13 +131,5 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
                 results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
             }
         }
-    }
-
-    static class Data {
-        public String id;
-        public String name;
-        public Set<String> tags;
-        public int storyPoints;
-        public Map<String, Integer> incidents;
     }
 }
