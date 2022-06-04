@@ -7,6 +7,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.reporting.data.dto.RuleDto;
+import org.jboss.windup.reporting.data.dto.TechnologyDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 
@@ -36,6 +37,20 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
         RuleProviderRegistry.instance(event).getProviders().forEach(ruleProvider -> {
             if (ruleProvider instanceof AbstractRuleProvider) {
                 String phase = ruleProvider.getMetadata().getPhase().getSimpleName();
+
+                List<TechnologyDto> sourceTechnology = ruleProvider.getMetadata().getSourceTechnologies().stream().map(technologyReference -> {
+                    TechnologyDto technologyDto = new TechnologyDto();
+                    technologyDto.id = technologyReference.getId();
+                    technologyDto.versionRange = technologyReference.getVersionRangeAsString();
+                    return technologyDto;
+                }).collect(Collectors.toList());
+                List<TechnologyDto> targetTechnology = ruleProvider.getMetadata().getTargetTechnologies().stream().map(technologyReference -> {
+                    TechnologyDto technologyDto = new TechnologyDto();
+                    technologyDto.id = technologyReference.getId();
+                    technologyDto.versionRange = technologyReference.getVersionRangeAsString();
+                    return technologyDto;
+                }).collect(Collectors.toList());
+
                 List<RuleDto> rules = RuleExecutionResultsListener.instance(event)
                         .getRuleExecutionInformation((AbstractRuleProvider) ruleProvider)
                         .stream()
@@ -52,6 +67,8 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
                             ruleDto.executed = ruleExecutionInformation.isExecuted();
                             ruleDto.failed = ruleExecutionInformation.isFailed();
                             ruleDto.failureMessage = ruleExecutionInformation.getFailureCause() != null && ruleExecutionInformation.getFailureCause().getMessage() != null ? ruleExecutionInformation.getFailureCause().getMessage() : null;
+                            ruleDto.sourceTechnology = sourceTechnology;
+                            ruleDto.targetTechnology = targetTechnology;
 
                             return ruleDto;
                         })

@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.data.dto;
 
+import java.util.List;
+
 public class RuleDto {
     public String id;
     public String content;
@@ -10,4 +12,6 @@ public class RuleDto {
     public boolean executed;
     public boolean failed;
     public String failureMessage;
+    public List<TechnologyDto> sourceTechnology;
+    public List<TechnologyDto> targetTechnology;
 }

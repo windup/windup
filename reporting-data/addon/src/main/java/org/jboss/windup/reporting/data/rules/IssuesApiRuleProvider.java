@@ -94,7 +94,7 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                                 issueAffectedFilesDto.description = description;
                                 issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
                                     IssueFileDto issueFileDto = new IssueFileDto();
-                                    issueFileDto.id = fileSummary.getFile().getId().toString();
+                                    issueFileDto.fileId = fileSummary.getFile().getId().toString();
                                     issueFileDto.fileName = fileSummary.getFile().getPrettyPath();
                                     issueFileDto.occurrences = fileSummary.getOccurrences();
                                     return issueFileDto;
