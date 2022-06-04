@@ -42,60 +42,55 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
         ClassificationService classificationService = new ClassificationService(context);
         InlineHintService inlineHintService = new InlineHintService(context);
 
-        return new ProjectService(context).getRootProjectModels().stream()
-                .map(projectModel -> {
-                    Data data = new Data();
+        return new ProjectService(context).getRootProjectModels().stream().map(projectModel -> {
+            Data data = new Data();
 
+            AllTraversalStrategy traversalStrategy = new AllTraversalStrategy();
+            ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel, traversalStrategy);
 
-                    AllTraversalStrategy traversalStrategy = new AllTraversalStrategy();
-                    ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel, traversalStrategy);
+            // Tags
+            Set<String> tags = new HashSet<>();
+            Iterable<TechnologyTagModel> technologyTagModels = new TechnologyTagService(context).findTechnologyTagsForProject(projectModelTraversal);
+            for (TechnologyTagModel tag : technologyTagModels) {
+                if (!Objects.equals(tag.getName(), "Decompiled Java File")) {
+                    tags.add(getTagFrom(tag));
+                }
+            }
 
-                    // Tags
-                    Set<String> tags = new HashSet<>();
-                    Iterable<TechnologyTagModel> technologyTagModels = new TechnologyTagService(context).findTechnologyTagsForProject(projectModelTraversal);
-                    for (TechnologyTagModel tag : technologyTagModels) {
-                        if (!Objects.equals(tag.getName(), "Decompiled Java File")) {
-                            tags.add(getTagFrom(tag));
-                        }
-                    }
+            // Story points
+            Set<String> includeTags = Collections.emptySet();
+            Set<String> excludeTags = Collections.emptySet();
+            Set<String> issueCategories = Collections.emptySet();
 
-                    // Story points
-                    Set<String> includeTags = Collections.emptySet();
-                    Set<String> excludeTags = Collections.emptySet();
-                    Set<String> issueCategories = Collections.emptySet();
+            Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
+            Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
+            Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
 
-                    Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
-                    Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
-                    Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
+            int storyPoints = sumPoints(results);
 
-                    int storyPoints = sumPoints(results);
+            // Incidents
+            Map<IssueCategoryModel, Integer> incidentsClassificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
+            Map<IssueCategoryModel, Integer> incidentsHintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
 
-                    // Incidents
-                    Map<IssueCategoryModel, Integer> incidentsClassificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
-                    Map<IssueCategoryModel, Integer> incidentsHintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
+            Map<IssueCategoryModel, Integer> allIncidents = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
+            addAllIncidents(allIncidents, incidentsClassificationEffortDetails);
+            addAllIncidents(allIncidents, incidentsHintEffortDetails);
 
-                    Map<IssueCategoryModel, Integer> allIncidents = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
-                    addAllIncidents(allIncidents, incidentsClassificationEffortDetails);
-                    addAllIncidents(allIncidents, incidentsHintEffortDetails);
+            Map<String, Integer> incidents = new HashMap<>();
+            for (Map.Entry<IssueCategoryModel, Integer> entry : allIncidents.entrySet()) {
+                String key = entry.getKey().getName().trim().toLowerCase().replaceAll("migration ", "");
+                incidents.put(key, entry.getValue());
+            }
 
-                    Map<String, Integer> incidents = new HashMap<>();
-                    for (Map.Entry<IssueCategoryModel, Integer> entry : allIncidents.entrySet()) {
-                        String key = entry.getKey().getName().trim()
-                                .toLowerCase()
-                                .replaceAll(" ", "_")
-                                .replaceFirst("migration_", "");
-                        incidents.put(key, entry.getValue());
-                    }
+            // Fill result
+            data.id = projectModel.getId().toString();
+            data.name = projectModel.getName();
+            data.tags = tags;
+            data.storyPoints = storyPoints;
+            data.incidents = incidents;
 
-                    // Fill result
-                    data.id = projectModel.getName().trim().toLowerCase().replaceAll("[^a-zA-Z0-9_-]", "");
-                    data.name = projectModel.getName();
-                    data.tags = tags;
-                    data.storyPoints = storyPoints;
-                    data.incidents = incidents;
-
-                    return data;
-                }).collect(Collectors.toList());
+            return data;
+        }).collect(Collectors.toList());
     }
 
     private String getTagFrom(TechnologyTagModel technologyTagModel) {
