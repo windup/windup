@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -24,6 +25,7 @@ import java.nio.file.Path;
 public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logger.getLogger(AbstractApiRuleProvider.class);
+    public static final String JAVASCRIPT_OUTPUT = "windup.js";
 
     // @formatter:off
     @Override
@@ -58,19 +60,31 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
         ReportService reportService = new ReportService(context);
         Path outputDir = reportService.getApiDataDirectory();
-        File outputFile = outputDir.resolve(getOutputFilename()).toFile();
+        File outputJSONFile = outputDir.resolve(getOutputFilename()).toFile();
+        File outputJSFile = outputDir.resolve(JAVASCRIPT_OUTPUT).toFile();
+
         try {
-            FileUtils.forceMkdir(outputFile.getParentFile());
+            FileUtils.forceMkdir(outputJSONFile.getParentFile());
         } catch (IOException ex) {
-            LOG.error("Error creating a directory: " + outputFile.getParentFile().getPath());
+            LOG.error("Error creating a directory: " + outputJSONFile.getParentFile().getPath());
             return;
         }
 
-        try (FileWriter writer = new FileWriter(outputFile)) {
+        // Create JSON file
+        try (FileWriter writer = new FileWriter(outputJSONFile)) {
             writer.append(json);
-            LOG.info("Exporting json data to file: " + outputFile.getPath());
+            LOG.info("Exporting json data to file: " + outputJSONFile.getPath());
         } catch (IOException e) {
-            LOG.error("Error exporting tags data to: " + outputFile.getPath());
+            LOG.error("Error exporting tags data to: " + outputJSONFile.getPath());
+            return;
+        }
+
+        // Enrich Javascript file
+        try (FileWriter writer = new FileWriter(outputJSFile, true)) {
+            writer.append("window." + FilenameUtils.removeExtension(outputJSONFile.getName()) + "=" + json + ";");
+            LOG.info("Exporting json data to file: " + outputJSFile.getPath());
+        } catch (IOException e) {
+            LOG.error("Error exporting tags data to: " + outputJSFile.getPath());
             return;
         }
     }

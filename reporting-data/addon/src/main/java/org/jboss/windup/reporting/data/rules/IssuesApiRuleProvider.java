@@ -1,10 +1,14 @@
 package org.jboss.windup.reporting.data.rules;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
@@ -19,6 +23,8 @@ import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryServic
 import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,7 +101,7 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                                 issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
                                     IssueFileDto issueFileDto = new IssueFileDto();
                                     issueFileDto.fileId = fileSummary.getFile().getId().toString();
-                                    issueFileDto.fileName = fileSummary.getFile().getPrettyPath();
+                                    issueFileDto.fileName = getPrettyPathForFile(fileSummary.getFile());
                                     issueFileDto.occurrences = fileSummary.getOccurrences();
                                     return issueFileDto;
                                 }).collect(Collectors.toList());
@@ -120,5 +126,29 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
         ProjectModelTraversal traversal = new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy());
         return traversal.getAllProjects(true);
+    }
+
+    private String getPrettyPathForFile(FileModel fileModel) {
+        if (fileModel instanceof JavaClassFileModel) {
+            JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
+            if (jcfm.getJavaClass() == null) {
+                return fileModel.getPrettyPathWithinProject();
+            } else {
+                return jcfm.getJavaClass().getQualifiedName();
+            }
+        } else if (fileModel instanceof ReportResourceFileModel) {
+            return "resources/" + fileModel.getPrettyPath();
+        } else if (fileModel instanceof JavaSourceFileModel) {
+            JavaSourceFileModel javaSourceModel = (JavaSourceFileModel) fileModel;
+            String filename = StringUtils.removeEndIgnoreCase(fileModel.getFileName(), ".java");
+            String packageName = javaSourceModel.getPackageName();
+            return packageName == null || packageName.isEmpty() ? filename : packageName + "." + filename;
+        }
+        // This is used for instance when showing unparsable files in the Issues Report.
+        else if (fileModel instanceof ArchiveModel) {
+            return fileModel.getPrettyPath();
+        } else {
+            return fileModel.getPrettyPathWithinProject();
+        }
     }
 }
