@@ -26,6 +26,7 @@ public class ReportService extends GraphService<ReportModel>
     private static final String REPORTS_DIR = "reports";
     private static final String DATA = "data";
     private static final String API = "api";
+    private static final String NEW_UI = "new-ui";
 
     private static final Set<String> usedFilenames = new HashSet<>();
 
@@ -51,6 +52,14 @@ public class ReportService extends GraphService<ReportModel>
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
         Path path = cfg.getOutputPath().asFile().toPath().resolve(API);
+        createDirectoryIfNeeded(path);
+        return path.toAbsolutePath();
+    }
+
+    public Path getNewUIDirectory()
+    {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
+        Path path = cfg.getOutputPath().asFile().toPath().resolve(NEW_UI);
         createDirectoryIfNeeded(path);
         return path.toAbsolutePath();
     }
