@@ -5,10 +5,10 @@
     </#if>
 
     <dt>Website</dt>
-    <dd><a href="https://developers.redhat.com/products/mta/overview/">https://developers.redhat.com/products/mta/overview/</a></dd>
+    <dd><a href="https://windup.github.io/">https://windup.github.io/</a></dd>
 
     <dt>Documentation</dt>
-    <dd><a href="https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/">https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/</a></dd>
+    <dd><a href="https://windup.github.io/">https://windup.github.io/</a></dd>
 </dl>
 
 <dl class="dl-horizontal">

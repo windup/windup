@@ -267,7 +267,7 @@ public class Bootstrap
             Path path = new File("").toPath();
             return path.toFile();
         }
-        return Paths.get(userHome).resolve(".mta").toFile();
+        return Paths.get(userHome).resolve(".windup").toFile();
     }
 
     private static File getUserAddonsDir()

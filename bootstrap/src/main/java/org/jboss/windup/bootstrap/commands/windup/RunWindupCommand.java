@@ -319,7 +319,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             else
             {
                 System.out.println("Generating reports were disabled by option --skipReports");
-                System.out.println("If using that option was unintentional, please run MTA again to generate reports.");
+                System.out.println("If using that option was unintentional, please run Windup again to generate reports.");
             }
         }
         catch (Exception e)

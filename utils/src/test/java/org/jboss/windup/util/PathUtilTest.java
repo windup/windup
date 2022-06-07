@@ -71,7 +71,7 @@ public class PathUtilTest
     {
         Assert.assertEquals(Paths.get(""), PathUtil.getWindupUserDir());
         setUserHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", ".mta"), PathUtil.getWindupUserDir());
+        Assert.assertEquals(Paths.get("/foo", ".windup"), PathUtil.getWindupUserDir());
     }
 
     @Test
@@ -79,6 +79,6 @@ public class PathUtilTest
     {
         Assert.assertEquals(Paths.get("ignore"), PathUtil.getUserIgnoreDir());
         setUserHome("/foo");
-        Assert.assertEquals(Paths.get("/foo", ".mta", "ignore"), PathUtil.getUserIgnoreDir());
+        Assert.assertEquals(Paths.get("/foo", ".windup", "ignore"), PathUtil.getUserIgnoreDir());
     }
 }

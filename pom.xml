@@ -571,10 +571,32 @@
         </profile>
 
         <profile>
-            <id>mta</id>
+            <id>windup</id>
             <activation>
                 <property>
                     <name>!downstream</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Windup Migration Toolkit for Applications</distribution.brand.name>
+                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://github.com/windup/windup</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-windup</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mta</value>
                 </property>
             </activation>
             <properties>
