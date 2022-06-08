@@ -55,7 +55,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     default long countParameters()
     {
         return new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
-                .in(METHOD_PARAMETER).toList().size();
+                .out(METHOD_PARAMETER).toList().size();
     }
 
 
@@ -83,7 +83,7 @@ public interface JavaMethodModel extends WindupVertexFrame
                 .toList();
         return vertices.stream().map(v -> getGraph().frameElement(v, JavaParameterModel.class)).findFirst().get();
 */
-        return this.traverse(v -> v.in(METHOD_PARAMETER).has(PARAMETER_POSITION, parameterPosition)).next(JavaParameterModel.class);
+        return this.traverse(v -> v.out(METHOD_PARAMETER).has(PARAMETER_POSITION, parameterPosition)).next(JavaParameterModel.class);
     }
 
 
