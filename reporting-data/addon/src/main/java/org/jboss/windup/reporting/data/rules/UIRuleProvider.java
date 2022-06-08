@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -58,7 +57,7 @@ public class UIRuleProvider extends AbstractRuleProvider {
         ReportService reportService = new ReportService(context);
 
         Path apiDataDirectory = reportService.getApiDataDirectory();
-        Path uiDirectory = reportService.getNewUIDirectory();
+        Path uiDirectory = reportService.getWindupUIDirectory();
         File uiDirectoryFile = uiDirectory.toFile();
 
         try {
@@ -85,7 +84,7 @@ public class UIRuleProvider extends AbstractRuleProvider {
             // Set data
             Path sourceWindupJS = apiDataDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
 
-            Path targetWindupJS = uiDirectory.resolve("api").resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
+            Path targetWindupJS = uiDirectory.resolve(ReportService.API).resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
             Files.delete(targetWindupJS);
 
             Files.copy(sourceWindupJS, targetWindupJS);

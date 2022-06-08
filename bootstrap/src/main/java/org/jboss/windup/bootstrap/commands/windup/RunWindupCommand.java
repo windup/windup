@@ -312,6 +312,10 @@ public class RunWindupCommand implements Command, FurnaceDependent
             final Boolean skipReports = (Boolean) windupConfiguration.getOptionMap().get(SkipReportsRenderingOption.NAME);
             if (!skipReports)
             {
+                Path indexHtmlPathWindupUI = windupConfiguration.getOutputDirectory().resolve("windup-ui").resolve("index.html").normalize().toAbsolutePath();
+                System.out.println("[Tech preview] windup-ui created: " + indexHtmlPathWindupUI + System.getProperty("line.separator")
+                            +"               Access it at this URL: " + indexHtmlPathWindupUI.toUri());
+
                 Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
                 System.out.println("Report created: " + indexHtmlPath + System.getProperty("line.separator")
                             + "              Access it at this URL: " + indexHtmlPath.toUri());

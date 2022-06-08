@@ -250,9 +250,15 @@ public class WindupCommand implements UICommand
 
             uiProgressMonitor.done();
 
+            Path indexHtmlPathWindupUI = windupConfiguration.getOutputDirectory().resolve("windup-ui").resolve("index.html").normalize().toAbsolutePath();
+            String windupUIMsg = "[Tech preview] windup-ui created: " + indexHtmlPathWindupUI + System.getProperty("line.separator")
+                    + "              Access it at this URL: " + indexHtmlPathWindupUI.toUri();
+
             Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-            return Results.success("Report created: " + indexHtmlPath + System.getProperty("line.separator")
-                        + "              Access it at this URL: " + indexHtmlPath.toUri());
+            String windupMsg = "Report created: " + indexHtmlPath + System.getProperty("line.separator")
+                    + "              Access it at this URL: " + indexHtmlPath.toUri();
+
+            return Results.success(windupUIMsg + System.getProperty("line.separator") + windupMsg);
         }
     }
 
