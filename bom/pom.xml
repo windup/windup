@@ -207,6 +207,12 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-diva</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
 
 
             <!-- Windup Rules Base -->

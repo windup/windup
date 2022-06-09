@@ -52,6 +52,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-diva</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
        	    <classifier>forge-addon</classifier>

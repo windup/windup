@@ -46,6 +46,8 @@ public class JavaMethodService extends GraphService<JavaMethodModel>
             param.setJavaType(params[i]);
         }
 
+        clz.addJavaMethod(method);
+
         return method;
     }
 
