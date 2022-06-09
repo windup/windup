@@ -176,6 +176,7 @@
                                 <!-- this will be used in the tests, see InstallRemoveAddonCommandTest -->
                                 <!--<addonId>org.jboss.windup.rules.apps:windup-rules-tattletale,${project.version}</addonId>-->
                             </addonIds>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>
