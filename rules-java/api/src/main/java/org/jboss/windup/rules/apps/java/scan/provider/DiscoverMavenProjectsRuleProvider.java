@@ -45,7 +45,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.logging.Logger;
 
 /**
@@ -387,7 +386,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         String dependencyManagement = "/pom:project/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/dependencyManagement/dependencies/dependency | /pom:project/pom:profiles/pom:profile/pom:dependencyManagement/pom:dependencies/pom:dependency | /project/profiles/profile/dependencyManagement/dependencies/dependency";
         String pluginManagement     = "/pom:project/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/build/pluginManagement/plugins/plugin        | /pom:project/pom:profiles/pom:profile/pom:build/pom:pluginManagement/pom:plugins/pom:plugin    | /project/profiles/profile/build/pluginManagement/plugins/plugin";
         return Arrays.asList(parent, dependencies, pluginDependencies, dependencyManagement, pluginManagement);
-//        return new StringJoiner(" | ").add(parent).add(dependencies).add(pluginDependencies).add(dependencyManagement).add(pluginManagement).toString();
     }
 
     private List<FileLocationModel> extractFileLocations(GraphRewrite event, XmlFileModel xmlFileModel, Node node) {

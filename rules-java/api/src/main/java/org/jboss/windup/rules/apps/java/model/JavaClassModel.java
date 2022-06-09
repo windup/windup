@@ -179,7 +179,7 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     default List<JavaMethodModel> getMethod(String methodName)
     {
         List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
-                .in(JAVA_METHOD)
+                .out(JAVA_METHOD)
                 .has(JavaMethodModel.METHOD_NAME, methodName)
                 .toList();
         return vertices.stream().map(v -> getGraph().frameElement(v, JavaMethodModel.class))
