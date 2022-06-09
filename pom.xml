@@ -38,7 +38,7 @@
         <jacoco.argLine /> <!-- Will be set by the JaCoCo Maven plugin when active. -->
         <furnace.dot.skip>true</furnace.dot.skip> <!-- Default to not spending time generating the (expensive to generate) dot files -->
 
-        <surefire-argLine>-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m -Djdk.xml.xpathExprGrpLimit=200 -Djdk.xml.xpathExprOpLimit=0 -Djdk.xml.xpathTotalOpLimit=0</surefire-argLine>
+        <surefire-argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</surefire-argLine>
     </properties>
 
     <scm>
