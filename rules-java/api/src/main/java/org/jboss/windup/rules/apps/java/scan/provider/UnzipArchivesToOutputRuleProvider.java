@@ -11,10 +11,11 @@ import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
-import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -41,6 +42,9 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
 
         return ConfigurationBuilder.begin()
             .addRule()
+            .when(Query.fromType(ArchiveModel.class), SourceMode.isEnabled())
+            .perform(new IgnoreArchivesInSourceModeOperation())
+            .addRule()
             .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class), SourceMode.isDisabled())
             .perform(
                 unzipArchives,
@@ -50,6 +54,18 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
             .addRule()
             .when(Query.fromType(ArchiveModel.class).excludingType(DuplicateArchiveModel.class))
             .perform(new DuplicateArchiveOperation());
+    }
+
+    /**
+     * Operation to ignore all archives when running in source mode
+     */
+    private class IgnoreArchivesInSourceModeOperation extends AbstractIterationOperation<ArchiveModel> {
+
+        @Override
+        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload) {
+            IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(event.getGraphContext(), payload, IgnoredArchiveModel.class);
+            ignoredArchive.setIgnoredRegex("Archives ignored in source mode");
+        }
     }
 
     /**
