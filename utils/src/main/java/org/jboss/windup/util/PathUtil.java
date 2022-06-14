@@ -35,7 +35,7 @@ public class PathUtil
     public static String BINARY_DIRECTORY_NAME = "bin";
 
     /**
-     * The path $USER_HOME/.rhamt
+     * The path $USER_HOME/.windup
      */
     public static Path getWindupUserDir()
     {

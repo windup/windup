@@ -97,7 +97,7 @@ public class Bootstrap
             runtimeLabelsDir.mkdirs();
         }
 
-        final String defaultLog = new File(getUserWindupDir(), "log/mta.log").getAbsolutePath();
+        final String defaultLog = new File(getUserWindupDir(), "log/windup.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
         System.setProperty("org.jboss.forge.log.file", logDir);
