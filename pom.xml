@@ -18,8 +18,8 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.9.2.Final</version.forge>
-        <version.furnace>2.28.4.Final</version.furnace>
+        <version.forge>3.9.8.Final</version.forge>
+        <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
@@ -115,6 +115,7 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
 
@@ -191,7 +192,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.2</version>
+                <version>2.13.2.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
