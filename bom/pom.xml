@@ -348,21 +348,25 @@
 
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.equinox.preferences</artifactId>
+                <version>3.9.100</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>org.eclipse.jdt.core</artifactId>
+                <version>3.29.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.runtime</artifactId>
+                <version>[3.13.0,4.0.0)</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.resources</artifactId>
-                <version>3.13.200</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.text</artifactId>
-                <version>3.8.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.14.100</version>
-                <scope>provided</scope>
+                <version>[3.14.0,4.0.0)</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
