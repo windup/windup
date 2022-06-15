@@ -362,7 +362,11 @@
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.runtime</artifactId>
                 <version>[3.13.0,4.0.0)</version>
-                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.resources</artifactId>
+                <version>[3.14.0,4.0.0)</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
