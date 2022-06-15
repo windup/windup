@@ -359,6 +359,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.runtime</artifactId>
+                <version>[3.13.0,4.0.0)</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>4.1.74.Final</version>
