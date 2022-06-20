@@ -14,21 +14,18 @@ import org.ocpsoft.rewrite.config.Or;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "or", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class OrHandler implements ElementHandler<Or>
-{
-   @Override
-   public Or processElement(ParserContext handlerManager, Element element)
-   {
-      List<Condition> conditions = new ArrayList<>();
+public class OrHandler implements ElementHandler<Or> {
+    @Override
+    public Or processElement(ParserContext handlerManager, Element element) {
+        List<Condition> conditions = new ArrayList<>();
 
-      List<Element> children = $(element).children().get();
-      for (Element child : children)
-      {
-         Condition condition = handlerManager.processElement(child);
-         conditions.add(condition);
-      }
+        List<Element> children = $(element).children().get();
+        for (Element child : children) {
+            Condition condition = handlerManager.processElement(child);
+            conditions.add(condition);
+        }
 
-      return Or.any(conditions.toArray(new Condition[conditions.size()]));
-   }
+        return Or.any(conditions.toArray(new Condition[conditions.size()]));
+    }
 
 }

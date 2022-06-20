@@ -15,34 +15,28 @@ import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
-public class FileService extends GraphService<FileModel>
-{
-    public FileService(GraphContext context)
-    {
+public class FileService extends GraphService<FileModel> {
+    public FileService(GraphContext context) {
         super(context, FileModel.class);
     }
 
-    public FileModel createByFilePath(String filePath)
-    {
+    public FileModel createByFilePath(String filePath) {
         return createByFilePath(null, filePath);
     }
 
-    public FileModel createByFilePath(FileModel parentFile, String filePath)
-    {
+    public FileModel createByFilePath(FileModel parentFile, String filePath) {
         ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
         String absolutePath = Paths.get(filePath).normalize().toAbsolutePath().toString();
         FileModel entry = findByPath(absolutePath);
 
-        if (entry == null)
-        {
+        if (entry == null) {
             entry = this.create();
             entry.setFilePath(absolutePath);
             entry.setParentFile(parentFile);
         }
 
-        if (entry.getParentFile() == null && parentFile != null)
-        {
+        if (entry.getParentFile() == null && parentFile != null) {
             // Deal with an odd corner case, that probably only happens in my test environment.
             entry.setParentFile(parentFile);
         }
@@ -51,15 +45,13 @@ public class FileService extends GraphService<FileModel>
         return entry;
     }
 
-    public FileModel findByPath(String filePath)
-    {
+    public FileModel findByPath(String filePath) {
         // make the path absolute (as we only store absolute paths)
         filePath = Paths.get(filePath).toAbsolutePath().toString();
         return getUniqueByProperty(FileModel.FILE_PATH, filePath);
     }
 
-    public Iterable<FileModel> findByFilenameRegex(String filenameRegex)
-    {
+    public Iterable<FileModel> findByFilenameRegex(String filenameRegex) {
         filenameRegex = TitanUtil.titanifyRegex(filenameRegex);
         Iterable<Vertex> vertices = getGraphContext().getGraph()
                 .traversal()
@@ -81,23 +73,18 @@ public class FileService extends GraphService<FileModel>
         return new FramedVertexIterable<>(getGraphContext().getFramed(), vertices, FileModel.class);
     }
 
-    public List<FileModel> findArchiveEntryWithExtension(String... values)
-    {
+    public List<FileModel> findArchiveEntryWithExtension(String... values) {
         // build regex
         if (values.length == 0)
             return Collections.emptyList();
 
         final String regex;
-        if (values.length == 1)
-        {
+        if (values.length == 1) {
             regex = ".+\\." + values[0] + "$";
-        }
-        else
-        {
+        } else {
             StringBuilder builder = new StringBuilder();
             builder.append("\\b(");
-            for (String value : values)
-            {
+            for (String value : values) {
                 builder.append("|");
                 builder.append(value);
             }
@@ -105,7 +92,7 @@ public class FileService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return (List<FileModel>)getGraphContext().getQuery(FileModel.class).traverse(g -> g.has("filePath", Text.textRegex(regex)))
-                    .toList(FileModel.class);
+        return (List<FileModel>) getGraphContext().getQuery(FileModel.class).traverse(g -> g.has("filePath", Text.textRegex(regex)))
+                .toList(FileModel.class);
     }
 }

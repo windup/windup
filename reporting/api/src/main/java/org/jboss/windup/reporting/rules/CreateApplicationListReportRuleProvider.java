@@ -51,8 +51,7 @@ import java.util.stream.Collectors;
         before = AttachApplicationReportsToIndexRuleProvider.class,
         haltOnException = true
 )
-public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(CreateApplicationListReportRuleProvider.class);
 
     public static final String APPLICATION_LIST_REPORT = "Application List";
@@ -67,21 +66,19 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-            .addRule()
-            .perform(new GraphOperation() {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context) {
-                    createIndexReport(event.getGraphContext());
-                }
-            });
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        createIndexReport(event.getGraphContext());
+                    }
+                });
     }
     // @formatter:on
 
-    private void createIndexReport(GraphContext context)
-    {
+    private void createIndexReport(GraphContext context) {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
         List<Path> userLabelPaths = cfg.getUserLabelsPaths().stream().map(fileModel -> fileModel.asFile().toPath()).collect(Collectors.toList());
 
@@ -89,14 +86,12 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         List<Label> labels = new ArrayList<>();
         RuleLoaderContext labelLoaderContext = new RuleLoaderContext(userLabelPaths, null);
         LabelProviderRegistry labelProviderRegistry = labelLoader.loadConfiguration(labelLoaderContext);
-        for (LabelProvider provider : labelProviderRegistry.getProviders())
-        {
+        for (LabelProvider provider : labelProviderRegistry.getProviders()) {
             labels.addAll(provider.getData().getLabels());
         }
 
         JsonArrayBuilder labelsJsonArrayBuilder = Json.createArrayBuilder();
-        for (Label label : labels)
-        {
+        for (Label label : labels) {
             labelsJsonArrayBuilder.add(toJson(label));
         }
         JsonArray labelsJsonArray = labelsJsonArrayBuilder.build();
@@ -121,10 +116,8 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         final Iterable<ApplicationReportModel> apps = applicationReportService.findAll();
         List<ApplicationReportModel> appsList = new ArrayList<>();
-        for (ApplicationReportModel applicationReportModel : apps)
-        {
-            if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
-            {
+        for (ApplicationReportModel applicationReportModel : apps) {
+            if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport()) {
                 appsList.add(applicationReportModel);
                 if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(applicationReportModel.getProjectModel().getUniqueID()))
                     relatedData.put("sharedLibsApplicationReport", applicationReportModel); // Used as kind of boolean in the template.
@@ -141,8 +134,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setRelatedResource(relatedData);
     }
 
-    private JsonObject toJson(Label label)
-    {
+    private JsonObject toJson(Label label) {
         JsonArrayBuilder supportedJsonArrayBuilder = Json.createArrayBuilder();
         JsonArrayBuilder unsuitableJsonArrayBuilder = Json.createArrayBuilder();
         JsonArrayBuilder neutralJsonArrayBuilder = Json.createArrayBuilder();
@@ -152,35 +144,30 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         label.getNeutral().forEach(neutralJsonArrayBuilder::add);
 
         return Json.createObjectBuilder()
-                    .add("id", label.getId())
-                    .add("name", label.getName())
-                    .add("description", label.getDescription() != null ? label.getDescription() : "")
-                    .add("supported", supportedJsonArrayBuilder.build())
-                    .add("unsuitable", unsuitableJsonArrayBuilder.build())
-                    .add("neutral", neutralJsonArrayBuilder.build())
-                    .build();
+                .add("id", label.getId())
+                .add("name", label.getName())
+                .add("description", label.getDescription() != null ? label.getDescription() : "")
+                .add("supported", supportedJsonArrayBuilder.build())
+                .add("unsuitable", unsuitableJsonArrayBuilder.build())
+                .add("neutral", neutralJsonArrayBuilder.build())
+                .build();
     }
 
-    public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
-    {
-        public AppRootFileNameComparator()
-        {
+    public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel> {
+        public AppRootFileNameComparator() {
         }
 
-        public int compare(ApplicationReportModel o1, ApplicationReportModel o2)
-        {
+        public int compare(ApplicationReportModel o1, ApplicationReportModel o2) {
             // If the info is missing, put that to the end. This may be the case of virtual apps.
-            if (null == o1.getProjectModel() || null == o1.getProjectModel().getRootFileModel() || null == o1.getProjectModel().getRootFileModel().getFileName() )
+            if (null == o1.getProjectModel() || null == o1.getProjectModel().getRootFileModel() || null == o1.getProjectModel().getRootFileModel().getFileName())
                 return 1;
-            if (null == o2.getProjectModel() || null == o2.getProjectModel().getRootFileModel() || null == o2.getProjectModel().getRootFileModel().getFileName() )
+            if (null == o2.getProjectModel() || null == o2.getProjectModel().getRootFileModel() || null == o2.getProjectModel().getRootFileModel().getFileName())
                 return -1;
 
             try {
                 return o1.getProjectModel().getRootFileModel().getFileName().compareToIgnoreCase(o2.getProjectModel().getRootFileModel().getFileName());
                 //return Comparator.comparing((ApplicationReportModel o) -> o.getProjectModel().getRootFileModel().getFileName(), String::compareToIgnoreCase).compare(o1, o2);
-            }
-            catch (Throwable ex)
-            {
+            } catch (Throwable ex) {
                 return 0;
             }
         }

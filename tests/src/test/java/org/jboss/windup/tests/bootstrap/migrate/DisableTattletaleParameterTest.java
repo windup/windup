@@ -21,7 +21,7 @@ public class DisableTattletaleParameterTest extends AbstractBootstrapTestWithRul
 
     @Test
     public void disableTattletaleParameterWithEapTarget() {
-        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(), 
+        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
         bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",

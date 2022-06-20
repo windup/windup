@@ -6,9 +6,10 @@ package org.jboss.windup.rules.apps.java.scan.ast.trie;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public interface TrieStructureTypeRelation<SAVE_TYPE, SEARCH_TYPE>
-{
-      String getStringToSearchFromSearchType(SEARCH_TYPE search);
-      String getStringPrefixToSaveSaveType(SAVE_TYPE save);
-      boolean checkIfMatchFound(SAVE_TYPE saved, SEARCH_TYPE searched);
+public interface TrieStructureTypeRelation<SAVE_TYPE, SEARCH_TYPE> {
+    String getStringToSearchFromSearchType(SEARCH_TYPE search);
+
+    String getStringPrefixToSaveSaveType(SAVE_TYPE save);
+
+    boolean checkIfMatchFound(SAVE_TYPE saved, SEARCH_TYPE searched);
 }

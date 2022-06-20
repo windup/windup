@@ -8,12 +8,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class AbstractTest
-{
+public class AbstractTest {
     @Deployment
     @AddonDependencies
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addClass(AbstractTest.class).addBeansXML();
     }
 }

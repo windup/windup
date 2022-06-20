@@ -12,21 +12,16 @@ import org.jboss.windup.util.FurnaceCompositeClassLoader;
 
 /**
  * Provides a composite classloader of all addons that depend on the graph addon.
- * 
  */
-public class GraphApiCompositeClassLoaderProvider
-{
+public class GraphApiCompositeClassLoaderProvider {
     private Addon addon;
 
     private Furnace furnace;
 
-    public GraphApiCompositeClassLoaderProvider()
-    {
+    public GraphApiCompositeClassLoaderProvider() {
         this.furnace = SimpleContainer.getFurnace(GraphApiCompositeClassLoaderProvider.class.getClassLoader());
-        for (Addon addon : this.furnace.getAddonRegistry().getAddons())
-        {
-            if (addon.getClassLoader() != null && addon.getClassLoader().equals(GraphApiCompositeClassLoaderProvider.class.getClassLoader()))
-            {
+        for (Addon addon : this.furnace.getAddonRegistry().getAddons()) {
+            if (addon.getClassLoader() != null && addon.getClassLoader().equals(GraphApiCompositeClassLoaderProvider.class.getClassLoader())) {
                 this.addon = addon;
                 break;
             }
@@ -38,37 +33,29 @@ public class GraphApiCompositeClassLoaderProvider
      * FramedGraph can always load all the relevant types of *Model classes (as all model classes will be in Addons that
      * depend on Graph API).
      */
-    public ClassLoader getCompositeClassLoader()
-    {
+    public ClassLoader getCompositeClassLoader() {
         List<ClassLoader> loaders = new ArrayList<>();
-        AddonFilter filter = new AddonFilter()
-        {
+        AddonFilter filter = new AddonFilter() {
             @Override
-            public boolean accept(Addon addon)
-            {
+            public boolean accept(Addon addon) {
                 return addonDependsOnGraphApi(addon);
             }
         };
 
-        for (Addon addon : furnace.getAddonRegistry().getAddons(filter))
-        {
+        for (Addon addon : furnace.getAddonRegistry().getAddons(filter)) {
             loaders.add(addon.getClassLoader());
         }
 
         return new FurnaceCompositeClassLoader(getClass().getClassLoader(), loaders);
     }
 
-    private boolean addonDependsOnGraphApi(Addon addon)
-    {
-        for (AddonDependency dep : addon.getDependencies())
-        {
-            if (dep.getDependency().equals(this.addon))
-            {
+    private boolean addonDependsOnGraphApi(Addon addon) {
+        for (AddonDependency dep : addon.getDependencies()) {
+            if (dep.getDependency().equals(this.addon)) {
                 return true;
             }
             boolean subDep = addonDependsOnGraphApi(dep.getDependency());
-            if (subDep)
-            {
+            if (subDep) {
                 return true;
             }
         }

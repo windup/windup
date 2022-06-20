@@ -14,8 +14,7 @@ import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(JdbcDatasourceModel.TYPE)
-public interface JdbcDatasourceModel extends WindupVertexFrame
-{
+public interface JdbcDatasourceModel extends WindupVertexFrame {
     String TYPE = "JdbcDatasourceModel";
 
     String NAME = TYPE + "-name";

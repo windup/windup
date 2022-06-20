@@ -10,8 +10,7 @@ import java.util.logging.LogRecord;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface WindupToolingProgressMonitor extends Remote
-{
+public interface WindupToolingProgressMonitor extends Remote {
     /**
      * Constant indicating an unknown amount of work.
      */
@@ -25,9 +24,9 @@ public interface WindupToolingProgressMonitor extends Remote
     /**
      * Notifies that the main task is beginning. This must only be called once on a given progress monitor instance.
      *
-     * @param name the name (or description) of the main task
+     * @param name      the name (or description) of the main task
      * @param totalWork the total number of work units into which the main task is been subdivided. If the value is <code>UNKNOWN</code> the
-     *            implementation is free to indicate progress in a way which doesn't require the total number of work units in advance.
+     *                  implementation is free to indicate progress in a way which doesn't require the total number of work units in advance.
      */
     void beginTask(String name, int totalWork) throws RemoteException;
 
@@ -50,7 +49,7 @@ public interface WindupToolingProgressMonitor extends Remote
      * Sets the cancel state to the given value.
      *
      * @param value <code>true</code> indicates that cancellation has been requested (but not necessarily acknowledged); <code>false</code> clears
-     *            this flag
+     *              this flag
      * @see #isCancelled()
      */
     void setCancelled(boolean value) throws RemoteException;

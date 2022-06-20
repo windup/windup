@@ -2,8 +2,7 @@ package org.jboss.windup.tooling.rules;
 
 import java.io.Serializable;
 
-public interface RulesPath extends Serializable
-{
+public interface RulesPath extends Serializable {
     int getVersion();
 
     void setVersion(int version);
@@ -38,8 +37,7 @@ public interface RulesPath extends Serializable
      */
     void setLoadError(String loadError);
 
-    public enum RulesPathType
-    {
+    public enum RulesPathType {
         SYSTEM_PROVIDED, USER_PROVIDED
     }
 }

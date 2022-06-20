@@ -18,11 +18,9 @@ import org.jboss.windup.graph.Adjacency;
  * Contains metadata related to Hibernate Session Factories.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 @TypeValue(HibernateSessionFactoryModel.TYPE)
-public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasApplications
-{
+public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasApplications {
     String TYPE = "HibernateSessionFactoryModel";
 
     String DATASOURCE = "datasource";
@@ -61,10 +59,8 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasAppl
     @JavaHandler(handler = Impl.class)
     boolean belongsToProject(ProjectModel projectModel);
 
-    class Impl
-    {
-        public boolean belongsToProject(HibernateSessionFactoryModel model, ProjectModel projectModel)
-        {
+    class Impl {
+        public boolean belongsToProject(HibernateSessionFactoryModel model, ProjectModel projectModel) {
             return model.getHibernateConfigurationFileModel().belongsToProject(projectModel);
         }
     }

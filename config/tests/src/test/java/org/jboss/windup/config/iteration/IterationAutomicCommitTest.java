@@ -50,25 +50,22 @@ import com.syncleus.ferma.WrappedFramedGraph;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class IterationAutomicCommitTest
-{
+public class IterationAutomicCommitTest {
     @Inject
     private GraphContextFactory factory;
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
-    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
+    private DefaultEvaluationContext createEvalContext(GraphRewrite event) {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
@@ -76,11 +73,9 @@ public class IterationAutomicCommitTest
     }
 
     @Test
-    public void testAutomaticPeriodicCommit() throws Exception
-    {
+    public void testAutomaticPeriodicCommit() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext baseContext = factory.create(folder, true))
-        {
+        try (final GraphContext baseContext = factory.create(folder, true)) {
             CommitInterceptingGraphContext context = new CommitInterceptingGraphContext(baseContext);
 
             GraphRewrite event = new GraphRewrite(context);
@@ -89,7 +84,7 @@ public class IterationAutomicCommitTest
             WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+                    .getAbsolutePath()));
 
             TestRuleProvider provider = new TestRuleProvider();
             Configuration configuration = provider.getConfiguration(null);
@@ -99,8 +94,7 @@ public class IterationAutomicCommitTest
             Assert.assertEquals(1, context.commitCount);
 
             // Now create a few hundred FileModels to see if autocommit happens periodically
-            for (int i = 0; i < 1200; i++)
-            {
+            for (int i = 0; i < 1200; i++) {
                 fileModelService.create().setFilePath("foo." + i);
             }
             context.commitCount = 0;
@@ -110,29 +104,26 @@ public class IterationAutomicCommitTest
         }
     }
 
-    public class TestRuleProvider extends AbstractRuleProvider
-    {
-        public TestRuleProvider()
-        {
+    public class TestRuleProvider extends AbstractRuleProvider {
+        public TestRuleProvider() {
             super(MetadataBuilder.forProvider(TestRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             Configuration configuration = ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(FileModel.class))
                     .perform(Iteration
-                                    .over()
-                                    .perform(new GraphOperation() {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context) {
-                                            // no-op
-                                        }
-                                    })
-                                    .endIteration()
+                            .over()
+                            .perform(new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    // no-op
+                                }
+                            })
+                            .endIteration()
                     );
             return configuration;
         }
@@ -140,116 +131,97 @@ public class IterationAutomicCommitTest
 
     }
 
-    private class CommitInterceptingGraphContext implements GraphContext
-    {
+    private class CommitInterceptingGraphContext implements GraphContext {
         private int commitCount = 0;
         private GraphContext delegate;
 
-        public CommitInterceptingGraphContext(GraphContext delegate)
-        {
+        public CommitInterceptingGraphContext(GraphContext delegate) {
             this.delegate = delegate;
         }
 
         @Override
-        public Path getGraphDirectory()
-        {
+        public Path getGraphDirectory() {
             return delegate.getGraphDirectory();
         }
 
         @Override
-        public JanusGraph getGraph()
-        {
+        public JanusGraph getGraph() {
             return delegate.getGraph();
         }
 
         @Override
-        public GraphContext create(boolean enableListeners)
-        {
+        public GraphContext create(boolean enableListeners) {
             return delegate.create(enableListeners);
         }
 
         @Override
-        public GraphContext load()
-        {
+        public GraphContext load() {
             return delegate.load();
         }
 
         @Override
-        public WrappedFramedGraph<JanusGraph> getFramed()
-        {
+        public WrappedFramedGraph<JanusGraph> getFramed() {
             return delegate.getFramed();
         }
 
         @Override
-        public GraphTypeManager getGraphTypeManager()
-        {
+        public GraphTypeManager getGraphTypeManager() {
             return delegate.getGraphTypeManager();
         }
 
         @Override
-        public Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind)
-        {
+        public Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind) {
             return delegate.getQuery(kind);
         }
 
         @Override
-        public void clear()
-        {
+        public void clear() {
             delegate.clear();
         }
 
         @Override
-        public void setOptions(Map<String, Object> options)
-        {
+        public void setOptions(Map<String, Object> options) {
             delegate.setOptions(options);
         }
 
         @Override
-        public Map<String, Object> getOptionMap()
-        {
+        public Map<String, Object> getOptionMap() {
             return delegate.getOptionMap();
         }
 
         @Override
-        public void close() throws IOException
-        {
+        public void close() throws IOException {
             delegate.close();
         }
 
         @Override
-        public <T extends WindupVertexFrame> Service<T> service(Class<T> clazz)
-        {
+        public <T extends WindupVertexFrame> Service<T> service(Class<T> clazz) {
             return delegate.service(clazz);
         }
 
         @Override
-        public <T extends WindupVertexFrame> T getUnique(Class<T> clazz)
-        {
+        public <T extends WindupVertexFrame> T getUnique(Class<T> clazz) {
             return delegate.getUnique(clazz);
         }
 
         @Override
-        public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz)
-        {
+        public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz) {
             return delegate.findAll(clazz);
         }
 
         @Override
-        public <T extends WindupVertexFrame> T create(Class<T> clazz)
-        {
+        public <T extends WindupVertexFrame> T create(Class<T> clazz) {
             return delegate.create(clazz);
         }
 
         @Override
-        public void commit()
-        {
+        public void commit() {
             commitCount++;
             delegate.commit();
         }
 
         @Override
-        public void registerGraphListener(GraphListener listener)
-        {
+        public void registerGraphListener(GraphListener listener) {
             delegate.registerGraphListener(listener);
         }
     }

@@ -18,63 +18,54 @@ import org.jboss.seam.faces.FacesMessages;
 @Stateful
 @Scope(EVENT)
 @Name("register")
-public class RegisterAction implements Register
-{
-   @In
-   private User user;
-   
-   @PersistenceContext
-   private EntityManager em;
-   
-   @In
-   private FacesMessages facesMessages;
-   
-   private String verify;
-   
-   private boolean registered;
-   
-   public void register()
-   {
-      if ( user.getPassword().equals(verify) )
-      {
-         List existing = em.createQuery("select u.username from User u where u.username=#{user.username}")
-            .getResultList();
-         if (existing.size()==0)
-         {
-            em.persist(user);
-            facesMessages.add("Successfully registered as #{user.username}");
-            registered = true;
-         }
-         else
-         {
-            facesMessages.addToControl("username", "Username #{user.username} already exists");
-         }
-      }
-      else 
-      {
-         facesMessages.addToControl("verify", "Re-enter your password");
-         verify=null;
-      }
-   }
-   
-   public void invalid()
-   {
-      facesMessages.add("Please try again");
-   }
-   
-   public boolean isRegistered()
-   {
-      return registered;
-   }
-   public String getVerify()
-   {
-      return verify;
-   }
-   public void setVerify(String verify)
-   {
-      this.verify = verify;
-   }
-   
-   @Remove
-   public void destroy() {}
+public class RegisterAction implements Register {
+    @In
+    private User user;
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @In
+    private FacesMessages facesMessages;
+
+    private String verify;
+
+    private boolean registered;
+
+    public void register() {
+        if (user.getPassword().equals(verify)) {
+            List existing = em.createQuery("select u.username from User u where u.username=#{user.username}")
+                    .getResultList();
+            if (existing.size() == 0) {
+                em.persist(user);
+                facesMessages.add("Successfully registered as #{user.username}");
+                registered = true;
+            } else {
+                facesMessages.addToControl("username", "Username #{user.username} already exists");
+            }
+        } else {
+            facesMessages.addToControl("verify", "Re-enter your password");
+            verify = null;
+        }
+    }
+
+    public void invalid() {
+        facesMessages.add("Please try again");
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    public String getVerify() {
+        return verify;
+    }
+
+    public void setVerify(String verify) {
+        this.verify = verify;
+    }
+
+    @Remove
+    public void destroy() {
+    }
 }

@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface FrameBooleanDefaultValue
-{
+public @interface FrameBooleanDefaultValue {
     boolean value();
 }

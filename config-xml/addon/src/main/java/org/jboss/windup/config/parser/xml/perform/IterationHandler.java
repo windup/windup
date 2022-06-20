@@ -22,75 +22,65 @@ import org.w3c.dom.Element;
 
 /**
  * Parses the "iteration" element to produce {@link Iteration} {@link Operation}s.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "iteration", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class IterationHandler implements ElementHandler<Iteration>
-{
+public class IterationHandler implements ElementHandler<Iteration> {
 
     @Override
-    public Iteration processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Iteration processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String overVar = $(element).attr("over");
         IterationBuilderOver iterationOver = StringUtils.isEmpty(overVar) ? Iteration.over() : Iteration.over(overVar);
 
         List<Element> children = $(element).children().get();
         List<Operation> operations = new ArrayList<>(children.size());
         List<Operation> otherwise = new ArrayList<>();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             if (null != child.getNodeName())
-            switch (child.getNodeName())
-            {
-                case "when":
-                    List<Element> whenElements = $(child).children().get();
-                    for (Element whenElement : whenElements)
-                    {
-                        Object object = handlerManager.processElement(whenElement);
-                        if (object instanceof Condition)
-                        {
+                switch (child.getNodeName()) {
+                    case "when":
+                        List<Element> whenElements = $(child).children().get();
+                        for (Element whenElement : whenElements) {
+                            Object object = handlerManager.processElement(whenElement);
+                            if (object instanceof Condition) {
+                                iterationOver.when((Condition) object);
+                            }
+                        }
+                        break;
+                    case "perform":
+                        List<Element> performElements = $(child).children().get();
+                        for (Element performElement : performElements) {
+                            Object object = handlerManager.processElement(performElement);
+                            if (object instanceof Operation) {
+                                operations.add((Operation) object);
+                            }
+                        }
+                        break;
+                    case "otherwise":
+                        List<Element> otherwiseElements = $(child).children().get();
+                        for (Element otherwiseElement : otherwiseElements) {
+                            Object object = handlerManager.processElement(otherwiseElement);
+                            if (object instanceof Operation) {
+                                otherwise.add((Operation) object);
+                            }
+                        }
+                        break;
+                    default:
+                        Object object = handlerManager.processElement(child);
+                        if (object instanceof Operation) {
+                            operations.add((Operation) object);
+                        } else if (object instanceof Condition) {
                             iterationOver.when((Condition) object);
                         }
-                    }   break;
-                case "perform":
-                    List<Element> performElements = $(child).children().get();
-                    for (Element performElement : performElements)
-                    {
-                        Object object = handlerManager.processElement(performElement);
-                        if (object instanceof Operation)
-                        {
-                            operations.add((Operation) object);
-                        }
-                }   break;
-                case "otherwise":
-                    List<Element> otherwiseElements = $(child).children().get();
-                    for (Element otherwiseElement : otherwiseElements)
-                    {
-                        Object object = handlerManager.processElement(otherwiseElement);
-                        if (object instanceof Operation)
-                        {
-                            otherwise.add((Operation) object);
-                    }
-                    }   break;
-                default:
-                    Object object = handlerManager.processElement(child);
-                    if (object instanceof Operation)
-                    {
-                        operations.add((Operation) object);
-                    }
-                    else if (object instanceof Condition)
-                    {
-                        iterationOver.when((Condition) object);
-                }   break;
-            }
+                        break;
+                }
         }
         IterationBuilderPerform iterationBuilderPerform = iterationOver.perform(operations
-                    .toArray(new Operation[operations.size()]));
-        if (otherwise.size() > 0)
-        {
+                .toArray(new Operation[operations.size()]));
+        if (otherwise.size() > 0) {
             IterationBuilderOtherwise iterationBuilderOtherwise = iterationBuilderPerform.otherwise(Perform
-                        .all(otherwise.toArray(new Operation[otherwise.size()])));
+                    .all(otherwise.toArray(new Operation[otherwise.size()])));
             return (Iteration) iterationBuilderOtherwise;
         }
 

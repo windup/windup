@@ -27,24 +27,19 @@ import static org.jboss.windup.rules.apps.java.scan.operation.packagemapping.Pac
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jess Sightler</a>
  */
-public class ArchivePackageNameIdentificationGraphChangedListener implements GraphListener
-{
+public class ArchivePackageNameIdentificationGraphChangedListener implements GraphListener {
     private static Logger LOG = Logging.get(ArchivePackageNameIdentificationGraphChangedListener.class);
 
     private GraphRewrite event;
 
-    public ArchivePackageNameIdentificationGraphChangedListener(GraphRewrite event)
-    {
+    public ArchivePackageNameIdentificationGraphChangedListener(GraphRewrite event) {
         this.event = event;
     }
 
     @Override
-    public void vertexPropertyChanged(Vertex vertex, Property property, Object oldValue, Object... setValue)
-    {
-        try
-        {
-            if (ArchiveModel.ARCHIVE_NAME.equals(property.key()))
-            {
+    public void vertexPropertyChanged(Vertex vertex, Property property, Object oldValue, Object... setValue) {
+        try {
+            if (ArchiveModel.ARCHIVE_NAME.equals(property.key())) {
                 ArchiveService archiveService = new ArchiveService(event.getGraphContext());
                 ArchiveModel archive = archiveService.getById(vertex.id());
 
@@ -57,16 +52,13 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
                 if (cfg.isAnalyzeKnownLibraries())
                     return;
 
-                if (allPackagesAreKnown(archive))
-                {
+                if (allPackagesAreKnown(archive)) {
                     IgnoredFileModel ignoredFileModel = new GraphService<>(event.getGraphContext(), IgnoredFileModel.class).addTypeToModel(archive);
                     ignoredFileModel.setIgnoredRegex("3rd Party Archive");
                     new GraphService<>(event.getGraphContext(), IdentifiedArchiveModel.class).addTypeToModel(archive);
                 }
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             LOG.warning("Failed to check package name mapping due to: " + t.getMessage());
         }
     }
@@ -83,8 +75,7 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
     }
 
     @Override
-    public void vertexAdded(Vertex vertex)
-    {
+    public void vertexAdded(Vertex vertex) {
     }
 
 }

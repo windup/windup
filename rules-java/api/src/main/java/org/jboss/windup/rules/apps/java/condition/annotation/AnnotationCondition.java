@@ -10,14 +10,13 @@ import java.util.Set;
 
 /**
  * {@link AnnotationCondition} provides support for filtering type references based upon detailed annotation information.
- *
+ * <p>
  * This must also support recursive filtering for cases involving nested annotations (for example,
- * @MyAnnotation(inner={@AnotherAnnotation(inner = [])})).
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @MyAnnotation(inner={@AnotherAnnotation(inner = [])})).
  */
-public abstract class AnnotationCondition
-{
+public abstract class AnnotationCondition {
     /**
      * Called by the framework to evaluate a specific condition. Returns true if the annotation matches the condition and
      * false otherwise.
@@ -26,6 +25,7 @@ public abstract class AnnotationCondition
 
     /**
      * Called by the framework to obtain the list of parameters required by the condition.
+     *
      * @return The parameter names used in the condition.
      */
     public abstract Set<String> getRequiredParameterNames();

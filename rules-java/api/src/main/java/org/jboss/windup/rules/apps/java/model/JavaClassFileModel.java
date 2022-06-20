@@ -14,8 +14,7 @@ import org.jboss.windup.graph.Property;
  * is represented by the {@link JavaClassModel} frame.
  */
 @TypeValue(JavaClassFileModel.TYPE)
-public interface JavaClassFileModel extends FileModel
-{
+public interface JavaClassFileModel extends FileModel {
     String MINOR_VERSION = "minorVersion";
     String MAJOR_VERSION = "majorVersion";
     String TYPE = "JavaClassFileModel";
@@ -91,8 +90,7 @@ public interface JavaClassFileModel extends FileModel
      * Returns the path of this file within the parent project (format suitable for reporting)
      * Uses fully qualified class name notation for classes
      */
-    default String getPrettyPathWithinProject(boolean useFQNForClasses)
-    {
+    default String getPrettyPathWithinProject(boolean useFQNForClasses) {
         if (!useFQNForClasses) {
             return this.getPrettyPathWithinProject();
         }

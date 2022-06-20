@@ -28,49 +28,43 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureHibernateTest extends WindupArchitectureTest
-{
+public class WindupArchitectureHibernateTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupHibernate() throws Exception
-    {
+    public void testRunWindupHibernate() throws Exception {
         final String path = "../test-files/hibernate-tutorial-web-3.3.2.GA.war";
         List<String> includeList = Collections.singletonList("nocodescanning");
         List<String> excludeList = Collections.emptyList();
-        try (GraphContext context = super.createGraphContext())
-        {
+        try (GraphContext context = super.createGraphContext()) {
             super.runTest(context, path, null, false, includeList, excludeList);
             validateHibernateFiles(context);
             validateReports(context);
         }
     }
 
-    private void validateHibernateFiles(GraphContext context)
-    {
+    private void validateHibernateFiles(GraphContext context) {
         HibernateConfigurationFileService cfgService = new HibernateConfigurationFileService(context);
 
         int hibernateCfgFilesFound = 0;
-        for (HibernateConfigurationFileModel model : cfgService.findAll())
-        {
+        for (HibernateConfigurationFileModel model : cfgService.findAll()) {
             Assert.assertEquals("3.0", model.getSpecificationVersion());
             hibernateCfgFilesFound++;
         }
@@ -82,12 +76,10 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         boolean itemHbmFound = false;
         int numberModelsFound = 0;
         Iterable<HibernateMappingFileModel> allMappingModels = mappingService.findAll();
-        for (HibernateMappingFileModel model : allMappingModels)
-        {
+        for (HibernateMappingFileModel model : allMappingModels) {
             numberModelsFound++;
             Assert.assertEquals("3.0", model.getSpecificationVersion());
-            if (model.getFileName().equals("Person.hbm.xml"))
-            {
+            if (model.getFileName().equals("Person.hbm.xml")) {
                 personHbmFound = true;
                 Iterator<HibernateEntityModel> entities = model.getHibernateEntities().iterator();
                 Assert.assertTrue(entities.hasNext());
@@ -98,9 +90,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
                 Assert.assertEquals("org.hibernate.tutorial.domain.Person", entity.getJavaClass().getQualifiedName());
 
                 Assert.assertFalse(entities.hasNext());
-            }
-            else if (model.getFileName().equals("Event.hbm.xml"))
-            {
+            } else if (model.getFileName().equals("Event.hbm.xml")) {
                 eventHbmFound = true;
 
                 Iterator<HibernateEntityModel> entities = model.getHibernateEntities().iterator();
@@ -112,9 +102,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
                 Assert.assertEquals("org.hibernate.tutorial.domain.Event", entity.getJavaClass().getQualifiedName());
 
                 Assert.assertFalse(entities.hasNext());
-            }
-            else if (model.getFileName().equals("Item.hbm.xml"))
-            {
+            } else if (model.getFileName().equals("Item.hbm.xml")) {
                 itemHbmFound = true;
 
                 Iterator<HibernateEntityModel> entities = model.getHibernateEntities().iterator();
@@ -134,12 +122,11 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         Assert.assertEquals(3, numberModelsFound);
     }
 
-    private void validateHibernateReport(GraphContext context)
-    {
+    private void validateHibernateReport(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = reportService.getUniqueByProperty(
-                    ReportModel.TEMPLATE_PATH,
-                    CreateHibernateReportRuleProvider.TEMPLATE_HIBERNATE_REPORT);
+                ReportModel.TEMPLATE_PATH,
+                CreateHibernateReportRuleProvider.TEMPLATE_HIBERNATE_REPORT);
         TestHibernateReportUtil util = new TestHibernateReportUtil();
         Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
@@ -153,8 +140,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkHibernateEntityInReport("org.hibernate.tutorial.domain.Event", "EVENTS"));
     }
 
-    private void validateReports(GraphContext context)
-    {
+    private void validateReports(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
         Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
@@ -163,9 +149,9 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war", "META-INF/MANIFEST.MF", "Manifest");
         util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war", "WEB-INF/classes/hibernate.cfg.xml",
-                    "Hibernate Cfg");
+                "Hibernate Cfg");
         util.checkFilePathAndTag("hibernate-tutorial-web-3.3.2.GA.war",
-                    "WEB-INF/classes/org/hibernate/tutorial/domain/Event.hbm.xml", "Hibernate Mapping");
+                "WEB-INF/classes/org/hibernate/tutorial/domain/Event.hbm.xml", "Hibernate Mapping");
 
         validateHibernateReport(context);
     }

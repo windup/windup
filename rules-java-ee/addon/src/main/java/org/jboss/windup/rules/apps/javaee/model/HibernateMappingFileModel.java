@@ -11,12 +11,11 @@ import java.util.List;
 
 /**
  * Contains metadata extracted from a hibernate mapping file (*.hbm.xml)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(HibernateMappingFileModel.TYPE)
-public interface HibernateMappingFileModel extends XmlFileModel
-{
+public interface HibernateMappingFileModel extends XmlFileModel {
     String TYPE = "HibernateMappingFileModel";
     String HIBERNATE_ENTITY = "hibernateEntity";
     String SPECIFICATION_VERSION = "specificationVersion";

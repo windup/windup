@@ -15,39 +15,33 @@ import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
  * A {@link RuleProvider} that provides only a single {@link Rule} (itself).
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class SingleRuleProvider extends AbstractRuleProvider implements Rule
-{
-    public SingleRuleProvider()
-    {
+public abstract class SingleRuleProvider extends AbstractRuleProvider implements Rule {
+    public SingleRuleProvider() {
         super();
     }
 
-    public SingleRuleProvider(RuleProviderMetadata metadata)
-    {
+    public SingleRuleProvider(RuleProviderMetadata metadata) {
         super(metadata);
     }
 
-    public SingleRuleProvider(Class<? extends RuleProvider> implementationType, String id)
-    {
+    public SingleRuleProvider(Class<? extends RuleProvider> implementationType, String id) {
         super(implementationType, id);
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return getMetadata().getID();
     }
 
     @Override
-    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(this)
-                    .perform(this);
+                .addRule()
+                .when(this)
+                .perform(this);
     }
 
     /**
@@ -55,8 +49,7 @@ public abstract class SingleRuleProvider extends AbstractRuleProvider implements
      * to the given event, it must return <code>false</code>. If the condition applies and is satisfied, return
      * <code>true</code>. (Default <code>true</code>.)
      */
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         return true;
     }
 
@@ -66,16 +59,14 @@ public abstract class SingleRuleProvider extends AbstractRuleProvider implements
     public abstract void perform(GraphRewrite event, EvaluationContext context);
 
     @Override
-    public final boolean evaluate(Rewrite event, EvaluationContext context)
-    {
+    public final boolean evaluate(Rewrite event, EvaluationContext context) {
         if (event instanceof GraphRewrite)
             return evaluate((GraphRewrite) event, context);
         return false;
     }
 
     @Override
-    public final void perform(Rewrite event, EvaluationContext context)
-    {
+    public final void perform(Rewrite event, EvaluationContext context) {
         if (event instanceof GraphRewrite)
             perform((GraphRewrite) event, context);
     }

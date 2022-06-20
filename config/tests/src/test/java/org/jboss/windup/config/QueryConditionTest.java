@@ -37,45 +37,41 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 import com.google.common.collect.Iterables;
 
 @RunWith(Arquillian.class)
-public class QueryConditionTest
-{
+public class QueryConditionTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestMavenExampleRuleProvider.class,
-                                TestJavaExampleRuleProvider.class,
-                                TestXmlExampleRuleProvider1.class,
-                                TestXmlExampleRuleProvider2.class,
-                                TestXmlExampleRuleProvider3.class,
-                                TestGremlinQueryOnlyRuleProvider.class,
-                                TestXmlMetaFacetModel.class,
-                                TestSomeModel.class,
-                                TestWindupConfigurationExampleRuleProvider.class);
+                .addBeansXML()
+                .addClasses(TestMavenExampleRuleProvider.class,
+                        TestJavaExampleRuleProvider.class,
+                        TestXmlExampleRuleProvider1.class,
+                        TestXmlExampleRuleProvider2.class,
+                        TestXmlExampleRuleProvider3.class,
+                        TestGremlinQueryOnlyRuleProvider.class,
+                        TestXmlMetaFacetModel.class,
+                        TestSomeModel.class,
+                        TestWindupConfigurationExampleRuleProvider.class);
         return archive;
     }
 
     @Inject
     private GraphContextFactory factory;
 
-    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
+    private DefaultEvaluationContext createEvalContext(GraphRewrite event) {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
     }
 
-    private void fillData(final GraphContext context)
-    {
+    private void fillData(final GraphContext context) {
         context.getFramed().addFramedVertex(TestSomeModel.class);
         context.getFramed().addFramedVertex(TestSomeModel.class);
         context.getFramed().addFramedVertex(TestSomeModel.class);
@@ -92,11 +88,9 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testInitialQueryAsGremlin() throws Exception
-    {
+    public void testInitialQueryAsGremlin() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
@@ -130,11 +124,9 @@ public class QueryConditionTest
 
     // TODO: Create shared method to set up the graph.
     @Test
-    public void testSingletonSelection() throws Exception
-    {
+    public void testSingletonSelection() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -166,7 +158,7 @@ public class QueryConditionTest
             Assert.assertNotNull(methodModelList.get(0).getJavaClass());
             Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
             Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass()
-                        .getQualifiedName());
+                    .getQualifiedName());
 
             WindupConfigurationModel foundCfgModel = provider.getConfig();
             Assert.assertNotNull(foundCfgModel);
@@ -182,11 +174,9 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testJavaMethodModel() throws Exception
-    {
+    public void testJavaMethodModel() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -214,17 +204,15 @@ public class QueryConditionTest
             Assert.assertNotNull(methodModelList.get(0).getJavaClass());
             Assert.assertEquals("toString", methodModelList.get(0).getMethodName());
             Assert.assertEquals(classModel2.getQualifiedName(), methodModelList.get(0).getJavaClass()
-                        .getQualifiedName());
+                    .getQualifiedName());
         }
     }
 
     @Test
-    public void testTypeTransition() throws Exception
-    {
+    public void testTypeTransition() throws Exception {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             fillData(context);
             context.commit();
@@ -243,12 +231,10 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testTypeFilter() throws Exception
-    {
+    public void testTypeFilter() throws Exception {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             fillData(context);
             context.commit();
@@ -275,12 +261,10 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testPropertyFilter() throws Exception
-    {
+    public void testPropertyFilter() throws Exception {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             fillData(context);
             context.commit();
@@ -300,12 +284,10 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testTypeAndPropertyFilter() throws Exception
-    {
+    public void testTypeAndPropertyFilter() throws Exception {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             fillData(context);
             context.commit();
 
@@ -325,10 +307,8 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testExcludeTypeFilter() throws Exception
-    {
-        try (final GraphContext context = factory.create(true))
-        {
+    public void testExcludeTypeFilter() throws Exception {
+        try (final GraphContext context = factory.create(true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
@@ -359,8 +339,7 @@ public class QueryConditionTest
             Iterable<? extends WindupVertexFrame> excludedResults = variables.findVariable("withTypeExcluded");
             Assert.assertEquals(4, Iterables.size(excludedResults));
 
-            for (WindupVertexFrame frame : excludedResults)
-            {
+            for (WindupVertexFrame frame : excludedResults) {
                 Assert.assertTrue(frame instanceof TestSomeModel);
                 Assert.assertFalse(frame instanceof TestXmlMetaFacetModel);
             }
@@ -370,10 +349,8 @@ public class QueryConditionTest
     }
 
     @Test
-    public void testIncludeTypeFilter() throws Exception
-    {
-        try (final GraphContext context = factory.create(true))
-        {
+    public void testIncludeTypeFilter() throws Exception {
+        try (final GraphContext context = factory.create(true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
@@ -404,8 +381,7 @@ public class QueryConditionTest
             Iterable<? extends WindupVertexFrame> includedResults = variables.findVariable("withTypeIncluded");
             Assert.assertEquals(1, Iterables.size(includedResults));
 
-            for (WindupVertexFrame frame : includedResults)
-            {
+            for (WindupVertexFrame frame : includedResults) {
                 Assert.assertTrue(frame instanceof TestSomeModel);
                 Assert.assertTrue(frame instanceof TestXmlMetaFacetModel);
             }

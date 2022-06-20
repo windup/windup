@@ -9,20 +9,17 @@ import javax.xml.xpath.XPathFunctionException;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.util.Logging;
 
-public class XmlFileEvaluateXPathFunction implements XPathFunction
-{
+public class XmlFileEvaluateXPathFunction implements XPathFunction {
     private static final Logger LOG = Logging.get(XmlFileEvaluateXPathFunction.class);
 
     private final EvaluationStrategy evaluationStrategy;
 
-    public XmlFileEvaluateXPathFunction(EvaluationStrategy evaluationStrategy)
-    {
+    public XmlFileEvaluateXPathFunction(EvaluationStrategy evaluationStrategy) {
         this.evaluationStrategy = evaluationStrategy;
     }
 
     @Override
-    public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException
-    {
+    public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException {
         int frameIdx = ((Double) args.get(0)).intValue();
         boolean expressionResult = (Boolean) args.get(1);
         LOG.fine("evaluate(" + frameIdx + ", " + expressionResult + ")");

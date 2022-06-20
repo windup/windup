@@ -14,8 +14,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EnvironmentReferenceModel.TYPE)
-public interface EnvironmentReferenceModel extends WindupVertexFrame
-{
+public interface EnvironmentReferenceModel extends WindupVertexFrame {
     String TYPE = "EnvironmentReferenceModel";
 
     String REFERENCE_TYPE = "referenceType";

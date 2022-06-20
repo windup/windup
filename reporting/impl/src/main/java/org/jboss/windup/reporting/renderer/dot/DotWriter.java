@@ -12,8 +12,7 @@ import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 import org.jboss.windup.util.exception.WindupException;
 
-public class DotWriter implements GraphDataSerializer
-{
+public class DotWriter implements GraphDataSerializer {
 
     private final Graph graph;
     private String graphName = "G";
@@ -22,14 +21,12 @@ public class DotWriter implements GraphDataSerializer
     private String fontSize = "12pt";
     private String edgeLabel = "";
 
-    public DotWriter(Graph graph)
-    {
+    public DotWriter(Graph graph) {
         this.graph = graph;
     }
 
     public DotWriter(Graph graph, String graphName, String vertexLabelProperty, String edgeLabel,
-                DotGraphType graphType, String fontSize)
-    {
+                     DotGraphType graphType, String fontSize) {
         this.graph = graph;
         this.graphName = graphName;
         this.fontSize = fontSize;
@@ -38,13 +35,11 @@ public class DotWriter implements GraphDataSerializer
         this.edgeLabel = edgeLabel;
     }
 
-    public void writeGraph(OutputStream os) throws IOException
-    {
+    public void writeGraph(OutputStream os) throws IOException {
         writeGraphTag(os);
     }
 
-    private void writeGraphTag(OutputStream os) throws IOException
-    {
+    private void writeGraphTag(OutputStream os) throws IOException {
         String name = this.getDotSafeName(graphName);
         IOUtils.write(graphType.getName() + " " + name + "{" + System.lineSeparator(), os);
 
@@ -54,75 +49,61 @@ public class DotWriter implements GraphDataSerializer
         IOUtils.write("}", os);
     }
 
-    private void writeGraphEdges(OutputStream os) throws IOException
-    {
+    private void writeGraphEdges(OutputStream os) throws IOException {
         graph.edges().forEachRemaining(edge -> {
             String label = edgeLabel;
             String source = "" + edge.outVertex().id().toString();
             String target = "" + edge.inVertex().id().toString();
-            try
-            {
+            try {
                 writeGraphEdge(label, source, target, os);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new WindupException(e);
             }
         });
     }
 
-    private void writeGraphEdge(String label, String source, String target, OutputStream os) throws IOException
-    {
+    private void writeGraphEdge(String label, String source, String target, OutputStream os) throws IOException {
         final String startTag = getDotSafeName(source) + graphType.getEdge() + getDotSafeName(target);
         final String endTag = DotConstants.END_LINE;
 
         IOUtils.write(startTag, os);
 
-        if (StringUtils.isNotBlank(label))
-        {
-            writeOptions(os, new String[] { "label", label }, new String[] { "fontsize", fontSize });
+        if (StringUtils.isNotBlank(label)) {
+            writeOptions(os, new String[]{"label", label}, new String[]{"fontsize", fontSize});
         }
 
         IOUtils.write(endTag, os);
 
     }
 
-    private void writeGraphNode(String id, String label, OutputStream os) throws IOException
-    {
+    private void writeGraphNode(String id, String label, OutputStream os) throws IOException {
         final String tag = DotConstants.INDENT + getDotSafeName(id) + "[label = \"" + label + "\", fontsize = \""
-                    + fontSize + "\"]" + DotConstants.END_LINE;
+                + fontSize + "\"]" + DotConstants.END_LINE;
         IOUtils.write(tag, os);
     }
 
-    private void writeGraphNodes(OutputStream os) throws IOException
-    {
+    private void writeGraphNodes(OutputStream os) throws IOException {
 
         // iterate the nodes.
         graph.vertices().forEachRemaining(vertex -> {
             String id = "" + vertex.id().toString();
             String label = (String) vertex.property(vertexLabelProperty).value();
 
-            if (StringUtils.isBlank(label))
-            {
+            if (StringUtils.isBlank(label)) {
                 label = vertex.toString();
             }
-            try
-            {
+            try {
                 writeGraphNode(id, label, os);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new WindupException(e);
             }
         });
 
     }
 
-    private void writeOptions(OutputStream os, String[]... options) throws IOException
-    {
+    private void writeOptions(OutputStream os, String[]... options) throws IOException {
         Map<String, String> map = new HashMap<>();
-        for (String[] option : options)
-        {
+        for (String[] option : options) {
             String key = option[0];
             String value = option[1];
             map.put(key, value);
@@ -131,18 +112,15 @@ public class DotWriter implements GraphDataSerializer
         writeOptions(map, os);
     }
 
-    private void writeOptions(Map<String, String> options, OutputStream os) throws IOException
-    {
-        if (options == null || options.isEmpty())
-        {
+    private void writeOptions(Map<String, String> options, OutputStream os) throws IOException {
+        if (options == null || options.isEmpty()) {
             return;
         }
 
         IOUtils.write("[", os);
 
         StringBuilder builder = new StringBuilder();
-        for (String key : options.keySet())
-        {
+        for (String key : options.keySet()) {
             builder.append(key + "=\"" + options.get(key) + "\", ");
         }
         String tag = builder.toString().trim();
@@ -152,15 +130,11 @@ public class DotWriter implements GraphDataSerializer
         IOUtils.write("]", os);
     }
 
-    private String getDotSafeName(String inName)
-    {
+    private String getDotSafeName(String inName) {
         String name = null;
-        if (StringUtils.isAlphanumeric(inName))
-        {
+        if (StringUtils.isAlphanumeric(inName)) {
             name = inName;
-        }
-        else
-        {
+        } else {
             name = "\"" + inName + "\"";
         }
 

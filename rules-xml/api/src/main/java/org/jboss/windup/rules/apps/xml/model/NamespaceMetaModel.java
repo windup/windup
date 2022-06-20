@@ -11,8 +11,7 @@ import org.jboss.windup.graph.Property;
 import java.util.List;
 
 @TypeValue(NamespaceMetaModel.TYPE)
-public interface NamespaceMetaModel extends WindupVertexFrame
-{
+public interface NamespaceMetaModel extends WindupVertexFrame {
     String SCHEMA_LOCATION = "schemaLocation";
     String NAMESPACE_URI = "namespaceURI";
     String TYPE = "NamespaceMetaModel";

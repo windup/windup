@@ -10,30 +10,23 @@ import java.util.Set;
 
 /**
  * Contains methods for querying, updating, and deleting {@link DataSourceModel}
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
-public class DataSourceService extends GraphService<DataSourceModel>
-{
-    public DataSourceService(GraphContext context)
-    {
+public class DataSourceService extends GraphService<DataSourceModel> {
+    public DataSourceService(GraphContext context) {
         super(context, DataSourceModel.class);
     }
 
     /**
      * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
-    public synchronized DataSourceModel createUnique(Set<ProjectModel> applications, String dataSourceName, String jndiName)
-    {
+    public synchronized DataSourceModel createUnique(Set<ProjectModel> applications, String dataSourceName, String jndiName) {
         JNDIResourceModel jndiResourceModel = new JNDIResourceService(getGraphContext()).createUnique(applications, jndiName);
         final DataSourceModel dataSourceModel;
-        if (jndiResourceModel instanceof DataSourceModel)
-        {
+        if (jndiResourceModel instanceof DataSourceModel) {
             dataSourceModel = (DataSourceModel) jndiResourceModel;
-        }
-        else
-        {
+        } else {
             dataSourceModel = addTypeToModel(jndiResourceModel);
         }
         dataSourceModel.setName(dataSourceName);

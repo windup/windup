@@ -35,27 +35,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class GroovyExtensionXmlRulesTest
-{
+public class GroovyExtensionXmlRulesTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy"),
-                                GROOVY_WINDUP_FILE)
-                    .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.rhamt.groovy"),
-                                GROOVY_RHAMT_FILE);
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy"),
+                        GROOVY_WINDUP_FILE)
+                .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.rhamt.groovy"),
+                        GROOVY_RHAMT_FILE);
         return archive;
     }
 
@@ -69,17 +67,15 @@ public class GroovyExtensionXmlRulesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintsAndClassificationOperation() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testHintsAndClassificationOperation() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -87,27 +83,25 @@ public class GroovyExtensionXmlRulesTest
             pm.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(new NotPredicate(
-                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                                    ))
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                    ))
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
 
             List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
             Assert.assertEquals(4, hints.size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            for (ClassificationModel model : classifications)
-            {
+            for (ClassificationModel model : classifications) {
                 String classification = model.getClassification();
                 System.out.println("Classification: " + classification + " of file(s): ");
-                for (FileModel fileModel : model.getFileModels())
-                {
+                for (FileModel fileModel : model.getFileModels()) {
                     System.out.println("\tFile Path: " + fileModel.getFilePath());
                 }
                 Assert.assertNotNull(classification);

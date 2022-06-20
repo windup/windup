@@ -23,7 +23,6 @@ import java.util.logging.Logger;
  * </pre>
  *
  * <p> Returns an Integer object, which holds the count:
-
  *
  * @author <a href="mailto:mbrophy@redhat.com">Mark Brophy</a>
  */
@@ -34,27 +33,23 @@ public class GetNumberOfLibrariesMethod implements WindupFreeMarkerMethod {
     private GraphContext graphContext;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.graphContext = event.getGraphContext();
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + ProjectModel.class.getSimpleName()
                 + " as a parameter and returns a count of the number of libraries contained within";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
 
         // Function arguments
@@ -77,13 +72,10 @@ public class GetNumberOfLibrariesMethod implements WindupFreeMarkerMethod {
         return result;
     }
 
-    private Integer countLibrariesInModel(GraphContext graphContext, ProjectModel projectModel)
-    {
+    private Integer countLibrariesInModel(GraphContext graphContext, ProjectModel projectModel) {
         int count = 0;
-        for (ProjectModel child: projectModel.getChildProjects())
-        {
-            if(child.getRootFileModel() instanceof ArchiveModel)
-            {
+        for (ProjectModel child : projectModel.getChildProjects()) {
+            if (child.getRootFileModel() instanceof ArchiveModel) {
                 count++;
                 count += countLibrariesInModel(graphContext, child);
             }

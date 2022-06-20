@@ -33,18 +33,16 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class VariablesTest
-{
+public class VariablesTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
         return archive;
     }
 
@@ -52,11 +50,9 @@ public class VariablesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testMultipleFramesSameName() throws Exception
-    {
+    public void testMultipleFramesSameName() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -89,11 +85,9 @@ public class VariablesTest
     }
 
     @Test
-    public void testInvalidTypeGet() throws Exception
-    {
+    public void testInvalidTypeGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -107,28 +101,23 @@ public class VariablesTest
             Variables vars = Variables.instance(event);
             vars.push();
             vars.setSingletonVariable("classModel1", classModel1);
-            try
-            {
+            try {
                 vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-            }
-            catch (IllegalTypeArgumentException e)
-            {
+            } catch (IllegalTypeArgumentException e) {
                 Assert.assertNotNull(e.getMessage());
                 Assert.assertTrue(e
-                            .getMessage()
-                            .contains("Variable \"classModel1\" does not implement expected interface "
-                                        + "\"" + MavenProjectModel.class.getName()
-                                        + "\", actual implemented interfaces are"));
+                        .getMessage()
+                        .contains("Variable \"classModel1\" does not implement expected interface "
+                                + "\"" + MavenProjectModel.class.getName()
+                                + "\", actual implemented interfaces are"));
             }
         }
     }
 
     @Test
-    public void testUnTypedGet() throws Exception
-    {
+    public void testUnTypedGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -148,11 +137,9 @@ public class VariablesTest
     }
 
     @Test
-    public void testInvalidCountGet() throws Exception
-    {
+    public void testInvalidCountGet() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
@@ -166,12 +153,9 @@ public class VariablesTest
             Variables vars = Variables.instance(event);
             vars.push();
             vars.setVariable("classModel1", Arrays.asList((WindupVertexFrame) classModel1, classModel2));
-            try
-            {
+            try {
                 vars.findSingletonVariable(MavenProjectModel.class, "classModel1");
-            }
-            catch (IllegalStateException e)
-            {
+            } catch (IllegalStateException e) {
                 Assert.assertNotNull(e.getMessage());
                 Assert.assertTrue(e.getMessage().contains("More than one frame present"));
             }

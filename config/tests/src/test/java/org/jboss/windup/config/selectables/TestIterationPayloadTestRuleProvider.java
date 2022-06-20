@@ -17,12 +17,10 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TestIterationPayloadTestRuleProvider extends AbstractRuleProvider
-{
-    public TestIterationPayloadTestRuleProvider()
-    {
+public class TestIterationPayloadTestRuleProvider extends AbstractRuleProvider {
+    public TestIterationPayloadTestRuleProvider() {
         super(MetadataBuilder.forProvider(TestIterationPayloadTestRuleProvider.class)
-                    .setPhase(DiscoveryPhase.class));
+                .setPhase(DiscoveryPhase.class));
     }
 
     private Set<TestParentModel> parents = new HashSet<>();
@@ -30,49 +28,42 @@ public class TestIterationPayloadTestRuleProvider extends AbstractRuleProvider
     private List<TestParentModel> allParents = new ArrayList<>();
     private List<TestChildModel> allChildren = new ArrayList<>();
 
-    public int getChildCount()
-    {
+    public int getChildCount() {
         return children.size();
     }
 
-    public int getParentCount()
-    {
+    public int getParentCount() {
         return parents.size();
     }
 
-    public int getActualChildCount()
-    {
+    public int getActualChildCount() {
         return allChildren.size();
     }
 
-    public int getActualParentCount()
-    {
+    public int getActualParentCount() {
         return allParents.size();
     }
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(Query.fromType(TestChildModel.class).as("children"))
-                    .perform(Iteration
-                                .over("children")
-                                .as("child")
-                                .perform(new AbstractIterationOperation<TestParentModel>("#{child.parent}")
-                                {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context,
-                                                TestParentModel payload)
-                                    {
-                                        parents.add(payload);
-                                        allParents.add(payload);
-                                        TestChildModel child = (TestChildModel) resolveVariable(event, "child");
-                                        children.add(child);
-                                        allChildren.add(child);
-                                    }
-                                }).endIteration());
+                .begin()
+                .addRule()
+                .when(Query.fromType(TestChildModel.class).as("children"))
+                .perform(Iteration
+                        .over("children")
+                        .as("child")
+                        .perform(new AbstractIterationOperation<TestParentModel>("#{child.parent}") {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context,
+                                                TestParentModel payload) {
+                                parents.add(payload);
+                                allParents.add(payload);
+                                TestChildModel child = (TestChildModel) resolveVariable(event, "child");
+                                children.add(child);
+                                allChildren.add(child);
+                            }
+                        }).endIteration());
     }
 
 }

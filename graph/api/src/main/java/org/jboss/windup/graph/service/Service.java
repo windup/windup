@@ -11,16 +11,14 @@ import java.util.List;
 
 /**
  * Base service interface for interacting with {@link WindupVertexFrame} instances.
- * 
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  * @param <FRAMETYPE>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Service<FRAMETYPE extends WindupVertexFrame>
-{
+public interface Service<FRAMETYPE extends WindupVertexFrame> {
     /**
      * Commit any started transaction.
-     * 
+     *
      * @see #newTransaction()
      */
     void commit();
@@ -90,7 +88,7 @@ public interface Service<FRAMETYPE extends WindupVertexFrame>
 
     /**
      * Begin a transaction.
-     * 
+     *
      * @see #commit()
      */
     Transaction newTransaction();

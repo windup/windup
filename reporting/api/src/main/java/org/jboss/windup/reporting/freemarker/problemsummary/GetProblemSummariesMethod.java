@@ -25,25 +25,22 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
-{
+public class GetProblemSummariesMethod implements WindupFreeMarkerMethod {
     private GraphContext context;
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Returns a summary of all classification and hints found during analysis in the form of a List<"
-                    + ProblemSummary.class.getSimpleName() + ">.";
+                + ProblemSummary.class.getSimpleName() + ">.";
     }
 
     @Override
-    public Object exec(List arguments) throws TemplateModelException
-    {
+    public Object exec(List arguments) throws TemplateModelException {
         if (arguments.isEmpty())
             throw new TemplateModelException("Method " + getMethodName() + " requires the following parameters (GraphRewrite event, ProjectModel project, Set<String> includeTags, Set<String> excludeTags)");
 
         // Gets the graph rewrite event
-        final GraphRewrite event = (GraphRewrite)((StringModel)arguments.get(0)).getWrappedObject();
+        final GraphRewrite event = (GraphRewrite) ((StringModel) arguments.get(0)).getWrappedObject();
 
         // Get the project if one was passed in
         final ProjectModel projectModel;
@@ -67,8 +64,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         problemSummaries.putAll(problemSummariesOriginal);
 
         Map<String, List<ProblemSummary>> primarySummariesByString = new LinkedHashMap<>(problemSummariesOriginal.size());
-        for (Map.Entry<IssueCategoryModel, List<ProblemSummary>> entry : problemSummaries.entrySet())
-        {
+        for (Map.Entry<IssueCategoryModel, List<ProblemSummary>> entry : problemSummaries.entrySet()) {
             String severityString = entry.getKey() == null ? null : entry.getKey().getName();
             primarySummariesByString.put(severityString, entry.getValue());
         }
@@ -76,8 +72,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         return primarySummariesByString;
     }
 
-    private Set<ProjectModel> getProjects(ProjectModel projectModel)
-    {
+    private Set<ProjectModel> getProjects(ProjectModel projectModel) {
         if (projectModel == null)
             return null;
 
@@ -86,8 +81,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.context = event.getGraphContext();
     }
 }

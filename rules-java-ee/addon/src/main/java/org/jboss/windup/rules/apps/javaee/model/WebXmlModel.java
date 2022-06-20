@@ -15,8 +15,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WebXmlModel.TYPE)
-public interface WebXmlModel extends XmlFileModel
-{
+public interface WebXmlModel extends XmlFileModel {
     String TYPE = "WebXmlModel";
     String DISPLAY_NAME = "displayName";
     String SPECIFICATION_VERSION = "specificationVersion";

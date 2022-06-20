@@ -2,14 +2,12 @@ package org.jboss.windup.decompiler.util;
 
 /**
  * A filter for anything that can ACCEPT, REJECT, or STOP.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public interface Filter<T>
-{
+public interface Filter<T> {
 
-    public enum Result
-    {
+    public enum Result {
         ACCEPT, REJECT, STOP, ACCEPT_STOP
     }
 

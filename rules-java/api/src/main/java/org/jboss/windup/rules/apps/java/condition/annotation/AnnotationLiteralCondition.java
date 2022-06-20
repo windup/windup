@@ -17,38 +17,33 @@ import java.util.Set;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class AnnotationLiteralCondition extends AnnotationCondition
-{
+public class AnnotationLiteralCondition extends AnnotationCondition {
     private RegexParameterizedPatternParser pattern;
 
     /**
      * Creates a {@link AnnotationLiteralCondition} with the given pattern.
      */
-    public AnnotationLiteralCondition(String pattern)
-    {
+    public AnnotationLiteralCondition(String pattern) {
         if (pattern != null)
             this.pattern = new RegexParameterizedPatternParser(pattern);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AnnotationLiteralCondition{" +
-                    "pattern=" + pattern +
-                    '}';
+                "pattern=" + pattern +
+                '}';
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value) {
         if (!(value instanceof JavaAnnotationLiteralTypeValueModel))
             return false;
 
         JavaAnnotationLiteralTypeValueModel literalType = (JavaAnnotationLiteralTypeValueModel) value;
 
         // submit the value to the value pattern
-        if (pattern != null)
-        {
+        if (pattern != null) {
             String annotationValue = literalType.getLiteralValue();
 
             // No regular expression will match against null. Allowing it to proceed only results in an NPE
@@ -67,8 +62,7 @@ public class AnnotationLiteralCondition extends AnnotationCondition
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (pattern != null) {
             result.addAll(pattern.getRequiredParameterNames());

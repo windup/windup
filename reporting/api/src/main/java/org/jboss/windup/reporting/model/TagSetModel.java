@@ -14,8 +14,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TagSetModel.TYPE)
-public interface TagSetModel extends WindupVertexFrame
-{
+public interface TagSetModel extends WindupVertexFrame {
     String TYPE = "TagSetModel";
     String PREFIX = "TAGS";
 

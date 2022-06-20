@@ -30,23 +30,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class XMLFileWithoutClassification1Test
-{
+public class XMLFileWithoutClassification1Test {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("simpleXSLT.xsl")
-                    .addAsResource("xmlfile-withoutclassification.windup.xml");
+                .addBeansXML()
+                .addAsResource("simpleXSLT.xsl")
+                .addAsResource("xmlfile-withoutclassification.windup.xml");
         return archive;
     }
 
@@ -57,21 +55,19 @@ public class XMLFileWithoutClassification1Test
     private GraphContextFactory factory;
 
     @Test
-    public void testXSLTTransformation() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testXSLTTransformation() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(
-                                    new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(
+                            new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -79,19 +75,15 @@ public class XMLFileWithoutClassification1Test
             GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
             int count = 0;
 
-            for (ClassificationModel classificationModel : classificationService.findAll())
-            {
-                if (classificationModel.getClassification().contains("rule1"))
-                {
+            for (ClassificationModel classificationModel : classificationService.findAll()) {
+                if (classificationModel.getClassification().contains("rule1")) {
                     count++;
                 }
             }
             Assert.assertEquals(1, count);
             count = 0;
-            for (ClassificationModel classificationModel : classificationService.findAll())
-            {
-                if (classificationModel.getClassification().contains("rule2"))
-                {
+            for (ClassificationModel classificationModel : classificationService.findAll()) {
+                if (classificationModel.getClassification().contains("rule2")) {
                     count++;
                 }
             }

@@ -12,48 +12,40 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * 
  * This FreeMarker method simply finds the SourceReport that is associated with the provided FileModel, if there is a SourceReport available.
- * 
+ * <p>
  * If none is available, it will return null.
- * 
+ * <p>
  * The function takes one parameter, and can be called from a freemarker template as follows:
- * 
+ * <p>
  * fileModelToSourceReport(fileModel)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod
-{
+public class FileModelToSourceReportModelMethod implements WindupFreeMarkerMethod {
     public static final String NAME = "fileModelToSourceReport";
     private SourceReportService sourceReportService;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.sourceReportService = new SourceReportService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + FileModel.class.getSimpleName() + " as a parameter, and returns the related " + SourceReportModel.class.getSimpleName()
-                    + " (or null if none is available).";
+                + " (or null if none is available).";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (FileModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);

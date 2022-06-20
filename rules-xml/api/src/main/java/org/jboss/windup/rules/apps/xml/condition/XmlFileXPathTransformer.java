@@ -10,15 +10,13 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Converts an XPath from a standard xpath, to one that calls Windup's builtin functions for hooking into the XPath execution lifecycle.
  */
-public class XmlFileXPathTransformer
-{
+public class XmlFileXPathTransformer {
     private static final String WINDUP_MATCHES_FUNCTION_PREFIX = "windup:matches(";
 
     /**
      * Performs the conversion from standard XPath to xpath with parameterization support.
      */
-    public static String transformXPath(String originalXPath)
-    {
+    public static String transformXPath(String originalXPath) {
         // use a list to maintain the multiple joined xqueries (if there are multiple queries joined with the "|" operator)
         List<StringBuilder> compiledXPaths = new ArrayList<>(1);
 
@@ -28,46 +26,32 @@ public class XmlFileXPathTransformer
         char startQuoteChar = 0;
         StringBuilder currentXPath = new StringBuilder();
         compiledXPaths.add(currentXPath);
-        for (int i = 0; i < originalXPath.length(); i++)
-        {
+        for (int i = 0; i < originalXPath.length(); i++) {
             char curChar = originalXPath.charAt(i);
-            if (!inQuote && curChar == '[')
-            {
+            if (!inQuote && curChar == '[') {
                 frameIdx++;
                 conditionLevel++;
                 currentXPath.append("[windup:startFrame(").append(frameIdx).append(") and windup:evaluate(").append(frameIdx).append(", ");
-            }
-            else if (!inQuote && curChar == ']')
-            {
+            } else if (!inQuote && curChar == ']') {
                 conditionLevel--;
                 currentXPath.append(")]");
-            }
-            else if (!inQuote && conditionLevel == 0 && curChar == '|')
-            {
+            } else if (!inQuote && conditionLevel == 0 && curChar == '|') {
                 // joining multiple xqueries
                 currentXPath = new StringBuilder();
                 compiledXPaths.add(currentXPath);
-            }
-            else
-            {
-                if (inQuote && curChar == startQuoteChar)
-                {
+            } else {
+                if (inQuote && curChar == startQuoteChar) {
                     inQuote = false;
                     startQuoteChar = 0;
-                }
-                else if (curChar == '"' || curChar == '\'')
-                {
+                } else if (curChar == '"' || curChar == '\'') {
                     inQuote = true;
                     startQuoteChar = curChar;
                 }
 
-                if (!inQuote && originalXPath.startsWith(WINDUP_MATCHES_FUNCTION_PREFIX, i))
-                {
+                if (!inQuote && originalXPath.startsWith(WINDUP_MATCHES_FUNCTION_PREFIX, i)) {
                     i += (WINDUP_MATCHES_FUNCTION_PREFIX.length() - 1);
                     currentXPath.append("windup:matches(").append(frameIdx).append(", ");
-                }
-                else
-                {
+                } else {
                     currentXPath.append(curChar);
                 }
             }
@@ -75,10 +59,8 @@ public class XmlFileXPathTransformer
 
         Pattern leadingAndTrailingWhitespace = Pattern.compile("(\\s*)(.*?)(\\s*)");
         StringBuilder finalResult = new StringBuilder();
-        for (StringBuilder compiledXPath : compiledXPaths)
-        {
-            if (StringUtils.isNotBlank(compiledXPath))
-            {
+        for (StringBuilder compiledXPath : compiledXPaths) {
+            if (StringUtils.isNotBlank(compiledXPath)) {
                 Matcher whitespaceMatcher = leadingAndTrailingWhitespace.matcher(compiledXPath);
                 if (!whitespaceMatcher.matches())
                     continue;

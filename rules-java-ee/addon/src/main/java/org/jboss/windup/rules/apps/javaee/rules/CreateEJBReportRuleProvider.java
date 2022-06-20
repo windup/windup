@@ -32,46 +32,38 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report of EJB data (eg, a list of EJB session beans).
- *
  */
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create EJB Report")
-public class CreateEJBReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateEJBReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/ejb.ftl";
     public static final String REPORT_DESCRIPTION = "The EJB report contains a list of EJBs found within the application.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        // configuration of current execution
+                        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel application = inputPath.getProjectModel();
-                                createEJBReport(event.getGraphContext(), application);
-                            }
+                        for (FileModel inputPath : configurationModel.getInputPaths()) {
+                            ProjectModel application = inputPath.getProjectModel();
+                            createEJBReport(event.getGraphContext(), application);
                         }
+                    }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "CreateEJBReport";
-                        }
-                    });
+                    @Override
+                    public String toString() {
+                        return "CreateEJBReport";
+                    }
+                });
 
     }
 
     @SuppressWarnings("unchecked")
-    private void createEJBReport(GraphContext context, ProjectModel application)
-    {
+    private void createEJBReport(GraphContext context, ProjectModel application) {
         EjbBeanService ejbService = new EjbBeanService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
@@ -81,29 +73,20 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         WindupVertexListModel<EjbBeanBaseModel> statefulList = listService.create();
 
         boolean itemAdded = false;
-        for (EjbBeanBaseModel ejbModel : ejbService.findAll())
-        {
+        for (EjbBeanBaseModel ejbModel : ejbService.findAll()) {
             if (!Iterables.contains(ejbModel.getApplications(), application))
                 continue;
 
             itemAdded = true;
 
-            if (ejbModel instanceof EjbMessageDrivenModel)
-            {
+            if (ejbModel instanceof EjbMessageDrivenModel) {
                 mdbList.addItem(ejbModel);
-            }
-            else if (ejbModel instanceof EjbEntityBeanModel)
-            {
+            } else if (ejbModel instanceof EjbEntityBeanModel) {
                 entityList.addItem(ejbModel);
-            }
-            else
-            {
-                if ("stateful".equalsIgnoreCase(ejbModel.getSessionType()))
-                {
+            } else {
+                if ("stateful".equalsIgnoreCase(ejbModel.getSessionType())) {
                     statefulList.addItem(ejbModel);
-                }
-                else
-                {
+                } else {
                     statelessList.addItem(ejbModel);
                 }
             }

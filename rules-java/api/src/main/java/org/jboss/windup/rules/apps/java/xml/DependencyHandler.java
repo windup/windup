@@ -12,12 +12,10 @@ import org.w3c.dom.Element;
 import static org.joox.JOOX.$;
 
 @NamespaceElementHandler(elementName = "dependency", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class DependencyHandler implements ElementHandler<Dependency>
-{
+public class DependencyHandler implements ElementHandler<Dependency> {
     @Override
     public Dependency processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String groupId = $(element).attr("groupId");
         String artifactId = $(element).attr("artifactId");
         String from = $(element).attr("fromVersion");

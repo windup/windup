@@ -17,6 +17,7 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
+
 import java.util.logging.Logger;
 
 /**
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  *
  * <p> Called from a freemarker template as follows:
  *
- *      <pre>getMigrationEffortPoints(
+ * <pre>getMigrationEffortPoints(
  *              projectModel: ProjectModel,
  *              recursive: Boolean,
  *              [includeTags: Set<String>],
@@ -38,8 +39,7 @@ import java.util.logging.Logger;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
-{
+public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod {
     public static final Logger LOG = Logger.getLogger(GetEffortDetailsForProjectTraversalMethod.class.getName());
 
     private static final String NAME = "getEffortDetailsForProjectTraversal";
@@ -47,35 +47,30 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     private InlineHintService inlineHintService;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.classificationService = new ClassificationService(event.getGraphContext());
         this.inlineHintService = new InlineHintService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns Map<Integer, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
+                + " as a parameter and returns Map<Integer, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         // Process arguments
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() < 2)
-        {
+        if (arguments.size() < 2) {
             throw new TemplateModelException(
-                "Error, method expects at least three arguments"
-                + " (projectModel: ProjectModel, recursive: Boolean, [includeTags: Set<String>], [excludeTags: Set<String>])");
+                    "Error, method expects at least three arguments"
+                            + " (projectModel: ProjectModel, recursive: Boolean, [includeTags: Set<String>], [excludeTags: Set<String>])");
         }
         StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
         ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
@@ -84,20 +79,17 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
         Set<String> includeTags = Collections.emptySet();
-        if (arguments.size() >= 3)
-        {
+        if (arguments.size() >= 3) {
             includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
         }
 
         Set<String> excludeTags = Collections.emptySet();
-        if (arguments.size() >= 4)
-        {
+        if (arguments.size() >= 4) {
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
         Set<String> issueCategories = Collections.emptySet();
-        if (arguments.size() >= 5)
-        {
+        if (arguments.size() >= 5) {
             issueCategories = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
         }
 
@@ -121,12 +113,10 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     }
 
 
-    private Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails)
-    {
+    private Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails) {
         Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         results.putAll(classificationEffortDetails);
-        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
-        {
+        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet()) {
             if (!results.containsKey(entry.getKey()))
                 results.put(entry.getKey(), entry.getValue());
             else
@@ -136,11 +126,9 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     }
 
 
-    private int sumPoints(Map<Integer, Integer> results)
-    {
+    private int sumPoints(Map<Integer, Integer> results) {
         int sum = 0;
-        for (Map.Entry<Integer, Integer> entry : results.entrySet())
-        {
+        for (Map.Entry<Integer, Integer> entry : results.entrySet()) {
             sum += entry.getKey() * entry.getValue();
         }
         return sum;

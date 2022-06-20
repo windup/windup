@@ -20,18 +20,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class RuleProviderExecutionStatisticsServiceTest
-{
+public class RuleProviderExecutionStatisticsServiceTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
         return archive;
     }
 
@@ -39,10 +37,8 @@ public class RuleProviderExecutionStatisticsServiceTest
     private GraphContextFactory factory;
 
     @Test
-    public void testFindAllOrderedByIndex() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFindAllOrderedByIndex() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(context);
             RuleProviderExecutionStatisticsModel m1 = service.create();
             m1.setRuleIndex(10);

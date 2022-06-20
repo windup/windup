@@ -10,26 +10,22 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Turns the given Iterable into a List.
- *
+ * <p>
  * Example call: iteratorToList(Iterable).
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class IterableToListMethod implements WindupFreeMarkerMethod
-{
+public class IterableToListMethod implements WindupFreeMarkerMethod {
     private static final String NAME = "iterableToList";
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        try
-        {
+        try {
             if (arguments.size() != 1)
                 throw new TemplateModelException("Error, method expects one argument (an Iterable)");
 
@@ -40,22 +36,18 @@ public class IterableToListMethod implements WindupFreeMarkerMethod
             List list = new ArrayList();
             iterable.iterator().forEachRemaining(list::add);
             return list;
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end(NAME);
         }
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Turns the given Iterable into a List.";
     }
 

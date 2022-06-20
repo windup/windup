@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 
 /**
  * Indicates whether or not rules in this provider will override rules from another provider. The default value is false.
- *
+ * <p>
  * For example:
  *
  * <pre>
@@ -20,13 +20,11 @@ import org.w3c.dom.Element;
  * </pre>
  */
 @NamespaceElementHandler(elementName = MetadataProviderOverrideHandler.OVERRIDE_PROVIDER, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataProviderOverrideHandler implements ElementHandler<Boolean>
-{
+public class MetadataProviderOverrideHandler implements ElementHandler<Boolean> {
     public static final String OVERRIDE_PROVIDER = "overrideRules";
 
     @Override
-    public Boolean processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Boolean processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String textContent = element.getTextContent();
         return StringUtils.isNotBlank(textContent) && Boolean.parseBoolean(textContent.trim());
     }

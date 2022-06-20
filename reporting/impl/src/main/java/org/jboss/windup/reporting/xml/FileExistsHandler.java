@@ -28,21 +28,17 @@ import static org.joox.JOOX.$;
  * </pre>
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
- *
  */
 @NamespaceElementHandler(elementName = FileExistsHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class FileExistsHandler implements ElementHandler<FileExists>
-{
+public class FileExistsHandler implements ElementHandler<FileExists> {
     static final String ELEMENT_NAME = "file-exists";
     private static final String FILENAME = "filename";
 
     @Override
-    public FileExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public FileExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String fileName = $(element).attr(FILENAME);
 
-        if (StringUtils.isBlank(fileName))
-        {
+        if (StringUtils.isBlank(fileName)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + FILENAME + "' attribute");
         }
 

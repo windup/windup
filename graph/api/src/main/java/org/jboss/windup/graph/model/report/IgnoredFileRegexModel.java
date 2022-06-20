@@ -9,8 +9,7 @@ import org.jboss.windup.graph.Property;
  * Indicates which files within archives should be skipped by Windup.
  */
 @TypeValue(IgnoredFileRegexModel.TYPE)
-public interface IgnoredFileRegexModel extends WindupVertexFrame
-{
+public interface IgnoredFileRegexModel extends WindupVertexFrame {
 
     String TYPE = "IgnoredFileRegexModel";
     String NAME_REGEX = "nameRegex";
@@ -27,13 +26,13 @@ public interface IgnoredFileRegexModel extends WindupVertexFrame
      */
     @Property(NAME_REGEX)
     void setRegex(String regex);
-    
+
     /**
      * Checks if the regex is compilable
      */
     @Property(COMPILATION_ERROR)
     String getCompilationError();
-    
+
     @Property(COMPILATION_ERROR)
     void setCompilationError(String errorMessage);
 

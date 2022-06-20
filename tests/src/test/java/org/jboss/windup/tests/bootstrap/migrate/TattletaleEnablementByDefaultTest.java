@@ -21,7 +21,7 @@ public class TattletaleEnablementByDefaultTest extends AbstractBootstrapTestWith
 
     @Test
     public void tattletaleEnabledByDefaultWithEapTarget() {
-        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(), 
+        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
         bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",
@@ -35,7 +35,7 @@ public class TattletaleEnablementByDefaultTest extends AbstractBootstrapTestWith
 
     @Test
     public void tattletaleDisabledByDefaultWithoutEapTarget() {
-        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(), 
+        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
         bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",

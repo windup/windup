@@ -10,11 +10,10 @@ import org.jboss.windup.graph.Adjacency;
 import java.util.List;
 
 @TypeValue(LinkableModel.TYPE)
-public interface LinkableModel extends WindupVertexFrame
-{
+public interface LinkableModel extends WindupVertexFrame {
     String TYPE = "LinkableModel";
     String LINK = "linkable";
-    
+
     /**
      * Contains the link for the resource.
      */

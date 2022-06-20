@@ -20,8 +20,7 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
 @NamespaceElementHandler(elementName = "label", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelHandler implements ElementHandler<Label>
-{
+public class LabelHandler implements ElementHandler<Label> {
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
     public static final String SUPPORTED = "supported";
@@ -29,8 +28,7 @@ public class LabelHandler implements ElementHandler<Label>
     public static final String NEUTRAL = "neutral";
 
     @Override
-    public Label processElement(ParserContext context, Element element)
-    {
+    public Label processElement(ParserContext context, Element element) {
         String id = $(element).attr("id");
         String name = null;
         String description = null;
@@ -39,30 +37,20 @@ public class LabelHandler implements ElementHandler<Label>
         Set<String> neutral = new HashSet<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            if (StringUtils.equals(NAME, child.getTagName()))
-            {
+        for (Element child : children) {
+            if (StringUtils.equals(NAME, child.getTagName())) {
                 name = $(child).text();
-            }
-            else if (StringUtils.equals(DESCRIPTION, child.getTagName()))
-            {
+            } else if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
                 description = $(child).text();
-            }
-            else if (StringUtils.equals(SUPPORTED, child.getTagName()))
-            {
+            } else if (StringUtils.equals(SUPPORTED, child.getTagName())) {
                 $(child).children().get().forEach(tagElements -> {
                     supported.add(context.processElement(tagElements));
                 });
-            }
-            else if (StringUtils.equals(UNSUITABLE, child.getTagName()))
-            {
+            } else if (StringUtils.equals(UNSUITABLE, child.getTagName())) {
                 $(child).children().get().forEach(tagElements -> {
                     unsuitable.add(context.processElement(tagElements));
                 });
-            }
-            else if (StringUtils.equals(NEUTRAL, child.getTagName()))
-            {
+            } else if (StringUtils.equals(NEUTRAL, child.getTagName())) {
                 $(child).children().get().forEach(tagElements -> {
                     neutral.add(context.processElement(tagElements));
                 });

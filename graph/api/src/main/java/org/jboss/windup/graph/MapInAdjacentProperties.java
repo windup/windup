@@ -9,8 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MapInAdjacentProperties
-{
+public @interface MapInAdjacentProperties {
     /**
      * The edge label for this relationship.
      */

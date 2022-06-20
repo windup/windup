@@ -11,15 +11,13 @@ import org.ocpsoft.rewrite.config.Not;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "not", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class NotHandler implements ElementHandler<Not>
-{
+public class NotHandler implements ElementHandler<Not> {
 
-   @Override
-   public Not processElement(ParserContext handlerManager, Element element)
-   {
-      Element child = $(element).children().get().get(0);
-      Condition condition = handlerManager.processElement(child);
-      return Not.any(condition);
-   }
+    @Override
+    public Not processElement(ParserContext handlerManager, Element element) {
+        Element child = $(element).children().get().get(0);
+        Condition condition = handlerManager.processElement(child);
+        return Not.any(condition);
+    }
 
 }

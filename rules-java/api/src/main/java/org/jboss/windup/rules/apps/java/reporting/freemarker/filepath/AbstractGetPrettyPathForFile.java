@@ -16,54 +16,43 @@ import freemarker.template.TemplateModelException;
  * A template pattern: An abstract class implementing a template method exec for multiple path generators.
  * In order to provide a new path generator from Model, extend this class and implement all the abstract methods.
  */
-public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMethod
-{
-    private static final String  NAME = "abstractGetPrettyPathForFile";
+public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMethod {
+    private static final String NAME = "abstractGetPrettyPathForFile";
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        try
-        {
-            if (arguments.size() != 1)
-            {
+        try {
+            if (arguments.size() != 1) {
                 throw new TemplateModelException("Error, method expects one argument (FileModel)");
             }
             StringModel stringModelArg = (StringModel) arguments.get(0);
             FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
-            if (fileModel instanceof JavaClassFileModel)
-            {
+            if (fileModel instanceof JavaClassFileModel) {
                 return getPath((JavaClassFileModel) fileModel);
-            }
-            else if (fileModel instanceof ReportResourceFileModel)
-            {
+            } else if (fileModel instanceof ReportResourceFileModel) {
                 return getPath((ReportResourceFileModel) fileModel);
-            }
-            else if (fileModel instanceof JavaSourceFileModel)
-            {
+            } else if (fileModel instanceof JavaSourceFileModel) {
                 return getPath((JavaSourceFileModel) fileModel);
-            }
-            else
-            {
+            } else {
                 return getPath(fileModel);
             }
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end(NAME);
         }
     }
 
     public abstract String getPath(JavaClassFileModel jcfm);
+
     public abstract String getPath(ReportResourceFileModel model);
+
     public abstract String getPath(FileModel model);
+
     public abstract String getPath(JavaSourceFileModel javaSourceModel);
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + FileModel.class.getSimpleName()
-                    + " as a parameter and either the qualified name (if it is a Java file) or the path within the file's project.";
+                + " as a parameter and either the qualified name (if it is a Java file) or the path within the file's project.";
     }
 }

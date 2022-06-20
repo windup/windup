@@ -9,14 +9,12 @@ import org.jboss.modules.ModuleIdentifier;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class JavaGraphDependenciesClasspathSpec extends AbstractModuleSpecProvider
-{
+public class JavaGraphDependenciesClasspathSpec extends AbstractModuleSpecProvider {
     public static final ModuleIdentifier ID = ModuleIdentifier.create("furnace.windup.graph.api");
 
     public static Set<String> paths = new HashSet<>();
 
-    static
-    {
+    static {
         /*
          *  Add the paths that we need from Sun Java.
          */
@@ -25,14 +23,12 @@ public class JavaGraphDependenciesClasspathSpec extends AbstractModuleSpecProvid
     }
 
     @Override
-    public ModuleIdentifier getId()
-    {
+    public ModuleIdentifier getId() {
         return ID;
     }
 
     @Override
-    protected Set<String> getPaths()
-    {
+    protected Set<String> getPaths() {
         return paths;
     }
 

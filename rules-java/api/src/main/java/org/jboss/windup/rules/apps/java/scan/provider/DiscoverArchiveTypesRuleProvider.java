@@ -18,25 +18,23 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * Iterates over discovered archives and sets their vertices' types.
  */
 @RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
-public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider {
     @Inject
     private GraphTypeManager graphTypeManager;
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(
-                Query.fromType(ArchiveModel.class)
-            )
-            .perform(
-                Iteration.over()
-                .perform(ConfigureArchiveTypes.withTypeManager(graphTypeManager))
-                .endIteration()
-            );
+                .addRule()
+                .when(
+                        Query.fromType(ArchiveModel.class)
+                )
+                .perform(
+                        Iteration.over()
+                                .perform(ConfigureArchiveTypes.withTypeManager(graphTypeManager))
+                                .endIteration()
+                );
     }
     // @formatter:on
 }

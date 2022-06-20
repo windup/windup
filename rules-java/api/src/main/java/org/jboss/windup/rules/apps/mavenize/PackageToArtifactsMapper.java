@@ -8,8 +8,7 @@ import java.util.List;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-interface PackageToArtifactsMapper
-{
+interface PackageToArtifactsMapper {
     /**
      * @return All artifacts known to contain given package.
      */

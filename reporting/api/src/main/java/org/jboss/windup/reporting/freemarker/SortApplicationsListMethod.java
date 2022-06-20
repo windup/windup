@@ -9,7 +9,9 @@ import org.jboss.windup.util.ExecutionStatistics;
 import freemarker.template.DefaultListAdapter;
 
 import freemarker.template.TemplateModelException;
+
 import java.util.Collections;
+
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 
@@ -18,20 +20,17 @@ import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class SortApplicationsListMethod implements WindupFreeMarkerMethod
-{
+public class SortApplicationsListMethod implements WindupFreeMarkerMethod {
     private static final String NAME = "sortApplicationsList";
     private GraphContext context;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.context = event.getGraphContext();
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
             throw new TemplateModelException("Error, method expects one argument (an Iterable)");
@@ -45,14 +44,12 @@ public class SortApplicationsListMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Sorts the given list of ApplicationReportModel's by it's root filename or, for VIRTUAL apps, by the name.";
     }
 

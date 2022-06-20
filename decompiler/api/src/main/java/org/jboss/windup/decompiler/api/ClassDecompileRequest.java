@@ -7,8 +7,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ClassDecompileRequest
-{
+public class ClassDecompileRequest {
     private final Path rootDirectory;
     private final Path classFile;
     private final Path outputDirectory;
@@ -16,11 +15,10 @@ public class ClassDecompileRequest
     /**
      * Create an instance with the given rootDirectory (eg, for a class named "com.foo.Example" in
      * "/path/to/com/foo/Example.class", this would be "/path/to") and the full path to the class file itself.
-     *
+     * <p>
      * The resulting decompiled file will be placed in outputDirectory.
      */
-    public ClassDecompileRequest(Path rootDirectory, Path classFile, Path outputDirectory)
-    {
+    public ClassDecompileRequest(Path rootDirectory, Path classFile, Path outputDirectory) {
         this.rootDirectory = rootDirectory;
         this.classFile = classFile;
         this.outputDirectory = outputDirectory;
@@ -29,24 +27,21 @@ public class ClassDecompileRequest
     /**
      * Contains the root directory for this class file.
      */
-    public Path getRootDirectory()
-    {
+    public Path getRootDirectory() {
         return rootDirectory;
     }
 
     /**
      * Contains the full path to the file itself.
      */
-    public Path getClassFile()
-    {
+    public Path getClassFile() {
         return classFile;
     }
 
     /**
      * Contains the full path to the output directory (where the decompiled file will be placed).
      */
-    public Path getOutputDirectory()
-    {
+    public Path getOutputDirectory() {
         return outputDirectory;
     }
 

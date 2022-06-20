@@ -4,22 +4,19 @@ import java.util.zip.ZipEntry;
 
 /**
  * ZipEntry Filter which accepts only one class and its inner classes.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class ClassNameFilter implements Filter<ZipEntry>
-{
+public class ClassNameFilter implements Filter<ZipEntry> {
 
     private final String cls;
 
-    public ClassNameFilter(String cls)
-    {
+    public ClassNameFilter(String cls) {
         this.cls = cls.replace('.', '/');
     }
 
     @Override
-    public Result decide(ZipEntry what)
-    {
+    public Result decide(ZipEntry what) {
         if (what.isDirectory())
             return Result.REJECT;
         if (!what.getName().startsWith(cls))

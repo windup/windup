@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.annotationtests.complex;
 
-public @interface ExampleComplexAnnotation
-{
+public @interface ExampleComplexAnnotation {
     String key();
 
     ExampleNestedAnnotation nestedAnnotation();

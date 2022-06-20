@@ -21,19 +21,17 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupPropertyMethodHandlerTest
-{
+public class WindupPropertyMethodHandlerTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
         return archive;
     }
 
@@ -41,10 +39,8 @@ public class WindupPropertyMethodHandlerTest
     private GraphContextFactory factory;
 
     @Test
-    public void testPropertyHandler() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testPropertyHandler() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
             GraphService<TestFooModel> fooModelService = new GraphService<>(context, TestFooModel.class);
@@ -59,8 +55,7 @@ public class WindupPropertyMethodHandlerTest
                     .collect(Collectors.toList());
 
             int numberFound = 0;
-            for (Vertex v : vertices)
-            {
+            for (Vertex v : vertices) {
                 numberFound++;
                 TestFooModel framed = (TestFooModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 
