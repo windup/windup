@@ -10,13 +10,10 @@ import org.jboss.windup.graph.Property;
 import java.util.List;
 
 /**
- * 
- * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(HibernateConfigurationFileModel.TYPE)
-public interface HibernateConfigurationFileModel extends XmlFileModel
-{
+public interface HibernateConfigurationFileModel extends XmlFileModel {
 
     String HIBERNATE_SESSION_FACTORY = "hibernateSessionFactory";
     String SPECIFICATION_VERSION = "specificationVersion";

@@ -9,8 +9,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Represents a JMS Message destination.
  */
 @TypeValue(JmsDestinationModel.TYPE)
-public interface JmsDestinationModel extends JNDIResourceModel
-{
+public interface JmsDestinationModel extends JNDIResourceModel {
     public static final String JMS_DESTINATION = "jmsDestination";
     public static final String TYPE = "JmsDestinationModel";
     public static final String DESTINATION_TYPE = "destinationType";

@@ -13,21 +13,19 @@ import org.w3c.dom.Element;
 
 /**
  * Adds the provided {@link HasHint} operation to the current iteration filter.
- * 
+ * <p>
  * Expected format:
- * 
+ *
  * <pre>
  * &lt;has-hint title="parameterized hint message {pattern}" /&gt;
  * </pre>
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @NamespaceElementHandler(elementName = "has-hint", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class HasHintHandler implements ElementHandler<HasHint>
-{
+public class HasHintHandler implements ElementHandler<HasHint> {
     @Override
-    public HasHint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public HasHint processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String pattern = $(element).attr("message");
         HasHint hint = new HasHint();
 

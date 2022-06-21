@@ -1,9 +1,11 @@
 package org.jboss.windup.graph.typedgraph.setinprops;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -19,19 +21,17 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class SetInPropertiesTest
-{
+public class SetInPropertiesTest {
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-            .addBeansXML()
-            .addPackage("org.jboss.windup.graph.typedgraph.setinprops");
+                .addBeansXML()
+                .addPackage("org.jboss.windup.graph.typedgraph.setinprops");
         return archive;
     }
 
@@ -39,10 +39,8 @@ public class SetInPropertiesTest
     private GraphContextFactory contextFactory;
 
     @Test
-    public void testSetHandling() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testSetHandling() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             Assert.assertNotNull(context);
             prepareFrame(context, TestSetPrefixModel.class);
 
@@ -56,10 +54,8 @@ public class SetInPropertiesTest
     }
 
     @Test
-    public void testSetWithBlankPrefixHandling() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testSetWithBlankPrefixHandling() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             TestSetBlankSubModel frame = prepareFrame(context, TestSetBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
 
@@ -69,8 +65,7 @@ public class SetInPropertiesTest
             v.property("still here", "does't matter");
             TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frameElement(v, TestSetBlankSubModel.class);
             checkSet(framed.getSet(), 5);
-            for (String string : framed.getElement().keys())
-            {
+            for (String string : framed.getElement().keys()) {
                 System.out.println("    Key: " + string);
             }
             Assert.assertTrue(framed.getSet().contains("still here"));
@@ -82,17 +77,14 @@ public class SetInPropertiesTest
      * This doesn't use submodel.
      */
     @Test
-    public void testSetWithBlankPrefixHandling2() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testSetWithBlankPrefixHandling2() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             TestSetBlankModel frame = context.getFramed().addFramedVertex(TestSetBlankModel.class);
             Set<String> set = prepareSet();
             frame.addAllNaturalSet(set);
 
             System.out.println("    Frame class: " + frame.getClass());
-            for (Class<?> iface : frame.getClass().getInterfaces())
-            {
+            for (Class<?> iface : frame.getClass().getInterfaces()) {
                 System.out.println("      Implements: " + iface.getName());
             }
 
@@ -102,8 +94,7 @@ public class SetInPropertiesTest
             v.property("still here", "does't matter");
             TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frameElement(v, TestSetBlankSubModel.class);
             checkSet(framed.getSet(), 5);
-            for (String string : framed.getElement().keys())
-            {
+            for (String string : framed.getElement().keys()) {
                 System.out.println("    Key: " + string);
             }
             Assert.assertTrue(framed.getSet().contains("still here"));
@@ -111,24 +102,21 @@ public class SetInPropertiesTest
         }
     }
 
-    private static void checkSet(Set<String> foundSet, int expectedNumOfEntries)
-    {
+    private static void checkSet(Set<String> foundSet, int expectedNumOfEntries) {
         Assert.assertEquals(expectedNumOfEntries, foundSet.size());
         Assert.assertTrue(foundSet.contains("value1"));
         Assert.assertTrue(foundSet.contains("value2"));
         Assert.assertTrue(foundSet.contains("value3"));
     }
 
-    private static <T extends TestSetPrefixModel> T prepareFrame(GraphContext context, Class<T> cls)
-    {
+    private static <T extends TestSetPrefixModel> T prepareFrame(GraphContext context, Class<T> cls) {
         T mainModel = context.getFramed().addFramedVertex(cls);
         Set<String> set = prepareSet();
         mainModel.setSet(set);
         return mainModel;
     }
 
-    private static Set<String> prepareSet()
-    {
+    private static Set<String> prepareSet() {
         Set<String> set = new HashSet<>();
         set.add("value1");
         set.add("value2");

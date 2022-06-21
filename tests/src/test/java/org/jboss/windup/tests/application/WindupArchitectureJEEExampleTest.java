@@ -43,8 +43,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
-{
+public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     static final String LABEL_SUCCESS = "label label-success";
     static final String LABEL_DANGER = "label label-danger";
     static final String LABEL_WARNING = "label label-warning";
@@ -53,29 +52,26 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-        @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-            .addBeansXML()
-            .addClass(WindupArchitectureTest.class)
-            .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupJEEExampleMode() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testRunWindupJEEExampleMode() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
             super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
 
@@ -87,10 +83,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     }
 
     @Test
-    public void testTechReportFrameworksWar() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testTechReportFrameworksWar() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
             super.runTest(context, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
             validateTechReportFrameworksWar(context);
@@ -101,10 +95,9 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     /**
      * Validate that a ejb-jar.xml file was found, and that the metadata was extracted correctly
      */
-    private void validateEjbXmlReferences(GraphContext context)
-    {
+    private void validateEjbXmlReferences(GraphContext context) {
         Service<EjbDeploymentDescriptorModel> ejbXmlService = new GraphService<>(context,
-                    EjbDeploymentDescriptorModel.class);
+                EjbDeploymentDescriptorModel.class);
         Iterator<EjbDeploymentDescriptorModel> models = ejbXmlService.findAll().iterator();
 
         // There should be at least one file
@@ -120,10 +113,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             model = model2;
 
         int sessionBeansFound = 0;
-        for (EjbSessionBeanModel sessionBean : model.getEjbSessionBeans())
-        {
-            if (sessionBean.getBeanName().equals("ItemLookupBean"))
-            {
+        for (EjbSessionBeanModel sessionBean : model.getEjbSessionBeans()) {
+            if (sessionBean.getBeanName().equals("ItemLookupBean")) {
                 Assert.assertEquals("com.acme.anvil.service.ItemLookupHome", sessionBean.getEjbHome().getQualifiedName());
                 Assert.assertEquals("com.acme.anvil.service.ItemLookup", sessionBean.getEjbRemote().getQualifiedName());
                 Assert.assertEquals("com.acme.anvil.service.ItemLookupLocalHome", sessionBean.getEjbLocalHome().getQualifiedName());
@@ -131,9 +122,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                 Assert.assertEquals("com.acme.anvil.service.ItemLookupBean", sessionBean.getEjbClass().getQualifiedName());
                 Assert.assertEquals("Stateless", sessionBean.getSessionType());
                 Assert.assertEquals("Container", sessionBean.getTransactionType());
-            }
-            else if (sessionBean.getBeanName().equals("ProductCatalogBean"))
-            {
+            } else if (sessionBean.getBeanName().equals("ProductCatalogBean")) {
                 Assert.assertEquals("com.acme.anvil.service.ProductCatalogHome", sessionBean.getEjbHome().getQualifiedName());
                 Assert.assertEquals("com.acme.anvil.service.ProductCatalog", sessionBean.getEjbRemote().getQualifiedName());
                 Assert.assertEquals("com.acme.anvil.service.ProductCatalogLocalHome", sessionBean.getEjbLocalHome().getQualifiedName());
@@ -141,9 +130,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                 Assert.assertEquals("com.acme.anvil.service.ProductCatalogBean", sessionBean.getEjbClass().getQualifiedName());
                 Assert.assertEquals("Stateless", sessionBean.getSessionType());
                 Assert.assertEquals("Container", sessionBean.getTransactionType());
-            }
-            else
-            {
+            } else {
                 Assert.fail("Unrecognized session bean found: " + sessionBean.getBeanName());
             }
             sessionBeansFound++;
@@ -151,23 +138,21 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertEquals(2, sessionBeansFound);
 
         int messageDrivenFound = 0;
-        for (EjbMessageDrivenModel messageDriven : model.getMessageDriven())
-        {
+        for (EjbMessageDrivenModel messageDriven : model.getMessageDriven()) {
             Assert.assertEquals("LogEventSubscriber", messageDriven.getBeanName());
             Assert.assertEquals("com.acme.anvil.service.jms.LogEventSubscriber", messageDriven.getEjbClass()
-                        .getQualifiedName());
+                    .getQualifiedName());
             Assert.assertEquals("Container", messageDriven.getTransactionType());
             messageDrivenFound++;
         }
         Assert.assertEquals(1, messageDrivenFound);
     }
 
-    private void validateEJBBeanReport(GraphContext context)
-    {
+    private void validateEJBBeanReport(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = reportService.getUniqueByProperty(
-                    ReportModel.TEMPLATE_PATH,
-                    CreateEJBReportRuleProvider.TEMPLATE_EJB_REPORT);
+                ReportModel.TEMPLATE_PATH,
+                CreateEJBReportRuleProvider.TEMPLATE_EJB_REPORT);
         TestEJBReportUtil util = new TestEJBReportUtil();
         Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
@@ -176,8 +161,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ProductCatalogBean", "HomeLocalRemote", "com.acme.anvil.service.ProductCatalogBean"));
     }
 
-    private void validateReports(GraphContext context)
-    {
+    private void validateReports(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
         Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
@@ -185,25 +169,22 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("jee-example-app-1.0.0.ear/jee-example-services.jar", "META-INF/ejb-jar.xml",
-                    "EJB XML 2.1");
+                "EJB XML 2.1");
 
         validateEJBBeanReport(context);
 
         validateTechReportJEEExample(context);
     }
 
-    private void validateTechReportPointsCount(GraphContext graphContext)
-    {
+    private void validateTechReportPointsCount(GraphContext graphContext) {
         Iterable<TechReportModel> techReportsIt = graphContext.findAll(TechReportModel.class);
         ReportService reportService = new ReportService(graphContext);
 
         // Check the reports
-        for (TechReportModel techReportModel : techReportsIt)
-        {
+        for (TechReportModel techReportModel : techReportsIt) {
             final Path path = reportService.getReportDirectory().resolve(techReportModel.getReportFilename());
 
-            if (techReportModel.getProjectModel() == null)
-            {
+            if (techReportModel.getProjectModel() == null) {
                 TestTechReportUtil techReportUtil = new TestTechReportUtil();
                 techReportUtil.loadPage(path);
                 String appName = "frameworks.war";
@@ -215,8 +196,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         }
     }
 
-    private void validateTechReport(GraphContext graphContext, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected)
-    {
+    private void validateTechReport(GraphContext graphContext, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected) {
 
         // 2 reports - a global one and the app one.
         Iterable<TechReportModel> techReportsIt = graphContext.findAll(TechReportModel.class);
@@ -239,8 +219,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         });
 
         Assert.assertNotNull(idToReport.get(null));
-        for (ProjectModel app : new ProjectService(graphContext).getRootProjectModels())
-        {
+        for (ProjectModel app : new ProjectService(graphContext).getRootProjectModels()) {
             final TechReportModel techReport = idToReport.get(app.getElement().id());
             Assert.assertNotNull(techReport);
         }
@@ -248,16 +227,13 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         ReportService reportService = new ReportService(graphContext);
 
         // Check the reports
-        for (TechReportModel techReportModel : techReportsIt)
-        {
+        for (TechReportModel techReportModel : techReportsIt) {
             final Path path = reportService.getReportDirectory().resolve(techReportModel.getReportFilename());
 
-            if (techReportModel.getProjectModel() == null)
-            {
+            if (techReportModel.getProjectModel() == null) {
                 // Global bubbles report
                 new TestTechReportUtil().checkTechGlobalReport(path, bubblesExpected);
-            }
-            else {
+            } else {
                 // Per-app box report
                 new TestTechReportUtil().checkTechBoxReport(path, boxesExpected);
             }
@@ -265,11 +241,9 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 
     }
 
-    private void validateParentOfSourceReports(GraphContext context)
-    {
+    private void validateParentOfSourceReports(GraphContext context) {
         SourceReportService reportService = new SourceReportService(context);
-        for (SourceReportModel sourceReportModel : reportService.findAll())
-        {
+        for (SourceReportModel sourceReportModel : reportService.findAll()) {
             List<ReportModel> parents = sourceReportModel.getAllParentsInReversedOrder();
             Assert.assertTrue(parents.size() == 2);
             Assert.assertTrue(parents.get(0).getReportName().equals("Dashboard"));
@@ -277,8 +251,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         }
     }
 
-    private void validateTechReportJEEExample(GraphContext context)
-    {
+    private void validateTechReportJEEExample(GraphContext context) {
         List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
         final String appName = "jee-example-app-1.0.0.ear";
         bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
@@ -301,8 +274,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateTechReport(context, bubblesExpected, boxesExpected);
     }
 
-    private void validateTechReportFrameworksWar(GraphContext context)
-    {
+    private void validateTechReportFrameworksWar(GraphContext context) {
         List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
         final String appName = "frameworks.war";
         //bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
@@ -324,12 +296,11 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateTechReport(context, bubblesExpected, boxesExpected);
     }
 
-    private void validateLabels(GraphContext context)
-    {
+    private void validateLabels(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = reportService.getUniqueByProperty(
-                    ReportModel.TEMPLATE_PATH,
-                    CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
+                ReportModel.TEMPLATE_PATH,
+                CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
         Assert.assertNotNull(reportModel);
 
         Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
@@ -344,8 +315,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateApplicationTargetRuntimeLabelsClickable(util);
     }
 
-    private void validateRuntimeLabelsLegendHeader(TestApplicationListUtil util)
-    {
+    private void validateRuntimeLabelsLegendHeader(TestApplicationListUtil util) {
         WebElement runtimeLegendHeader = util.getApplicationTargetRuntimeLegendHeader();
         WebElement legendHeaderText = runtimeLegendHeader.findElement(By.tagName("a"));
         Assert.assertEquals("Runtime labels legend", legendHeaderText.getText().trim());
@@ -365,15 +335,13 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertEquals(LABEL_DEFAULT, legendHeaderLabels.get(3).getAttribute("class"));
     }
 
-    private void validateRuntimeLabelsLegendContent(TestApplicationListUtil util)
-    {
+    private void validateRuntimeLabelsLegendContent(TestApplicationListUtil util) {
         WebElement runtimeLegendContent = util.getApplicationTargetRuntimeLegendContent();
         WebElement legendsDL = runtimeLegendContent.findElement(By.tagName("dl"));
 
         // validate tech sort
         List<WebElement> dd = legendsDL.findElements(By.tagName("dd"));
-        for (WebElement webElement : dd)
-        {
+        for (WebElement webElement : dd) {
             List<WebElement> supportedTechLabels = webElement.findElements(By.className("label-success"));
             List<WebElement> unsuitableTechLabels = webElement.findElements(By.className("label-danger"));
             List<WebElement> neutralTechLabels = webElement.findElements(By.className("label-info"));
@@ -384,15 +352,12 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         }
     }
 
-    private boolean verifyOrderedAlphabetically(List<WebElement> webElements)
-    {
+    private boolean verifyOrderedAlphabetically(List<WebElement> webElements) {
         boolean ordered = true;
-        for (int i = 1; i < webElements.size(); i++)
-        {
+        for (int i = 1; i < webElements.size(); i++) {
             WebElement currentWebElement = webElements.get(i);
             WebElement previousWebElement = webElements.get(i - 1);
-            if (currentWebElement.getText().trim().compareTo(previousWebElement.getText().trim()) < 0)
-            {
+            if (currentWebElement.getText().trim().compareTo(previousWebElement.getText().trim()) < 0) {
                 ordered = false;
                 break;
             }
@@ -400,8 +365,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         return ordered;
     }
 
-    private void validateApplicationTargetRuntimeLabels(TestApplicationListUtil util)
-    {
+    private void validateApplicationTargetRuntimeLabels(TestApplicationListUtil util) {
         final String appName = "jee-example-app-1.0.0.ear";
 
         List<WebElement> targetRuntimes = util.getApplicationTargetRuntimeLabels(appName);
@@ -421,8 +385,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertEquals(LABEL_SUCCESS, spanTarget3.getAttribute("class"));
     }
 
-    private void validateApplicationTargetRuntimeLabelsClickable(TestApplicationListUtil util)
-    {
+    private void validateApplicationTargetRuntimeLabelsClickable(TestApplicationListUtil util) {
         final String appName = "jee-example-app-1.0.0.ear";
 
         List<WebElement> targetRuntimes = util.getApplicationTargetRuntimeLabels(appName);
@@ -469,10 +432,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         verifyTechLabelsInitialState(applicationTechLabels);
     }
 
-    private void verifyTechLabelsInitialState(List<WebElement> applicationTechLabels)
-    {
-        for (WebElement webElement : applicationTechLabels)
-        {
+    private void verifyTechLabelsInitialState(List<WebElement> applicationTechLabels) {
+        for (WebElement webElement : applicationTechLabels) {
             String techLabelClass = webElement.getAttribute("class");
 
             // Assert using contains instead of equals since application_list.ftl contains
@@ -482,28 +443,19 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     }
 
     private void verifyTechLabelsClicked(
-                List<WebElement> applicationTechLabels,
-                List<String> supported, List<String> unsuitable, List<String> neutral)
-    {
-        for (WebElement webElement : applicationTechLabels)
-        {
+            List<WebElement> applicationTechLabels,
+            List<String> supported, List<String> unsuitable, List<String> neutral) {
+        for (WebElement webElement : applicationTechLabels) {
             String techLabel = webElement.getText().trim();
             String techLabelClass = webElement.getAttribute("class");
 
-            if (supported.stream().anyMatch(techLabel::startsWith))
-            {
+            if (supported.stream().anyMatch(techLabel::startsWith)) {
                 Assert.assertEquals(LABEL_SUCCESS, techLabelClass);
-            }
-            else if (unsuitable.stream().anyMatch(techLabel::startsWith))
-            {
+            } else if (unsuitable.stream().anyMatch(techLabel::startsWith)) {
                 Assert.assertEquals(LABEL_DANGER, techLabelClass);
-            }
-            else if (neutral.stream().anyMatch(techLabel::startsWith))
-            {
+            } else if (neutral.stream().anyMatch(techLabel::startsWith)) {
                 Assert.assertEquals(LABEL_DEFAULT, techLabelClass);
-            }
-            else
-            {
+            } else {
                 Assert.assertEquals(LABEL_WARNING, techLabelClass);
             }
         }

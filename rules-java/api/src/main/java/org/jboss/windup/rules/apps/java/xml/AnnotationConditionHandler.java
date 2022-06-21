@@ -5,7 +5,6 @@ package org.jboss.windup.rules.apps.java.xml;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public abstract class AnnotationConditionHandler
-{
+public abstract class AnnotationConditionHandler {
     public static final String NAME = "name";
 }

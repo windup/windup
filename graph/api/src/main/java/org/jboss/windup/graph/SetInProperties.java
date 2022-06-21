@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Store Map<String,String> in vertex'es properties. The properties of vertex which contains the property are used.
- *
+ * <p>
  * Applicable to:
  * <ul>
  * <li><code>Set get*()</code> - materializes the set from the vertex properties.
@@ -18,8 +18,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SetInProperties
-{
+public @interface SetInProperties {
     public static final char SEPAR = ':';
 
     /**
@@ -28,7 +27,7 @@ public @interface SetInProperties
      * May be blank, in which case the separator is ommited. That can be used to map the actual vertices property names to a set,
      * which may be especially useful when creating generic or meta-rules. Be very careful if using blank prefix on extended models,
      * where it can interfere with other models and rules data!
-     *
+     * <p>
      * By setting different prefixes, a Model can contain multiple sets.
      */
     public String propertyPrefix() default "set";

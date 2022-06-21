@@ -4,11 +4,10 @@ import org.jboss.windup.bootstrap.Bootstrap;
 
 /**
  * A phase in the {@link Bootstrap} life-cycle.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public enum CommandPhase
-{
+public enum CommandPhase {
     /**
      * Before Furnace/Windup configuration has begun.
      */

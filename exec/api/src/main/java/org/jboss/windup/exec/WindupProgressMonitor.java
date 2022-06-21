@@ -6,8 +6,7 @@ package org.jboss.windup.exec;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public interface WindupProgressMonitor
-{
+public interface WindupProgressMonitor {
     /**
      * Constant indicating an unknown amount of work.
      */
@@ -16,10 +15,10 @@ public interface WindupProgressMonitor
     /**
      * Notifies that the main task is beginning. This must only be called once on a given progress monitor instance.
      *
-     * @param name the name (or description) of the main task
+     * @param name      the name (or description) of the main task
      * @param totalWork the total number of work units into which the main task is been subdivided. If the value is
-     *            <code>UNKNOWN</code> the implementation is free to indicate progress in a way which doesn't require
-     *            the total number of work units in advance.
+     *                  <code>UNKNOWN</code> the implementation is free to indicate progress in a way which doesn't require
+     *                  the total number of work units in advance.
      */
     void beginTask(String name, int totalWork);
 
@@ -42,7 +41,7 @@ public interface WindupProgressMonitor
      * Sets the cancel state to the given value.
      *
      * @param value <code>true</code> indicates that cancellation has been requested (but not necessarily acknowledged);
-     *        value <code>false</code> clears this flag
+     *              value <code>false</code> clears this flag
      * @see #isCancelled()
      */
     void setCancelled(boolean value);

@@ -29,22 +29,19 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 /**
  * Adds the getPackageUseFrequencies() and createTypeReference().
  */
-public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
-{
-    public TypeReferenceService(GraphContext context)
-    {
+public class TypeReferenceService extends GraphService<JavaTypeReferenceModel> {
+    public TypeReferenceService(GraphContext context) {
         super(context, JavaTypeReferenceModel.class);
     }
 
     /**
      * This performs the same function as {@link TypeReferenceService#getPackageUseFrequencies(ProjectModel, Set, Set, int, boolean)},
      * however it is designed to use a {@link ProjectModelTraversal} instead of only {@link ProjectModel}.
-     *
+     * <p>
      * This is useful for cases where the {@link ProjectModelTraversal} needs to use a custom {@link TraversalStrategy}.
      */
     public Map<String, Integer> getPackageUseFrequencies(ProjectModelTraversal projectTraversal, Set<String> includeTags,
-                                                         Set<String> excludeTags, int nameDepth, boolean recursive)
-    {
+                                                         Set<String> excludeTags, int nameDepth, boolean recursive) {
         Map<String, Integer> packageUseCount = new HashMap<>();
         getPackageUseFrequencies(packageUseCount, projectTraversal, includeTags, excludeTags, nameDepth, recursive);
         return packageUseCount;
@@ -52,14 +49,11 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 
     private Map<String, Integer> getPackageUseFrequencies(Map<String, Integer> packageUseCount,
                                                           ProjectModelTraversal projectTraversal, Set<String> includeTags,
-                                                          Set<String> excludeTags, int nameDepth, boolean recursive)
-    {
+                                                          Set<String> excludeTags, int nameDepth, boolean recursive) {
         getPackageUseFrequencies(packageUseCount, projectTraversal.getCurrent(), includeTags, excludeTags, nameDepth, false);
 
-        if (recursive)
-        {
-            for (ProjectModelTraversal childTraversal : projectTraversal.getChildren())
-            {
+        if (recursive) {
+            for (ProjectModelTraversal childTraversal : projectTraversal.getChildren()) {
                 getPackageUseFrequencies(packageUseCount, childTraversal, includeTags, excludeTags, nameDepth, recursive);
             }
         }
@@ -69,12 +63,11 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     /**
      * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
      * set to true, then also include child projects.
-     *
+     * <p>
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
     public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, int nameDepth,
-                boolean recursive)
-    {
+                                                         boolean recursive) {
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(projectModel,nameDepth,recursive)");
         Map<String, Integer> packageUseCount = new HashMap<>();
         getPackageUseFrequencies(packageUseCount, projectModel, includeTags, excludeTags, nameDepth, recursive);
@@ -83,11 +76,10 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     private void getPackageUseFrequencies(Map<String, Integer> data, ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags,
-                int nameDepth, boolean recursive)
-    {
+                                          int nameDepth, boolean recursive) {
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
         if (projectModel instanceof DuplicateProjectModel)
-            projectModel = ((DuplicateProjectModel)projectModel).getCanonicalProject();
+            projectModel = ((DuplicateProjectModel) projectModel).getCanonicalProject();
 
         InlineHintService hintService = new InlineHintService(getGraphContext());
 
@@ -103,20 +95,17 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 
         // 2. Organize them by package name
         // summarize results.
-        for (Vertex inlineHintVertex : pipeline.toList())
-        {
+        for (Vertex inlineHintVertex : pipeline.toList()) {
             InlineHintModel javaInlineHint = hintService.frame(inlineHintVertex);
             // only check tags if we have some passed in
-            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
-            {
+            if (!includeTags.isEmpty() || !excludeTags.isEmpty()) {
                 if (!TagUtil.checkMatchingTags(javaInlineHint.getTags(), includeTags, excludeTags))
                     continue;
             }
 
             int val = 1;
             FileLocationModel fileLocationModel = javaInlineHint.getFileLocationReference();
-            if (fileLocationModel == null || !(fileLocationModel instanceof JavaTypeReferenceModel))
-            {
+            if (fileLocationModel == null || !(fileLocationModel instanceof JavaTypeReferenceModel)) {
                 continue;
             }
             JavaTypeReferenceModel typeReferenceModel = (JavaTypeReferenceModel) fileLocationModel;
@@ -124,48 +113,39 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
             String pattern = typeReferenceModel.getResolvedSourceSnippit();
             String[] keyArray = pattern.split("\\.");
 
-            if (keyArray.length > 1 && nameDepth > 1)
-            {
+            if (keyArray.length > 1 && nameDepth > 1) {
                 StringBuilder patternSB = new StringBuilder();
-                for (int i = 0; i < nameDepth; i++)
-                {
+                for (int i = 0; i < nameDepth; i++) {
                     String subElement = keyArray[i];
                     // FIXME/TODO - This shouldn't be necessary, but is at the moment due to some stuff emmitted by our
                     // AST
-                    if (subElement.contains("(") || subElement.contains(")"))
-                    {
+                    if (subElement.contains("(") || subElement.contains(")")) {
                         continue;
                     }
 
-                    if (patternSB.length() != 0)
-                    {
+                    if (patternSB.length() != 0) {
                         patternSB.append(".");
                     }
                     patternSB.append(subElement);
                 }
-                if (patternSB.toString().contains("."))
-                {
+                if (patternSB.toString().contains(".")) {
                     patternSB.append(".*");
                 }
                 pattern = patternSB.toString();
             }
-            if (pattern.contains("("))
-            {
+            if (pattern.contains("(")) {
                 pattern = pattern.substring(0, pattern.indexOf('('));
             }
 
-            if (data.containsKey(pattern))
-            {
+            if (data.containsKey(pattern)) {
                 val = data.get(pattern);
                 val++;
             }
             data.put(pattern, val);
         }
 
-        if (recursive)
-        {
-            for (ProjectModel childProject : projectModel.getChildProjects())
-            {
+        if (recursive) {
+            for (ProjectModel childProject : projectModel.getChildProjects()) {
                 ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
                 getPackageUseFrequencies(data, childProject, includeTags, excludeTags, nameDepth, recursive);
                 ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
@@ -175,8 +155,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
-                ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line)
-    {
+                                                      ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line) {
         ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         JavaTypeReferenceModel model = create();
 

@@ -14,8 +14,7 @@ import java.util.List;
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 @TypeValue(RuleProviderModel.TYPE)
-public interface RuleProviderModel extends WindupVertexFrame
-{
+public interface RuleProviderModel extends WindupVertexFrame {
     String TYPE = "RuleProviderModel";
 
     String RULE_PROVIDER_ID = "ruleProviderID";

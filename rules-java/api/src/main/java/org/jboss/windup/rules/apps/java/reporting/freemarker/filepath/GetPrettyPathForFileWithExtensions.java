@@ -17,9 +17,8 @@ import java.io.File;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathForFile
-{
-    public String getPath( JavaClassFileModel jcfm) {
+public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathForFile {
+    public String getPath(JavaClassFileModel jcfm) {
         String filename = jcfm.getFileName();
         String packageName = jcfm.getPackageName() == null ? "" : jcfm.getPackageName().replaceAll("\\.", File.separator);
         String qualifiedName = packageName + File.separator + filename;
@@ -35,13 +34,11 @@ public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathFor
         return reportFileName;
     }
 
-    public String getPath(ReportResourceFileModel model)
-    {
+    public String getPath(ReportResourceFileModel model) {
         return "resources/" + model.getPrettyPath();
     }
 
-    public String getPath(FileModel model)
-    {
+    public String getPath(FileModel model) {
         return model.getPrettyPathWithinProject();
     }
 }

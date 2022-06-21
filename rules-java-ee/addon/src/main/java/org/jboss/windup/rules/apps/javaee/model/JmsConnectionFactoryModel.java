@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Represents a JMS Connection Factory that is defined or referenced by the application.
  */
 @TypeValue(JmsConnectionFactoryModel.TYPE)
-public interface JmsConnectionFactoryModel extends JNDIResourceModel
-{
+public interface JmsConnectionFactoryModel extends JNDIResourceModel {
     String TYPE = "JmsConnectionFactoryModel";
     String CONNECTION_FACTORY_TYPE = "connectionFactoryType";
 

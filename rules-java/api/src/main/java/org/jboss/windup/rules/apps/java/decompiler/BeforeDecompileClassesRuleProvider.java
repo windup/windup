@@ -14,18 +14,16 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * Predecompilation scan - performance purposes.
  */
 @RuleMetadata(phase = DecompilationPhase.class)
-public class BeforeDecompileClassesRuleProvider extends AbstractRuleProvider
-{
+public class BeforeDecompileClassesRuleProvider extends AbstractRuleProvider {
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(Query.fromType(JavaClassFileModel.class)
-                .withoutProperty(FileModel.PARSE_ERROR)
-        )
-        .perform(new ClassFilePreDecompilationScan());
+                .addRule()
+                .when(Query.fromType(JavaClassFileModel.class)
+                        .withoutProperty(FileModel.PARSE_ERROR)
+                )
+                .perform(new ClassFilePreDecompilationScan());
     }
     // @formatter:on
 }

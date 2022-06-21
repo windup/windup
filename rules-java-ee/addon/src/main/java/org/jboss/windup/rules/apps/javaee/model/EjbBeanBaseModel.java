@@ -15,13 +15,11 @@ import java.util.List;
 
 /**
  * Contains metadata used by all specializations of EJBs (eg, environment references)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(EjbBeanBaseModel.TYPE)
-public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
-{
+public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications {
     String TYPE = "EjbBeanBaseModel";
 
     String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";

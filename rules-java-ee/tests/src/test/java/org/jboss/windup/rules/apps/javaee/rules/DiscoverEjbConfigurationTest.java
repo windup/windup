@@ -30,8 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DiscoverEjbConfigurationTest extends AbstractTest
-{
+public class DiscoverEjbConfigurationTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 
@@ -42,14 +41,11 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     private DiscoverEjbConfigurationXmlRuleProvider discoverEjbConfigurationXmlRuleProvider;
 
     @Test
-    public void testEjbDiscoveryFindByClass() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testEjbDiscoveryFindByClass() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             GraphService<JavaClassModel> javaClassService = new GraphService<>(context, JavaClassModel.class);
             List<JavaClassModel> classModels = new ArrayList<>();
-            for (int i = 1; i < 5; i++)
-            {
+            for (int i = 1; i < 5; i++) {
                 JavaClassModel classModel = javaClassService.create();
                 classModel.setQualifiedName("com.example.Foo" + i);
                 classModels.add(classModel);
@@ -87,17 +83,14 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     }
 
     @Test
-    public void testEJBMessageDrivenNotInEJBXML() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testEJBMessageDrivenNotInEJBXML() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             String inputPath = "src/test/resources/ejb/mdb";
             executeAnalysis(context, inputPath);
 
             GraphService<EjbMessageDrivenModel> ejbMessageDrivenService = new GraphService<>(context, EjbMessageDrivenModel.class);
             int entitiesFound = 0;
-            for (EjbMessageDrivenModel messageDrivenModel : ejbMessageDrivenService.findAll())
-            {
+            for (EjbMessageDrivenModel messageDrivenModel : ejbMessageDrivenService.findAll()) {
                 Assert.assertEquals("EJBMessageDrivenNotInEJBXML", messageDrivenModel.getEjbClass().getClassName());
                 entitiesFound++;
             }
@@ -106,10 +99,8 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     }
 
     @Test
-    public void testEJBSessionBeanNotInEJBXML() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testEJBSessionBeanNotInEJBXML() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             String inputPath = "src/test/resources/ejb/session";
             executeAnalysis(context, inputPath);
 
@@ -119,8 +110,7 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
             boolean sessionBeanFound = false;
             boolean localHomeFound = false;
             boolean localObjectFound = false;
-            for (EjbSessionBeanModel sessionBeanModel : ejbSessionService.findAll())
-            {
+            for (EjbSessionBeanModel sessionBeanModel : ejbSessionService.findAll()) {
                 if (sessionBeanModel.getEjbHome() != null && sessionBeanModel.getEjbHome().getQualifiedName().equals("EJB2SessionHomeNotInEJBXML"))
                     homeFound = true;
                 if (sessionBeanModel.getEjbRemote() != null && sessionBeanModel.getEjbRemote().getQualifiedName().equals("EJB2RemoteInterfaceNotInEJBXML"))
@@ -141,17 +131,14 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     }
 
     @Test
-    public void testEJBEntityBeanNotInEJBXML() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testEJBEntityBeanNotInEJBXML() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             String inputPath = "src/test/resources/ejb/entity";
             executeAnalysis(context, inputPath);
 
             GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(context, EjbEntityBeanModel.class);
             int entitiesFound = 0;
-            for (EjbEntityBeanModel entityBeanModel : ejbEntityService.findAll())
-            {
+            for (EjbEntityBeanModel entityBeanModel : ejbEntityService.findAll()) {
                 Assert.assertEquals("EJB2EntityNotInEJBXML", entityBeanModel.getEjbClass().getClassName());
                 entitiesFound++;
             }
@@ -160,17 +147,14 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     }
 
     @Test
-    public void testEJBMetadataExtraction() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testEJBMetadataExtraction() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             String inputPath = "src/test/resources/";
             executeAnalysis(context, inputPath);
 
             GraphService<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(context, EjbMessageDrivenModel.class);
             int msgDrivenFound = 0;
-            for (EjbMessageDrivenModel msgDriven : messageDrivenService.findAll())
-            {
+            for (EjbMessageDrivenModel msgDriven : messageDrivenService.findAll()) {
                 if (msgDriven.getDestination() == null)
                     continue;
                 Assert.assertEquals("ChatBeanDestination", msgDriven.getDestination().getJndiLocation());
@@ -180,8 +164,7 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
         }
     }
 
-    private void executeAnalysis(GraphContext context, String inputPathString) throws IOException
-    {
+    private void executeAnalysis(GraphContext context, String inputPathString) throws IOException {
         ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
         pm.setName("Main Project");
         FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);

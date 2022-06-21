@@ -5,8 +5,7 @@ import org.jboss.windup.reporting.config.Link;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ClassificationWithIssueDisplayMode
-{
+public interface ClassificationWithIssueDisplayMode {
     /**
      * @see ClassificationAs#with(Link)
      */

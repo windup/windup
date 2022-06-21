@@ -22,81 +22,68 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Adds the vertex types to ArchiveModels as per the file's extension.
  */
-public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel>
-{
+public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel> {
 
     private GraphTypeManager graphTypeManager;
 
     private HashMap<String, Class<? extends WindupVertexFrame>> suffixToModelClass = new HashMap<>();
 
-    public ConfigureArchiveTypes(String variableName, GraphTypeManager graphTypeManager)
-    {
+    public ConfigureArchiveTypes(String variableName, GraphTypeManager graphTypeManager) {
         super(variableName);
         this.graphTypeManager = graphTypeManager;
         initTypes();
     }
 
-    public ConfigureArchiveTypes(GraphTypeManager graphTypeManager)
-    {
+    public ConfigureArchiveTypes(GraphTypeManager graphTypeManager) {
         super();
         this.graphTypeManager = graphTypeManager;
         initTypes();
     }
 
-    public static ConfigureArchiveTypes forVar(String variableName, GraphTypeManager graphTypeManager)
-    {
+    public static ConfigureArchiveTypes forVar(String variableName, GraphTypeManager graphTypeManager) {
         return new ConfigureArchiveTypes(variableName, graphTypeManager);
     }
 
-    public static ConfigureArchiveTypes withTypeManager(GraphTypeManager graphTypeManager)
-    {
+    public static ConfigureArchiveTypes withTypeManager(GraphTypeManager graphTypeManager) {
         return new ConfigureArchiveTypes(graphTypeManager);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel archiveModel)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel archiveModel) {
         GraphContext graphContext = event.getGraphContext();
         String filename = archiveModel.getArchiveName();
         WindupVertexFrame newFrame = null;
 
-        for (Map.Entry<String, Class<? extends WindupVertexFrame>> entry : suffixToModelClass.entrySet())
-        {
-            if (StringUtils.endsWith(filename, entry.getKey()))
-            {
+        for (Map.Entry<String, Class<? extends WindupVertexFrame>> entry : suffixToModelClass.entrySet()) {
+            if (StringUtils.endsWith(filename, entry.getKey())) {
                 newFrame = GraphService.addTypeToModel(graphContext, archiveModel, entry.getValue());
             }
         }
 
-        if (newFrame != null)
-        {
+        if (newFrame != null) {
             Iteration.setCurrentPayload(Variables.instance(event), getVariableName(), newFrame);
         }
     }
 
-    private void initTypes()
-    {
+    private void initTypes() {
         Set<Class<? extends WindupFrame<?>>> frameClasses = graphTypeManager.getRegisteredTypes();
-        for (Class<? extends WindupFrame<?>> frameClass : frameClasses)
-        {
+        for (Class<? extends WindupFrame<?>> frameClass : frameClasses) {
             // only use vertex frames for this mapping
             if (!WindupVertexFrame.class.isAssignableFrom(frameClass))
                 continue;
 
             @SuppressWarnings("unchecked")
-            Class<? extends WindupVertexFrame> vertexFrame = (Class<? extends WindupVertexFrame>)frameClass;
+            Class<? extends WindupVertexFrame> vertexFrame = (Class<? extends WindupVertexFrame>) frameClass;
 
             ArchiveType archiveType = frameClass.getAnnotation(ArchiveType.class);
-            if (archiveType != null)
-            {
+            if (archiveType != null) {
                 this.suffixToModelClass.put(archiveType.value(), vertexFrame);
             }
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ConfigureArchiveTypes";
     }
 }

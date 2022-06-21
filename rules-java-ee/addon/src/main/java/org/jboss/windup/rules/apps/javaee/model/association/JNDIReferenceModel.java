@@ -8,11 +8,10 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 
 @TypeValue(JNDIReferenceModel.TYPE)
-public interface JNDIReferenceModel extends WindupVertexFrame
-{
+public interface JNDIReferenceModel extends WindupVertexFrame {
     String TYPE = "JNDIReferenceModel";
     String REF = "jndi";
-    
+
     /**
      * Contains the jndi location for this resource.
      */

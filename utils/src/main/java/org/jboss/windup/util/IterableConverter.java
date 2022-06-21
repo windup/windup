@@ -8,15 +8,13 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>
-{
+public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo> {
     final Iterable<TFrom> sourceIterable;
 
     /**
      * Creates a new {@link IterableConverter} from the source {@link Iterable}.
      */
-    public IterableConverter(Iterable<TFrom> sourceIterable)
-    {
+    public IterableConverter(Iterable<TFrom> sourceIterable) {
         this.sourceIterable = sourceIterable;
     }
 
@@ -26,35 +24,29 @@ public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>
     public abstract TTo from(TFrom m);
 
     @Override
-    public Iterator<TTo> iterator()
-    {
+    public Iterator<TTo> iterator() {
         return new IteratorBacked(sourceIterable.iterator());
     }
 
-    private class IteratorBacked implements Iterator<TTo>
-    {
+    private class IteratorBacked implements Iterator<TTo> {
         private final Iterator<TFrom> backIterator;
 
-        public IteratorBacked(Iterator<TFrom> backIterator)
-        {
+        public IteratorBacked(Iterator<TFrom> backIterator) {
             this.backIterator = backIterator;
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return backIterator.hasNext();
         }
 
         @Override
-        public TTo next()
-        {
+        public TTo next() {
             return from(backIterator.next());
         }
 
         @Override
-        public void remove()
-        {
+        public void remove() {
             throw new UnsupportedOperationException("remove");
         }
     }

@@ -7,10 +7,8 @@ import org.jboss.windup.reporting.model.rule.ExecutionPhaseModel;
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
-public class ExecutionPhaseService extends GraphService<ExecutionPhaseModel>
-{
-    public ExecutionPhaseService(GraphContext context)
-    {
+public class ExecutionPhaseService extends GraphService<ExecutionPhaseModel> {
+    public ExecutionPhaseService(GraphContext context) {
         super(context, ExecutionPhaseModel.class);
     }
 }

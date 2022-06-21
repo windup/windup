@@ -25,32 +25,26 @@ import org.jboss.windup.util.Logging;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class DagreD3JSHtmlWriter implements GraphWriter
-{
+public class DagreD3JSHtmlWriter implements GraphWriter {
     private static final Logger LOG = Logging.get(DagreD3JSHtmlWriter.class);
 
     private final GraphlibWriter writer;
 
-    public DagreD3JSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabelProperty)
-    {
+    public DagreD3JSHtmlWriter(Graph graph, String vertexLabelProperty, String edgeLabelProperty) {
         this.writer = new GraphlibWriter(graph, GraphvizType.DIGRAPH, GraphvizDirection.TOP_TO_BOTTOM, "g",
-                    vertexLabelProperty, edgeLabelProperty);
+                vertexLabelProperty, edgeLabelProperty);
     }
 
     @Override
-    public void writeGraph(Path outputDirectory) throws IOException
-    {
-        try (OutputStream os = new FileOutputStream(outputDirectory.resolve("index.html").toFile()))
-        {
+    public void writeGraph(Path outputDirectory) throws IOException {
+        try (OutputStream os = new FileOutputStream(outputDirectory.resolve("index.html").toFile())) {
             writeGraph(os);
         }
     }
 
-    private void writeGraph(final OutputStream os) throws IOException
-    {
+    private void writeGraph(final OutputStream os) throws IOException {
         // read in the html template resource.
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("dagred3/HtmlTemplate.html"))
-        {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("dagred3/HtmlTemplate.html")) {
 
             String result;
             {
@@ -59,41 +53,33 @@ public class DagreD3JSHtmlWriter implements GraphWriter
                 result = baos.toString();
             }
 
-            if (LOG.isLoggable(Level.FINE))
-            {
+            if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine("Graphlib: " + result);
             }
 
             // read the document.
             Document document;
-            try
-            {
+            try {
                 document = $(is).document();
                 // append in the gexf.
                 $(document).find("#graphlib-source").append(result);
 
                 writeDocument(document, os);
-            }
-            catch (SAXException e)
-            {
+            } catch (SAXException e) {
                 throw new IOException("Exception loading document.", e);
             }
         }
     }
 
-    public void writeDocument(final Document document, final OutputStream os) throws IOException
-    {
-        try
-        {
+    public void writeDocument(final Document document, final OutputStream os) throws IOException {
+        try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
 
             DOMSource source = new DOMSource(document);
             StreamResult result = new StreamResult(os);
             transformer.transform(source, result);
-        }
-        catch (TransformerException e)
-        {
+        } catch (TransformerException e) {
             throw new IOException("Exception writing to output stream.", e);
         }
     }

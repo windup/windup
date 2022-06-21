@@ -4,8 +4,7 @@ import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue(JavaAnnotationLiteralTypeValueModel.TYPE)
-public interface JavaAnnotationLiteralTypeValueModel extends JavaAnnotationTypeValueModel
-{
+public interface JavaAnnotationLiteralTypeValueModel extends JavaAnnotationTypeValueModel {
     public static final String TYPE = "JavaAnnotationLiteralTypeValueModel";
     public static final String LITERAL_TYPE = "literalType";
     public static final String LITERAL_VALUE = "literalValue";

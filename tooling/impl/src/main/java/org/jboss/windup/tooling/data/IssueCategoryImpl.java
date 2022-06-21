@@ -5,8 +5,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class IssueCategoryImpl implements IssueCategory
-{
+public class IssueCategoryImpl implements IssueCategory {
     private static final long serialVersionUID = 1L;
 
     private String categoryID;
@@ -15,8 +14,7 @@ public class IssueCategoryImpl implements IssueCategory
     private String description;
     private Integer priority;
 
-    public IssueCategoryImpl(IssueCategoryModel issueCategoryModel)
-    {
+    public IssueCategoryImpl(IssueCategoryModel issueCategoryModel) {
         this.categoryID = issueCategoryModel.getCategoryID();
         this.origin = issueCategoryModel.getOrigin();
         this.name = issueCategoryModel.getName();
@@ -25,62 +23,52 @@ public class IssueCategoryImpl implements IssueCategory
     }
 
     @Override
-    public String getCategoryID()
-    {
+    public String getCategoryID() {
         return categoryID;
     }
 
     @Override
-    public void setCategoryID(String categoryID)
-    {
+    public void setCategoryID(String categoryID) {
         this.categoryID = categoryID;
     }
 
     @Override
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin;
     }
 
     @Override
-    public void setOrigin(String origin)
-    {
+    public void setOrigin(String origin) {
         this.origin = origin;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Override
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
     @Override
-    public Integer getPriority()
-    {
+    public Integer getPriority() {
         return priority;
     }
 
     @Override
-    public void setPriority(Integer priority)
-    {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 }

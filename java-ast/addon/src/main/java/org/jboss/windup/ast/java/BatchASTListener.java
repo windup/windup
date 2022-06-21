@@ -10,8 +10,7 @@ import org.jboss.windup.ast.java.data.ClassReference;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface BatchASTListener
-{
+public interface BatchASTListener {
     /**
      * Called to indicate that processing has completed on the specified file.
      */

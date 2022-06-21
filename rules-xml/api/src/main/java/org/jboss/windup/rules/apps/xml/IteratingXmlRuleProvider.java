@@ -15,25 +15,21 @@ import java.util.logging.Logger;
 /**
  * This provides a simplified way to extend {@link AbstractRuleProvider} for cases where the rule simply needs to
  * provide some query, and wants to execute a function over each valid xml row.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-public abstract class IteratingXmlRuleProvider<PAYLOADTYPE extends XmlFileModel> extends IteratingRuleProvider<PAYLOADTYPE>
-{
+public abstract class IteratingXmlRuleProvider<PAYLOADTYPE extends XmlFileModel> extends IteratingRuleProvider<PAYLOADTYPE> {
     private static Logger LOG = Logger.getLogger(IteratingXmlRuleProvider.class.getCanonicalName());
 
-    public IteratingXmlRuleProvider()
-    {
+    public IteratingXmlRuleProvider() {
         super();
     }
 
-    public IteratingXmlRuleProvider(RuleProviderMetadata metadata)
-    {
+    public IteratingXmlRuleProvider(RuleProviderMetadata metadata) {
         super(metadata);
     }
 
-    public IteratingXmlRuleProvider(Class<? extends RuleProvider> implementationType, String id)
-    {
+    public IteratingXmlRuleProvider(Class<? extends RuleProvider> implementationType, String id) {
         super(implementationType, id);
     }
 
@@ -42,13 +38,13 @@ public abstract class IteratingXmlRuleProvider<PAYLOADTYPE extends XmlFileModel>
      */
     public void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload) {
         Document doc = payload.asDocument();
-        if(doc == null) {
+        if (doc == null) {
             LOG.warning("Document is null.");
             return;
         }
-        
+
         perform(event, context, payload, doc);
     }
-    
+
     public abstract void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload, Document doc);
 }

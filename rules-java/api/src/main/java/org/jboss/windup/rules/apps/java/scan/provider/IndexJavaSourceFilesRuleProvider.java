@@ -37,8 +37,10 @@ import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
+
 import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_CLASSIFICATION;
 import static org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_DESCRIPTION;
+
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
@@ -53,40 +55,34 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ClassifyFileTypesPhase.class)
-public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
-{
+public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
 
     public static final String TECH_TAG = "Java Source";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(Query.fromType(JavaSourceFileModel.class))
-        .perform(new IndexJavaFileIterationOperator()
-                    .and(Commit.every(100))
-                    .and(IterationProgress.monitoring("Index Java Source Files", 250)));
+                .addRule()
+                .when(Query.fromType(JavaSourceFileModel.class))
+                .perform(new IndexJavaFileIterationOperator()
+                        .and(Commit.every(100))
+                        .and(IterationProgress.monitoring("Index Java Source Files", 250)));
     }
 
-    private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>
-    {
+    private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel> {
         private static final int JAVA_SUFFIX_LEN = 5;
 
-        private IndexJavaFileIterationOperator()
-        {
+        private IndexJavaFileIterationOperator() {
             super();
         }
 
         /**
          * If this is in the input directory, return the input directory. Otherwise, return null.
          */
-        private String getInputPathForSource(WindupConfigurationModel configuration, String javaPath)
-        {
-            for (FileModel input : configuration.getInputPaths())
-            {
+        private String getInputPathForSource(WindupConfigurationModel configuration, String javaPath) {
+            for (FileModel input : configuration.getInputPaths()) {
                 if (javaPath.startsWith(input.getFilePath()))
                     return input.getFilePath();
             }
@@ -94,89 +90,69 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         }
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload) {
             // If we are in binary mode, then we ignore java sources. Just remove them from the graph
-            if (SourceMode.isDisabled().evaluate(event, context))
-            {
+            if (SourceMode.isDisabled().evaluate(event, context)) {
                 payload.remove();
                 return;
             }
 
             WindupWildcardImportResolver.setContext(event.getGraphContext());
-            try
-            {
+            try {
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                 GraphContext graphContext = event.getGraphContext();
                 WindupConfigurationModel configuration = new GraphService<>(graphContext,
-                            WindupConfigurationModel.class)
-                            .getUnique();
+                        WindupConfigurationModel.class)
+                        .getUnique();
 
                 String filepath = payload.getFilePath();
                 filepath = Paths.get(filepath).toAbsolutePath().toString();
 
                 String classFilePath;
                 String inputDir = getInputPathForSource(configuration, filepath);
-                if (inputDir != null)
-                {
+                if (inputDir != null) {
                     classFilePath = filepath.substring(inputDir.length() + 1);
-                }
-                else
-                {
+                } else {
                     classFilePath = payload.getPrettyPathWithinProject();
                 }
                 String qualifiedName = classFilePath.replace(File.separatorChar, '.').substring(0,
-                            classFilePath.length() - JAVA_SUFFIX_LEN);
+                        classFilePath.length() - JAVA_SUFFIX_LEN);
 
                 String packageName = "";
                 if (qualifiedName.contains("."))
                     packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
 
-                if (packageName.startsWith("src.main.java."))
-                {
+                if (packageName.startsWith("src.main.java.")) {
                     packageName = packageName.substring("src.main.java.".length());
                 }
 
                 // make sure we mark this as a Java file
                 technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
                 payload.setPackageName(packageName);
-                try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
-                {
+                try (FileInputStream fis = new FileInputStream(payload.getFilePath())) {
                     addParsedClassToFile(event, context, payload, fis);
-                }
-                catch (FileNotFoundException e)
-                {
+                } catch (FileNotFoundException e) {
                     throw new WindupException("File in " + payload.getFilePath() + " was not found.", e);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new WindupException("IOException thrown when parsing file located in "
-                                + payload.getFilePath(), e);
-                }
-                catch (Exception e)
-                {
+                            + payload.getFilePath(), e);
+                } catch (Exception e) {
                     LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
                     classificationService.attachClassification(event, context, payload, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                     payload.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
                     return;
                 }
-            }
-            finally
-            {
+            } finally {
                 WindupWildcardImportResolver.setContext(null);
             }
         }
 
-        private void addParsedClassToFile(GraphRewrite event, EvaluationContext context, JavaSourceFileModel sourceFileModel, FileInputStream fis)
-        {
+        private void addParsedClassToFile(GraphRewrite event, EvaluationContext context, JavaSourceFileModel sourceFileModel, FileInputStream fis) {
             JavaSource<?> javaSource;
-            try
-            {
+            try {
                 javaSource = Roaster.parse(JavaSource.class, fis);
-            }
-            catch (ParserException e)
-            {
+            } catch (ParserException e) {
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                 classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                 sourceFileModel.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
@@ -191,8 +167,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             // is possible that the path will not match the package name. In this case, we will likely end up with a null
             // root path.
             Path rootSourcePath = PathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
-            if (rootSourcePath != null)
-            {
+            if (rootSourcePath != null) {
                 FileModel rootSourceFileModel = new FileService(event.getGraphContext()).createByFilePath(rootSourcePath.toString());
                 sourceFileModel.setRootSourceFolder(rootSourceFileModel);
             }
@@ -200,8 +175,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             String qualifiedName = javaSource.getQualifiedName();
 
             String simpleName = qualifiedName;
-            if (packageName != null && !packageName.isEmpty() && simpleName != null)
-            {
+            if (packageName != null && !packageName.isEmpty() && simpleName != null) {
                 simpleName = simpleName.substring(packageName.length() + 1);
             }
 
@@ -215,22 +189,18 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             javaClassModel.setPublic(javaSource.isPublic());
             javaClassModel.setInterface(javaSource.isInterface());
 
-            if (javaSource instanceof InterfaceCapable)
-            {
+            if (javaSource instanceof InterfaceCapable) {
                 InterfaceCapable interfaceCapable = (InterfaceCapable) javaSource;
                 List<String> interfaceNames = interfaceCapable.getInterfaces();
-                if (interfaceNames != null)
-                {
-                    for (String iface : interfaceNames)
-                    {
+                if (interfaceNames != null) {
+                    for (String iface : interfaceNames) {
                         JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
                         javaClassService.addInterface(javaClassModel, interfaceModel);
                     }
                 }
             }
 
-            if (!javaSource.isInterface() && javaSource instanceof Extendable)
-            {
+            if (!javaSource.isInterface() && javaSource instanceof Extendable) {
                 Extendable<?> extendable = (Extendable<?>) javaSource;
                 String superclassName = extendable.getSuperType();
                 if (!Strings.isNullOrEmpty(superclassName))
@@ -241,8 +211,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "AttachJavaSourceInformationToGraph";
         }
     }

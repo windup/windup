@@ -39,20 +39,17 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class InlineHintService extends GraphService<InlineHintModel>
-{
+public class InlineHintService extends GraphService<InlineHintModel> {
     public static final Logger LOG = Logger.getLogger(InlineHintService.class.getName());
 
-    public InlineHintService(GraphContext context)
-    {
+    public InlineHintService(GraphContext context) {
         super(context, InlineHintModel.class);
     }
 
     /**
      * Gets all {@link InlineHintModel} instances that are directly associated with the given {@link FileReferenceModel}
      */
-    public Iterable<InlineHintModel> getHintsForFileReference(FileReferenceModel reference)
-    {
+    public Iterable<InlineHintModel> getHintsForFileReference(FileReferenceModel reference) {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(reference.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
@@ -62,8 +59,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Gets all {@link InlineHintModel} instances that are directly associated with the given {@link FileModel}
      */
-    public Iterable<InlineHintModel> getHintsForFile(FileModel file)
-    {
+    public Iterable<InlineHintModel> getHintsForFile(FileModel file) {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(file.getElement());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
@@ -73,28 +69,24 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
-    {
+    public int getMigrationEffortPoints(FileModel fileModel) {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
         inlineHintPipeline.has(EffortReportModel.EFFORT, P.gt(0));
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
 
         int hintEffort = 0;
-        for (Vertex v : inlineHintPipeline.toList())
-        {
+        for (Vertex v : inlineHintPipeline.toList()) {
             hintEffort += (Integer) v.property(InlineHintModel.EFFORT).value();
         }
         return hintEffort;
     }
 
-    private List<Vertex> getProjectAndChildren(ProjectModel projectModel)
-    {
+    private List<Vertex> getProjectAndChildren(ProjectModel projectModel) {
         ArrayList<Vertex> result = new ArrayList<>();
         result.add(projectModel.getElement());
 
-        for (ProjectModel child : projectModel.getChildProjects())
-        {
+        for (ProjectModel child : projectModel.getChildProjects()) {
             result.addAll(getProjectAndChildren(child));
         }
         return result;
@@ -104,23 +96,18 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * Returns all hints for the given {@link ProjectModel}. If recursive is set, then this will recurse into
      * child projects as well.
      */
-    public Iterable<InlineHintModel> getHintsForProject(ProjectModel projectModel, boolean recursive)
-    {
+    public Iterable<InlineHintModel> getHintsForProject(ProjectModel projectModel, boolean recursive) {
         final List<Vertex> initialVertices;
-        if (recursive)
-        {
+        if (recursive) {
             initialVertices = getProjectAndChildren(projectModel);
-        }
-        else
-        {
+        } else {
             initialVertices = Collections.singletonList(projectModel.getElement());
         }
 
         return getInlineHintModels(initialVertices);
     }
 
-    public Iterable<InlineHintModel> getHintsForProjects(List<ProjectModel> projectModels)
-    {
+    public Iterable<InlineHintModel> getHintsForProjects(List<ProjectModel> projectModels) {
         List<Vertex> projectVertexList = projectModels.stream().map(ProjectModel::getElement).collect(Collectors.toList());
         return getInlineHintModels(projectVertexList);
     }
@@ -131,8 +118,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
 
         Set<InlineHintModel> results = new LinkedHashSet<>();
-        for (Vertex v : inlineHintPipeline.toList())
-        {
+        for (Vertex v : inlineHintPipeline.toList()) {
             results.add(frame(v));
         }
         return results;
@@ -151,12 +137,11 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * </p>
      */
     public Map<Integer, Integer> getMigrationEffortByPoints(
-        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs,
-        boolean recursive, boolean includeZero)
-    {
-        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
+            ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs,
+            boolean recursive, boolean includeZero) {
+        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction() {
             public Object vertexToKey(Vertex effortReportVertex) {
-                Integer migrationEffort = (Integer)effortReportVertex.property(EffortReportModel.EFFORT).value();
+                Integer migrationEffort = (Integer) effortReportVertex.property(EffortReportModel.EFFORT).value();
                 return migrationEffort;
             }
         };
@@ -168,18 +153,14 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * Returns the total incidents in all of the {@link InlineHintModel}s associated with the files in this project by severity.
      */
     public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event, ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
-                                                                         Set<String> issueCategoryIDs, boolean recursive)
-    {
-        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator = new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
-        {
-            public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
-            {
+                                                                         Set<String> issueCategoryIDs, boolean recursive) {
+        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator = new MapSumEffortAccumulatorFunction<IssueCategoryModel>() {
+            public IssueCategoryModel vertexToKey(Vertex effortReportVertex) {
                 return frame(effortReportVertex).getIssueCategory();
             }
 
             @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
+            public void accumulate(Vertex effortReportVertex) {
                 /*
                  * If it is a detail only issue, then summaries should not include it in the count.
                  */
@@ -195,22 +176,18 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                                            Set<String> issueCategoryIDs, boolean recursive, boolean includeZero,
-                                           EffortAccumulatorFunction accumulatorFunction)
-    {
-        LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+                                           EffortAccumulatorFunction accumulatorFunction) {
+        LOG.log(Level.INFO, String.format(System.lineSeparator() + "\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
         GraphTraversal<Vertex, Vertex> pipeline = this.getGraphContext().getGraph().traversal().V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
-        if (!includeZero)
-        {
+        if (!includeZero) {
             pipeline.has(EffortReportModel.EFFORT, P.gt(0));
             pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
-        }
-        else
-        {
+        } else {
             pipeline.has(WindupVertexFrame.TYPE_PROP, InlineHintModel.TYPE);
         }
         pipeline.as("hint");
@@ -220,10 +197,8 @@ public class InlineHintService extends GraphService<InlineHintModel>
         pipeline.select("hint");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
-        for (Vertex v : pipeline.toSet())
-        {
-            if (checkTags || !issueCategoryIDs.isEmpty())
-            {
+        for (Vertex v : pipeline.toSet()) {
+            if (checkTags || !issueCategoryIDs.isEmpty()) {
                 InlineHintModel hintModel = frame(v);
 
                 // only check tags if we have some passed in

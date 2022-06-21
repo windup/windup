@@ -5,18 +5,14 @@ import org.openqa.selenium.WebElement;
 
 /**
  * Contains methods for testing the contents of the Hibernate report.
- *
  */
-public class TestHibernateReportUtil extends TestChromeDriverReportUtil
-{
+public class TestHibernateReportUtil extends TestChromeDriverReportUtil {
     /**
      * Checks that a Hibernate property is listed with the given key and value
      */
-    public boolean checkSessionFactoryPropertyInReport(String propKey, String propValue)
-    {
+    public boolean checkSessionFactoryPropertyInReport(String propKey, String propValue) {
         WebElement element = getDriver().findElement(By.id("sessionFactoryPropertiesTable"));
-        if (element == null)
-        {
+        if (element == null) {
             throw new CheckFailedException("Unable to find hibernate session factory table element");
         }
         return checkValueInTable(element, propKey, propValue);
@@ -25,11 +21,9 @@ public class TestHibernateReportUtil extends TestChromeDriverReportUtil
     /**
      * Checks that a Hibernate entity is listed with the given entity classname and tablename
      */
-    public boolean checkHibernateEntityInReport(String classname, String tablename)
-    {
+    public boolean checkHibernateEntityInReport(String classname, String tablename) {
         WebElement element = getDriver().findElement(By.id("hibernateEntityTable"));
-        if (element == null)
-        {
+        if (element == null) {
             throw new CheckFailedException("Unable to find hibernate entity table element");
         }
         return checkValueInTable(element, classname, tablename);

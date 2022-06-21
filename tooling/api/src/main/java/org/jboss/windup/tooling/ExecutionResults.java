@@ -15,8 +15,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public interface ExecutionResults extends Serializable
-{
+public interface ExecutionResults extends Serializable {
     /**
      * A message about Windup stopping on request before finishing, if that happened; null otherwise.
      */

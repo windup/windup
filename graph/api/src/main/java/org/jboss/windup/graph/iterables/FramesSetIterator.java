@@ -10,8 +10,7 @@ import java.util.Set;
 /**
  * An iterator that wraps up another {@link Iterator<WindupVertexFrame>} and does not return duplicates
  */
-public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<T>
-{
+public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<T> {
     private final Iterator<T> wrappedIterator;
     private Set<String> ids = new HashSet<>();
     private T nextFrame = null;
@@ -23,16 +22,14 @@ public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<
     }
 
     @Override
-    public boolean hasNext()
-    {
-        return nextFrame!=null;
+    public boolean hasNext() {
+        return nextFrame != null;
     }
 
     @Override
-    public T next()
-    {
+    public T next() {
         T nextFrame = getAndSetNewFrame();
-        if(nextFrame == null) {
+        if (nextFrame == null) {
             throw new NoSuchElementException();
         } else {
             return nextFrame;
@@ -47,12 +44,12 @@ public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<
     }
 
     private void fillInNextFrame() {
-        while(wrappedIterator.hasNext() && nextFrame==null) {
+        while (wrappedIterator.hasNext() && nextFrame == null) {
             T frame = wrappedIterator.next();
             String frameId = frame.getElement().id().toString();
-            if(!ids.contains(frameId)) {
+            if (!ids.contains(frameId)) {
                 ids.add(frameId);
-                nextFrame=frame;
+                nextFrame = frame;
             }
         }
     }

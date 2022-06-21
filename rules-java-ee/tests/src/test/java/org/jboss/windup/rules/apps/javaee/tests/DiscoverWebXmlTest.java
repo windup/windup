@@ -23,8 +23,7 @@ import java.util.Iterator;
 import java.util.UUID;
 
 @RunWith(Arquillian.class)
-public class DiscoverWebXmlTest extends AbstractTest
-{
+public class DiscoverWebXmlTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 
@@ -32,24 +31,22 @@ public class DiscoverWebXmlTest extends AbstractTest
     private GraphContextFactory factory;
 
     @Test
-    public void testWebXmlMetadataExtraction() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testWebXmlMetadataExtraction() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/web-xml/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             pm.addFileModel(inputPath);
             pm.setRootFileModel(inputPath);
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setGraphContext(context);
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);

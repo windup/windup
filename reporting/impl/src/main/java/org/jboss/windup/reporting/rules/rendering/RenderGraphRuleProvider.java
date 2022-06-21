@@ -22,32 +22,26 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 @Vetoed
 @RuleMetadata(phase = PostReportRenderingPhase.class)
-public class RenderGraphRuleProvider extends AbstractRuleProvider
-{
+public class RenderGraphRuleProvider extends AbstractRuleProvider {
     @Inject
     private Imported<GraphRenderer> renderers;
 
     @Override
-    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                for (GraphRenderer renderer : renderers)
-                {
-                    renderer.renderGraph(event.getGraphContext());
-                }
-            }
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        for (GraphRenderer renderer : renderers) {
+                            renderer.renderGraph(event.getGraphContext());
+                        }
+                    }
 
-            @Override
-            public String toString()
-            {
-                return "RenderGraphForDebugging";
-            }
-        });
+                    @Override
+                    public String toString() {
+                        return "RenderGraphForDebugging";
+                    }
+                });
     }
 }

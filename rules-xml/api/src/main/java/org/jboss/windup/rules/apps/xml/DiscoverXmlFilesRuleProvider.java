@@ -34,49 +34,41 @@ import org.w3c.dom.Document;
 /**
  * Extract some basic metadata from all {@link XmlFileModel}s found in the graph.
  */
-public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getName());
 
-    public DiscoverXmlFilesRuleProvider()
-    {
+    public DiscoverXmlFilesRuleProvider() {
         super(MetadataBuilder.forProvider(DiscoverXmlFilesRuleProvider.class)
-                    .setPhase(ClassifyFileTypesPhase.class));
+                .setPhase(ClassifyFileTypesPhase.class));
     }
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-            .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
-            .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
-            .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))
-            .addRule(FileMapping.from(".*\\.xhtml$").to(XmlFileModel.class))
-            .addRule()
-            .when(Query.fromType(XmlFileModel.class))
-            .perform(new AbstractIterationOperation<XmlFileModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-                {
-                    addXmlMetaInformation(event, context, payload);
-                }
+                .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
+                .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
+                .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))
+                .addRule(FileMapping.from(".*\\.xhtml$").to(XmlFileModel.class))
+                .addRule()
+                .when(Query.fromType(XmlFileModel.class))
+                .perform(new AbstractIterationOperation<XmlFileModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
+                        addXmlMetaInformation(event, context, payload);
+                    }
 
-                @Override
-                public String toString()
-                {
-                    return "IndexXmlFilesMetadata";
-                }
-            });
+                    @Override
+                    public String toString() {
+                        return "IndexXmlFilesMetadata";
+                    }
+                });
     }
 
-    private void addXmlMetaInformation(GraphRewrite event, EvaluationContext context, XmlFileModel file)
-    {
+    private void addXmlMetaInformation(GraphRewrite event, EvaluationContext context, XmlFileModel file) {
         DoctypeMetaService docTypeService = new DoctypeMetaService(event.getGraphContext());
         NamespaceService namespaceService = new NamespaceService(event.getGraphContext());
 
-        try
-        {
+        try {
             Document parsedDocument = file.asDocument();
 
             // pull out doctype data.
@@ -90,19 +82,15 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
             String tagName = $(parsedDocument).tag();
             xmlResourceModel.setRootTagName(tagName);
 
-            if (docType != null)
-            {
+            if (docType != null) {
                 // create the doctype from
                 Iterator<DoctypeMetaModel> metas = docTypeService.findByPublicIdAndSystemId(docType.getPublicId(),
-                            docType.getSystemId());
-                if (metas.hasNext())
-                {
+                        docType.getSystemId());
+                if (metas.hasNext()) {
                     DoctypeMetaModel meta = metas.next();
                     meta.addXmlResource(xmlResourceModel);
                     xmlResourceModel.setDoctype(meta);
-                }
-                else
-                {
+                } else {
                     DoctypeMetaModel meta = event.getGraphContext().getFramed().addFramedVertex(DoctypeMetaModel.class);
                     meta.addXmlResource(xmlResourceModel);
                     meta.setBaseURI(docType.getBaseURI());
@@ -113,33 +101,26 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
             }
 
             Map<String, String> namespaceSchemaLocations = XmlUtil.getSchemaLocations(parsedDocument);
-            if (namespaceSchemaLocations != null && namespaceSchemaLocations.size() > 0)
-            {
-                for (String namespace : namespaceSchemaLocations.keySet())
-                {
+            if (namespaceSchemaLocations != null && namespaceSchemaLocations.size() > 0) {
+                for (String namespace : namespaceSchemaLocations.keySet()) {
                     NamespaceMetaModel meta = namespaceService.createNamespaceSchemaLocation(namespace,
-                                namespaceSchemaLocations.get(namespace));
+                            namespaceSchemaLocations.get(namespace));
                     meta.addXmlResource(xmlResourceModel);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            if (file.asFile().length() == 0)
-            {
+        } catch (Exception e) {
+            if (file.asFile().length() == 0) {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ": the file is empty.";
                 LOG.log(Level.FINE, message);
                 file.setParseError(message);
-            }
-            else
-            {
+            } else {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ", due to: " + e.getMessage();
                 LOG.log(Level.INFO, message);
                 LOG.log(Level.FINE, message, e);
                 file.setParseError(message);
             }
             new ClassificationService(event.getGraphContext())
-                .attachClassification(event, context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);
+                    .attachClassification(event, context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);
         }
     }
 }

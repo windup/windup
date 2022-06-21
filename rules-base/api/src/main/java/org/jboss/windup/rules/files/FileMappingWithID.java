@@ -7,6 +7,5 @@ import org.ocpsoft.rewrite.config.Rule;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface FileMappingWithID extends Rule
-{
+public interface FileMappingWithID extends Rule {
 }

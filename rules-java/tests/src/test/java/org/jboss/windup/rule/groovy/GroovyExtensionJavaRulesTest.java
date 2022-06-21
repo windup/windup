@@ -46,27 +46,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class GroovyExtensionJavaRulesTest
-{
+public class GroovyExtensionJavaRulesTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(TestHintsClassificationsTestRuleProvider.class)
-                    .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.windup.groovy"),
-                                GROOVY_CLASSIFICATION_AND_HINT_WINDUP_FILE)
-                    .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.rhamt.groovy"),
-                                GROOVY_CLASSIFICATION_AND_HINT_RHAMT_FILE);
+                .addBeansXML()
+                .addClass(TestHintsClassificationsTestRuleProvider.class)
+                .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.windup.groovy"),
+                        GROOVY_CLASSIFICATION_AND_HINT_WINDUP_FILE)
+                .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.rhamt.groovy"),
+                        GROOVY_CLASSIFICATION_AND_HINT_RHAMT_FILE);
     }
 
     @Inject
@@ -79,16 +77,14 @@ public class GroovyExtensionJavaRulesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintsAndClassificationOperation() throws Exception
-    {
+    public void testHintsAndClassificationOperation() throws Exception {
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath.resolve("graph"), true))
-        {
+        try (GraphContext context = factory.create(outputPath.resolve("graph"), true)) {
             String inputPath = "src/test/resources/org/jboss/windup/rules/java";
 
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
@@ -106,29 +102,28 @@ public class GroovyExtensionJavaRulesTest
             fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
             pm.addFileModel(fileModel);
 
-            try
-            {
+            try {
                 Predicate<RuleProvider> predicate = new AndPredicate(
-                            new NotPredicate(
-                                        new RuleProviderPhasePredicate(
-                                                    MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)),
-                            new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class)));
+                        new NotPredicate(
+                                new RuleProviderPhasePredicate(
+                                        MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)),
+                        new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class)));
                 WindupConfiguration configuration = new WindupConfiguration()
-                            .setGraphContext(context)
-                            .setRuleProviderFilter(predicate)
-                            .addInputPath(Paths.get(inputPath))
-                            .setOutputDirectory(outputPath)
-                            .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                            .setOptionValue(SourceModeOption.NAME, true);
+                        .setGraphContext(context)
+                        .setRuleProviderFilter(predicate)
+                        .addInputPath(Paths.get(inputPath))
+                        .setOutputDirectory(outputPath)
+                        .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                        .setOptionValue(SourceModeOption.NAME, true);
 
                 processor.execute(configuration);
 
                 GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
                 GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                            ClassificationModel.class);
+                        ClassificationModel.class);
 
                 GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                            JavaTypeReferenceModel.class);
+                        JavaTypeReferenceModel.class);
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
@@ -138,9 +133,7 @@ public class GroovyExtensionJavaRulesTest
 
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
                 Assert.assertEquals(2, Iterators.asList(fileModels).size());
-            }
-            finally
-            {
+            } finally {
                 FileUtils.deleteDirectory(outputPath.toFile());
             }
         }

@@ -45,15 +45,14 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
         assertTrue(records.stream().allMatch(this::isRowSorted));
     }
 
-    private List<List<String>> readCSVFile(File csvFile) throws IOException
-    {
+    private List<List<String>> readCSVFile(File csvFile) throws IOException {
         List<List<String>> rows = new ArrayList<>();
         try (BufferedReader buffer = new BufferedReader(new FileReader(csvFile))) {
             String lineString;
             while ((lineString = buffer.readLine()) != null) {
                 String[] columns = lineString.split(DELIMITER);
                 //remove first element from Array, as this is always the app name and is not part of the sort
-                String[] columnsWithoutAppName = Arrays.copyOfRange(columns,1,columns.length );
+                String[] columnsWithoutAppName = Arrays.copyOfRange(columns, 1, columns.length);
                 rows.add(Arrays.asList(columnsWithoutAppName));
             }
         }
@@ -61,8 +60,7 @@ public class ExportCsvTest extends AbstractBootstrapTestWithRules {
         return rows;
     }
 
-    public boolean isRowSorted(List<String> row)
-    {
+    public boolean isRowSorted(List<String> row) {
         return row.equals(row.stream().sorted().collect(Collectors.toList()));
     }
 }

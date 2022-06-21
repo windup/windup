@@ -14,33 +14,27 @@ import org.jboss.windup.config.GraphRewrite;
 import freemarker.template.TemplateModelException;
 
 /**
- *
  * Returns a list of all FreeMarker Template Directives that have been added by Windup and the currently loaded addons.
- *
+ * <p>
  * Called as follows:
- *
+ * <p>
  * getAllFreeMarkerDirectives()
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public class GetAllFreeMarkerDirectivesMethod implements WindupFreeMarkerMethod
-{
+public class GetAllFreeMarkerDirectivesMethod implements WindupFreeMarkerMethod {
     @Inject
     private Imported<WindupFreeMarkerTemplateDirective> directives;
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "This method takes no parameters, and returns a List of hashes containing a 'name', 'class',  and 'description' field.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         List<Map<String, String>> results = new ArrayList<>();
-        for (WindupFreeMarkerTemplateDirective directive : directives)
-        {
+        for (WindupFreeMarkerTemplateDirective directive : directives) {
             Map<String, String> directiveInfo = new HashMap<>();
             directiveInfo.put("name", directive.getDirectiveName());
             directiveInfo.put("description", directive.getDescription());
@@ -51,7 +45,6 @@ public class GetAllFreeMarkerDirectivesMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 }

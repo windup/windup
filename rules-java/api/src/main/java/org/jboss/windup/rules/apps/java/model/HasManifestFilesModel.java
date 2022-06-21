@@ -13,8 +13,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(HasManifestFilesModel.TYPE)
-public interface HasManifestFilesModel extends WindupVertexFrame
-{
+public interface HasManifestFilesModel extends WindupVertexFrame {
     String TYPE = "HasManifestFilesModel";
 
     /**

@@ -3,13 +3,13 @@ package org.jboss.windup.config;
 /**
  * Option to force the analysis of already known libraries. What a "known" library is will depend on the particular
  * implementation.
- * 
+ *
  * @author <a href="mailto:jleflete@gmail.com">Juan Manuel Leflet Estrada</a>
  */
 public class AnalyzeKnownLibrariesOption extends AbstractConfigurationOption {
-    
+
     public static final String NAME = "analyzeKnownLibraries";
-    
+
     @Override
     public String getName() {
         return NAME;

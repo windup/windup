@@ -37,44 +37,37 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of EJB data (eg, a list of EJB session beans).
  */
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Remote Services Report")
-public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateRemoteReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/remote.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all remote services references that were found within the application.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(Query.fromType(RemoteServiceModel.class))
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                // configuration of current execution
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                .addRule()
+                .when(Query.fromType(RemoteServiceModel.class))
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        // configuration of current execution
+                        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                for (FileModel inputPath : configurationModel.getInputPaths())
-                {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    createReport(event.getGraphContext(), projectModel);
-                }
-            }
+                        for (FileModel inputPath : configurationModel.getInputPaths()) {
+                            ProjectModel projectModel = inputPath.getProjectModel();
+                            createReport(event.getGraphContext(), projectModel);
+                        }
+                    }
 
-            @Override
-            public String toString()
-            {
-                return "CreateRemoteServiceReport";
-            }
-        });
+                    @Override
+                    public String toString() {
+                        return "CreateRemoteServiceReport";
+                    }
+                });
 
     }
 
     @SuppressWarnings("unchecked")
-    private void createReport(GraphContext context, ProjectModel projectModel)
-    {
+    private void createReport(GraphContext context, ProjectModel projectModel) {
         GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
 
         List<JaxRSWebServiceModel> jaxRsList = new ArrayList<>();
@@ -82,25 +75,17 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
         List<EjbRemoteServiceModel> ejbRemoteList = new ArrayList<>();
         List<RMIServiceModel> rmiList = new ArrayList<>();
 
-        for (RemoteServiceModel remoteServiceModel : remoteServices.findAll())
-        {
+        for (RemoteServiceModel remoteServiceModel : remoteServices.findAll()) {
             if (!remoteServiceModel.isAssociatedWithApplication(projectModel))
                 continue;
 
-            if (remoteServiceModel instanceof JaxRSWebServiceModel)
-            {
+            if (remoteServiceModel instanceof JaxRSWebServiceModel) {
                 jaxRsList.add((JaxRSWebServiceModel) remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof JaxWSWebServiceModel)
-            {
+            } else if (remoteServiceModel instanceof JaxWSWebServiceModel) {
                 jaxWsList.add((JaxWSWebServiceModel) remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof EjbRemoteServiceModel)
-            {
+            } else if (remoteServiceModel instanceof EjbRemoteServiceModel) {
                 ejbRemoteList.add((EjbRemoteServiceModel) remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof RMIServiceModel)
-            {
+            } else if (remoteServiceModel instanceof RMIServiceModel) {
                 rmiList.add((RMIServiceModel) remoteServiceModel);
             }
         }

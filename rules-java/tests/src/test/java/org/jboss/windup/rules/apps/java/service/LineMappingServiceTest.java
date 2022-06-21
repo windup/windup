@@ -21,12 +21,12 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class LineMappingServiceTest {
 
-    @AddonDependencies({ @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+    @AddonDependencies({@AddonDependency(name = "org.jboss.windup.config:windup-config"),
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
     public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
@@ -41,7 +41,7 @@ public class LineMappingServiceTest {
 
             LineMappingService service = new LineMappingService(context);
 
-            LineMappingModel model = service.create(new int[] { 1, 2, 3, 4 });
+            LineMappingModel model = service.create(new int[]{1, 2, 3, 4});
 
             Map<Integer, Integer> map = service.getMapping(model);
 

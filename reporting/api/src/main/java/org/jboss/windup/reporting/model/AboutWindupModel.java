@@ -9,8 +9,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(AboutWindupModel.TYPE)
-public interface AboutWindupModel extends WindupVertexFrame
-{
+public interface AboutWindupModel extends WindupVertexFrame {
     public static final String TYPE = "AboutWindupModel";
     public static final String WINDUP_RUNTIME_VERSION = "windupRuntimeVersion";
 

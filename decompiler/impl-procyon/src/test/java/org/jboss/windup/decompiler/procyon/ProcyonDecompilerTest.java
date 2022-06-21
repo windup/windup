@@ -19,21 +19,17 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ProcyonDecompilerTest extends DecompilerTestBase
-{
+public class ProcyonDecompilerTest extends DecompilerTestBase {
     @Override
-    protected Decompiler getDecompiler()
-    {
+    protected Decompiler getDecompiler() {
         return new ProcyonDecompiler();
     }
 
     @Override
-    protected boolean isResultValid(DecompilationResult res)
-    {
+    protected boolean isResultValid(DecompilationResult res) {
         return (res.getFailures().size() == 1);
     }
 
@@ -41,8 +37,7 @@ public class ProcyonDecompilerTest extends DecompilerTestBase
      * Tests the {@link ProcyonDecompiler#decompileClassFiles(Collection, DecompilationListener)} method.
      */
     @Test
-    public void testDecompileClassFiles() throws DecompilationException, IOException
-    {
+    public void testDecompileClassFiles() throws DecompilationException, IOException {
         final ProcyonDecompiler dec = (ProcyonDecompiler) this.getDecompiler();
 
         Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
@@ -56,30 +51,25 @@ public class ProcyonDecompilerTest extends DecompilerTestBase
 
         Collection<ClassDecompileRequest> requests = Collections.singletonList(new ClassDecompileRequest(unzipDir, clsFile, decompDir));
         final AtomicInteger numberDecompiled = new AtomicInteger(0);
-        DecompilationListener listener = new DecompilationListener()
-        {
+        DecompilationListener listener = new DecompilationListener() {
             @Override
-            public void fileDecompiled(List<String> inputPath, String outputPath)
-            {
+            public void fileDecompiled(List<String> inputPath, String outputPath) {
                 Assert.assertNotNull("Results object was returned.", outputPath);
                 numberDecompiled.incrementAndGet();
             }
 
             @Override
-            public void decompilationFailed(List<String> inputPath, String message)
-            {
+            public void decompilationFailed(List<String> inputPath, String message) {
 
             }
 
             @Override
-            public void decompilationProcessComplete()
-            {
+            public void decompilationProcessComplete() {
 
             }
 
             @Override
-            public boolean isCancelled()
-            {
+            public boolean isCancelled() {
                 return false;
             }
         };

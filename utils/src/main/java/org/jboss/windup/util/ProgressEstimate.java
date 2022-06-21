@@ -7,8 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ProgressEstimate
-{
+public class ProgressEstimate {
     private long startTime = -1;
     private final AtomicInteger worked = new AtomicInteger();
     private final int total;
@@ -16,8 +15,7 @@ public class ProgressEstimate
     /**
      * Creates a new {@link ProgressEstimate} for the given number of units of work.
      */
-    public ProgressEstimate(int total)
-    {
+    public ProgressEstimate(int total) {
         this.startTime = System.currentTimeMillis();
         this.total = total;
     }
@@ -25,35 +23,31 @@ public class ProgressEstimate
     /**
      * Indicates that the given number of work units have been done.
      */
-    public void addWork(int worked)
-    {
+    public void addWork(int worked) {
         this.worked.addAndGet(worked);
     }
 
     /**
      * Gets the current number of work units done.
      */
-    public int getWorked()
-    {
+    public int getWorked() {
         return worked.get();
     }
 
     /**
      * Gets the total number of work units to be done.
      */
-    public int getTotal()
-    {
+    public int getTotal() {
         return total;
     }
 
     /**
      * Gets the estimated time remaining in milliseconds based upon the total number of work units, the start time, and how many units have been done
      * so far.
-     *
+     * <p>
      * This should not be called before any work units have been done.
      */
-    public long getTimeRemainingInMillis()
-    {
+    public long getTimeRemainingInMillis() {
         long batchTime = System.currentTimeMillis() - startTime;
         double timePerIteration = (double) batchTime / (double) worked.get();
         return (long) (timePerIteration * (total - worked.get()));

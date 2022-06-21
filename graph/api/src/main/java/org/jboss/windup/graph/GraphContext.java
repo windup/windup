@@ -19,8 +19,7 @@ import org.jboss.windup.graph.service.Service;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka, I</a>
  */
-public interface GraphContext extends Closeable
-{
+public interface GraphContext extends Closeable {
     /**
      * Get the {@link Path} on disk where this graph is stored.
      */
@@ -33,7 +32,7 @@ public interface GraphContext extends Closeable
 
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
-     *
+     * <p>
      * If the enableListeners flag is false, then this will not enable GraphMutation listeners. These are not
      * necessary for processes that only read from the graph and are only used for graphs that are used as part of an analysis.
      */
@@ -71,7 +70,7 @@ public interface GraphContext extends Closeable
 
     /**
      * Returns the globally configured options as an immutable {@link Map}.
-     *
+     * <p>
      * Example usage:
      * <pre>
      * Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);

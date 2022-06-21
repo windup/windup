@@ -25,57 +25,50 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:marcorizzi82@gmail.com">Marco Rizzi</a>
  */
 @RunWith(Arquillian.class)
-public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest
-{
+public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
 
     final TemporaryFolder tmp = new TemporaryFolder();
     private static final String EXPLODED_APP_DIR = "exploded-app-directory";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupExplodedApp() throws Exception
-    {
+    public void testRunWindupExplodedApp() throws Exception {
         tmp.create();
         final File explodedAppDir = tmp.newFolder(EXPLODED_APP_DIR);
         ZipUtil.unzipToFolder(new File("../test-files/spring-small-example.war"), explodedAppDir);
 
         final Path outputPath = getDefaultPath();
-        try (GraphContext context = createGraphContext(outputPath))
-        {
+        try (GraphContext context = createGraphContext(outputPath)) {
             Map<String, Object> explodedAppOption = new HashMap<>();
             explodedAppOption.put(ExplodedAppInputOption.NAME, true);
             super.runTest(context, Collections.singletonList(explodedAppDir.toString()), null, false, Collections.emptyList(),
-                        Collections.emptyList(), explodedAppOption);
+                    Collections.emptyList(), explodedAppOption);
             validateJarDependencyGraphReport(context);
-        }
-        finally
-        {
+        } finally {
             tmp.delete();
         }
     }
 
-    private void validateJarDependencyGraphReport(GraphContext graphContext)
-    {
+    private void validateJarDependencyGraphReport(GraphContext graphContext) {
         Path dependencyReport = getApplicationDependencyGraphReportPath(graphContext);
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();

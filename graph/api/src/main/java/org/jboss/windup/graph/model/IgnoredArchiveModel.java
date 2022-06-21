@@ -9,7 +9,6 @@ import org.jboss.windup.graph.model.resource.IgnoredFileModel;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(IgnoredArchiveModel.TYPE)
-public interface IgnoredArchiveModel extends ArchiveModel, IgnoredFileModel
-{
+public interface IgnoredArchiveModel extends ArchiveModel, IgnoredFileModel {
     String TYPE = "IgnoredArchiveModel";
 }

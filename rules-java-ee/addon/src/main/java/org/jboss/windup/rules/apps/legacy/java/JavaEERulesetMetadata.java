@@ -9,12 +9,10 @@ import org.jboss.windup.config.metadata.RulesetMetadata;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaEERulesetMetadata extends AbstractRulesetMetadata implements RulesetMetadata
-{
+public class JavaEERulesetMetadata extends AbstractRulesetMetadata implements RulesetMetadata {
     public static final String RULE_SET_ID = "CoreJavaEERules";
 
-    public JavaEERulesetMetadata()
-    {
+    public JavaEERulesetMetadata() {
         super(RULE_SET_ID);
     }
 }

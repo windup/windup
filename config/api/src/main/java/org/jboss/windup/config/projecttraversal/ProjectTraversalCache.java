@@ -20,19 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ProjectTraversalCache extends AbstractRuleLifecycleListener
-{
+public class ProjectTraversalCache extends AbstractRuleLifecycleListener {
     private static final Map<ProjectModel, SoftReference<Set<ProjectModel>>> moduleToApplicationCache = new ConcurrentHashMap<>();
     private static final Map<ProjectModel, SoftReference<Set<ProjectModel>>> applicationToProjectCache = new ConcurrentHashMap<>();
 
     @Override
-    public void beforeExecution(GraphRewrite event)
-    {
+    public void beforeExecution(GraphRewrite event) {
         moduleToApplicationCache.clear();
     }
 
-    public static Set<ProjectModel> getApplicationsForProject(GraphContext context, ProjectModel project)
-    {
+    public static Set<ProjectModel> getApplicationsForProject(GraphContext context, ProjectModel project) {
         Set<ProjectModel> results = getFromCache(project);
         if (results != null)
             return results;
@@ -40,19 +37,16 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener
         results = new HashSet<>();
 
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel inputFile : configurationModel.getInputPaths())
-        {
+        for (FileModel inputFile : configurationModel.getInputPaths()) {
             ProjectModel application = inputFile.getProjectModel();
-            synchronized (applicationToProjectCache)
-            {
+            synchronized (applicationToProjectCache) {
                 SoftReference<Set<ProjectModel>> projectsInApplicationReference = applicationToProjectCache.get(application);
 
                 Set<ProjectModel> projectsInApplication = null;
                 if (projectsInApplicationReference != null)
                     projectsInApplication = projectsInApplicationReference.get();
 
-                if (projectsInApplication == null)
-                {
+                if (projectsInApplication == null) {
                     ProjectModelTraversal traversal = new ProjectModelTraversal(application);
                     projectsInApplication = traversal.getAllProjects(true);
                     applicationToProjectCache.put(application, new SoftReference<>(projectsInApplication));
@@ -77,25 +71,21 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener
         return results;
     }
 
-    private static Set<ProjectModel> getFromCache(ProjectModel project)
-    {
+    private static Set<ProjectModel> getFromCache(ProjectModel project) {
         if (project == null)
             return null;
 
-        synchronized (moduleToApplicationCache)
-        {
+        synchronized (moduleToApplicationCache) {
             SoftReference<Set<ProjectModel>> referenceProjectsSet = moduleToApplicationCache.get(project);
             return referenceProjectsSet == null ? null : referenceProjectsSet.get();
         }
     }
 
-    private static void putInCache(ProjectModel project, Set<ProjectModel> projects)
-    {
+    private static void putInCache(ProjectModel project, Set<ProjectModel> projects) {
         if (project == null)
             return;
 
-        synchronized (moduleToApplicationCache)
-        {
+        synchronized (moduleToApplicationCache) {
             SoftReference<Set<ProjectModel>> referenceProjectsSet = new SoftReference<>(projects);
             moduleToApplicationCache.put(project, referenceProjectsSet);
         }

@@ -10,49 +10,42 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Base class for constructing {@link RulesetMetadata} instances. Provides sensible defaults.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AbstractRulesetMetadata implements RulesetMetadata
-{
+public class AbstractRulesetMetadata implements RulesetMetadata {
     private final String id;
 
     /**
      * Construct a new {@link AbstractRulesetMetadata} instance using the given {@link String} ID.
      */
-    public AbstractRulesetMetadata(String id)
-    {
+    public AbstractRulesetMetadata(String id) {
         Assert.notNull(id, "Ruleset ID must not be null.");
         this.id = id;
     }
 
     @Override
-    public String getID()
-    {
+    public String getID() {
         return id;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "";
     }
 
     @Override
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return getClass().getClassLoader().toString();
     }
 
     @Override
-    public Set<String> getTags()
-    {
+    public Set<String> getTags() {
         return Collections.emptySet();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -60,8 +53,7 @@ public class AbstractRulesetMetadata implements RulesetMetadata
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -69,27 +61,22 @@ public class AbstractRulesetMetadata implements RulesetMetadata
         if (getClass() != obj.getClass())
             return false;
         AbstractRulesetMetadata other = (AbstractRulesetMetadata) obj;
-        if (id == null)
-        {
+        if (id == null) {
             if (other.id != null)
                 return false;
-        }
-        else if (!id.equals(other.id))
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }
 
     @Override
-    public boolean hasTags(String tag, String... tags)
-    {
+    public boolean hasTags(String tag, String... tags) {
         Set<String> expected = new HashSet<>();
         if (!Strings.isNullOrEmpty(tag))
             expected.add(tag);
 
-        if (tags != null)
-        {
-            for (String t : tags)
-            {
+        if (tags != null) {
+            for (String t : tags) {
                 if (!Strings.isNullOrEmpty(tag))
                     expected.add(t);
             }
@@ -99,34 +86,30 @@ public class AbstractRulesetMetadata implements RulesetMetadata
     }
 
     @Override
-    public Set<TechnologyReference> getSourceTechnologies()
-    {
+    public Set<TechnologyReference> getSourceTechnologies() {
         return Collections.emptySet();
     }
 
     @Override
-    public Set<TechnologyReference> getTargetTechnologies()
-    {
+    public Set<TechnologyReference> getTargetTechnologies() {
         return Collections.emptySet();
     }
 
     @Override
-    public Set<AddonId> getRequiredAddons()
-    {
+    public Set<AddonId> getRequiredAddons() {
         return Collections.emptySet();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RulesetMetadata ["
-                    + "\tid=" + id + ", "
-                    + "\tdescription=" + getDescription() + ", "
-                    + "\torigin=" + getOrigin() + ", "
-                    + "\ttags=" + getTags() + ", "
-                    + "\tsourceTechnologies=" + getSourceTechnologies() + ", "
-                    + "\ttargetTechnologies=" + getTargetTechnologies() + ""
-                    + "]";
+                + "\tid=" + id + ", "
+                + "\tdescription=" + getDescription() + ", "
+                + "\torigin=" + getOrigin() + ", "
+                + "\ttags=" + getTags() + ", "
+                + "\tsourceTechnologies=" + getSourceTechnologies() + ", "
+                + "\ttargetTechnologies=" + getTargetTechnologies() + ""
+                + "]";
     }
 
 }

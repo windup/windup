@@ -10,13 +10,11 @@ import java.util.List;
 
 /**
  * This represents Jar Dependencies report model
- * 
- * @author mnovotny
  *
+ * @author mnovotny
  */
 @TypeValue(DependenciesReportModel.TYPE)
-public interface DependenciesReportModel extends ApplicationReportModel
-{
+public interface DependenciesReportModel extends ApplicationReportModel {
     String TYPE = "DependenciesReportModel";
 
     String DEPENDENCY_REPORT_GROUP = "dependencyReportGroup";

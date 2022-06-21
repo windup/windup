@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("MapInPropsPrefixModel")
-public interface TestMapPrefixModel extends WindupVertexFrame
-{
+public interface TestMapPrefixModel extends WindupVertexFrame {
     @MapInProperties(propertyPrefix = "map")
     void setMap(Map<String, String> map);
 

@@ -14,8 +14,7 @@ import org.jboss.windup.tooling.rules.RuleProviderRegistry;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ExecutionBuilder extends Remote
-{
+public interface ExecutionBuilder extends Remote {
     String LOOKUP_NAME = "ExecutionBuilder";
 
     /**
@@ -118,17 +117,17 @@ public interface ExecutionBuilder extends Remote
      * Returns the registry containing the rule providers.
      */
     RuleProviderRegistry getRuleProviderRegistry(List<String> paths) throws RemoteException;
-    
+
     /**
      * Returns the registry containing the system rule providers.
      */
     RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException;
-    
+
     /**
      * Executes the quickfix transformation.
      */
     String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException;
-    
+
     /**
      * Returns the system environment variable value.
      */

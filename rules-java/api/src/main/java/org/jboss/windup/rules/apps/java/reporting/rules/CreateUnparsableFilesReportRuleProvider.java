@@ -27,25 +27,20 @@ import java.util.List;
  * Creates the main report HTML page for a Java application.
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvider {
     public static final String REPORT_NAME = "Unparsable";
     public static final String TEMPLATE_UNPARSABLE = "/reports/templates/unparsable_files.ftl";
     public static final String DESCRIPTION = "This report shows all files that could not been parsed in the expected format. For instance, a file with a '.xml' or '.wsdl' suffix is assumed to be an XML file. If the XML parser fails on it, you'll see that here. Besides that, the information about parsing failure is also present wherever the individual file is listed.";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         // Create the ReportModel.
-        GraphOperation createReportModel = new GraphOperation()
-        {
+        GraphOperation createReportModel = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                for(FileModel fileModel : windupConfiguration.getInputPaths())
-                {
+                for (FileModel fileModel : windupConfiguration.getInputPaths()) {
                     ProjectModel application = fileModel.getProjectModel();
                     if (application == null)
                         throw new WindupException("Error, no project found in: " + fileModel.getFilePath());
@@ -54,38 +49,35 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
                 }
             }
 
-            public String toString() { return "addReport"; }
+            public String toString() {
+                return "addReport";
+            }
         };
 
         // For each FileModel...
         return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(createReportModel);
+                .addRule()
+                .perform(createReportModel);
 
     }
     // @formatter:on
 
-    private List<ProjectModel> getProjectsWithUnparsableFiles(ProjectModelTraversal traversal)
-    {
+    private List<ProjectModel> getProjectsWithUnparsableFiles(ProjectModelTraversal traversal) {
         List<ProjectModel> results = new ArrayList<>();
-        for (FileModel fileModel : traversal.getCanonicalProject().getUnparsableFiles())
-        {
-            if (fileModel.getOnParseError() != FileModel.OnParseError.IGNORE)
-            {
+        for (FileModel fileModel : traversal.getCanonicalProject().getUnparsableFiles()) {
+            if (fileModel.getOnParseError() != FileModel.OnParseError.IGNORE) {
                 results.add(traversal.getCanonicalProject());
                 break;
             }
         }
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-        {
+        for (ProjectModelTraversal child : traversal.getChildren()) {
             results.addAll(getProjectsWithUnparsableFiles(child));
         }
         return results;
     }
 
-    private void createReportModel(GraphContext context, ProjectModel application)
-    {
+    private void createReportModel(GraphContext context, ProjectModel application) {
         ProjectModelTraversal traversal = new ProjectModelTraversal(application);
         List<ProjectModel> projects = getProjectsWithUnparsableFiles(traversal);
 

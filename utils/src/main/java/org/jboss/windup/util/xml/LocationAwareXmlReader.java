@@ -8,7 +8,7 @@
  *
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
-*/
+ */
 package org.jboss.windup.util.xml;
 
 import java.io.IOException;
@@ -29,30 +29,24 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * XML stream reader which, after parsing, can tell which node appeared on which line.
  */
-public class LocationAwareXmlReader
-{
+public class LocationAwareXmlReader {
     private static final SAXParserFactory factory = SAXParserFactory.newInstance();
     private static final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 
-    static
-    {
+    static {
         factory.setNamespaceAware(true);
         factory.setValidating(false);
         factory.setXIncludeAware(false);
     }
 
-    public static Document readXML(final InputStream is) throws IOException, SAXException
-    {
+    public static Document readXML(final InputStream is) throws IOException, SAXException {
         final Document doc;
         SAXParser parser;
-        try
-        {
+        try {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             parser = factory.newSAXParser();
             doc = docBuilder.newDocument();
-        }
-        catch (final ParserConfigurationException e)
-        {
+        } catch (final ParserConfigurationException e) {
             throw new RuntimeException("Can't create SAX parser / DOM builder.", e);
         }
 
@@ -62,13 +56,11 @@ public class LocationAwareXmlReader
         return doc;
     }
 
-    public static Integer getLineNumber(Node node)
-    {
+    public static Integer getLineNumber(Node node) {
         return (Integer) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
     }
 
-    public static Set<String> getNamespaces(Document doc)
-    {
+    public static Set<String> getNamespaces(Document doc) {
         return (Set<String>) doc.getUserData(LocationAwareContentHandler.NAMESPACE_KEY_NAME);
     }
 }

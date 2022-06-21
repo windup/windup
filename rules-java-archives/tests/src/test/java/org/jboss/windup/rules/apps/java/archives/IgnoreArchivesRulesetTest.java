@@ -43,8 +43,7 @@ import java.nio.file.Paths;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class IgnoreArchivesRulesetTest
-{
+public class IgnoreArchivesRulesetTest {
     private static final Path INPUT_PATH = new File("").getAbsoluteFile().toPath().getParent().getParent()
             .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
@@ -52,16 +51,15 @@ public class IgnoreArchivesRulesetTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
                 .addBeansXML();
     }
@@ -81,10 +79,8 @@ public class IgnoreArchivesRulesetTest
     }
 
     @Test
-    public void testSkippedArchivesFound() throws Exception
-    {
-        try (GraphContext graphContext = contextFactory.create(true))
-        {
+    public void testSkippedArchivesFound() throws Exception {
+        try (GraphContext graphContext = contextFactory.create(true)) {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
             InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
@@ -104,17 +100,16 @@ public class IgnoreArchivesRulesetTest
             config.setOutputDirectory(OUTPUT_PATH);
             config.setOptionValue(OverwriteOption.NAME, true);
             config.setRuleProviderFilter(new NotPredicate(
-                        new RuleProviderPhasePredicate(DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class,
-                                    ReportRenderingPhase.class)
-                        ));
+                    new RuleProviderPhasePredicate(DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class,
+                            ReportRenderingPhase.class)
+            ));
 
             processor.execute(config);
 
             GraphService<IgnoredArchiveModel> archiveService = new GraphService<>(graphContext, IgnoredArchiveModel.class);
             Iterable<IgnoredArchiveModel> archives = archiveService.findAllByProperty(IgnoredArchiveModel.FILE_NAME, "log4j-1.2.6.jar");
             Assert.assertTrue(archives.iterator().hasNext());
-            for (IgnoredArchiveModel archive : archives)
-            {
+            for (IgnoredArchiveModel archive : archives) {
                 if (archive.isDirectory())
                     continue;
                 Assert.assertNotNull(archive);
@@ -124,11 +119,11 @@ public class IgnoreArchivesRulesetTest
 
                 final Coordinate expected = CoordinateBuilder.create(LOG4J_COORDINATE);
                 final CoordinateBuilder actual = CoordinateBuilder.create()
-                            .setGroupId(archiveCoordinate.getGroupId())
-                            .setArtifactId(archiveCoordinate.getArtifactId())
-                            .setPackaging(archiveCoordinate.getPackaging())
-                            .setClassifier(archiveCoordinate.getClassifier())
-                            .setVersion(archiveCoordinate.getVersion());
+                        .setGroupId(archiveCoordinate.getGroupId())
+                        .setArtifactId(archiveCoordinate.getArtifactId())
+                        .setPackaging(archiveCoordinate.getPackaging())
+                        .setClassifier(archiveCoordinate.getClassifier())
+                        .setVersion(archiveCoordinate.getVersion());
 
                 Assert.assertEquals(expected.toString(), actual.toString());
             }
