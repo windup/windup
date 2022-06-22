@@ -17,13 +17,11 @@ import static java.util.stream.Collectors.toSet;
 import static org.joox.JOOX.$;
 
 @NamespaceElementHandler(elementName = "artifact", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class ArtifactHandler implements ElementHandler<Artifact>
-{
+public class ArtifactHandler implements ElementHandler<Artifact> {
 
     @Override
     public Artifact processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String groupId = $(element).attr("groupId");
         String artifactId = $(element).attr("artifactId");
         String from = $(element).attr("fromVersion");
@@ -33,7 +31,7 @@ public class ArtifactHandler implements ElementHandler<Artifact>
 
         Collection<DependencyLocation> locations = null;
         if (locationElements != null && !locationElements.isEmpty()) {
-             locations = locationElements.stream().map(child -> DependencyLocation.valueOf(child.getTextContent())).collect(toSet());
+            locations = locationElements.stream().map(child -> DependencyLocation.valueOf(child.getTextContent())).collect(toSet());
         }
 
         return Artifact.withGroupId(groupId).andArtifactId(artifactId).andVersion(Version.fromVersion(from).to(to)).andLocations(locations);

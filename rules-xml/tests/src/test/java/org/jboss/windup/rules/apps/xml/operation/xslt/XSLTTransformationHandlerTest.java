@@ -44,8 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @RunWith(Arquillian.class)
-public class XSLTTransformationHandlerTest
-{
+public class XSLTTransformationHandlerTest {
 
     private static final String XSLT_WINDUP_FILE = "src/test/resources/unit/xslt.windup.xml";
     private static final String XSLT_RHAMT_FILE = "src/test/resources/unit/xslt.rhamt.xml";
@@ -53,16 +52,15 @@ public class XSLTTransformationHandlerTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -79,28 +77,24 @@ public class XSLTTransformationHandlerTest
     private Addon addon;
 
     @Test
-    public void testWindupXSLTOperation() throws Exception
-    {
+    public void testWindupXSLTOperation() throws Exception {
         File fXmlFile = new File(XSLT_WINDUP_FILE);
         testXSLTOperation(fXmlFile);
     }
 
     @Test
-    public void testRhamtXSLTOperation() throws Exception
-    {
+    public void testRhamtXSLTOperation() throws Exception {
         File fXmlFile = new File(XSLT_RHAMT_FILE);
         testXSLTOperation(fXmlFile);
     }
 
     @Test
-    public void testMtaXSLTOperation() throws Exception
-    {
+    public void testMtaXSLTOperation() throws Exception {
         File fXmlFile = new File(XSLT_MTA_FILE);
         testXSLTOperation(fXmlFile);
     }
 
-    public void testXSLTOperation(File fXmlFile) throws Exception
-    {
+    public void testXSLTOperation(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);
@@ -111,7 +105,7 @@ public class XSLTTransformationHandlerTest
         List<Element> xsltList = $(doc).children("xslt").get();
 
         Element firstXslt = xsltList.get(0);
-        XSLTTransformation xsltOperation = parser.<XSLTTransformation> processElement(firstXslt);
+        XSLTTransformation xsltOperation = parser.<XSLTTransformation>processElement(firstXslt);
         // verify xsltOperation
         Assert.assertEquals("XSLT Tranformed Output", xsltOperation.getDescription());
         Assert.assertEquals("-test-result.html", xsltOperation.getExtension());
@@ -120,7 +114,7 @@ public class XSLTTransformationHandlerTest
         Assert.assertFalse(xsltOperation.isUseSaxon());
 
         Element secondXslt = xsltList.get(1);
-        xsltOperation = parser.<XSLTTransformation> processElement(secondXslt);
+        xsltOperation = parser.<XSLTTransformation>processElement(secondXslt);
         // verify xmlfile
         Assert.assertEquals("XSLT Tranformed Output", xsltOperation.getDescription());
         Assert.assertEquals("-test-result.html", xsltOperation.getExtension());
@@ -129,19 +123,17 @@ public class XSLTTransformationHandlerTest
         Assert.assertFalse(xsltOperation.isUseSaxon());
 
         Element fifthXslt = xsltList.get(4);
-        xsltOperation = parser.<XSLTTransformation> processElement(fifthXslt);
+        xsltOperation = parser.<XSLTTransformation>processElement(fifthXslt);
         Assert.assertTrue(xsltOperation.isUseSaxon());
     }
 
     @Test
-    public void testWithIncludedStylesheet() throws IOException
-    {
+    public void testWithIncludedStylesheet() throws IOException {
         String inputPath = "src/test/resources/xslttransform";
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup", "windup_"
                 + UUID.randomUUID().toString());
 
-        try (GraphContext context = factory.create(true))
-        {
+        try (GraphContext context = factory.create(true)) {
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -170,28 +162,24 @@ public class XSLTTransformationHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testWindupXSLTWithoutExtension() throws Exception
-    {
+    public void testWindupXSLTWithoutExtension() throws Exception {
         File fXmlFile = new File(XSLT_WINDUP_FILE);
         testXSLTWithoutExtension(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testRhamtXSLTWithoutExtension() throws Exception
-    {
+    public void testRhamtXSLTWithoutExtension() throws Exception {
         File fXmlFile = new File(XSLT_RHAMT_FILE);
         testXSLTWithoutExtension(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testMtaXSLTWithoutExtension() throws Exception
-    {
+    public void testMtaXSLTWithoutExtension() throws Exception {
         File fXmlFile = new File(XSLT_MTA_FILE);
         testXSLTWithoutExtension(fXmlFile);
     }
 
-    public void testXSLTWithoutExtension(File fXmlFile) throws Exception
-    {
+    public void testXSLTWithoutExtension(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);
@@ -202,32 +190,28 @@ public class XSLTTransformationHandlerTest
         List<Element> xsltList = $(doc).children("xslt").get();
 
         Element firstXslt = xsltList.get(2);
-        XSLTTransformation xsltOperation = parser.<XSLTTransformation> processElement(firstXslt);
+        XSLTTransformation xsltOperation = parser.<XSLTTransformation>processElement(firstXslt);
     }
 
     @Test(expected = WindupException.class)
-    public void testWindupXSLTWithoutTemplate() throws Exception
-    {
+    public void testWindupXSLTWithoutTemplate() throws Exception {
         File fXmlFile = new File(XSLT_WINDUP_FILE);
         testXSLTWithoutTemplate(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testRhamtXSLTWithoutTemplate() throws Exception
-    {
+    public void testRhamtXSLTWithoutTemplate() throws Exception {
         File fXmlFile = new File(XSLT_RHAMT_FILE);
         testXSLTWithoutTemplate(fXmlFile);
     }
 
     @Test(expected = WindupException.class)
-    public void testMtaXSLTWithoutTemplate() throws Exception
-    {
+    public void testMtaXSLTWithoutTemplate() throws Exception {
         File fXmlFile = new File(XSLT_MTA_FILE);
         testXSLTWithoutTemplate(fXmlFile);
     }
 
-    public void testXSLTWithoutTemplate(File fXmlFile) throws Exception
-    {
+    public void testXSLTWithoutTemplate(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);
@@ -238,6 +222,6 @@ public class XSLTTransformationHandlerTest
         List<Element> xsltList = $(doc).children("xslt").get();
 
         Element firstXslt = xsltList.get(3);
-        XSLTTransformation xsltOperation = parser.<XSLTTransformation> processElement(firstXslt);
+        XSLTTransformation xsltOperation = parser.<XSLTTransformation>processElement(firstXslt);
     }
 }

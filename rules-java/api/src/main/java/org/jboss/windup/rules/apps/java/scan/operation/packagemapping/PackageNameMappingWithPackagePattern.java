@@ -5,8 +5,7 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * Interface to assist in the construction of {@link PackageNameMapping} {@link Rule}s.
  */
-public interface PackageNameMappingWithPackagePattern
-{
+public interface PackageNameMappingWithPackagePattern {
     /**
      * Sets the package pattern to match against.
      */

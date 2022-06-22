@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 
 /**
  * Parses a "message" element, and returns the contents of the element as a {@link String}.
- * 
+ *
  * <pre>
  *  &lt;message&gt;
  *          Longer help contents go here
@@ -21,15 +21,12 @@ import org.w3c.dom.Element;
  * </pre>
  */
 @NamespaceElementHandler(elementName = "message", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MessageHandler implements ElementHandler<String>
-{
+public class MessageHandler implements ElementHandler<String> {
 
     @Override
-    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String message = $(element).text();
-        if (StringUtils.isBlank(message))
-        {
+        if (StringUtils.isBlank(message)) {
             throw new WindupException("Error, 'message' element must not be blank");
         }
         return message;

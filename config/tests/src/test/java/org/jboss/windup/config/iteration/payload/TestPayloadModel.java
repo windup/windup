@@ -4,7 +4,6 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("TestPayloadModel")
-public interface TestPayloadModel extends WindupVertexFrame
-{
+public interface TestPayloadModel extends WindupVertexFrame {
 
 }

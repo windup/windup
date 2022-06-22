@@ -14,13 +14,12 @@ import org.jboss.windup.graph.Property;
  * <p>
  * <b>Note:</b> Only one property in any getter/setter pair need be annotated with {@link Indexed}. Multiple annotations
  * will have no effect.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Indexed
-{
+public @interface Indexed {
     /**
      * The type of index to be created.
      */

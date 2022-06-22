@@ -38,16 +38,14 @@ import org.jboss.windup.config.metadata.RuleMetadata;
         after = PostMigrationRulesPhase.class,
         before = PreReportGenerationPhase.class,
         tags = FindUnboundJavaReferencesRuleProvider.JAVA)
-public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
-{
+public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider {
     public static final String JAVA = "java";
     public static final String RULE_ID = FindUnboundJavaReferencesRuleProvider.class.getSimpleName();
     public static final String TITLE = "Unresolved Class Binding";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
                 .addRule()
                 .when(Query.fromType(WindupJavaConfigurationModel.class).withProperty(WindupJavaConfigurationModel.CLASS_NOT_FOUND_ANALYSIS_ENABLED, true))
@@ -56,11 +54,9 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
     }
     // @formatter:on
 
-    private class AttachHintOperation extends GraphOperation
-    {
+    private class AttachHintOperation extends GraphOperation {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context) {
             // Has hint filter (so that we only add to those that do not have a hint)
             HasHint hasHint = new HasHint();
 
@@ -73,11 +69,9 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
             GraphService<JavaTypeReferenceModel> typeReferenceService = new GraphService<>(event.getGraphContext(), JavaTypeReferenceModel.class);
             int count = 0;
 
-            for (Vertex vertex : pipeline.toList())
-            {
+            for (Vertex vertex : pipeline.toList()) {
                 JavaTypeReferenceModel typeReference = typeReferenceService.frame(vertex);
-                if (hasHint.evaluate(event, context, typeReference))
-                {
+                if (hasHint.evaluate(event, context, typeReference)) {
                     // we already have hints, so this would likely be redundant
                     continue;
                 }
@@ -99,8 +93,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
                 typeReference.getFile().setGenerateSourceReport(true);
 
                 count++;
-                if (count % 1000 == 0)
-                {
+                if (count % 1000 == 0) {
                     event.getGraphContext().commit();
                 }
             }

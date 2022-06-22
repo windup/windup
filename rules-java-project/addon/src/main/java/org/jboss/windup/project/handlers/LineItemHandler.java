@@ -13,18 +13,15 @@ import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "lineitem", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class LineItemHandler implements ElementHandler<LineItem>
-{
+public class LineItemHandler implements ElementHandler<LineItem> {
 
     @Override
     public LineItem processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String message = $(element).attr("message");
-        if (StringUtils.isBlank(message))
-        {
+        if (StringUtils.isBlank(message)) {
             throw new WindupException(
-                        "Error, 'lineItem' element must have a non-empty 'message' attribute");
+                    "Error, 'lineItem' element must have a non-empty 'message' attribute");
         }
         LineItem lineItem = LineItem.withMessage(message);
         return lineItem;

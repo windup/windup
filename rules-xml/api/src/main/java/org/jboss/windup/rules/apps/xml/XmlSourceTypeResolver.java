@@ -9,17 +9,12 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class XmlSourceTypeResolver implements SourceTypeResolver
-{
+public class XmlSourceTypeResolver implements SourceTypeResolver {
     @Override
-    public String resolveSourceType(FileModel f)
-    {
-        if (f instanceof XmlFileModel)
-        {
+    public String resolveSourceType(FileModel f) {
+        if (f instanceof XmlFileModel) {
             return "xml";
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

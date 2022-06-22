@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * This creates {@link DuplicateProjectModel}s, associates them with the {@link DuplicateArchiveModel}s
  * and attaches them to the canonical {@link ProjectModel}s.
- *
+ * <p>
  * The links between the duplicated projects and archives follow this schema:
  * <pre>
  *    ArchiveX.jar          <->  canonical archive  <-> ArchiveXDuplicate.jar
@@ -32,30 +32,24 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * </pre>
  * Canonical (virtual) project and archive has 1:N relation to duplicated project and archives.
  *
- *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = DiscoverMavenHierarchyRuleProvider.class)
-public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
                 .addRule()
                 .when(Query.fromType(DuplicateArchiveModel.class))
-                .perform(new AbstractIterationOperation<DuplicateArchiveModel>()
-                {
+                .perform(new AbstractIterationOperation<DuplicateArchiveModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, DuplicateArchiveModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, DuplicateArchiveModel payload) {
                         setupProject(event, payload);
                     }
                 });
     }
 
-    private void setupProject(GraphRewrite event, DuplicateArchiveModel duplicateArchive)
-    {
+    private void setupProject(GraphRewrite event, DuplicateArchiveModel duplicateArchive) {
         Service<DuplicateProjectModel> duplicateProjectService = event.getGraphContext().service(DuplicateProjectModel.class);
         ArchiveModel canonicalArchive = duplicateArchive.getCanonicalArchive();
 
@@ -68,8 +62,7 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
             duplicateProject.setParentProject(duplicateArchive.getParentArchive().getProjectModel());
         duplicateProject.setRootFileModel(duplicateArchive);
 
-        if (canonicalProject.getParentProject() == null)
-        {
+        if (canonicalProject.getParentProject() == null) {
             ProjectService projectService = new ProjectService(event.getGraphContext());
             ProjectModel sharedLibsProject = projectService.getOrCreateSharedLibsProject();
             canonicalProject.setParentProject(sharedLibsProject);

@@ -8,11 +8,9 @@ import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains a Java package name
- *
  */
 @TypeValue(PackageModel.TYPE)
-public interface PackageModel extends WindupVertexFrame
-{
+public interface PackageModel extends WindupVertexFrame {
     public static final String TYPE = "PackageModel";
     public static final String PACKAGE_NAME = "packageName";
 

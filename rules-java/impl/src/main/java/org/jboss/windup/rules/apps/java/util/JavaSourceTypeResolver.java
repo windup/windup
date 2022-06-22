@@ -10,30 +10,19 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class JavaSourceTypeResolver implements SourceTypeResolver
-{
+public class JavaSourceTypeResolver implements SourceTypeResolver {
     @Override
-    public String resolveSourceType(FileModel f)
-    {
+    public String resolveSourceType(FileModel f) {
         String filename = f.getFileName();
-        if (filename.endsWith(".properties"))
-        {
+        if (filename.endsWith(".properties")) {
             return "properties";
-        }
-        else if (filename.equalsIgnoreCase("MANIFEST.MF"))
-        {
+        } else if (filename.equalsIgnoreCase("MANIFEST.MF")) {
             return "manifest";
-        }
-        else if (f instanceof JarManifestModel)
-        {
+        } else if (f instanceof JarManifestModel) {
             return "manifest";
-        }
-        else if (f instanceof JavaSourceFileModel)
-        {
+        } else if (f instanceof JavaSourceFileModel) {
             return "java";
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

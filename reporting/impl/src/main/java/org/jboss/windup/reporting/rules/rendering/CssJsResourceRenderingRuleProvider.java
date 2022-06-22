@@ -38,92 +38,70 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = ReportRenderingPhase.class)
-public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
-{
+public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider {
     @Inject
     private Addon addon;
     @Inject
     private Furnace furnace;
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        GraphOperation copyCssOperation = new GraphOperation()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        GraphOperation copyCssOperation = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 final WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
-                            .getGraphContext());
+                        .getGraphContext());
                 copyCssResourcesToOutput(event.getGraphContext());
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CopyCSSToOutput";
             }
         };
 
         Configuration configuration = ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(copyCssOperation);
+                .addRule()
+                .perform(copyCssOperation);
         return configuration;
     }
 
-    private void copyCssResourcesToOutput(GraphContext context)
-    {
+    private void copyCssResourcesToOutput(GraphContext context) {
         ReportService reportService = new ReportService(context);
         Path outputPath = reportService.getReportDirectory().resolve("resources");
 
         // iterate through the addons to scan
-        for (Addon addonToScan : getAddonsToScan())
-        {
+        for (Addon addonToScan : getAddonsToScan()) {
             List<File> addonResources = addon.getRepository().getAddonResources(addonToScan.getId());
-            for (File addonResource : addonResources)
-            {
-                try
-                {
-                    if (addonResource.isDirectory())
-                    {
+            for (File addonResource : addonResources) {
+                try {
+                    if (addonResource.isDirectory()) {
                         Path addonReportsResourcesPath = addonResource.toPath().resolve("reports").resolve("resources");
-                        if (Files.isDirectory(addonReportsResourcesPath))
-                        {
+                        if (Files.isDirectory(addonReportsResourcesPath)) {
                             recursePath(addonReportsResourcesPath, outputPath);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         try (FileSystem fs = FileSystems.newFileSystem(addonResource.toPath(),
-                                    addonToScan.getClassLoader()))
-                        {
+                                addonToScan.getClassLoader())) {
                             Path p = fs.getPath("reports", "resources");
-                            try
-                            {
+                            try {
                                 recursePath(p, outputPath);
-                            }
-                            catch (NoSuchFileException e)
-                            {
+                            } catch (NoSuchFileException e) {
                                 // ignore ... this just means this archive did not contain report resources
                             }
                         }
                     }
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     throw new RuntimeException("Exception reading resource.", e);
                 }
             }
         }
     }
 
-    private void recursePath(final Path path, final Path resultPath) throws IOException
-    {
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>()
-        {
+    private void recursePath(final Path path, final Path resultPath) throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-            {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 String relativePath = StringUtils.substringAfter(file.toString(), path.toString());
 
                 // needed on windows, as for some reason the path from a zip still uses s'/' sometimes
@@ -142,13 +120,10 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
     /**
      * Get all {@link Addon} instances that depend on the reporting addon
      */
-    private Set<Addon> getAddonsToScan()
-    {
-        AddonFilter filter = new AddonFilter()
-        {
+    private Set<Addon> getAddonsToScan() {
+        AddonFilter filter = new AddonFilter() {
             @Override
-            public boolean accept(Addon addon)
-            {
+            public boolean accept(Addon addon) {
                 // make sure to include ourselves as well (even though we don't technically depend on ourselves)
                 return addonDependsOnReporting(addon) || addon.equals(CssJsResourceRenderingRuleProvider.this.addon);
             }
@@ -160,17 +135,13 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
     /**
      * Returns true if the addon depends on reporting.
      */
-    private boolean addonDependsOnReporting(Addon addon)
-    {
-        for (AddonDependency dep : addon.getDependencies())
-        {
-            if (dep.getDependency().equals(this.addon))
-            {
+    private boolean addonDependsOnReporting(Addon addon) {
+        for (AddonDependency dep : addon.getDependencies()) {
+            if (dep.getDependency().equals(this.addon)) {
                 return true;
             }
             boolean subDep = addonDependsOnReporting(dep.getDependency());
-            if (subDep)
-            {
+            if (subDep) {
                 return true;
             }
         }

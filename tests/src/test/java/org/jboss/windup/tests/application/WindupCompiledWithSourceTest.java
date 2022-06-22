@@ -30,41 +30,36 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RunWith(Arquillian.class)
-public class WindupCompiledWithSourceTest extends WindupArchitectureTest
-{
+public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class);
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class);
     }
 
     @Test
     @Ignore("Does not apply anymore in binary mode, as both class and java files are analysed")
-    public void testRunWindupOnAppWithoutJars() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testRunWindupOnAppWithoutJars() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             final String path = "../test-files/rexster/rexster-onlyclasses";
 
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
             super.runTest(context, path, null, false, includeList, excludeList);
             String duplicate = findDuplicateJavaFile(context);
-            if (duplicate != null)
-            {
+            if (duplicate != null) {
                 Assert.fail("Windup registered twice the same java class " + duplicate);
             }
         }
@@ -72,18 +67,15 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
 
     @Test
     @Ignore("Does not apply anymore in binary mode, as both class and java files are analysed")
-    public void testRunWindupOnAppWithJars() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testRunWindupOnAppWithJars() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             final String path = "../test-files/rexster/rexster-with-jar";
 
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
             super.runTest(context, path, null, false, includeList, excludeList);
             String duplicate = findDuplicateJavaFile(context);
-            if (duplicate != null)
-            {
+            if (duplicate != null) {
                 Assert.fail("Windup registered twice the same java class " + duplicate);
             }
 
@@ -91,10 +83,8 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
     }
 
     @Test
-    public void testRunWindupOnJarWithSourceAndClassFiles() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testRunWindupOnJarWithSourceAndClassFiles() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             final String path = "../test-files/rexster/jar-with-source-and-class/rexster.jar";
 
             List<String> includeList = Collections.emptyList();
@@ -106,8 +96,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
 
             ProjectModel project = models.iterator().next();
             Set<FileModel> duplicateCheck = new HashSet<>();
-            for (FileModel fileModel : project.getFileModels())
-            {
+            for (FileModel fileModel : project.getFileModels()) {
                 if (duplicateCheck.contains(fileModel))
                     Assert.fail("Duplicate model detected, aborting");
                 else
@@ -118,22 +107,17 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
 
     /**
      * There shouldn't be multiple .java files registered for the same {package}{className}
-     * 
+     *
      * @param context
      */
-    private String findDuplicateJavaFile(GraphContext context)
-    {
+    private String findDuplicateJavaFile(GraphContext context) {
         GraphService<JavaSourceFileModel> javaFileService = new GraphService<>(context, JavaSourceFileModel.class);
         Set<String> foundJavaClasses = new HashSet<>();
-        for (JavaSourceFileModel javaSourceFileModel : javaFileService.findAll())
-        {
+        for (JavaSourceFileModel javaSourceFileModel : javaFileService.findAll()) {
             String javaClassIdentififer = javaSourceFileModel.getPackageName() + "." + javaSourceFileModel.getFileName();
-            if (foundJavaClasses.contains(javaClassIdentififer))
-            {
+            if (foundJavaClasses.contains(javaClassIdentififer)) {
                 return javaClassIdentififer;
-            }
-            else
-            {
+            } else {
                 foundJavaClasses.add(javaClassIdentififer);
             }
         }

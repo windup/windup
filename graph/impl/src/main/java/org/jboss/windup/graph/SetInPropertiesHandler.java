@@ -30,13 +30,11 @@ import net.bytebuddy.matcher.ElementMatchers;
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class SetInPropertiesHandler extends AbstractMethodHandler implements MethodHandler
-{
+public class SetInPropertiesHandler extends AbstractMethodHandler implements MethodHandler {
     private static final String SET_VERTEX_PROP_VALUE = "1";
 
     @Override
-    public Class<SetInProperties> getAnnotationType()
-    {
+    public Class<SetInProperties> getAnnotationType() {
         return SetInProperties.class;
     }
 
@@ -44,8 +42,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
      * The handling method.
      */
     @Override
-    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         String methodName = method.getName();
         if (ReflectionUtility.isGetMethod(method))
             return createInterceptor(builder, method);
@@ -57,25 +54,22 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
             return createInterceptor(builder, method);
         else
             throw new WindupException("Only get*, set*, add*, and addAll* method names are supported for @"
-                        + SetInProperties.class.getSimpleName() + ", found at: " + method.getName());
+                    + SetInProperties.class.getSimpleName() + ", found at: " + method.getName());
     }
 
-    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
-    {
+    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method) {
         return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(SetInPropertiesHandler.SetInPropertiesMethodInterceptor.class));
     }
 
-    public static final class SetInPropertiesMethodInterceptor
-    {
+    public static final class SetInPropertiesMethodInterceptor {
         @RuntimeType
-        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args)
-        {
+        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args) {
             final SetInProperties ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, SetInProperties.class);
 
             Element thisElement = thisFrame.getElement();
             if (!(thisElement instanceof Vertex))
                 throw new WindupException("Element is not of supported type, must be Vertex, but was: " + thisElement.getClass().getCanonicalName());
-            Vertex vertex = (Vertex)thisElement;
+            Vertex vertex = (Vertex) thisElement;
 
             String methodName = method.getName();
             if (methodName.startsWith("get"))
@@ -100,8 +94,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
         /**
          * Getter
          */
-        private static Set<String> handleGetter(Vertex vertex, Method method, Object[] args, SetInProperties ann)
-        {
+        private static Set<String> handleGetter(Vertex vertex, Method method, Object[] args, SetInProperties ann) {
             if (args != null && args.length != 0)
                 throw new WindupException("Method must take zero arguments");
 
@@ -109,11 +102,9 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
             String prefix = preparePrefix(ann);
 
             Set<String> keys = vertex.keys();
-            for (String key : keys)
-            {
+            for (String key : keys) {
                 String tail = key;
-                if (!prefix.isEmpty())
-                {
+                if (!prefix.isEmpty()) {
                     if (!key.startsWith(prefix))
                         continue;
                     else
@@ -129,8 +120,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
         /**
          * Setter
          */
-        private static void handleSetter(Vertex vertex, Method method, Object[] args, SetInProperties ann)
-        {
+        private static void handleSetter(Vertex vertex, Method method, Object[] args, SetInProperties ann) {
             // Argument.
             if (args == null || args.length != 1)
                 throw new WindupException("Method must take one argument: " + method.getName());
@@ -145,8 +135,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
 
             // For all keys in the old set...
             Set<String> vertKeys = vertex.keys();
-            for (String vertKey : vertKeys)
-            {
+            for (String vertKey : vertKeys) {
                 if (!vertKey.startsWith(prefix))
                     continue;
                 if (WindupVertexFrame.TYPE_PROP.equals(vertKey)) // Leave the "type" property.
@@ -156,8 +145,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
 
                 String subKey = vertKey.substring(prefix.length());
                 // ...either change to the new value,
-                if (newSet.contains(subKey))
-                {
+                if (newSet.contains(subKey)) {
                     vertex.property(vertKey, SET_VERTEX_PROP_VALUE);
                     newSet.remove(subKey);
                 }
@@ -167,23 +155,20 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
             }
 
             // Add the new entries.
-            for (String item : newSet)
-            {
+            for (String item : newSet) {
                 if (!(item instanceof String))
                     throw new WindupException("Argument of " + method.getName() + " must be a Set<String>, but it contains: " + item.getClass());
                 vertex.property(prefix + item, "1");
             }
         }
 
-        private static void handleAdder(Vertex vertex, Method method, Object[] args, SetInProperties ann)
-        {
+        private static void handleAdder(Vertex vertex, Method method, Object[] args, SetInProperties ann) {
             if (args == null || args.length == 0)
                 throw new WindupException("Method must take at least one String argument: " + method.getName());
 
             String prefix = preparePrefix(ann);
 
-            for (Object arg : args)
-            {
+            for (Object arg : args) {
                 if (!(arg instanceof String))
                     throw new WindupException("The arguments of the add*() method " + method.getName() + " must be String, but was: " + arg.getClass());
 
@@ -194,8 +179,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
         /**
          * Adder
          */
-        private static void handleAddAll(Vertex vertex, Method method, Object[] args, SetInProperties ann)
-        {
+        private static void handleAddAll(Vertex vertex, Method method, Object[] args, SetInProperties ann) {
             if (args == null || args.length != 1)
                 throw new WindupException("Method must take one String argument: " + method.getName());
 
@@ -206,8 +190,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
             Set<String> set = (Set<String>) args[0];
 
             // Store all set entries in vertex'es properties.
-            for (String item : set)
-            {
+            for (String item : set) {
                 vertex.property(prefix + item, SET_VERTEX_PROP_VALUE);
             }
         }
@@ -215,8 +198,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
         /**
          * Returns "&lt;ann.propertyPrefix()>&lt;SEPAR>", for example, "set:"; or an empty string if the prefix is empty.
          */
-        private static String preparePrefix(SetInProperties ann)
-        {
+        private static String preparePrefix(SetInProperties ann) {
             return "".equals(ann.propertyPrefix()) ? "" : (ann.propertyPrefix() + SetInProperties.SEPAR);
         }
     }

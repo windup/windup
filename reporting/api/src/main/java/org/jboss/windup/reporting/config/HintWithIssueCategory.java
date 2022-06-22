@@ -7,10 +7,8 @@ import org.jboss.windup.reporting.model.IssueDisplayMode;
  * This is {@link Hint} after the {@link IssueCategory} has been set.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public interface HintWithIssueCategory
-{
+public interface HintWithIssueCategory {
     /**
      * Provide a link describing the topic more precisely
      *

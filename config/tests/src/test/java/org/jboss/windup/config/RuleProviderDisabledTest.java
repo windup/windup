@@ -35,8 +35,7 @@ import java.util.Collections;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class RuleProviderDisabledTest
-{
+public class RuleProviderDisabledTest {
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
@@ -46,8 +45,7 @@ public class RuleProviderDisabledTest
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -63,8 +61,7 @@ public class RuleProviderDisabledTest
     @Inject
     private DisabledProvider disabledProvider;
 
-    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
+    private DefaultEvaluationContext createEvalContext(GraphRewrite event) {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
@@ -72,11 +69,9 @@ public class RuleProviderDisabledTest
     }
 
     @Test
-    public void testDisabledFeature() throws Exception
-    {
+    public void testDisabledFeature() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 

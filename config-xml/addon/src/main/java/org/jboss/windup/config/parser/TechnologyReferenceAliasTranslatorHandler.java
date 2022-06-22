@@ -16,7 +16,7 @@ import static org.joox.JOOX.$;
 
 /**
  * This produces a list of {@link TechnologyReferenceAliasTranslator} objects.
- *
+ * <p>
  * The format of the file is:
  *
  * <pre>
@@ -31,25 +31,21 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "technology-reference-transfomers", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class TechnologyReferenceAliasTranslatorHandler implements ElementHandler<List<TechnologyReferenceAliasTranslator>>
-{
+public class TechnologyReferenceAliasTranslatorHandler implements ElementHandler<List<TechnologyReferenceAliasTranslator>> {
 
     public static final String TRANSFORM = "transform";
 
     @Override
-    public List<TechnologyReferenceAliasTranslator> processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public List<TechnologyReferenceAliasTranslator> processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         List<TechnologyReferenceAliasTranslator> translators = new ArrayList<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            if (StringUtils.equals(TRANSFORM, child.getTagName()))
-            {
-                Element sourceElement = (Element)child.getElementsByTagName(MetadataSourceTechnologyHandler.METADATA_SOURCE_TECHNOLOGY_ELEMENT).item(0);
+        for (Element child : children) {
+            if (StringUtils.equals(TRANSFORM, child.getTagName())) {
+                Element sourceElement = (Element) child.getElementsByTagName(MetadataSourceTechnologyHandler.METADATA_SOURCE_TECHNOLOGY_ELEMENT).item(0);
                 TechnologyReference source = handlerManager.processElement(sourceElement);
 
-                Element targetElement = (Element)child.getElementsByTagName(MetadataTargetTechnologyHandler.METADATA_TARGET_TECHNOLOGY_ELEMENT).item(0);
+                Element targetElement = (Element) child.getElementsByTagName(MetadataTargetTechnologyHandler.METADATA_TARGET_TECHNOLOGY_ELEMENT).item(0);
                 TechnologyReference target = handlerManager.processElement(targetElement);
 
                 TechnologyReferenceAliasTranslator translator = new TechnologyReferenceAliasTranslator(source, target);

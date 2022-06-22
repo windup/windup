@@ -16,31 +16,28 @@ import org.jboss.windup.ast.java.data.ClassReference;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ASTProcessor
-{
+public class ASTProcessor {
     /**
      * Processes a java file using the default {@link WildcardImportResolver}.
-     *
+     * <p>
      * See also: {@see JavaASTProcessor#analyze(WildcardImportResolver, Set, Set, Path)}
      */
-    public static List<ClassReference> analyze(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile)
-    {
+    public static List<ClassReference> analyze(Set<String> libraryPaths, Set<String> sourcePaths, Path sourceFile) {
         return analyze(new NoopWildcardImportResolver(), libraryPaths, sourcePaths, sourceFile);
     }
 
     /**
      * Parses the provided file, using the given libraryPaths and sourcePaths as context. The libraries may be either
      * jar files or references to directories containing class files.
-     *
+     * <p>
      * The sourcePaths must be a reference to the top level directory for sources (eg, for a file
      * src/main/java/org/example/Foo.java, the source path would be src/main/java).
-     *
+     * <p>
      * The wildcard resolver provides a fallback for processing wildcard imports that the underlying parser was unable
      * to resolve.
      */
     public static List<ClassReference> analyze(WildcardImportResolver importResolver, Set<String> libraryPaths, Set<String> sourcePaths,
-                Path sourceFile)
-    {
+                                               Path sourceFile) {
         ASTParser parser = ASTParser.newParser(AST.JLS11);
         parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]), sourcePaths.toArray(new String[sourcePaths.size()]), null, true);
         parser.setBindingsRecovery(false);
@@ -50,12 +47,9 @@ public class ASTProcessor
         parser.setCompilerOptions(options);
         String fileName = sourceFile.getFileName().toString();
         parser.setUnitName(fileName);
-        try
-        {
+        try {
             parser.setSource(FileUtils.readFileToString(sourceFile.toFile()).toCharArray());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new ASTException("Failed to get source for file: " + sourceFile.toString() + " due to: " + e.getMessage(), e);
         }
         parser.setKind(ASTParser.K_COMPILATION_UNIT);

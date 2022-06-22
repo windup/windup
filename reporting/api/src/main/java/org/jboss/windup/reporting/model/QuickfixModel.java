@@ -10,8 +10,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 @TypeValue(QuickfixModel.TYPE)
-public interface QuickfixModel extends WindupVertexFrame
-{
+public interface QuickfixModel extends WindupVertexFrame {
     String TYPE = "QuickfixModel";
     String PROPERTY_TYPE = TYPE + "-type";
     String PROPERTY_DESCRIPTION = TYPE + "-description";

@@ -11,12 +11,11 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 
 /**
  * Manages creating, querying, and deleting {@link EnvironmentReferenceModel}s.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel>
-{
+public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel> {
     private static final Logger LOG = Logger.getLogger(EnvironmentReferenceService.class.getName());
 
     protected JNDIResourceService jndiResourceService;
@@ -24,8 +23,7 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
     /**
      * Creates a new {@link EnvironmentReferenceService}.
      */
-    public EnvironmentReferenceService(GraphContext context)
-    {
+    public EnvironmentReferenceService(GraphContext context) {
         super(context, EnvironmentReferenceModel.class);
         jndiResourceService = new JNDIResourceService(context);
     }
@@ -33,23 +31,20 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
     /**
      * Finds a {@link EnvironmentReferenceModel} by name and type.
      */
-    public EnvironmentReferenceModel findEnvironmentReference(String name, EnvironmentReferenceTagType type)
-    {
+    public EnvironmentReferenceModel findEnvironmentReference(String name, EnvironmentReferenceTagType type) {
         Traversal<?, ?> query = findAllQuery().getRawTraversal().has(EnvironmentReferenceModel.NAME, name).has(
-                    EnvironmentReferenceModel.TAG_TYPE, type);
+                EnvironmentReferenceModel.TAG_TYPE, type);
         return getUnique(query);
     }
 
     /**
      * Associate a {@link EnvironmentReferenceModel} to the given {@link JNDIResourceModel}.
      */
-    public void associateEnvironmentToJndi(JNDIResourceModel resource, EnvironmentReferenceModel ref)
-    {
+    public void associateEnvironmentToJndi(JNDIResourceModel resource, EnvironmentReferenceModel ref) {
         LOG.info("Associating JNDI: " + resource + " to Environmental Ref: " + ref.getName() + ", " + ref.getReferenceId() + ", "
-                    + ref.getReferenceType());
+                + ref.getReferenceType());
         // hook up the JNDI resource to the environment reference
-        if (ref.getJndiReference() == null)
-        {
+        if (ref.getJndiReference() == null) {
             ref.setJndiReference(resource);
         }
         jndiResourceService.associateTypeJndiResource(resource, ref.getReferenceType());

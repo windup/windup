@@ -9,50 +9,42 @@ import org.jboss.windup.config.ValidationResult;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class EnableClassNotFoundAnalysisOption extends AbstractConfigurationOption
-{
+public class EnableClassNotFoundAnalysisOption extends AbstractConfigurationOption {
     public static final String NAME = "enableClassNotFoundAnalysis";
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Enable Class Not Found Analysis";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Enable analysis of Java files that are not available on the Classpath. This should be left off if" +
-                    " some classes will be unavailable at analysis time.";
+                " some classes will be unavailable at analysis time.";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Boolean.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         return ValidationResult.SUCCESS;
     }
 }

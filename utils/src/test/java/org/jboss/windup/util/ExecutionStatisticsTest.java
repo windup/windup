@@ -12,30 +12,26 @@ import java.util.concurrent.TimeUnit;
 /**
  * Testing ExecutionStatistics in a multi-threaded environment
  */
-public class ExecutionStatisticsTest
-{
+public class ExecutionStatisticsTest {
 
     public static final String STATISTICS_KEY = "key";
 
     @Test
-    public void testMultiThreadedStatistics() throws InterruptedException
-    {
+    public void testMultiThreadedStatistics() throws InterruptedException {
         final ExecutorService executor = WindupExecutors.newFixedThreadPool(10);
-        testExecutorService(executor,1000);
+        testExecutorService(executor, 1000);
     }
 
     @Test
-    public void testSingleThreadedStatistics() throws InterruptedException
-    {
+    public void testSingleThreadedStatistics() throws InterruptedException {
         final ExecutorService executor = WindupExecutors.newSingleThreadExecutor();
-        testExecutorService(executor,3000);
+        testExecutorService(executor, 3000);
     }
 
-    private void testExecutorService(ExecutorService executor, int totalMilis) throws InterruptedException
-    {
+    private void testExecutorService(ExecutorService executor, int totalMilis) throws InterruptedException {
         Callable<Void> callable = new Callable<Void>() {
-            @Override public Void call() throws Exception
-            {
+            @Override
+            public Void call() throws Exception {
                 ExecutionStatistics.get().begin(STATISTICS_KEY);
                 Thread.sleep(1000);
                 ExecutionStatistics.get().end(STATISTICS_KEY);
@@ -55,6 +51,6 @@ public class ExecutionStatisticsTest
     }
 
     private long nanoToMili(long nano) {
-       return (nano/1000) /1000;
+        return (nano / 1000) / 1000;
     }
 }

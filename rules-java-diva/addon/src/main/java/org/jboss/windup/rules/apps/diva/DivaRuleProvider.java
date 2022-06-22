@@ -10,18 +10,18 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilderPerform;
 
 /**
-*/
+ *
+ */
 @RuleMetadata(phase = MigrationRulesPhase.class)
 public class DivaRuleProvider extends AbstractRuleProvider {
 
     // @formatter:off
-   @Override
-   public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-   {
-       ConfigurationRuleBuilderPerform conf = ConfigurationBuilder.begin()
-           .addRule()
-           .perform(new DivaLauncher());
-       return conf;
-   }
-   // @formatter:on
+    @Override
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        ConfigurationRuleBuilderPerform conf = ConfigurationBuilder.begin()
+                .addRule()
+                .perform(new DivaLauncher());
+        return conf;
+    }
+    // @formatter:on
 }

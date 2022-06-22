@@ -7,7 +7,6 @@ import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue(EarArchiveModel.TYPE)
 @ArchiveType(".ear")
-public interface EarArchiveModel extends ArchiveModel
-{
+public interface EarArchiveModel extends ArchiveModel {
     String TYPE = "EarArchiveModel";
 }

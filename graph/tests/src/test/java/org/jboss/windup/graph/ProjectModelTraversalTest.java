@@ -34,8 +34,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class ProjectModelTraversalTest
-{
+public class ProjectModelTraversalTest {
     @Inject
     private GraphContextFactory factory;
     @Inject
@@ -43,38 +42,33 @@ public class ProjectModelTraversalTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
-    private Path getTempDirectory()
-    {
+    private Path getTempDirectory() {
         return FileUtils.getTempDirectory()
-                    .toPath()
-                    .resolve("Windup")
-                    .resolve("ProjectTraversalTest_" + RandomStringUtils.randomAlphanumeric(6));
+                .toPath()
+                .resolve("Windup")
+                .resolve("ProjectTraversalTest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
-    private GraphContext createGraphContext(Path temporaryDirectory)
-    {
+    private GraphContext createGraphContext(Path temporaryDirectory) {
         return factory.create(temporaryDirectory.resolve("output"), true);
     }
 
     @Test
-    public void testProjectDuplicateTraversal() throws Exception
-    {
+    public void testProjectDuplicateTraversal() throws Exception {
         Path tempDirectory = getTempDirectory();
 
-        try (GraphContext context = createGraphContext(tempDirectory))
-        {
+        try (GraphContext context = createGraphContext(tempDirectory)) {
             final Path inputPath1 = Paths.get("../../test-files/jee-example-app-1.0.0.ear");
             final Path inputPath2 = tempDirectory.resolve("copy-of-ear.ear");
             FileUtils.copyFile(inputPath1.toFile(), inputPath2.toFile());
@@ -83,11 +77,9 @@ public class ProjectModelTraversalTest
 
             final List<String> log4jPathList = new ArrayList<>();
             final List<String> migrationSupportPathList = new ArrayList<>();
-            FileFoundCallback fileFoundCallback = new FileFoundCallback()
-            {
+            FileFoundCallback fileFoundCallback = new FileFoundCallback() {
                 @Override
-                public void fileFound(ProjectModelTraversal traversal, FileModel fileModel)
-                {
+                public void fileFound(ProjectModelTraversal traversal, FileModel fileModel) {
                     if (fileModel.getFileName().contains("log4j-1.2.6.jar"))
                         log4jPathList.add(traversal.getFilePath(fileModel));
                     else if (fileModel.getFileName().contains("migration-support-1.0.0.jar"))
@@ -96,8 +88,7 @@ public class ProjectModelTraversalTest
             };
 
             WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(context);
-            for (FileModel inputApplication : windupConfiguration.getInputPaths())
-            {
+            for (FileModel inputApplication : windupConfiguration.getInputPaths()) {
                 System.out.println("---------------------------------------------");
                 System.out.println("Input App: " + inputApplication.getFileName() + ", project: " + inputApplication.getProjectModel().getName());
                 traverse(new ProjectModelTraversal(inputApplication.getProjectModel()), 0, fileFoundCallback);
@@ -117,29 +108,23 @@ public class ProjectModelTraversalTest
             Assert.assertTrue(migrationSupportPathList.contains("copy-of-ear.ear/migration-support-1.0.0.jar"));
             Assert.assertTrue(migrationSupportPathList.contains("shared-libs/migration-support-1.0.0.jar"));
             System.out.println("Done!");
-        }
-        finally
-        {
+        } finally {
             //FileUtils.deleteDirectory(tempDirectory.toFile());
         }
     }
 
     @Test
-    public void testDuplicateFilesWithDifferingNames() throws Exception
-    {
+    public void testDuplicateFilesWithDifferingNames() throws Exception {
         Path tempDirectory = getTempDirectory();
-        try (GraphContext context = createGraphContext(tempDirectory))
-        {
+        try (GraphContext context = createGraphContext(tempDirectory)) {
             final Path inputPath1 = Paths.get("src/test/resources/project_model_traversal/app.ear");
 
             runTest(context, Collections.singleton(inputPath1.toString()));
 
             final List<String> pathList = new ArrayList<>();
-            FileFoundCallback fileFoundCallback = new FileFoundCallback()
-            {
+            FileFoundCallback fileFoundCallback = new FileFoundCallback() {
                 @Override
-                public void fileFound(ProjectModelTraversal traversal, FileModel fileModel)
-                {
+                public void fileFound(ProjectModelTraversal traversal, FileModel fileModel) {
                     if (!(fileModel instanceof ArchiveModel))
                         return;
 
@@ -150,8 +135,7 @@ public class ProjectModelTraversalTest
             };
 
             WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(context);
-            for (FileModel inputApplication : windupConfiguration.getInputPaths())
-            {
+            for (FileModel inputApplication : windupConfiguration.getInputPaths()) {
                 System.out.println("---------------------------------------------");
                 System.out.println("Input App: " + inputApplication.getFileName() + ", project: " + inputApplication.getProjectModel().getName());
                 traverseRoots(new ProjectModelTraversal(inputApplication.getProjectModel()), fileFoundCallback);
@@ -160,49 +144,40 @@ public class ProjectModelTraversalTest
             Assert.assertTrue(pathList.contains("app.ear/xercesImpl-2.11.0.jar"));
             Assert.assertTrue(pathList.contains("app.ear/xercesImpl-other.jar"));
             System.out.println("Done!");
-        }
-        finally
-        {
+        } finally {
             FileUtils.deleteDirectory(tempDirectory.toFile());
         }
     }
 
-    private void traverseRoots(ProjectModelTraversal traversal, FileFoundCallback callback)
-    {
+    private void traverseRoots(ProjectModelTraversal traversal, FileFoundCallback callback) {
         callback.fileFound(traversal, traversal.getCurrent().getRootFileModel());
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-        {
+        for (ProjectModelTraversal child : traversal.getChildren()) {
             traverseRoots(child, callback);
         }
     }
 
-    private void traverse(ProjectModelTraversal traversal, int indentLevel, FileFoundCallback callback)
-    {
+    private void traverse(ProjectModelTraversal traversal, int indentLevel, FileFoundCallback callback) {
         String indent = StringUtils.repeat(" ", indentLevel * 3);
 
         System.out.println(indent + "Project: " + traversal.getCanonicalProject().getName());
         System.out.println("Root file: " + traversal.getFilePath(traversal.getCurrent().getRootFileModel()));
         System.out.println(indent + "Files: ");
-        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels())
-        {
+        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels()) {
             System.out.println(indent + "   " + traversal.getFilePath(fileModel));
             callback.fileFound(traversal, fileModel);
         }
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-        {
+        for (ProjectModelTraversal child : traversal.getChildren()) {
             traverse(child, indentLevel + 1, callback);
         }
     }
 
-    void runTest(final GraphContext graphContext, Iterable<String> inputPaths) throws Exception
-    {
+    void runTest(final GraphContext graphContext, Iterable<String> inputPaths) throws Exception {
         WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(graphContext);
         windupConfiguration.setAlwaysHaltOnException(true);
         windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, true);
-        for (String inputPath : inputPaths)
-        {
+        for (String inputPath : inputPaths) {
             windupConfiguration.addInputPath(Paths.get(inputPath));
         }
         windupConfiguration.setOutputDirectory(graphContext.getGraphDirectory());
@@ -210,8 +185,7 @@ public class ProjectModelTraversalTest
         processor.execute(windupConfiguration);
     }
 
-    private interface FileFoundCallback
-    {
+    private interface FileFoundCallback {
         void fileFound(ProjectModelTraversal traversal, FileModel fileModel);
     }
 }

@@ -35,22 +35,19 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover JBoss EJB XML Files")
-public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(DiscoverJBossJbpmProcessFilesRuleProvider.class.getName());
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "process-definition");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
-        if($(payload.asDocument()).find("start-state").isEmpty()) {
+        if ($(payload.asDocument()).find("start-state").isEmpty()) {
             LOG.warning("Found process-definition, but no start-state.");
             return;
         }
@@ -61,12 +58,11 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
 
         //try and read out the process name
         String processName = $(doc).attr("name");
-        if(StringUtils.isNotBlank(processName)) {
+        if (StringUtils.isNotBlank(processName)) {
             processModel.setProcessName(processName);
-            LOG.info("Found process: "+processName);
-        }
-        else {
-            LOG.info("Process name is null for process: "+payload.getFilePath());
+            LOG.info("Found process: " + processName);
+        } else {
+            LOG.info("Process name is null for process: " + payload.getFilePath());
         }
 
         //count all nodes
@@ -77,21 +73,21 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
         processModel.setSubProcessCount($(doc).find("sub-process").get().size());
 
 
-        for(Element action : $(doc).find("action").get()) {
+        for (Element action : $(doc).find("action").get()) {
             String actionName = $(action).attr("name");
             String className = $(action).attr("class");
 
-            if(StringUtils.isNotBlank(className)) {
+            if (StringUtils.isNotBlank(className)) {
                 JavaClassModel javaClass = javaClassService.getOrCreatePhantom(className);
                 processModel.addActionHandler(javaClass);
             }
         }
 
-        for(Element decision : $(doc).find("decision").get()) {
-            for(Element handler : $(decision).find("handler").get()) {
+        for (Element decision : $(doc).find("decision").get()) {
+            for (Element handler : $(decision).find("handler").get()) {
                 String className = $(handler).attr("class");
 
-                if(StringUtils.isNotBlank(className)) {
+                if (StringUtils.isNotBlank(className)) {
                     JavaClassModel javaClass = javaClassService.getOrCreatePhantom(className);
                     processModel.addDecisionHandler(javaClass);
                 }
@@ -107,10 +103,9 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
         FileService fileService = new FileService(event.getGraphContext());
         FileModel processDefinitionImage = fileService.findByPath(processImage);
 
-        if(processDefinitionImage == null) {
-            LOG.warning("Expected process definition image at: "+processImage+", but wasn't found.");
-        }
-        else {
+        if (processDefinitionImage == null) {
+            LOG.warning("Expected process definition image at: " + processImage + ", but wasn't found.");
+        } else {
             ReportResourceFileModel reportResource = GraphService.addTypeToModel(event.getGraphContext(), processDefinitionImage, ReportResourceFileModel.class);
             processModel.setProcessImage(reportResource);
 

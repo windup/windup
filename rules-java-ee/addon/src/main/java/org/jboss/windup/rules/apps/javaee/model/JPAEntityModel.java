@@ -15,8 +15,7 @@ import java.util.List;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(JPAEntityModel.TYPE)
-public interface JPAEntityModel extends PersistenceEntityModel
-{
+public interface JPAEntityModel extends PersistenceEntityModel {
     String TYPE = "JPAEntityModel";
     String CATALOG_NAME = TYPE + "-catalogName";
     String SCHEMA_NAME = TYPE + "-schemaName";
@@ -60,7 +59,6 @@ public interface JPAEntityModel extends PersistenceEntityModel
      */
     @Property(CATALOG_NAME)
     void setCatalogName(String catalogName);
-
 
 
     /**

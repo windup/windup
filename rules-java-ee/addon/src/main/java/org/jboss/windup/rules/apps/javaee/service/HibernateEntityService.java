@@ -13,22 +13,18 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
 
 /**
  * Contains methods for querying, creating, and deleting {@link HibernateEntityModel}s.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class HibernateEntityService extends GraphService<HibernateEntityModel>
-{
-    public HibernateEntityService(GraphContext context)
-    {
+public class HibernateEntityService extends GraphService<HibernateEntityModel> {
+    public HibernateEntityService(GraphContext context) {
         super(context, HibernateEntityModel.class);
     }
 
     /**
      * Gets an {@link Iterable} of {@link }s for the given {@link ProjectModel}.
      */
-    public Iterable<HibernateEntityModel> findAllByApplication(ProjectModel application)
-    {
+    public Iterable<HibernateEntityModel> findAllByApplication(ProjectModel application) {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(application.getElement());
         pipeline.in(HibernateEntityModel.APPLICATIONS);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(HibernateEntityModel.TYPE));

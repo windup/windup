@@ -7,11 +7,10 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * Fluent builder for {@link JavaClass} {@link Condition}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClassBuilderInFile
-{
+public interface JavaClassBuilderInFile {
 
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.

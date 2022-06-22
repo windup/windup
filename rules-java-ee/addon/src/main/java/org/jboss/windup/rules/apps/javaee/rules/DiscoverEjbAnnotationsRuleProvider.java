@@ -36,68 +36,56 @@ import java.util.Set;
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
 
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(JavaClass.references("javax.ejb.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
-                    .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractEJBMetadata(event, payload);
-                        }
-                    })
-                    .where("annotationType").matches("Stateless|Stateful")
-                    .withId(ruleIDPrefix + "_StatelessAndStatefulRule")
-                    .addRule()
-                    .when(JavaClass.references("javax.ejb.MessageDriven").at(TypeReferenceLocation.ANNOTATION))
-                    .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractMessageDrivenMetadata(event, payload);
-                        }
-                    })
-                    .withId(ruleIDPrefix + "_MessageDrivenRule");
+                .addRule()
+                .when(JavaClass.references("javax.ejb.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                        extractEJBMetadata(event, payload);
+                    }
+                })
+                .where("annotationType").matches("Stateless|Stateful")
+                .withId(ruleIDPrefix + "_StatelessAndStatefulRule")
+                .addRule()
+                .when(JavaClass.references("javax.ejb.MessageDriven").at(TypeReferenceLocation.ANNOTATION))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                        extractMessageDrivenMetadata(event, payload);
+                    }
+                })
+                .withId(ruleIDPrefix + "_MessageDrivenRule");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
+    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name) {
         JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
 
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
+        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel) {
             JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
             return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
-    {
+    private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(ejbName))
-        {
+        if (Strings.isNullOrEmpty(ejbName)) {
             ejbName = ejbClass.getClassName();
         }
 
         String sessionType = javaTypeReference.getResolvedSourceSnippit()
-                    .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
+                .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
@@ -109,24 +97,21 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         sessionBean.setSessionType(sessionType);
     }
 
-    private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
-    {
+    private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(ejbName))
-        {
+        if (Strings.isNullOrEmpty(ejbName)) {
             ejbName = ejbClass.getClassName();
         }
 
         JavaAnnotationTypeValueModel activationConfigAnnotation = annotationTypeReference.getAnnotationValues().get("activationConfig");
 
         String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
-        if (StringUtils.isBlank(destination))
-        {
+        if (StringUtils.isBlank(destination)) {
             destination = getDestinationFromActivationConfig(activationConfigAnnotation);
         }
 
@@ -137,8 +122,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         messageDrivenBean.setBeanName(ejbName);
         messageDrivenBean.setEjbClass(ejbClass);
 
-        if (StringUtils.isNotBlank(destination))
-        {
+        if (StringUtils.isNotBlank(destination)) {
             String destinationType = getPropertyFromActivationConfig(activationConfigAnnotation, "destinationType");
 
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
@@ -146,81 +130,63 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)
-    {
+    private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel) {
         return this.getPropertyFromActivationConfig(annotationTypeReferenceModel, "destination");
     }
 
-    private String getPropertyFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel, String property)
-    {
-        if (property == null)
-        {
+    private String getPropertyFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel, String property) {
+        if (property == null) {
             throw new IllegalArgumentException("property cannot be null");
         }
 
-        if (annotationTypeReferenceModel == null)
-        {
+        if (annotationTypeReferenceModel == null) {
             return null;
         }
 
-        if (annotationTypeReferenceModel instanceof JavaAnnotationListTypeValueModel)
-        {
-            for (JavaAnnotationTypeValueModel activationConfig : (JavaAnnotationListTypeValueModel) annotationTypeReferenceModel)
-            {
-                if (!(activationConfig instanceof JavaAnnotationTypeReferenceModel))
-                {
+        if (annotationTypeReferenceModel instanceof JavaAnnotationListTypeValueModel) {
+            for (JavaAnnotationTypeValueModel activationConfig : (JavaAnnotationListTypeValueModel) annotationTypeReferenceModel) {
+                if (!(activationConfig instanceof JavaAnnotationTypeReferenceModel)) {
                     continue;
                 }
 
                 JavaAnnotationTypeReferenceModel javaAnnotationTypeReferenceModel = (JavaAnnotationTypeReferenceModel) activationConfig;
                 String propertyValue = getPropertyFromActivationConfig(javaAnnotationTypeReferenceModel, property);
-                if (propertyValue != null)
-                {
+                if (propertyValue != null) {
                     return propertyValue;
                 }
             }
             return null;
-        }
-        else if (annotationTypeReferenceModel instanceof JavaAnnotationTypeReferenceModel)
-        {
+        } else if (annotationTypeReferenceModel instanceof JavaAnnotationTypeReferenceModel) {
             JavaAnnotationTypeReferenceModel javaAnnotationTypeReferenceModel = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceModel;
             JavaAnnotationTypeValueModel propertyNameModel = javaAnnotationTypeReferenceModel.getAnnotationValues().get("propertyName");
             JavaAnnotationTypeValueModel propertyValueModel = javaAnnotationTypeReferenceModel.getAnnotationValues().get("propertyValue");
 
             if (propertyNameModel instanceof JavaAnnotationLiteralTypeValueModel
-                        && propertyValueModel instanceof JavaAnnotationLiteralTypeValueModel)
-            {
+                    && propertyValueModel instanceof JavaAnnotationLiteralTypeValueModel) {
                 String propertyName = ((JavaAnnotationLiteralTypeValueModel) propertyNameModel).getLiteralValue();
                 String propertyValue = ((JavaAnnotationLiteralTypeValueModel) propertyValueModel).getLiteralValue();
-                if (property.equals(propertyName))
-                {
+                if (property.equals(propertyName)) {
                     return propertyValue;
                 }
             }
             return null;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
+    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference) {
         JavaClassModel result = null;
         AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses()) {
             // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic()) {
                 result = javaClassModel;
                 break;
             }
         }
 
-        if (result == null)
-        {
+        if (result == null) {
             // no public classes found, so try to find any class (even non-public ones)
             result = javaSource.getJavaClasses().iterator().next();
         }
@@ -228,8 +194,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DiscoverEJBAnnotatedClasses";
     }
 }

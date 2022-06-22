@@ -9,12 +9,11 @@ import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains information regarding parameters to a Java Method.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaParameterModel.TYPE)
-public interface JavaParameterModel extends WindupVertexFrame
-{
+public interface JavaParameterModel extends WindupVertexFrame {
 
     public static final String METHOD_PARAMETER_TYPE = "methodParameterType";
     public static final String PARAMETER_POSITION = "parameterPosition";

@@ -7,12 +7,10 @@ import java.net.MalformedURLException;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-class InvalidXSDURLException extends MalformedURLException
-{
+class InvalidXSDURLException extends MalformedURLException {
     private final String url;
 
-    public InvalidXSDURLException(String msg, String url)
-    {
+    public InvalidXSDURLException(String msg, String url) {
         super(msg);
         this.url = url;
     }
@@ -20,8 +18,7 @@ class InvalidXSDURLException extends MalformedURLException
     /**
      * Gets the problematic URL.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 }

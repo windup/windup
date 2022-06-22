@@ -12,12 +12,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class FileExists extends GraphCondition
-{
+public class FileExists extends GraphCondition {
     private String filename;
 
-    private FileExists(String filename)
-    {
+    private FileExists(String filename) {
         this.filename = filename;
     }
 
@@ -26,10 +24,9 @@ public class FileExists extends GraphCondition
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         QueryBuilderFind q = Query.fromType(FileModel.class);
-        q.withProperty(FileModel.FILE_NAME,filename);
+        q.withProperty(FileModel.FILE_NAME, filename);
         return q.evaluate(event, context);
     }
 

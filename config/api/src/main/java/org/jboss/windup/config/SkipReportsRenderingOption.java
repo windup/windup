@@ -8,49 +8,41 @@ import org.jboss.windup.util.ThemeProvider;
  *
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
-public class SkipReportsRenderingOption extends AbstractConfigurationOption
-{
+public class SkipReportsRenderingOption extends AbstractConfigurationOption {
     public static final String NAME = WindupConfigurationModel.SKIP_REPORTS_RENDERING;
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "If set, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " will not generate reports.";
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Should " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " generate HTML reports?";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Boolean.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         return ValidationResult.SUCCESS;
     }
 

@@ -5,8 +5,7 @@ import java.util.List;
 /**
  * Provides a pluggable lookup mechanism for resolving wildcard imports.
  */
-public interface WildcardImportResolver
-{
+public interface WildcardImportResolver {
     /**
      * Resolve the given name based upon the provided wildcard imports.
      */

@@ -32,29 +32,23 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates the main report HTML page for a Java application.
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider {
     public static final String DETAILS_REPORT = "Application Details";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
     public static final String DESCRIPTION = "An exhaustive list of all of the information and issues found within the application.";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         ConditionBuilder applicationProjectModelsFound = Query
                 .fromType(WindupConfigurationModel.class);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-            {
-                for (FileModel inputPath : payload.getInputPaths())
-                {
+            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload) {
+                for (FileModel inputPath : payload.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
-                    if (application == null)
-                    {
+                    if (application == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createReport(event.getGraphContext(), application);
@@ -62,8 +56,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateJavaApplicationOverviewReport";
             }
         };
@@ -76,8 +69,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     }
     // @formatter:on
 
-    private void createReport(GraphContext context, ProjectModel application)
-    {
+    private void createReport(GraphContext context, ProjectModel application) {
         GraphService<JavaApplicationOverviewReportModel> service = new GraphService<>(context, JavaApplicationOverviewReportModel.class);
         JavaApplicationOverviewReportModel applicationReportModel = service.create();
         applicationReportModel.setReportPriority(102);
@@ -97,14 +89,12 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(application);
         Set<ProjectModel> allProjectsInApplication = projectModelTraversal.getAllProjects(true);
 
-        for (OverviewReportLineMessageModel line : allLines)
-        {
+        for (OverviewReportLineMessageModel line : allLines) {
             if (dupeCheck.contains(line.getMessage()))
                 continue;
 
             ProjectModel project = line.getProject();
-            if (allProjectsInApplication.contains(project))
-            {
+            if (allProjectsInApplication.contains(project)) {
                 dupeCheck.add(line.getMessage());
                 applicationReportModel.addApplicationReportLine(line);
             }

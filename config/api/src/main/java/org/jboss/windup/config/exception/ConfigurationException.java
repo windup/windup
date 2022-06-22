@@ -11,17 +11,14 @@ import org.jboss.windup.util.exception.WindupException;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ConfigurationException extends WindupException
-{
+public class ConfigurationException extends WindupException {
     private static final long serialVersionUID = 4056481414828022615L;
 
-    public ConfigurationException(String message, Throwable cause)
-    {
+    public ConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ConfigurationException(String message)
-    {
+    public ConfigurationException(String message) {
         super(message);
     }
 }

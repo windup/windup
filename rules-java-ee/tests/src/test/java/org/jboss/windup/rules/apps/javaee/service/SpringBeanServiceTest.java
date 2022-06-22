@@ -20,17 +20,14 @@ import java.util.Collections;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class SpringBeanServiceTest extends AbstractTest
-{
+public class SpringBeanServiceTest extends AbstractTest {
 
     @Inject
     GraphContextFactory factory;
 
     @Test
-    public void testSpringFindByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testSpringFindByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();
             app1.setName("app1");

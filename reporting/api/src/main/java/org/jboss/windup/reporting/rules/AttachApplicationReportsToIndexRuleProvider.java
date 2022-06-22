@@ -22,46 +22,39 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = PostReportGenerationPhase.class)
-public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider
-{
+public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         ConditionBuilder applicationReportFound = Query.fromType(ApplicationReportModel.class);
 
         AbstractIterationOperation<ApplicationReportModel> addToApplicationIndex = new AddToApplicationIndex();
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(applicationReportFound)
-                    .perform(addToApplicationIndex);
+                .addRule()
+                .when(applicationReportFound)
+                .perform(addToApplicationIndex);
     }
 
-    private class AddToApplicationIndex extends AbstractIterationOperation<ApplicationReportModel>
-    {
+    private class AddToApplicationIndex extends AbstractIterationOperation<ApplicationReportModel> {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, ApplicationReportModel payload)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context, ApplicationReportModel payload) {
             final ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(event.getGraphContext());
             final ProjectModel projectModel = payload.getProjectModel();
 
-            if (projectModel == null || Boolean.TRUE == payload.getDisplayInGlobalApplicationIndex())
-            {
+            if (projectModel == null || Boolean.TRUE == payload.getDisplayInGlobalApplicationIndex()) {
                 ApplicationReportIndexModel index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
                 index.addApplicationReportModel(payload);
             }
 
-            if (projectModel != null)
-            {
+            if (projectModel != null) {
                 ApplicationReportIndexModel index = applicationReportIndexService
-                            .getApplicationReportIndexForProjectModel(payload.getProjectModel());
+                        .getApplicationReportIndexForProjectModel(payload.getProjectModel());
                 index.addApplicationReportModel(payload);
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "AddToApplicationIndex";
         }
     }

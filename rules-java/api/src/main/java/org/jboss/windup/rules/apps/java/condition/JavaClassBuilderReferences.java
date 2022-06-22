@@ -1,16 +1,13 @@
 package org.jboss.windup.rules.apps.java.condition;
 
-public class JavaClassBuilderReferences
-{
+public class JavaClassBuilderReferences {
     private final String inputVarName;
 
-    public JavaClassBuilderReferences(String inputVarName)
-    {
+    public JavaClassBuilderReferences(String inputVarName) {
         this.inputVarName = inputVarName;
     }
 
-    public JavaClassBuilder references(String regex)
-    {
+    public JavaClassBuilder references(String regex) {
         JavaClassBuilder javaClass = JavaClass.references(regex);
         ((JavaClass) javaClass).setInputVariablesName(this.inputVarName);
         return javaClass;

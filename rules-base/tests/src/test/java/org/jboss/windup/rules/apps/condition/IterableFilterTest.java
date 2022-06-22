@@ -45,22 +45,20 @@ import java.util.UUID;
  * Tests the iterable-filter condition
  */
 @RunWith(Arquillian.class)
-public class IterableFilterTest
-{
+public class IterableFilterTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
         return archive;
     }
 
@@ -77,29 +75,27 @@ public class IterableFilterTest
     private NotFilteredConditionRuleProvider notFilteredProvider;
 
     @Test
-    public void testFiltered() throws Exception
-    {
+    public void testFiltered() throws Exception {
         runWindupWithPredicate();
         Assert.assertEquals(6, notFilteredProvider.count);
         Assert.assertEquals(0, filteredProvider.count);
 
     }
 
-    private void runWindupWithPredicate()  throws Exception{
-        try (GraphContext context = factory.create(true))
-        {
+    private void runWindupWithPredicate() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
-                        MigrationRulesPhase.class));
+                    MigrationRulesPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setGraphContext(context);
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
@@ -110,52 +106,45 @@ public class IterableFilterTest
     }
 
 
-    public abstract static class AbstractIterableFilterRuleProvider extends AbstractRuleProvider
-    {
+    public abstract static class AbstractIterableFilterRuleProvider extends AbstractRuleProvider {
         public int count = 0;
-        private int sizeToFilter =0;
+        private int sizeToFilter = 0;
 
-        public AbstractIterableFilterRuleProvider(int sizeToFilter, Class<? extends RuleProvider> currentClass)
-        {
+        public AbstractIterableFilterRuleProvider(int sizeToFilter, Class<? extends RuleProvider> currentClass) {
             super(MetadataBuilder.forProvider(currentClass)
-                        .setPhase(PostMigrationRulesPhase.class));
-            this.sizeToFilter=sizeToFilter;
+                    .setPhase(PostMigrationRulesPhase.class));
+            this.sizeToFilter = sizeToFilter;
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
 
             return ConfigurationBuilder.begin()
-            .addRule()
-            .when(IterableFilter.withSize(sizeToFilter).withWrappedCondition((FileContent)FileContent.matches("file {*}.").inFileNamed("{*}.txt")))
-            .perform(new AbstractIterationOperation<FileLocationModel>() {
+                    .addRule()
+                    .when(IterableFilter.withSize(sizeToFilter).withWrappedCondition((FileContent) FileContent.matches("file {*}.").inFileNamed("{*}.txt")))
+                    .perform(new AbstractIterationOperation<FileLocationModel>() {
 
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
-                    count++;
-                }});
-         }
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
+                            count++;
+                        }
+                    });
+        }
         // @formatter:on
     }
 
     @Singleton
-    public static class FilteredConditionRuleProvider extends AbstractIterableFilterRuleProvider
-    {
-        public FilteredConditionRuleProvider()
-        {
+    public static class FilteredConditionRuleProvider extends AbstractIterableFilterRuleProvider {
+        public FilteredConditionRuleProvider() {
             super(1, FilteredConditionRuleProvider.class);
         }
 
     }
 
     @Singleton
-    public static class NotFilteredConditionRuleProvider extends AbstractIterableFilterRuleProvider
-    {
-        public NotFilteredConditionRuleProvider()
-        {
+    public static class NotFilteredConditionRuleProvider extends AbstractIterableFilterRuleProvider {
+        public NotFilteredConditionRuleProvider() {
             // the size of the result should be exactly 6 and therefore the iterable should not be filtered out.
             super(6, NotFilteredConditionRuleProvider.class);
         }

@@ -8,11 +8,9 @@ import org.ocpsoft.rewrite.config.True;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "true", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class TrueHandler implements ElementHandler<True>
-{
-   @Override
-   public True processElement(ParserContext handlerManager, Element element)
-   {
-      return new True();
-   }
+public class TrueHandler implements ElementHandler<True> {
+    @Override
+    public True processElement(ParserContext handlerManager, Element element) {
+        return new True();
+    }
 }

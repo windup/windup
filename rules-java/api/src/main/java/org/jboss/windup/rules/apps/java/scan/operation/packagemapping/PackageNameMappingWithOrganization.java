@@ -7,8 +7,7 @@ import org.ocpsoft.rewrite.config.Rule;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface PackageNameMappingWithOrganization extends Rule
-{
+public interface PackageNameMappingWithOrganization extends Rule {
     /**
      * Assigns the given ID to the Rule.
      */

@@ -10,51 +10,43 @@ import org.jboss.windup.config.ValidationResult;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
-public class MavenizeOption extends AbstractConfigurationOption
-{
+public class MavenizeOption extends AbstractConfigurationOption {
     public static final String NAME = "mavenize";
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Create a Maven project stub.";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Create a Maven project stub (a directory structure with pom.xml files) based on the structure and content of the application."
                 + " This helps with locating the libraries and their versions, as well as adding the right Java EE API and creating the correct"
                 + "  dependencies between the project modules.";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Boolean.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         return ValidationResult.SUCCESS;
     }
 }

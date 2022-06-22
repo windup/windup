@@ -9,8 +9,7 @@ import org.ocpsoft.rewrite.config.Rule;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FileMappingTo extends Rule
-{
+public interface FileMappingTo extends Rule {
     /**
      * Specifies the {@link WindupVertexFrame} type to which files matching the specified pattern should be mapped.
      */

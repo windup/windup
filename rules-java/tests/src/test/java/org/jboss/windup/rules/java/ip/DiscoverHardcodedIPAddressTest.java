@@ -40,19 +40,17 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverHardcodedIPAddressTest
-{
+public class DiscoverHardcodedIPAddressTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -63,22 +61,20 @@ public class DiscoverHardcodedIPAddressTest
     private GraphContextFactory factory;
 
     @Test
-    public void testStaticIPScanner() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testStaticIPScanner() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/staticip");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
@@ -109,10 +105,8 @@ public class DiscoverHardcodedIPAddressTest
     }
 
     @Test
-    public void testStaticIPScannerInBinary() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testStaticIPScannerInBinary() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/staticip/sample.jar");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -147,22 +141,17 @@ public class DiscoverHardcodedIPAddressTest
         Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
         int numberFound = 0;
 
-        for (InlineHintModel hint : service.findAll())
-        {
-            if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
-            {
+        for (InlineHintModel hint : service.findAll()) {
+            if (StringUtils.equals("Hard-coded IP address", hint.getTitle())) {
                 Matcher matcher = ipExtractor.matcher(hint.getHint());
-                if (matcher.find())
-                {
+                if (matcher.find()) {
                     String ip = matcher.group(1);
                     if (unexpectedIPs.contains(ip))
                         Assert.fail("This IP (" + ip + ") should not have been marked valid");
                     else if (!expectedIPs.contains(ip))
                         Assert.fail("This IP (" + ip + ") was detected, but was not in the expected list");
                     numberFound++;
-                }
-                else
-                {
+                } else {
                     Assert.fail("Hint format not recognized: " + hint.getHint());
                 }
             }

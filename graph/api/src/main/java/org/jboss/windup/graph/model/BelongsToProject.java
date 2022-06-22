@@ -3,8 +3,7 @@ package org.jboss.windup.graph.model;
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
-public interface BelongsToProject
-{
+public interface BelongsToProject {
     /**
      * Checks if current model belongs to given project model
      *
@@ -13,12 +12,10 @@ public interface BelongsToProject
      */
     boolean belongsToProject(ProjectModel projectModel);
 
-    default ProjectModel getCanonicalProjectModel(ProjectModel projectModel)
-    {
+    default ProjectModel getCanonicalProjectModel(ProjectModel projectModel) {
         ProjectModel canonicalProjectModel = projectModel;
 
-        if (projectModel instanceof DuplicateProjectModel)
-        {
+        if (projectModel instanceof DuplicateProjectModel) {
             canonicalProjectModel = ((DuplicateProjectModel) projectModel).getCanonicalProject();
         }
 

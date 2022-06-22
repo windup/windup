@@ -23,19 +23,17 @@ import org.junit.runner.RunWith;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 @RunWith(Arquillian.class)
-public class MapInAdjacentPropertiesTest
-{
+public class MapInAdjacentPropertiesTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(MapMainModel.class);
+                .addBeansXML()
+                .addClasses(MapMainModel.class);
         return archive;
     }
 
@@ -43,12 +41,10 @@ public class MapInAdjacentPropertiesTest
     private GraphContextFactory contextFactory;
 
     @Test
-    public void testMapHandling() throws Exception
-    {
+    public void testMapHandling() throws Exception {
         Assert.assertNotNull(contextFactory);
 
-        try (GraphContext context = contextFactory.create(true))
-        {
+        try (GraphContext context = contextFactory.create(true)) {
             MapMainModel mainModel = context.getFramed().addFramedVertex(MapMainModel.class);
 
             // Map 1
@@ -70,8 +66,7 @@ public class MapInAdjacentPropertiesTest
             Iterable<Vertex> vertices = context.getGraph().traversal().V().has(WindupVertexFrame.TYPE_PROP, Text.textContains(typeVal)).toList();
 
             int numberFound = 0;
-            for (Vertex v : vertices)
-            {
+            for (Vertex v : vertices) {
                 // final Set<String> propertyKeys = v.getVertices( Direction.OUT, "map").iterator().next().getPropertyKeys();
 
                 numberFound++;

@@ -11,12 +11,11 @@ import java.util.List;
 
 /**
  * Contains a graph model representing a JPA configuration file within the application.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(JPAConfigurationFileModel.TYPE)
-public interface JPAConfigurationFileModel extends XmlFileModel
-{
+public interface JPAConfigurationFileModel extends XmlFileModel {
     String JPA_PERSISTENCE_UNIT = "jpaPersistenceUnit";
     String SPECIFICATION_VERSION = "specificationVersion";
     String TYPE = "JPAConfigurationFileModel";

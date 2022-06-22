@@ -11,8 +11,7 @@ import org.jboss.windup.graph.model.WindupEdgeFrame;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SourceReportToProjectEdgeModel.TYPE)
-public interface SourceReportToProjectEdgeModel extends WindupEdgeFrame
-{
+public interface SourceReportToProjectEdgeModel extends WindupEdgeFrame {
     String TYPE = "SourceReportToProjectEdgeModel";
 
     String FULL_PATH = "fullPath";

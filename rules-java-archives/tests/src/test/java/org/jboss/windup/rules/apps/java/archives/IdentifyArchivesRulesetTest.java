@@ -41,26 +41,24 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class IdentifyArchivesRulesetTest
-{
+public class IdentifyArchivesRulesetTest {
     private static final Path INPUT_PATH = new File("").getAbsoluteFile().toPath().getParent().getParent()
-                .resolve("test-files/jee-example-app-1.0.0.ear");
+            .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
     private static final String LOG4J_COORDINATE = "log4j:log4j:4.11";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
 
         return archive;
     }
@@ -78,10 +76,8 @@ public class IdentifyArchivesRulesetTest
      * Run initial Windup rules against the JEE sample app, add a single identification record, and check if the lib is identified.
      */
     @Test
-    public void testJarsAreIdentified() throws Exception
-    {
-        try (GraphContext graphContext = contextFactory.create(true))
-        {
+    public void testJarsAreIdentified() throws Exception {
+        try (GraphContext graphContext = contextFactory.create(true)) {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
             InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
@@ -94,25 +90,24 @@ public class IdentifyArchivesRulesetTest
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
             wc.setRuleProviderFilter(new NotPredicate(
-                        new RuleProviderPhasePredicate(ArchiveExtractionPhase.class, DecompilationPhase.class, MigrationRulesPhase.class,
-                                    ReportGenerationPhase.class, ReportRenderingPhase.class)
-                        ));
+                    new RuleProviderPhasePredicate(ArchiveExtractionPhase.class, DecompilationPhase.class, MigrationRulesPhase.class,
+                            ReportGenerationPhase.class, ReportRenderingPhase.class)
+            ));
 
             processor.execute(wc);
 
             GraphService<IdentifiedArchiveModel> archiveService = new GraphService<>(graphContext, IdentifiedArchiveModel.class);
             Iterable<IdentifiedArchiveModel> archives = archiveService.findAllByProperty(IdentifiedArchiveModel.FILE_NAME, "log4j-1.2.6.jar");
-            for (IdentifiedArchiveModel archive : archives)
-            {
+            for (IdentifiedArchiveModel archive : archives) {
                 ArchiveCoordinateModel archiveCoordinate = archive.getCoordinate();
                 Assert.assertNotNull(archiveCoordinate);
 
                 final Coordinate expected = CoordinateBuilder.create(LOG4J_COORDINATE);
                 Assert.assertEquals(expected, CoordinateBuilder.create()
-                            .setGroupId(archiveCoordinate.getGroupId())
-                            .setArtifactId(archiveCoordinate.getArtifactId())
-                            .setClassifier(archiveCoordinate.getClassifier())
-                            .setVersion(archiveCoordinate.getVersion()));
+                        .setGroupId(archiveCoordinate.getGroupId())
+                        .setArtifactId(archiveCoordinate.getArtifactId())
+                        .setClassifier(archiveCoordinate.getClassifier())
+                        .setVersion(archiveCoordinate.getVersion()));
             }
         }
     }

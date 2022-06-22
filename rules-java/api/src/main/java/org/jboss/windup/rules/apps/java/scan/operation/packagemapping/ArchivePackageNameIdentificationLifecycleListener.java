@@ -10,13 +10,11 @@ import java.util.logging.Logger;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jess Sightler</a>
  */
-public class ArchivePackageNameIdentificationLifecycleListener extends AbstractRuleLifecycleListener
-{
+public class ArchivePackageNameIdentificationLifecycleListener extends AbstractRuleLifecycleListener {
     private static final Logger LOG = Logger.getLogger(ArchivePackageNameIdentificationLifecycleListener.class.getName());
 
     @Override
-    public void beforeExecution(GraphRewrite event)
-    {
+    public void beforeExecution(GraphRewrite event) {
         LOG.info("Registered " + ArchivePackageNameIdentificationGraphChangedListener.class.getSimpleName() + " - vendors will automatically be identified.");
 
         event.getGraphContext().registerGraphListener(new ArchivePackageNameIdentificationGraphChangedListener(event));

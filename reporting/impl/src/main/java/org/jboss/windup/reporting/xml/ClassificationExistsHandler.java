@@ -26,24 +26,20 @@ import org.w3c.dom.Element;
  *         &lt;/perform&gt;
  *     &lt;/rule&gt;
  * </pre>
- * 
- * @author jsightler
  *
+ * @author jsightler
  */
 @NamespaceElementHandler(elementName = ClassificationExistsHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class ClassificationExistsHandler implements ElementHandler<ClassificationExists>
-{
+public class ClassificationExistsHandler implements ElementHandler<ClassificationExists> {
     static final String ELEMENT_NAME = "classification-exists";
     private static final String CLASSIFICATION = "classification";
 
     @Override
-    public ClassificationExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public ClassificationExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String classificationPattern = $(element).attr(CLASSIFICATION);
         String in = $(element).attr("in");
 
-        if (StringUtils.isBlank(classificationPattern))
-        {
+        if (StringUtils.isBlank(classificationPattern)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + CLASSIFICATION + "' attribute");
         }
 

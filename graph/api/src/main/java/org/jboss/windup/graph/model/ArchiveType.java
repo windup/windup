@@ -5,11 +5,9 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Used to associate this particular Archive Model with a file extension.
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ArchiveType
-{
+public @interface ArchiveType {
     /**
      * The archive file extension (eg, ".war" or ".jar")
      */

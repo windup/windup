@@ -6,8 +6,7 @@ import org.jboss.windup.graph.Property;
  * Model saves additional link information.
  */
 @TypeValue(LinkModel.TYPE)
-public interface LinkModel extends WindupVertexFrame
-{
+public interface LinkModel extends WindupVertexFrame {
     String TYPE = "LinkModel";
     String PROPERTY_LINK = "href";
     String PROPERTY_DESCRIPTION = "description";

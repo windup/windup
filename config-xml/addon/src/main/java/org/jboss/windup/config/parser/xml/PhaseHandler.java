@@ -16,20 +16,17 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "phase", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class PhaseHandler implements ElementHandler<Void>
-{
+public class PhaseHandler implements ElementHandler<Void> {
 
     private RulePhaseFinder phaseFinder = new RulePhaseFinder();
 
     @Override
-    public Void processElement(ParserContext context, Element element) throws ConfigurationException
-    {
+    public Void processElement(ParserContext context, Element element) throws ConfigurationException {
         String phaseStr = element.getTextContent().trim();
 
         Class<? extends RulePhase> phase = phaseFinder.findPhase(phaseStr);
-        if (phase == null)
-        {
-            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining(System.lineSeparator()+"    "));
+        if (phase == null) {
+            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining(System.lineSeparator() + "    "));
             throw new IllegalArgumentException("Unrecognized phase \"" + phaseStr + "\". Available phases: \n    " + phasesListing);
         }
         context.getBuilder().setPhase(phase);

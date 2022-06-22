@@ -37,19 +37,16 @@ import net.bytebuddy.matcher.ElementMatchers;
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implements MethodHandler
-{
+public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implements MethodHandler {
     private static final Logger log = Logging.get(MapInAdjacentPropertiesHandler.class);
 
     @Override
-    public Class<MapInAdjacentProperties> getAnnotationType()
-    {
+    public Class<MapInAdjacentProperties> getAnnotationType() {
         return MapInAdjacentProperties.class;
     }
 
     @Override
-    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         String methodName = method.getName();
         if (methodName.startsWith("get"))
             return createInterceptor(builder, method);
@@ -59,17 +56,14 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
         throw new WindupException("Only get* and set* method names are supported for @" + MapInAdjacentProperties.class.getSimpleName());
     }
 
-    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
-    {
+    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method) {
         return builder.method(ElementMatchers.is(method))
-                    .intercept(MethodDelegation.to(MapInAdjacentPropertiesHandler.MapInAdjacentPropertiesInterceptor.class));
+                .intercept(MethodDelegation.to(MapInAdjacentPropertiesHandler.MapInAdjacentPropertiesInterceptor.class));
     }
 
-    public static final class MapInAdjacentPropertiesInterceptor
-    {
+    public static final class MapInAdjacentPropertiesInterceptor {
         @RuntimeType
-        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args)
-        {
+        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args) {
             final MapInAdjacentProperties ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, MapInAdjacentProperties.class);
 
             Element thisElement = thisFrame.getElement();
@@ -81,8 +75,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             if (methodName.startsWith("get"))
                 return handleGetter(vertex, method, args, ann);
 
-            if (methodName.startsWith("set"))
-            {
+            if (methodName.startsWith("set")) {
                 handleSetter(vertex, method, args, ann, thisFrame.getGraph());
                 return null;
             }
@@ -94,8 +87,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
          * Getter
          */
         private static Map<String, Serializable> handleGetter(Vertex vertex, Method method, Object[] args,
-                    MapInAdjacentProperties ann)
-        {
+                                                              MapInAdjacentProperties ann) {
             if (args != null && args.length != 0)
                 throw new WindupException("Method must take no arguments: " + method.getName());
 
@@ -103,24 +95,19 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             Map<String, Serializable> map = new HashMap<>();
             Iterator<Vertex> it = vertex.vertices(Direction.OUT, ann.label());
             Vertex mapVertex = null;
-            if (!it.hasNext())
-            {
+            if (!it.hasNext()) {
                 // No map yet.
                 return map;
-            }
-            else
-            {
+            } else {
                 mapVertex = it.next();
-                if (it.hasNext())
-                {
+                if (it.hasNext()) {
                     // Multiple vertices behind edges with given label.
                     log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
                 }
             }
 
             Set<String> keys = mapVertex.keys();
-            for (String key : keys)
-            {
+            for (String key : keys) {
                 final Property<Object> val = mapVertex.property(key);
                 if (!val.isPresent() || !(val.value() instanceof String))
                     log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
@@ -134,8 +121,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
          */
 
         private static void handleSetter(Vertex vertex, Method method, Object[] args, MapInAdjacentProperties ann,
-                    FramedGraph framedGraph)
-        {
+                                         FramedGraph framedGraph) {
             // Argument.
             if (args == null || args.length != 1)
                 throw new WindupException("Method must take one argument: " + method.getName());
@@ -146,7 +132,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             if (!(framedGraph instanceof WrappedFramedGraph))
                 throw new WindupException("Framed graph must be an instance of " + WrappedFramedGraph.class.getCanonicalName());
 
-            Graph graph = (Graph)((WrappedFramedGraph) framedGraph).getBaseGraph();
+            Graph graph = (Graph) ((WrappedFramedGraph) framedGraph).getBaseGraph();
 
             @SuppressWarnings("unchecked")
             Map<String, Serializable> map = (Map<String, Serializable>) args[0];
@@ -154,17 +140,13 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             // Find or create the map vertex.
             Iterator<Vertex> it = vertex.vertices(Direction.OUT, ann.label());
             Vertex mapVertex = null;
-            if (!it.hasNext())
-            {
+            if (!it.hasNext()) {
                 // No map vertex yet.
                 mapVertex = graph.addVertex();
                 vertex.addEdge(ann.label(), mapVertex);
-            }
-            else
-            {
+            } else {
                 mapVertex = it.next();
-                if (it.hasNext())
-                {
+                if (it.hasNext()) {
                     // Multiple vertices behind edges with given label.
                     log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
                 }
@@ -173,16 +155,13 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             // For all keys in the old map...
             Set<String> keys = mapVertex.keys();
             Set<String> mapKeys = map.keySet();
-            for (String key : keys)
-            {
+            for (String key : keys) {
                 final Property<Object> val = mapVertex.property(key);
-                if (!val.isPresent() || !(val.value() instanceof String))
-                {
+                if (!val.isPresent() || !(val.value() instanceof String)) {
                     log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
                 }
                 // ...either change to new value,
-                if (map.containsKey(key))
-                {
+                if (map.containsKey(key)) {
                     mapVertex.property(key, map.get(key));
                     mapKeys.remove(key);
                 }
@@ -192,8 +171,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
             }
 
             // Add the new entries.
-            for (String key : mapKeys)
-            {
+            for (String key : mapKeys) {
                 mapVertex.property(key, map.get(key));
             }
         }

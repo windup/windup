@@ -9,8 +9,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue("parameterwiringmodel")
-public interface ParameterWiringTestModel extends WindupVertexFrame
-{
+public interface ParameterWiringTestModel extends WindupVertexFrame {
     String VALUE = "value";
 
     @Property(VALUE)

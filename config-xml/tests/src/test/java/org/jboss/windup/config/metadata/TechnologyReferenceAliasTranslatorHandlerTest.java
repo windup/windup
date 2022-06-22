@@ -27,8 +27,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class TechnologyReferenceAliasTranslatorHandlerTest
-{
+public class TechnologyReferenceAliasTranslatorHandlerTest {
     private static final String XML_FILE = "src/test/resources/testxml/testtransformers.windup.technologytransformer.xml";
 
     @Deployment
@@ -37,8 +36,7 @@ public class TechnologyReferenceAliasTranslatorHandlerTest
             @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -49,8 +47,7 @@ public class TechnologyReferenceAliasTranslatorHandlerTest
     private GraphContextFactory graphContextFactory;
 
     @Test
-    public void testXmlParsinfOfRulesetMetadata() throws Exception
-    {
+    public void testXmlParsinfOfRulesetMetadata() throws Exception {
         File fXmlFile = new File(XML_FILE);
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);

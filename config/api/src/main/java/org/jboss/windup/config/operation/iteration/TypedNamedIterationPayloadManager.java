@@ -13,42 +13,36 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Basically, a NamedIterationPayloadManager + a type check.
- * 
+ * <p>
  * TODO: Personally I'd remove the whole IterationPayloadManager interface and access VarStack directly.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class TypedNamedIterationPayloadManager implements IterationPayloadManager
-{
+public class TypedNamedIterationPayloadManager implements IterationPayloadManager {
 
     private final Class<? extends WindupVertexFrame> varType;
     private final String var;
 
-    public TypedNamedIterationPayloadManager(Class<? extends WindupVertexFrame> varType, String var)
-    {
+    public TypedNamedIterationPayloadManager(Class<? extends WindupVertexFrame> varType, String var) {
         this.varType = varType;
         this.var = var;
     }
 
     @Override
-    public void setCurrentPayload(Variables varStack, WindupVertexFrame element)
-    {
-        if (!varType.isAssignableFrom(element.getClass()))
-        {
+    public void setCurrentPayload(Variables varStack, WindupVertexFrame element) {
+        if (!varType.isAssignableFrom(element.getClass())) {
             throw new IllegalTypeArgumentException(var, varType, element.getClass());
         }
         Iteration.setCurrentPayload(varStack, var, element);
     }
 
     @Override
-    public void removeCurrentPayload(Variables varStack)
-    {
+    public void removeCurrentPayload(Variables varStack) {
         Iteration.removeCurrentPayload(varStack, varType, var);
     }
 
     @Override
-    public String getPayLoadName()
-    {
+    public String getPayLoadName() {
         return var;
     }
 

@@ -29,9 +29,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author Ondrej Zizka
  */
-@RuleMetadata(phase = PreReportGenerationPhase.class, before = { RenderReportRuleProvider.class })
-public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
-{
+@RuleMetadata(phase = PreReportGenerationPhase.class, before = {RenderReportRuleProvider.class})
+public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(RenderTagsJavaScriptRuleProvider.class);
 
     @Inject
@@ -42,43 +41,34 @@ public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder
-            .begin()
-            .addRule()
-            .perform(new GraphOperation()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context)
-                {
-                    TagService tagService = tagServiceHolder.getTagService();
+                .begin()
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        TagService tagService = tagServiceHolder.getTagService();
 
-                    ReportService reportService = new ReportService(event.getGraphContext());
-                    Path outputDir = reportService.getReportDirectory();
-                    File tagsDataFile = outputDir.resolve("resources/tagsData.js").toFile();
-                    try
-                    {
-                        FileUtils.forceMkdir(tagsDataFile.getParentFile());
-                    }
-                    catch (IOException ex)
-                    {
-                        LOG.severe("Error creating a directory: " + tagsDataFile.getParentFile().getPath());
-                        return;
-                    }
+                        ReportService reportService = new ReportService(event.getGraphContext());
+                        Path outputDir = reportService.getReportDirectory();
+                        File tagsDataFile = outputDir.resolve("resources/tagsData.js").toFile();
+                        try {
+                            FileUtils.forceMkdir(tagsDataFile.getParentFile());
+                        } catch (IOException ex) {
+                            LOG.severe("Error creating a directory: " + tagsDataFile.getParentFile().getPath());
+                            return;
+                        }
 
-                    try(FileWriter writer = new FileWriter(tagsDataFile))
-                    {
-                        tagService.writeTagsToJavaScript(writer);
-                        LOG.info("Exporting tags data to file: " + tagsDataFile.getPath());
+                        try (FileWriter writer = new FileWriter(tagsDataFile)) {
+                            tagService.writeTagsToJavaScript(writer);
+                            LOG.info("Exporting tags data to file: " + tagsDataFile.getPath());
+                        } catch (IOException e) {
+                            LOG.severe("Error exporting tags data to: " + tagsDataFile.getPath());
+                            return;
+                        }
                     }
-                    catch (IOException e)
-                    {
-                        LOG.severe("Error exporting tags data to: " + tagsDataFile.getPath());
-                        return;
-                    }
-                }
-            });
+                });
     }
     // @formatter:on
 }

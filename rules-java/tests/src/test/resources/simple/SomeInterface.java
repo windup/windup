@@ -1,12 +1,10 @@
 package simple;
 
-public interface SomeInterface
-{
+public interface SomeInterface {
 
     void interfaceMethod();
-    
-    default defaultMethod()
-    {
+
+    default defaultMethod() {
         //java 8 feature test
     }
 }

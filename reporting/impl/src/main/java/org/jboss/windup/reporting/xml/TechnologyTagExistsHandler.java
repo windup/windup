@@ -26,24 +26,20 @@ import static org.joox.JOOX.$;
  *         &lt;/perform&gt;
  *     &lt;/rule&gt;
  * </pre>
- * 
- * @author mrizzi
  *
+ * @author mrizzi
  */
 @NamespaceElementHandler(elementName = TechnologyTagExistsHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class TechnologyTagExistsHandler implements ElementHandler<TechnologyTagExists>
-{
+public class TechnologyTagExistsHandler implements ElementHandler<TechnologyTagExists> {
     static final String ELEMENT_NAME = "technology-tag-exists";
     private static final String NAME = "technology-tag";
 
     @Override
-    public TechnologyTagExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public TechnologyTagExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String technologyTagPattern = $(element).attr(NAME);
         String in = $(element).attr("in");
 
-        if (StringUtils.isBlank(technologyTagPattern))
-        {
+        if (StringUtils.isBlank(technologyTagPattern)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + NAME + "' attribute");
         }
 

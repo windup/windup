@@ -16,18 +16,15 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- *
  * Returns the SHA1 hash of the given a {@link ProjectModel}.
- *
+ * <p>
  * The function takes one parameter, and can be called from a freemarker template as follows:
- *
+ * <p>
  * projectModelToApplicationArchive(projectModel)
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- *
  */
-public class ProjectModelToSha1 implements WindupFreeMarkerMethod
-{
+public class ProjectModelToSha1 implements WindupFreeMarkerMethod {
     private static Logger LOG = Logging.get(ProjectModelToSha1.class);
 
     private static final String NAME = "projectModelToSha1";
@@ -35,41 +32,35 @@ public class ProjectModelToSha1 implements WindupFreeMarkerMethod
     private ApplicationReportIndexService service;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.service = new ApplicationReportIndexService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a parameter of type " + ProjectModel.class.getSimpleName() + " and returns the associated "
-                    + ApplicationReportIndexModel.class.getSimpleName() + ".";
+                + ApplicationReportIndexModel.class.getSimpleName() + ".";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
-    	Object result = null;
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        Object result = null;
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (ProjectModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        if (stringModelArg == null)
-        {
+        if (stringModelArg == null) {
             throw new IllegalArgumentException("FreeMarker Method " + NAME + " called with null project model");
         }
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
-        if(projectModel.getRootFileModel() instanceof IdentifiedArchiveModel) {
-        	result = projectModel.getRootFileModel().getSHA1Hash();
+        if (projectModel.getRootFileModel() instanceof IdentifiedArchiveModel) {
+            result = projectModel.getRootFileModel().getSHA1Hash();
         }
         ExecutionStatistics.get().end(NAME);
 

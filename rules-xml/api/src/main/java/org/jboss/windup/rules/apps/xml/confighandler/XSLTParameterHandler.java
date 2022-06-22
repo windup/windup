@@ -10,13 +10,11 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "xslt-parameter", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class XSLTParameterHandler implements ElementHandler<XSLTParameter>
-{
+public class XSLTParameterHandler implements ElementHandler<XSLTParameter> {
 
     @Override
     public XSLTParameter processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String property = $(element).attr("property");
         String value = $(element).attr("value");
         XSLTParameter entry = new XSLTParameter(property, value);

@@ -116,8 +116,8 @@ public class DivaLauncher extends GraphOperation {
             return;
         }
         try {
-            Util.injectedCall(DivaIRGen.advices(), new String[] { "org.jboss.windup.rules.apps.diva.analysis" },
-                    new String[] {}, DivaLauncher.class.getName() + ".launch", event, context);
+            Util.injectedCall(DivaIRGen.advices(), new String[]{"org.jboss.windup.rules.apps.diva.analysis"},
+                    new String[]{}, DivaLauncher.class.getName() + ".launch", event, context);
         } catch (Exception e) {
             throw new WindupException(e);
         }
@@ -203,7 +203,7 @@ public class DivaLauncher extends GraphOperation {
             clf = new ClassLoaderFactoryImpl(scope.getExclusions()) {
                 @Override
                 protected IClassLoader makeNewClassLoader(ClassLoaderReference classLoaderReference,
-                        IClassHierarchy cha, IClassLoader parent, AnalysisScope unused) throws IOException {
+                                                          IClassHierarchy cha, IClassLoader parent, AnalysisScope unused) throws IOException {
                     if (mods.moduleLoaderRefs().contains(classLoaderReference)) {
                         IClassLoader cl = new DivaSourceLoaderImpl(classLoaderReference, parent, cha, stdlibs);
                         cl.init(mods.getModules(classLoaderReference));
@@ -235,7 +235,7 @@ public class DivaLauncher extends GraphOperation {
                     if (file.isDirectory()) {
                         sourceDirs.add(file.getFilePath());
                     } else if (file instanceof ArchiveModel) {
-                        String unzipped = ((ArchiveModel)file).getUnzippedDirectory();
+                        String unzipped = ((ArchiveModel) file).getUnzippedDirectory();
                         if (unzipped != null) {
                             sourceDirs.add(unzipped);
                         }
@@ -278,7 +278,7 @@ public class DivaLauncher extends GraphOperation {
                         }
 
                     } else if (rootFileModel instanceof JarArchiveModel && !rootFileModel.traverse(
-                            g -> g.out(ArchiveModel.PARENT_ARCHIVE).has(WindupFrame.TYPE_PROP, JarArchiveModel.TYPE))
+                                    g -> g.out(ArchiveModel.PARENT_ARCHIVE).has(WindupFrame.TYPE_PROP, JarArchiveModel.TYPE))
                             .toList(JarArchiveModel.class).isEmpty()) {
                         scope.addToScope(ClassLoaderReference.Application,
                                 new BinaryDirectoryTreeModule(unzippedPath.toFile()));
@@ -299,7 +299,7 @@ public class DivaLauncher extends GraphOperation {
             clf = new ECJClassLoaderFactory(scope.getExclusions()) {
                 @Override
                 protected JavaSourceLoaderImpl makeSourceLoader(ClassLoaderReference classLoaderReference,
-                        IClassHierarchy cha, IClassLoader parent) {
+                                                                IClassHierarchy cha, IClassLoader parent) {
                     return new DivaSourceLoaderImpl(classLoaderReference, parent, cha, stdlibs);
                 }
             };
