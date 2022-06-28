@@ -167,7 +167,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         final Coordinate coordinate = archiveIdentificationService.getCoordinate(hash);
         boolean isKnownLibrary = archiveModel instanceof IgnoredFileModel || coordinate != null;
         boolean analyseKnownLibraries = cfg.isAnalyzeKnownLibraries();
-        if (isKnownLibrary && !analyseKnownLibraries && !isInputApp) {
+        boolean shouldBeIgnored = isKnownLibrary && !analyseKnownLibraries && !isInputApp;
+        if (shouldBeIgnored) {
             LOG.info(String.format("Library will be ignored: %s", archiveModel.getArchiveName()));
 
             GraphService.addTypeToModel(event.getGraphContext(), archiveModel, IgnoredArchiveModel.class);
@@ -190,6 +191,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             return;
 
         for (File subFile : subFiles) {
+            if (shouldBeIgnored)
+                continue;
+
             if (!filter.accept(subFile))
                 continue;
 
