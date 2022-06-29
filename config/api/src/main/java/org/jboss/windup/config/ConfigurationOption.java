@@ -9,8 +9,7 @@ import java.util.Collection;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public interface ConfigurationOption
-{
+public interface ConfigurationOption {
     /**
      * Returns the name of the parameter. This should be a short name that is suitable for use in a command line parameter (for example, "packages" or
      * "excludePackages").

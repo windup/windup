@@ -21,17 +21,14 @@ import org.jboss.windup.bootstrap.ThemeProvider;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class GreetingListener implements ContainerLifecycleListener
-{
+public class GreetingListener implements ContainerLifecycleListener {
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public GreetingListener()
-    {
+    public GreetingListener() {
     }
 
     @Override
-    public void beforeStart(Furnace furnace) throws ContainerException
-    {
+    public void beforeStart(Furnace furnace) throws ContainerException {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
         StringWriter sw = new StringWriter();
@@ -47,31 +44,26 @@ public class GreetingListener implements ContainerLifecycleListener
     }
 
     @Override
-    public void afterStart(Furnace furnace) throws ContainerException
-    {
+    public void afterStart(Furnace furnace) throws ContainerException {
     }
 
     @Override
-    public void beforeStop(Furnace forge) throws ContainerException
-    {
+    public void beforeStop(Furnace forge) throws ContainerException {
         // Do nothing
     }
 
     @Override
-    public void afterStop(Furnace forge) throws ContainerException
-    {
+    public void afterStop(Furnace forge) throws ContainerException {
         // Do nothing
     }
 
     @Override
-    public void beforeConfigurationScan(Furnace forge) throws ContainerException
-    {
+    public void beforeConfigurationScan(Furnace forge) throws ContainerException {
         // Do nothing
     }
 
     @Override
-    public void afterConfigurationScan(Furnace forge) throws ContainerException
-    {
+    public void afterConfigurationScan(Furnace forge) throws ContainerException {
         // Do nothing
     }
 

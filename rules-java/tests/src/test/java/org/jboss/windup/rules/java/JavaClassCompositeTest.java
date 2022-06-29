@@ -43,19 +43,17 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaClassCompositeTest
-{
+public class JavaClassCompositeTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -69,20 +67,18 @@ public class JavaClassCompositeTest
     private GraphContextFactory factory;
 
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        JavaCompositeClassTestRuleProvider.class));
+                    JavaCompositeClassTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
@@ -92,7 +88,7 @@ public class JavaClassCompositeTest
             processor.execute(processorConfig);
 
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                        JavaTypeReferenceModel.class);
+                    JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
             Assert.assertTrue(typeReferences.iterator().hasNext());
 
@@ -101,68 +97,58 @@ public class JavaClassCompositeTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
     @Singleton
-    public static class JavaCompositeClassTestRuleProvider extends AbstractRuleProvider
-    {
+    public static class JavaCompositeClassTestRuleProvider extends AbstractRuleProvider {
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
 
-        public JavaCompositeClassTestRuleProvider()
-        {
+        public JavaCompositeClassTestRuleProvider() {
             super(MetadataBuilder.forProvider(JavaCompositeClassTestRuleProvider.class)
-                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
 
             return ConfigurationBuilder.begin()
-            .addRule().when(
-                JavaClass.references("org.apache.commons.{*}").inType("{type}2").at(TypeReferenceLocation.IMPORT)
-                .and(JavaClass.references("org.ocpsoft.rewrite.{*}").inType("{type}1").at(TypeReferenceLocation.IMPORT).as("2"))
-            ).perform(
-                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        firstRuleMatchCount++;
-                    }
-                }).endIteration()
-            )
-            
-            .addRule().when(
-                JavaClass.references("{type}").inType("org.{*}1").at(TypeReferenceLocation.IMPORT)
-                .and(JavaClass.references("{type}").inType("org.{*}2").at(TypeReferenceLocation.IMPORT).as("2"))
-            ).perform(
-                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        secondRuleMatchCount++;
-                    }
-                }).endIteration()
-            )
-            .where("type").matches("org\\.jboss\\.forge\\.furnace\\.repositories\\.AddonDependencyEntry");
+                    .addRule().when(
+                            JavaClass.references("org.apache.commons.{*}").inType("{type}2").at(TypeReferenceLocation.IMPORT)
+                                    .and(JavaClass.references("org.ocpsoft.rewrite.{*}").inType("{type}1").at(TypeReferenceLocation.IMPORT).as("2"))
+                    ).perform(
+                            Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    firstRuleMatchCount++;
+                                }
+                            }).endIteration()
+                    )
+
+                    .addRule().when(
+                            JavaClass.references("{type}").inType("org.{*}1").at(TypeReferenceLocation.IMPORT)
+                                    .and(JavaClass.references("{type}").inType("org.{*}2").at(TypeReferenceLocation.IMPORT).as("2"))
+                    ).perform(
+                            Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                                    secondRuleMatchCount++;
+                                }
+                            }).endIteration()
+                    )
+                    .where("type").matches("org\\.jboss\\.forge\\.furnace\\.repositories\\.AddonDependencyEntry");
         }
         // @formatter:on
 
-        public int getFirstRuleMatchCount()
-        {
+        public int getFirstRuleMatchCount() {
             return firstRuleMatchCount;
         }
 
-        public int getSecondRuleMatchCount()
-        {
+        public int getSecondRuleMatchCount() {
             return secondRuleMatchCount;
         }
     }

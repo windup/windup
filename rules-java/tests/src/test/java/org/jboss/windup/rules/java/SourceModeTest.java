@@ -36,18 +36,16 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class SourceModeTest
-{
+public class SourceModeTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -61,17 +59,15 @@ public class SourceModeTest
     private GraphContextFactory factory;
 
     @Test
-    public void testSourceModePositive() throws IOException, InstantiationException, IllegalAccessException
-    {
+    public void testSourceModePositive() throws IOException, InstantiationException, IllegalAccessException {
         final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        SourceModeTestRuleProvider.class));
+                    SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
@@ -85,17 +81,15 @@ public class SourceModeTest
     }
 
     @Test
-    public void testSourceModeNegative() throws IOException, InstantiationException, IllegalAccessException
-    {
+    public void testSourceModeNegative() throws IOException, InstantiationException, IllegalAccessException {
         final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        SourceModeTestRuleProvider.class));
+                    SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
@@ -109,17 +103,15 @@ public class SourceModeTest
     }
 
     @Test
-    public void testSourceModeDefault() throws IOException, InstantiationException, IllegalAccessException
-    {
+    public void testSourceModeDefault() throws IOException, InstantiationException, IllegalAccessException {
         final Path inputDir = Paths.get("src/test/resources/org/jboss/windup/rules/java");
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                        SourceModeTestRuleProvider.class));
+                    SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
@@ -131,68 +123,57 @@ public class SourceModeTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_sourcemodetest" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_sourcemodetest" + RandomStringUtils.randomAlphanumeric(6));
     }
 
     private static int enabledCount = 0;
     private static int disabledCount = 0;
 
     @After
-    public void after()
-    {
+    public void after() {
         enabledCount = 0;
         disabledCount = 0;
     }
 
     @Singleton
-    public static class SourceModeTestRuleProvider extends AbstractRuleProvider
-    {
-        public SourceModeTestRuleProvider()
-        {
+    public static class SourceModeTestRuleProvider extends AbstractRuleProvider {
+        public SourceModeTestRuleProvider() {
             super(MetadataBuilder.forProvider(SourceModeTestRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-            .addRule().when(
-                SourceMode.isEnabled()
-            ).perform(new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        enabledCount++;
-                    }
-                }
-            )
-               
-            .addRule().when(
-                SourceMode.isDisabled()
-            ).perform(new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        disabledCount++;
-                    }
-                }
-            );
+                    .addRule().when(
+                            SourceMode.isEnabled()
+                    ).perform(new GraphOperation() {
+                                  @Override
+                                  public void perform(GraphRewrite event, EvaluationContext context) {
+                                      enabledCount++;
+                                  }
+                              }
+                    )
+
+                    .addRule().when(
+                            SourceMode.isDisabled()
+                    ).perform(new GraphOperation() {
+                                  @Override
+                                  public void perform(GraphRewrite event, EvaluationContext context) {
+                                      disabledCount++;
+                                  }
+                              }
+                    );
         }
         // @formatter:on
 
-        public int getEnabledCount()
-        {
+        public int getEnabledCount() {
             return enabledCount;
         }
 
-        public int getDisabledCount()
-        {
+        public int getDisabledCount() {
             return disabledCount;
         }
     }

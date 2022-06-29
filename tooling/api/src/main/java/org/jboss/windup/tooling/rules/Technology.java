@@ -2,8 +2,7 @@ package org.jboss.windup.tooling.rules;
 
 import java.io.Serializable;
 
-public interface Technology extends Serializable
-{
+public interface Technology extends Serializable {
     int getVersion();
 
     void setVersion(int version);

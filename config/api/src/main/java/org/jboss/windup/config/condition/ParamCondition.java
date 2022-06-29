@@ -19,35 +19,30 @@ import org.ocpsoft.rewrite.param.Parameterized;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ParamCondition extends GraphCondition implements Parameterized
-{
-   private final String name;
-   private final String value;
+public class ParamCondition extends GraphCondition implements Parameterized {
+    private final String name;
+    private final String value;
 
-   public ParamCondition(String name, String value)
-   {
-      this.name = name;
-      this.value = value;
-   }
+    public ParamCondition(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-   @Override
-   public boolean evaluate(GraphRewrite event, EvaluationContext context)
-   {
-      ParameterStore store = (ParameterStore) context.get(ParameterStore.class);
-      ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
-      boolean result = values.submit(event, context, store.get(name), value);
-      return result;
-   }
+    @Override
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
+        ParameterStore store = (ParameterStore) context.get(ParameterStore.class);
+        ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
+        boolean result = values.submit(event, context, store.get(name), value);
+        return result;
+    }
 
-   @Override
-   public Set<String> getRequiredParameterNames()
-   {
-      return new HashSet<>(Arrays.asList(name));
-   }
+    @Override
+    public Set<String> getRequiredParameterNames() {
+        return new HashSet<>(Arrays.asList(name));
+    }
 
-   @Override
-   public void setParameterStore(ParameterStore store)
-   {
-   }
+    @Override
+    public void setParameterStore(ParameterStore store) {
+    }
 
 }

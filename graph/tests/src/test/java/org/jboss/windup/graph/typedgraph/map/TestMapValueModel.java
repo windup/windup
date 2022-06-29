@@ -6,8 +6,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.Property;
 
 @TypeValue("MapModelValue")
-public interface TestMapValueModel extends WindupVertexFrame
-{
+public interface TestMapValueModel extends WindupVertexFrame {
     @Property("myproperty")
     String getProperty();
 

@@ -20,64 +20,53 @@ import org.jboss.windup.graph.Property;
 /**
  * Simplified operation having method that already accepts the found payload.
  */
-public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation
-{
+public abstract class AbstractIterationOperation<T extends WindupVertexFrame> extends GraphOperation {
 
     /**
      * When the variable name is not specified, let the Iteration to set the current payload variable name.
      */
-    public AbstractIterationOperation()
-    {
+    public AbstractIterationOperation() {
 
     }
 
-    public AbstractIterationOperation(String variableName)
-    {
+    public AbstractIterationOperation(String variableName) {
         this.variableName = variableName;
     }
 
     private String variableName;
 
-    public String getVariableName()
-    {
-        if (variableName == null)
-        {
+    public String getVariableName() {
+        if (variableName == null) {
             return null;
         }
         return new VariableNameIterator(variableName).next();
     }
 
-    public void setVariableName(String variableName)
-    {
+    public void setVariableName(String variableName) {
         this.variableName = variableName;
     }
 
-    public boolean hasVariableNameSet()
-    {
+    public boolean hasVariableNameSet() {
         return getVariableName() != null;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context) {
         checkVariableName(event, context);
         WindupVertexFrame payload = resolveVariable(event, variableName);
         perform(event, context, resolvePayload(event, context, payload));
     }
 
     @SuppressWarnings("unchecked")
-    public T resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
+    public T resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
         return (T) payload;
     }
 
     /**
      * Check the variable name and if not set, set it with the singleton variable name being on the top of the stack.
      */
-    protected void checkVariableName(GraphRewrite event, EvaluationContext context)
-    {
-        if (variableName == null)
-        {
+    protected void checkVariableName(GraphRewrite event, EvaluationContext context) {
+        if (variableName == null) {
             setVariableName(Iteration.getPayloadVariableName(event, context));
         }
     }
@@ -88,33 +77,25 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * method of the form `<code>@Property public X getCustomProperty()</code>` and `X` has a {@link Property} method of
      * the form `<code>@Property public X getAnotherProp()</code>`
      */
-    protected WindupVertexFrame resolveVariable(GraphRewrite event, String variableName)
-    {
+    protected WindupVertexFrame resolveVariable(GraphRewrite event, String variableName) {
         Variables variables = Variables.instance(event);
         Iterator<String> tokenizer = new VariableNameIterator(variableName);
 
         WindupVertexFrame payload;
         String initialName = tokenizer.next();
-        try
-        {
+        try {
             payload = Iteration.getCurrentPayload(variables, initialName);
-        }
-        catch (IllegalArgumentException e1)
-        {
+        } catch (IllegalArgumentException e1) {
             payload = variables.findSingletonVariable(initialName);
         }
 
-        while (tokenizer.hasNext())
-        {
+        while (tokenizer.hasNext()) {
             String propertyName = tokenizer.next();
             propertyName = "get" + camelCase(propertyName, true);
-            try
-            {
+            try {
                 payload = (WindupVertexFrame) payload.getClass().getMethod(propertyName).invoke(payload);
-            }
-            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | NoSuchMethodException | SecurityException e)
-            {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException e) {
                 throw new IllegalArgumentException("Invalid variable expression: " + variableName, e);
             }
         }
@@ -124,15 +105,12 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
     public abstract void perform(GraphRewrite event, EvaluationContext context, T payload);
 
     // TODO Replace all this lame hacky junk with a real Variables resolving EL implementation.
-    private static class VariableNameIterator implements Iterator<String>
-    {
+    private static class VariableNameIterator implements Iterator<String> {
         final Queue<String> queue;
 
-        public VariableNameIterator(String name)
-        {
+        public VariableNameIterator(String name) {
             String result = name;
-            if (name.trim().startsWith("#{"))
-            {
+            if (name.trim().startsWith("#{")) {
                 result = result.replaceAll("\\s*#\\{\\s*([a-zA-Z0-9.]+)\\s*\\}\\s*", "$1");
                 result = result.replaceAll("([a-zA-Z0-9]+\\..*)", "$1");
             }
@@ -140,20 +118,17 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return !queue.isEmpty();
         }
 
         @Override
-        public String next()
-        {
+        public String next() {
             return queue.remove();
         }
 
         @Override
-        public void remove()
-        {
+        public void remove() {
             queue.poll();
         }
 
@@ -178,28 +153,24 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * </p>
      *
      * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
-     * @param uppercaseFirstLetter true if the first character is to be uppercased, or false if the first character is
-     *            to be lowercased
-     * @param delimiterChars optional characters that are used to delimit word boundaries
+     * @param uppercaseFirstLetter        true if the first character is to be uppercased, or false if the first character is
+     *                                    to be lowercased
+     * @param delimiterChars              optional characters that are used to delimit word boundaries
      * @return the camel case version of the word
      */
     public String camelCase(String lowerCaseAndUnderscoredWord,
-                boolean uppercaseFirstLetter,
-                char... delimiterChars)
-    {
+                            boolean uppercaseFirstLetter,
+                            char... delimiterChars) {
         if (lowerCaseAndUnderscoredWord == null)
             return null;
         lowerCaseAndUnderscoredWord = lowerCaseAndUnderscoredWord.trim();
         if (lowerCaseAndUnderscoredWord.length() == 0)
             return "";
-        if (uppercaseFirstLetter)
-        {
+        if (uppercaseFirstLetter) {
             String result = lowerCaseAndUnderscoredWord;
             // Replace any extra delimiters with underscores (before the underscores are converted in the next step)...
-            if (delimiterChars != null)
-            {
-                for (char delimiterChar : delimiterChars)
-                {
+            if (delimiterChars != null) {
+                for (char delimiterChar : delimiterChars) {
                     result = result.replace(delimiterChar, '_');
                 }
             }
@@ -210,7 +181,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
         if (lowerCaseAndUnderscoredWord.length() < 2)
             return lowerCaseAndUnderscoredWord;
         return "" + Character.toLowerCase(lowerCaseAndUnderscoredWord.charAt(0))
-                    + camelCase(lowerCaseAndUnderscoredWord, true, delimiterChars).substring(1);
+                + camelCase(lowerCaseAndUnderscoredWord, true, delimiterChars).substring(1);
     }
 
     /**
@@ -229,14 +200,12 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * @return the input string with the appropriate characters converted to upper-case
      */
     String replaceAllWithUppercase(String input,
-                String regex,
-                int groupNumberToUppercase)
-    {
+                                   String regex,
+                                   int groupNumberToUppercase) {
         Pattern underscoreAndDotPattern = Pattern.compile(regex);
         Matcher matcher = underscoreAndDotPattern.matcher(input);
         StringBuffer sb = new StringBuffer();
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             matcher.appendReplacement(sb, matcher.group(groupNumberToUppercase).toUpperCase());
         }
         matcher.appendTail(sb);
@@ -245,8 +214,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.getClass().getSimpleName() + " with var '" + variableName + "'";
     }
 }

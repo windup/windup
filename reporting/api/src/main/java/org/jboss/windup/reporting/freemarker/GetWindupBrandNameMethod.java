@@ -10,14 +10,12 @@ import java.util.List;
  */
 public class GetWindupBrandNameMethod implements WindupFreeMarkerMethod {
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Returns the name to use in place of the project name.";
     }
 
     @Override
-    public Object exec(List arguments) throws TemplateModelException
-    {
+    public Object exec(List arguments) throws TemplateModelException {
         return ThemeProvider.getInstance().getTheme().getBrandNameLong();
     }
 }

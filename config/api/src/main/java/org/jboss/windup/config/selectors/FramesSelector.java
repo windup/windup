@@ -13,14 +13,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Retrieves proper Iterable of frames, from the variable stack.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FramesSelector
-{
+public interface FramesSelector {
     /**
      * Get the currently selected {@link WindupVertexFrame} instances for this {@link Iteration}.
-     * 
+     *
      * @throws IllegalStateException upon failure to locate frames
      */
     Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context);

@@ -19,62 +19,50 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.util.ParameterUtils;
 
 public abstract class ParameterizedIterationOperation<T extends WindupVertexFrame> extends AbstractIterationOperation<T>
-            implements Operation, Parameterized
-{
+        implements Operation, Parameterized {
     private WindupVertexFrame originalPayload;
 
-    public ParameterizedIterationOperation()
-    {
+    public ParameterizedIterationOperation() {
     }
 
-    public ParameterizedIterationOperation(String variableName)
-    {
+    public ParameterizedIterationOperation(String variableName) {
         super(variableName);
     }
 
     public abstract void performParameterized(GraphRewrite event, EvaluationContext context, T payload);
 
     @Override
-    public final void perform(GraphRewrite event, EvaluationContext context)
-    {
+    public final void perform(GraphRewrite event, EvaluationContext context) {
         checkVariableName(event, context);
         WindupVertexFrame payload = resolveVariable(event, getVariableName());
         this.originalPayload = payload;
-        try
-        {
+        try {
             super.perform(event, context);
-        }
-        finally
-        {
+        } finally {
             this.originalPayload = null;
         }
     }
 
     @Override
-    public final void perform(GraphRewrite event, EvaluationContext context, T payload)
-    {
+    public final void perform(GraphRewrite event, EvaluationContext context, T payload) {
         Map<WindupVertexFrame, ParameterValueStore> stores = ParameterizedGraphCondition
-                    .getResultValueStoreMap(context);
+                .getResultValueStoreMap(context);
 
         ParameterValueStore originalValueStore = DefaultParameterValueStore.getInstance(context);
         ParameterStore parameterStore = DefaultParameterStore.getInstance(context);
 
-        try
-        {
+        try {
             DefaultEvaluationContext tempEvaluationContext = new DefaultEvaluationContext(context);
             tempEvaluationContext.setState(RewriteState.PERFORMING);
             ParameterValueStore valueStore = stores.get(originalPayload);
-            for (Entry<String, Parameter<?>> entry : parameterStore)
-            {
+            for (Entry<String, Parameter<?>> entry : parameterStore) {
                 Parameter<?> parameter = entry.getValue();
                 String value = valueStore == null ? null : valueStore.retrieve(parameter);
                 ParameterUtils.enqueueSubmission(event, tempEvaluationContext, parameter, value);
             }
             context.put(ParameterValueStore.class, valueStore);
             performParameterized(event, tempEvaluationContext, payload);
-        }
-        finally
-        {
+        } finally {
             context.put(ParameterValueStore.class, originalValueStore);
         }
     }

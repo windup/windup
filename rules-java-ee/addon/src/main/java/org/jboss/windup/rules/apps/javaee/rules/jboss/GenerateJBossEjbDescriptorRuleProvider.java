@@ -42,49 +42,41 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a jboss-ejb3.xml for JNDI bindings.
  */
 @RuleMetadata(phase = MigrationRulesPhase.class, id = "Generate jboss-ejb3.xml")
-public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
-{
+public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(GenerateJBossEjbDescriptorRuleProvider.class.getName());
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jboss/jboss-ejb3.ftl";
     private final String fileName = "jboss-ejb3";
     private final String fileExtension = "xml";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(Query.fromType(EjbDeploymentDescriptorModel.class))
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                // configuration of current execution
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                .addRule()
+                .when(Query.fromType(EjbDeploymentDescriptorModel.class))
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        // configuration of current execution
+                        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                for (FileModel inputPath : configurationModel.getInputPaths())
-                {
-                    ProjectModel application = inputPath.getProjectModel();
-                    createReport(event, context, event.getGraphContext(), application);
-                }
-            }
+                        for (FileModel inputPath : configurationModel.getInputPaths()) {
+                            ProjectModel application = inputPath.getProjectModel();
+                            createReport(event, context, event.getGraphContext(), application);
+                        }
+                    }
 
-            @Override
-            public String toString()
-            {
-                return "Generate " + fileName + "." + fileExtension;
-            }
-        });
+                    @Override
+                    public String toString() {
+                        return "Generate " + fileName + "." + fileExtension;
+                    }
+                });
     }
 
-    private void createReport(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
-    {
+    private void createReport(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel) {
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
         LinkService linkService = new LinkService(context);
 
-        for (EjbDeploymentDescriptorModel ejbDescriptor : findAllEjbDescsInProject(context,projectModel))
-        {
+        for (EjbDeploymentDescriptorModel ejbDescriptor : findAllEjbDescsInProject(context, projectModel)) {
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
             ApplicationReportModel applicationReportModel = applicationReportService.create();
             applicationReportModel.setReportPriority(300);
@@ -97,14 +89,12 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
             WindupVertexListModel sessionBeans = listService.create();
-            for (EjbSessionBeanModel sb : ejbDescriptor.getEjbSessionBeans())
-            {
+            for (EjbSessionBeanModel sb : ejbDescriptor.getEjbSessionBeans()) {
                 sessionBeans.addItem(sb);
             }
 
             WindupVertexListModel messageDrivenBeans = listService.create();
-            for (EjbMessageDrivenModel mb : ejbDescriptor.getMessageDriven())
-            {
+            for (EjbMessageDrivenModel mb : ejbDescriptor.getMessageDriven()) {
                 messageDrivenBeans.addItem(mb);
             }
 
@@ -115,11 +105,9 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
             ReportService reportService = new ReportService(context);
             String ancestorFolder = projectModel.getName();
-            if (ejbDescriptor.getProjectModel().getName() == null || ancestorFolder.equals(ejbDescriptor.getProjectModel().getName()))
-            {
+            if (ejbDescriptor.getProjectModel().getName() == null || ancestorFolder.equals(ejbDescriptor.getProjectModel().getName())) {
                 applicationReportModel.setReportFilename(reportService.getUniqueFilename(fileName, fileExtension, false, ancestorFolder));
-            } else
-            {
+            } else {
                 applicationReportModel.setReportFilename(reportService.getUniqueFilename(fileName, fileExtension, false, ancestorFolder, ejbDescriptor.getProjectModel().getName()));
             }
 
@@ -129,8 +117,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             newDescriptorLink.setDescription("JBoss EJB XML Descriptor - Generated by " + ThemeProvider.getInstance().getTheme().getBrandNameLong());
             newDescriptorLink.setLink(applicationReportModel.getReportFilename());
 
-            for (VendorSpecificationExtensionModel vendorSpecificExtension : vendorSpecificService.getVendorSpecificationExtensions(ejbDescriptor))
-            {
+            for (VendorSpecificationExtensionModel vendorSpecificExtension : vendorSpecificService.getVendorSpecificationExtensions(ejbDescriptor)) {
                 LOG.info("Vendor specific: " + vendorSpecificExtension.getFileName());
                 //classificationService.attachClassification(event, evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
                 //            "Vendor Specific EJB Specification Extension");
@@ -144,14 +131,11 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
     }
 
-    private Iterable<EjbDeploymentDescriptorModel> findAllEjbDescsInProject(GraphContext context, ProjectModel application)
-    {
+    private Iterable<EjbDeploymentDescriptorModel> findAllEjbDescsInProject(GraphContext context, ProjectModel application) {
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptorService = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
         List<EjbDeploymentDescriptorModel> resultModels = new ArrayList<>();
-        for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptorService.findAll())
-        {
-            if(ejbDesc.getProjectModel().getRootProjectModel().equals(application))
-            {
+        for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptorService.findAll()) {
+            if (ejbDesc.getProjectModel().getRootProjectModel().equals(application)) {
                 resultModels.add(ejbDesc);
             }
         }

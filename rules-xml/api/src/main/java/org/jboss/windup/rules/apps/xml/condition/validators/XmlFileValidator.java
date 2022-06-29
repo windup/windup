@@ -7,8 +7,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * An interface validating a given {@link XmlFileModel} based on the given criteria. It is used with Strategy design pattern.
  */
-public interface XmlFileValidator
-{
+public interface XmlFileValidator {
 
     boolean isValid(GraphRewrite event, EvaluationContext context, XmlFileModel model);
 }

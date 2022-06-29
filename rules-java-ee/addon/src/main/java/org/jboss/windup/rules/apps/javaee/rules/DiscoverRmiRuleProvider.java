@@ -29,40 +29,34 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = MigrationRulesPhase.class)
-public class DiscoverRmiRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverRmiRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(DiscoverRmiRuleProvider.class);
     private static final String RMI_INHERITANCE = "rmiInheritance";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder
-        .begin()
-        .addRule()
-        .when(JavaClass
-                    .references("java.rmi.Remote")
-                    .at(TypeReferenceLocation.IMPORT)
-                    .as(RMI_INHERITANCE))
-        .perform(Iteration.over(RMI_INHERITANCE).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-            {
-                extractMetadata(event, payload);
-            }
-        }).endIteration())
-        .withId(ruleIDPrefix + "_RMIInheritanceRule");
+                .begin()
+                .addRule()
+                .when(JavaClass
+                        .references("java.rmi.Remote")
+                        .at(TypeReferenceLocation.IMPORT)
+                        .as(RMI_INHERITANCE))
+                .perform(Iteration.over(RMI_INHERITANCE).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                        extractMetadata(event, payload);
+                    }
+                }).endIteration())
+                .withId(ruleIDPrefix + "_RMIInheritanceRule");
     }
 
-    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
-    {
+    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference) {
         // get the rmi interface class from the graph
         JavaClassModel javaClassModel = getJavaClass(typeReference);
 
-        if (!isRemoteInterface(javaClassModel))
-        {
+        if (!isRemoteInterface(javaClassModel)) {
             LOG.warning("Is not remote: " + javaClassModel.getQualifiedName());
             return;
         }
@@ -73,61 +67,51 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
 
         RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
-        if (javaClassModel != null)
-        {
+        if (javaClassModel != null) {
             RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
 
             // Create the source report for the RMI Implementation.
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
             if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
-                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
-                {
+                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName())) {
                     source.setGenerateSourceReport(true);
                 }
             }
         }
     }
 
-    public boolean isRemoteInterface(JavaClassModel jcm)
-    {
+    public boolean isRemoteInterface(JavaClassModel jcm) {
         if (!jcm.isInterface())
             return false;
 
         LOG.info("Class: " + jcm.getQualifiedName());
-        for (JavaClassModel im : jcm.getInterfaces())
-        {
-            if (StringUtils.equals("java.rmi.Remote", im.getQualifiedName()))
-            {
+        for (JavaClassModel im : jcm.getInterfaces()) {
+            if (StringUtils.equals("java.rmi.Remote", im.getQualifiedName())) {
                 return true;
             }
             LOG.info(" - Implements: " + im.getQualifiedName());
         }
-        if (jcm.getExtends() != null)
-        {
+        if (jcm.getExtends() != null) {
             LOG.info(" - Extends: " + jcm.getExtends().getQualifiedName());
             return (StringUtils.equals("java.rmi.Remote", jcm.getExtends().getQualifiedName()));
         }
         return false;
     }
 
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
+    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference) {
         JavaClassModel result = null;
         AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
 
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses()) {
             // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic()) {
                 result = javaClassModel;
                 break;
             }
         }
 
-        if (result == null)
-        {
+        if (result == null) {
             // no public classes found, so try to find any class (even non-public ones)
             result = javaSource.getJavaClasses().iterator().next();
         }
@@ -135,8 +119,7 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DiscoverEJBAnnotatedClasses";
     }
 }

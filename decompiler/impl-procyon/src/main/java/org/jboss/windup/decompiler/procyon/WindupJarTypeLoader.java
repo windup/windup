@@ -32,36 +32,30 @@ import com.strobel.assembler.metadata.JarTypeLoader;
 import com.strobel.core.ExceptionUtilities;
 import com.strobel.core.VerifyArgument;
 
-public class WindupJarTypeLoader implements ITypeLoader
-{
+public class WindupJarTypeLoader implements ITypeLoader {
     private final static Logger LOG = Logger.getLogger(JarTypeLoader.class.getName());
 
     private final JarFile _jarFile;
     private final Map<String, String> _knownMappings = new ConcurrentHashMap<>(1000);
 
-    public WindupJarTypeLoader(final JarFile jarFile)
-    {
+    public WindupJarTypeLoader(final JarFile jarFile) {
         _jarFile = VerifyArgument.notNull(jarFile, "jarFile");
     }
 
     @Override
-    public boolean tryLoadType(final String internalName, final Buffer buffer)
-    {
-        try
-        {
-            if (LOG.isLoggable(Level.FINE))
-            {
+    public boolean tryLoadType(final String internalName, final Buffer buffer) {
+        try {
+            if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine("Attempting to load type: " + internalName + "...");
             }
 
             final JarEntry entry = _jarFile.getJarEntry(internalName + ".class");
 
-            if (entry == null)
-            {
+            if (entry == null) {
                 final String mappedName = _knownMappings.get(internalName);
 
                 return mappedName != null &&
-                            !mappedName.equals(internalName) && tryLoadType(mappedName, buffer);
+                        !mappedName.equals(internalName) && tryLoadType(mappedName, buffer);
             }
 
             final InputStream inputStream = _jarFile.getInputStream(entry);
@@ -70,12 +64,10 @@ public class WindupJarTypeLoader implements ITypeLoader
 
             buffer.reset(remainingBytes);
 
-            while (remainingBytes > 0)
-            {
+            while (remainingBytes > 0) {
                 final int bytesRead = inputStream.read(buffer.array(), buffer.position(), remainingBytes);
 
-                if (bytesRead < 0)
-                {
+                if (bytesRead < 0) {
                     break;
                 }
 
@@ -87,30 +79,24 @@ public class WindupJarTypeLoader implements ITypeLoader
 
             final String actualName = getInternalNameFromClassFile(buffer);
 
-            if (actualName != null && !actualName.equals(internalName))
-            {
+            if (actualName != null && !actualName.equals(internalName)) {
                 _knownMappings.put(actualName, internalName);
             }
 
-            if (LOG.isLoggable(Level.FINE))
-            {
+            if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine("Type loaded from " + _jarFile.getName() + "!" + entry.getName() + ".");
             }
 
             return true;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw ExceptionUtilities.asRuntimeException(e);
         }
     }
 
-    private static String getInternalNameFromClassFile(final Buffer b)
-    {
+    private static String getInternalNameFromClassFile(final Buffer b) {
         final long magic = b.readInt() & 0xFFFFFFFFL;
 
-        if (magic != 0xCAFEBABEL)
-        {
+        if (magic != 0xCAFEBABEL) {
             return null;
         }
 

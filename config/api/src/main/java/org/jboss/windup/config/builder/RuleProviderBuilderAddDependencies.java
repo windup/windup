@@ -7,10 +7,8 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public interface RuleProviderBuilderAddDependencies
-{
+public interface RuleProviderBuilderAddDependencies {
     /**
      * Indicates that the current ruleset should execute after the ruleset with the given id
      */

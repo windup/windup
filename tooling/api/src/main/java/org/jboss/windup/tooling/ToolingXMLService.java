@@ -10,8 +10,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ToolingXMLService extends Serializable
-{
+public interface ToolingXMLService extends Serializable {
     /**
      * Serialize the given results to the provided {@link OutputStream}.
      */
@@ -19,7 +18,7 @@ public interface ToolingXMLService extends Serializable
 
     /**
      * Generates the XSD schema and outputs it to the provided path (full path to a filename).
-     *
+     * <p>
      * This will throw an exception if the path cannot be written to due to permissions or other IO errors.
      * If anything exists at the path, it will be overwritten!
      */

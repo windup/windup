@@ -23,45 +23,39 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class TestXmlExampleRuleProvider3 extends AbstractRuleProvider
-{
+public class TestXmlExampleRuleProvider3 extends AbstractRuleProvider {
     final List<TestXmlMetaFacetModel> typeSearchResults = new ArrayList<>();
 
-    public TestXmlExampleRuleProvider3()
-    {
+    public TestXmlExampleRuleProvider3() {
         super(MetadataBuilder.forProvider(TestXmlExampleRuleProvider3.class, "TestXmlExampleRuleProvider3")
-                    .setPhase(DiscoveryPhase.class));
+                .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         Configuration configuration = ConfigurationBuilder.begin()
-            .addRule()
-            .when(Query.fromType(TestXmlMetaFacetModel.class)
-                .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
-                    QueryPropertyComparisonType.EQUALS, "xmlTag2"))
-            .perform(Iteration.over(TestXmlMetaFacetModel.class)
-                .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>()
-                {
-                    public void perform(GraphRewrite event, EvaluationContext context, TestXmlMetaFacetModel payload) {
-                        Variables varStack = Variables.instance(event);
-                        TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
-                                    TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
-                        typeSearchResults.add(xmlFacetModel);
-                    }
-                })
-                .endIteration()
-            );
+                .addRule()
+                .when(Query.fromType(TestXmlMetaFacetModel.class)
+                        .withProperty(TestXmlMetaFacetModel.PROPERTY_ROOT_TAG_NAME,
+                                QueryPropertyComparisonType.EQUALS, "xmlTag2"))
+                .perform(Iteration.over(TestXmlMetaFacetModel.class)
+                        .perform(new AbstractIterationOperation<TestXmlMetaFacetModel>() {
+                            public void perform(GraphRewrite event, EvaluationContext context, TestXmlMetaFacetModel payload) {
+                                Variables varStack = Variables.instance(event);
+                                TestXmlMetaFacetModel xmlFacetModel = Iteration.getCurrentPayload(varStack,
+                                        TestXmlMetaFacetModel.class, Iteration.DEFAULT_SINGLE_VARIABLE_STRING);
+                                typeSearchResults.add(xmlFacetModel);
+                            }
+                        })
+                        .endIteration()
+                );
         return configuration;
     }
     // @formatter:on
 
-    public List<TestXmlMetaFacetModel> getTypeSearchResults()
-    {
+    public List<TestXmlMetaFacetModel> getTypeSearchResults() {
         return typeSearchResults;
     }
 }

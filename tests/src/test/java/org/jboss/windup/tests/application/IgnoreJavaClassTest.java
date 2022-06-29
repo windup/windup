@@ -17,44 +17,39 @@ import org.junit.runner.RunWith;
 import java.io.File;
 
 @RunWith(Arquillian.class)
-public class IgnoreJavaClassTest extends WindupArchitectureTest
-{
+public class IgnoreJavaClassTest extends WindupArchitectureTest {
 
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/xml/javaclassignore.windup.xml"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/xml/javaclassignore.windup.xml"));
         return archive;
     }
 
     @Test
-    public void testIgnoreFiles() throws Exception
-    {
-        try (GraphContext context = super.createGraphContext())
-        {
+    public void testIgnoreFiles() throws Exception {
+        try (GraphContext context = super.createGraphContext()) {
             super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false);
-            validateFilesWereIgnored(context,true);
+            validateFilesWereIgnored(context, true);
         }
 
     }
 
-    private void validateFilesWereIgnored(GraphContext context, boolean wasIgnored)
-    {
+    private void validateFilesWereIgnored(GraphContext context, boolean wasIgnored) {
         Service<FileModel> fileModels = new GraphService<>(context,
-                    FileModel.class);
+                FileModel.class);
         Iterable<FileModel> decompiledFile = fileModels.findAllByProperty(FileModel.FILE_NAME, "AnvilWebLifecycleListener.java");
         boolean fileFound = decompiledFile.iterator().hasNext();
         Assert.assertEquals(wasIgnored, !fileFound);

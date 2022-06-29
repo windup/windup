@@ -22,6 +22,6 @@ public class ArtifactTest {
         Set<String> parameters = new HashSet<>();
         Collections.addAll(parameters, artifactIdParam);
 
-        Assert.assertEquals(parameters , art.getRequiredParameterNames());
+        Assert.assertEquals(parameters, art.getRequiredParameterNames());
     }
 }

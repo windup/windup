@@ -12,35 +12,29 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Provides the message that will be reported on the project overview page.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class LineItem extends AbstractIterationOperation<FileLocationModel>
-{
+public class LineItem extends AbstractIterationOperation<FileLocationModel> {
 
     private String message;
 
-    LineItem(String variable)
-    {
+    LineItem(String variable) {
         super(variable);
     }
 
-    LineItem()
-    {
+    LineItem() {
         super();
     }
 
-    public static LineItem withMessage(String text)
-    {
+    public static LineItem withMessage(String text) {
         LineItem lineItem = new LineItem();
         lineItem.setMessage(text);
         return lineItem;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
         GraphContext graphContext = event.getGraphContext();
         GraphService<OverviewReportLineMessageModel> overviewLineService = new GraphService<>(graphContext, OverviewReportLineMessageModel.class);
         OverviewReportLineMessageModel overviewLine = overviewLineService.create();
@@ -51,13 +45,11 @@ public class LineItem extends AbstractIterationOperation<FileLocationModel>
         overviewLine.setRuleID(((Rule) context.get(Rule.class)).getId());
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 

@@ -28,23 +28,21 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 
 @RunWith(Arquillian.class)
-public class FreeMarkerIterationOperationTest
-{
+public class FreeMarkerIterationOperationTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(ReportingTestUtil.class)
-                    .addClass(TestFreeMarkerOperationRuleProvider.class)
-                    .addAsResource(new File("src/test/resources/reports"));
+                .addBeansXML()
+                .addClass(ReportingTestUtil.class)
+                .addClass(TestFreeMarkerOperationRuleProvider.class)
+                .addAsResource(new File("src/test/resources/reports"));
     }
 
     @Inject
@@ -56,10 +54,8 @@ public class FreeMarkerIterationOperationTest
     private Path tempFolder;
 
     @Test
-    public void testApplicationReportFreemarker() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testApplicationReportFreemarker() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);
             fillData(context);
@@ -74,12 +70,10 @@ public class FreeMarkerIterationOperationTest
         }
     }
 
-    private void fillData(final GraphContext context) throws Exception
-    {
+    private void fillData(final GraphContext context) throws Exception {
         WindupConfigurationModel cfgModel = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
         this.tempFolder = Paths.get(FileUtils.getTempDirectoryPath(), "freemarkeroperationtest");
-        if (!Files.isDirectory(this.tempFolder))
-        {
+        if (!Files.isDirectory(this.tempFolder)) {
             Files.createDirectories(tempFolder);
         }
         FileService fileModelService = new FileService(context);

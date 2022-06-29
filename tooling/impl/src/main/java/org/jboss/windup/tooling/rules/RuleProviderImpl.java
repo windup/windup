@@ -6,8 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RuleProviderImpl implements RuleProvider
-{
+public class RuleProviderImpl implements RuleProvider {
     private static final long serialVersionUID = 1L;
 
     private int version;
@@ -33,154 +32,129 @@ public class RuleProviderImpl implements RuleProvider
 
     private RuleProviderType ruleProviderType;
 
-    public RuleProviderImpl()
-    {
+    public RuleProviderImpl() {
         this.sources = new HashSet<>();
         this.targets = new HashSet<>();
         this.rules = new ArrayList<>();
     }
 
     @Override
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
     @Override
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 
     @Override
-    public String getProviderID()
-    {
+    public String getProviderID() {
         return providerID;
     }
 
     @Override
-    public void setProviderID(String providerID)
-    {
+    public void setProviderID(String providerID) {
         this.providerID = providerID;
     }
 
     @Override
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin;
     }
 
     @Override
-    public void setOrigin(String origin)
-    {
+    public void setOrigin(String origin) {
         this.origin = origin;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Override
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
     @Override
-    public String getPhase()
-    {
+    public String getPhase() {
         return phase;
     }
 
     @Override
-    public void setPhase(String phase)
-    {
+    public void setPhase(String phase) {
         this.phase = phase;
     }
 
     @Override
-    public Calendar getDateLoaded()
-    {
+    public Calendar getDateLoaded() {
         return dateLoaded;
     }
 
     @Override
-    public void setDateLoaded(Calendar dateLoaded)
-    {
+    public void setDateLoaded(Calendar dateLoaded) {
         this.dateLoaded = dateLoaded;
     }
 
     @Override
-    public Calendar getDateModified()
-    {
+    public Calendar getDateModified() {
         return dateModified;
     }
 
     @Override
-    public void setDateModified(Calendar dateModified)
-    {
+    public void setDateModified(Calendar dateModified) {
         this.dateModified = dateModified;
     }
 
     @Override
-    public Set<Technology> getSources()
-    {
+    public Set<Technology> getSources() {
         return sources;
     }
 
     @Override
-    public void setSources(Set<Technology> sources)
-    {
+    public void setSources(Set<Technology> sources) {
         this.sources = sources;
     }
 
     @Override
-    public Set<Technology> getTargets()
-    {
+    public Set<Technology> getTargets() {
         return targets;
     }
 
     @Override
-    public void setTargets(Set<Technology> targets)
-    {
+    public void setTargets(Set<Technology> targets) {
         this.targets = targets;
     }
 
     @Override
-    public List<Rule> getRules()
-    {
+    public List<Rule> getRules() {
         return rules;
     }
 
     @Override
-    public void setRules(List<Rule> rules)
-    {
+    public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
 
     @Override
-    public RulesPath getRulesPath()
-    {
+    public RulesPath getRulesPath() {
         return rulesPath;
     }
 
     @Override
-    public void setRulesPath(RulesPath rulesPath)
-    {
+    public void setRulesPath(RulesPath rulesPath) {
         this.rulesPath = rulesPath;
     }
 
     @Override
-    public RuleProviderType getRuleProviderType()
-    {
+    public RuleProviderType getRuleProviderType() {
         return ruleProviderType;
     }
 
     @Override
-    public void setRuleProviderType(RuleProviderType ruleProviderType)
-    {
+    public void setRuleProviderType(RuleProviderType ruleProviderType) {
         this.ruleProviderType = ruleProviderType;
     }
 }

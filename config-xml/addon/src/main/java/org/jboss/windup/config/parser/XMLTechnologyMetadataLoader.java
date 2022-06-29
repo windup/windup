@@ -22,8 +22,7 @@ import org.jboss.windup.util.file.FileVisit;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
-{
+public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader {
     private static final String XML_EXTENSION = "\\.technology\\.metadata\\.xml";
 
     @Inject
@@ -31,17 +30,13 @@ public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
 
     private List<TechnologyMetadata> metadataList;
 
-    private void load(final GraphContext context)
-    {
+    private void load(final GraphContext context) {
         this.metadataList = new ArrayList<>();
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
-        {
-            Visitor<File> visitor = new Visitor<File>()
-            {
+        for (FileModel userRulesFileModel : cfg.getUserRulesPaths()) {
+            Visitor<File> visitor = new Visitor<File>() {
                 @Override
-                public void visit(File file)
-                {
+                public void visit(File file) {
                     loadMetadata(file);
                 }
             };
@@ -50,8 +45,7 @@ public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
         }
     }
 
-    private void loadMetadata(File file)
-    {
+    private void loadMetadata(File file) {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
 
@@ -62,12 +56,9 @@ public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
         metadataList.add(metadata);
     }
 
-    private void loadMetadataIfNeeded(GraphContext context)
-    {
-        if (this.metadataList == null)
-        {
-            synchronized (this)
-            {
+    private void loadMetadataIfNeeded(GraphContext context) {
+        if (this.metadataList == null) {
+            synchronized (this) {
                 if (this.metadataList == null)
                     load(context);
             }
@@ -75,12 +66,10 @@ public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
     }
 
     @Override
-    public TechnologyMetadata getMetadata(GraphContext context, TechnologyReference reference)
-    {
+    public TechnologyMetadata getMetadata(GraphContext context, TechnologyReference reference) {
         loadMetadataIfNeeded(context);
 
-        for (TechnologyMetadata metadata : metadataList)
-        {
+        for (TechnologyMetadata metadata : metadataList) {
             if (metadata.handles(reference))
                 return metadata;
         }

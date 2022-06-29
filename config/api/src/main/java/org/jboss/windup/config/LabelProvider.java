@@ -11,8 +11,7 @@ import org.jboss.windup.config.metadata.Label;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelProvider
-{
+public interface LabelProvider {
     LabelProviderMetadata getMetadata();
 
     LabelProviderData getData();

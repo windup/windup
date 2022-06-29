@@ -35,62 +35,53 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider {
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
     public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the " +
             ThemeProvider.getInstance().getTheme().getBrandNameLong() +
-        " configuration. See the '--userIgnorePath' option in the User Guide.";
+            " configuration. See the '--userIgnorePath' option in the User Guide.";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        AbstractIterationOperation<WindupJavaConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupJavaConfigurationModel>()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        AbstractIterationOperation<WindupJavaConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupJavaConfigurationModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupJavaConfigurationModel payload)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context, WindupJavaConfigurationModel payload) {
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                for (FileModel inputPath : configurationModel.getInputPaths())
-                {
+                for (FileModel inputPath : configurationModel.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
                     createIgnoredFilesReport(event.getGraphContext(), payload, application);
                 }
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateJavaApplicationOverviewReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(
+                .addRule()
+                .when(
                         Query.fromType(WindupJavaConfigurationModel.class)
-                    )
-                    .perform(addApplicationReport);
+                )
+                .perform(addApplicationReport);
 
     }
 
     // @formatter:on
 
     private void createIgnoredFilesReport(GraphContext context,
-                WindupJavaConfigurationModel javaCfg, ProjectModel application)
-    {
+                                          WindupJavaConfigurationModel javaCfg, ProjectModel application) {
         GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context,
                 IgnoredFileModel.class);
 
         List<IgnoredFileModel> ignoredFileModelsInApplication = new ArrayList<>();
 
-        for (IgnoredFileModel file : ignoredFilesModelService.findAll())
-        {
+        for (IgnoredFileModel file : ignoredFilesModelService.findAll()) {
             Set<ProjectModel> fileApplications = ProjectTraversalCache.getApplicationsForProject(context, file.getProjectModel());
-            if (fileApplications.contains(application))
-            {
+            if (fileApplications.contains(application)) {
                 ignoredFileModelsInApplication.add(file);
             }
         }
@@ -111,14 +102,12 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setTemplatePath(TEMPLATE_REPORT);
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        for (IgnoredFileModel ignoredFileModel : ignoredFileModelsInApplication)
-        {
+        for (IgnoredFileModel ignoredFileModel : ignoredFileModelsInApplication) {
             ignoredFilesReportModel.addIgnoredFile(ignoredFileModel);
         }
 
 
-        for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes())
-        {
+        for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes()) {
             ignoredFilesReportModel.addFileRegex(ignoreRegexModel);
         }
 

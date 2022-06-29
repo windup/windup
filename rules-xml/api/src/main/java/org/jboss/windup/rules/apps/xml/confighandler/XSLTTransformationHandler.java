@@ -21,24 +21,21 @@ import org.w3c.dom.Element;
 
 /**
  * Represents an {@link XSLTTransformation} {@link Condition}.
- * 
+ * <p>
  * Example:
- * 
+ *
  * <pre>
  *  &lt;xslt description="weblogic.xml converted to jboss.xml" extension="-transformed-file.xml" xsltFile="path/to/xsltfile"/&gt;
  * </pre>
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "xslt", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class XSLTTransformationHandler implements ElementHandler<XSLTTransformation>
-{
+public class XSLTTransformationHandler implements ElementHandler<XSLTTransformation> {
 
     @Override
     public XSLTTransformation processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String description = $(element).attr("title");
         String extension = $(element).attr("extension");
         String effort = $(element).attr("effort");
@@ -46,103 +43,82 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         String useSaxonStr = $(element).attr("use-saxon");
         String of = $(element).attr("of");
 
-        if (StringUtils.isBlank(description))
-        {
+        if (StringUtils.isBlank(description)) {
             throw new WindupException("Error, 'xslt' element must have a non-empty 'description' attribute");
         }
-        if (StringUtils.isBlank(template))
-        {
+        if (StringUtils.isBlank(template)) {
             throw new WindupException("Error, 'xslt' element must have a non-empty 'template' attribute");
         }
-        if (StringUtils.isBlank(extension))
-        {
+        if (StringUtils.isBlank(extension)) {
             throw new WindupException("Error, 'xslt' element must have a non-empty 'extension' attribute");
         }
         Map<String, String> parameters = new HashMap<>();
         List<Element> children = $(element).children("xslt-parameter").get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             XSLTParameter param = handlerManager.processElement(child);
             parameters.put(param.getKey(), param.getValue());
         }
 
         boolean useSaxon = false;
-        if (StringUtils.isNotBlank(useSaxonStr))
-        {
-            try
-            {
+        if (StringUtils.isNotBlank(useSaxonStr)) {
+            try {
                 useSaxon = Boolean.parseBoolean(useSaxonStr);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new WindupException("Could not parse use-saxon value: " + useSaxonStr + " due to: " + e.getMessage(), e);
             }
         }
 
         Path pathContainingXml = handlerManager.getXmlInputRootPath();
-        if (pathContainingXml != null)
-        {
+        if (pathContainingXml != null) {
             String fullPath;
-            if (template.startsWith("/") || template.startsWith("\\"))
-            {
+            if (template.startsWith("/") || template.startsWith("\\")) {
                 fullPath = template;
-            }
-            else
-            {
+            } else {
                 Path path = pathContainingXml.resolve(template).toAbsolutePath();
 
-                if (!Files.exists(path))
-                {
+                if (!Files.exists(path)) {
                     Path rulesParentPath = handlerManager.getXmlInputPath().getParent();
                     fullPath = rulesParentPath.resolve(template).normalize().toAbsolutePath().toString();
-                }
-                else
-                {
+                } else {
                     fullPath = path.normalize().toString();
                 }
             }
 
             XSLTTransformation transformation = ((XSLTTransformation) XSLTTransformation
-                        .usingFilesystem(fullPath)
+                    .usingFilesystem(fullPath)
+                    .withDescription(description)
+                    .withExtension(extension)
+                    .withParameters(parameters))
+                    .setUseSaxon(useSaxon);
+
+            if (of != null) {
+                transformation = ((XSLTTransformation) XSLTTransformation
+                        .of(of)
+                        .usingTemplate(fullPath)
                         .withDescription(description)
                         .withExtension(extension)
                         .withParameters(parameters))
                         .setUseSaxon(useSaxon);
-
-            if (of != null)
-            {
-                transformation = ((XSLTTransformation) XSLTTransformation
-                            .of(of)
-                            .usingTemplate(fullPath)
-                            .withDescription(description)
-                            .withExtension(extension)
-                            .withParameters(parameters))
-                            .setUseSaxon(useSaxon);
                 return transformation;
             }
             return transformation.withEffort(effort == null ? 0 : Integer.valueOf(effort));
-        }
-        else
-        {
+        } else {
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
-            if (of != null)
-            {
+            if (of != null) {
                 return ((XSLTTransformation) XSLTTransformation
-                            .of(of)
-                            .usingTemplate(template, xmlFileAddonClassLoader)
-                            .withDescription(description)
-                            .withExtension(extension)
-                            .withParameters(parameters))
-                            .setUseSaxon(useSaxon);
-            }
-            else
-            {
+                        .of(of)
+                        .usingTemplate(template, xmlFileAddonClassLoader)
+                        .withDescription(description)
+                        .withExtension(extension)
+                        .withParameters(parameters))
+                        .setUseSaxon(useSaxon);
+            } else {
                 return ((XSLTTransformation) XSLTTransformation
-                            .using(template, xmlFileAddonClassLoader)
-                            .withDescription(description)
-                            .withExtension(extension)
-                            .withParameters(parameters))
-                            .setUseSaxon(useSaxon);
+                        .using(template, xmlFileAddonClassLoader)
+                        .withDescription(description)
+                        .withExtension(extension)
+                        .withParameters(parameters))
+                        .setUseSaxon(useSaxon);
             }
         }
     }

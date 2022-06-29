@@ -31,8 +31,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class LoadIssueCategoriesRuleProviderTest
-{
+public class LoadIssueCategoriesRuleProviderTest {
     public static final String ISSUE_CATEGORIES_PATH = "src/test/resources/issue-categories";
     @Inject
     private GraphContextFactory factory;
@@ -41,13 +40,12 @@ public class LoadIssueCategoriesRuleProviderTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap
                 .create(AddonArchive.class)
                 .addBeansXML()
@@ -56,10 +54,8 @@ public class LoadIssueCategoriesRuleProviderTest
     }
 
     @Test
-    public void testLoadIssueCategories() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testLoadIssueCategories() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);
 
@@ -72,10 +68,10 @@ public class LoadIssueCategoriesRuleProviderTest
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
-            Assert.assertEquals(1000, (long)issueCategoryRegistry.getByID("mandatory").getPriority());
-            Assert.assertEquals(2000, (long)issueCategoryRegistry.getByID("optional").getPriority());
-            Assert.assertEquals(3000, (long)issueCategoryRegistry.getByID("potential").getPriority());
-            Assert.assertEquals(4000, (long)issueCategoryRegistry.getByID("extra").getPriority());
+            Assert.assertEquals(1000, (long) issueCategoryRegistry.getByID("mandatory").getPriority());
+            Assert.assertEquals(2000, (long) issueCategoryRegistry.getByID("optional").getPriority());
+            Assert.assertEquals(3000, (long) issueCategoryRegistry.getByID("potential").getPriority());
+            Assert.assertEquals(4000, (long) issueCategoryRegistry.getByID("extra").getPriority());
             Assert.assertEquals("extra", issueCategoryRegistry.getByID("extra").getCategoryID());
             Assert.assertEquals("Extra", issueCategoryRegistry.getByID("extra").getName());
             Assert.assertEquals("Extra Category", issueCategoryRegistry.getByID("extra").getDescription());

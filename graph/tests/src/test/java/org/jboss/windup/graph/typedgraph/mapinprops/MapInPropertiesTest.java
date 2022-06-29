@@ -21,19 +21,17 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.service.GraphService;
 
 @RunWith(Arquillian.class)
-public class MapInPropertiesTest
-{
+public class MapInPropertiesTest {
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-            .addBeansXML()
-            .addPackage("org.jboss.windup.graph.typedgraph.mapinprops");
+                .addBeansXML()
+                .addPackage("org.jboss.windup.graph.typedgraph.mapinprops");
         return archive;
     }
 
@@ -41,10 +39,8 @@ public class MapInPropertiesTest
     private GraphContextFactory contextFactory;
 
     @Test
-    public void testMapHandling() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testMapHandling() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             Assert.assertNotNull(context);
             prepareFrame(context, TestMapPrefixModel.class);
 
@@ -57,10 +53,8 @@ public class MapInPropertiesTest
     }
 
     @Test
-    public void testMapWithBlankPrefixHandling() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testMapWithBlankPrefixHandling() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             TestMapBlankSubModel frame = prepareFrame(context, TestMapBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
 
@@ -70,8 +64,7 @@ public class MapInPropertiesTest
             v.property("preexistingKey", "still here");
             TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frameElement(v, TestMapBlankSubModel.class);
             checkMap(framed.getMap(), 4);
-            for (String string : framed.getElement().keys())
-            {
+            for (String string : framed.getElement().keys()) {
                 System.out.println("    Key: " + string);
             }
             Assert.assertEquals("still here", framed.getMap().get("preexistingKey"));
@@ -83,17 +76,14 @@ public class MapInPropertiesTest
      * This doesn't use submodel.
      */
     @Test
-    public void testMapWithBlankPrefixHandling2() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testMapWithBlankPrefixHandling2() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             TestMapBlankModel frame = context.getFramed().addFramedVertex(TestMapBlankModel.class);
             Map<String, String> map = prepareMap();
             frame.putNaturalMap(map);
 
             System.out.println("    Frame class: " + frame.getClass());
-            for (Class<?> iface : frame.getClass().getInterfaces())
-            {
+            for (Class<?> iface : frame.getClass().getInterfaces()) {
                 System.out.println("      Implements: " + iface.getName());
             }
 
@@ -104,8 +94,7 @@ public class MapInPropertiesTest
             Object uncastObject = context.getFramed().frameElement(v, TestMapBlankSubModel.class);
             TestMapBlankSubModel framed = (TestMapBlankSubModel) uncastObject;
             checkMap(framed.getMap(), 4);
-            for (String string : framed.getElement().keys())
-            {
+            for (String string : framed.getElement().keys()) {
                 System.out.println("    Key: " + string);
             }
             Assert.assertEquals("still here", framed.getMap().get("preexistingKey"));
@@ -113,24 +102,21 @@ public class MapInPropertiesTest
         }
     }
 
-    private static void checkMap(Map<String, String> foundMap, int expectedNumOfEntries)
-    {
+    private static void checkMap(Map<String, String> foundMap, int expectedNumOfEntries) {
         Assert.assertEquals(expectedNumOfEntries, foundMap.size());
         Assert.assertEquals("value1", foundMap.get("key1"));
         Assert.assertEquals("value2", foundMap.get("key2"));
         Assert.assertEquals("value3", foundMap.get("key3"));
     }
 
-    private static <T extends TestMapPrefixModel> T prepareFrame(GraphContext context, Class<T> cls)
-    {
+    private static <T extends TestMapPrefixModel> T prepareFrame(GraphContext context, Class<T> cls) {
         T mainModel = context.getFramed().addFramedVertex(cls);
         Map<String, String> map = prepareMap();
         mainModel.setMap(map);
         return mainModel;
     }
 
-    private static Map<String, String> prepareMap()
-    {
+    private static Map<String, String> prepareMap() {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
         map.put("key2", "value2");

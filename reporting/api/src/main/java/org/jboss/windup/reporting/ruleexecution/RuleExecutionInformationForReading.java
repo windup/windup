@@ -10,8 +10,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
  *
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
-public interface RuleExecutionInformationForReading
-{
+public interface RuleExecutionInformationForReading {
     /**
      * Gets the {@link Rule}.
      */

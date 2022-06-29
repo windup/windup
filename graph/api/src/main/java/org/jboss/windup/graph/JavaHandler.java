@@ -25,14 +25,13 @@ import java.lang.annotation.Target;
  *   }
  * }
  * </pre>
- *
+ * <p>
  * (Inspired directly from the Tinkerpop Frames implementation)
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface JavaHandler
-{
+public @interface JavaHandler {
     Class<?> handler();
 }

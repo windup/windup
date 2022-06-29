@@ -13,8 +13,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class IterableFilter extends GraphCondition
-{
+public class IterableFilter extends GraphCondition {
     private GraphCondition wrappedCondition;
     private Integer size;
 
@@ -23,21 +22,19 @@ public class IterableFilter extends GraphCondition
     }
 
     public IterableFilter(int size) {
-        this.size=size;
+        this.size = size;
     }
 
-    public IterableFilter withWrappedCondition(GraphCondition condition)
-    {
-        this.wrappedCondition=condition;
+    public IterableFilter withWrappedCondition(GraphCondition condition) {
+        this.wrappedCondition = condition;
         return this;
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
-        wrappedCondition.evaluate(event,context);
-        Iterable<? extends WindupVertexFrame> vertices= Variables.instance(event).findVariable(wrappedCondition.getOutputVariablesName());
-        if(Iterables.size(vertices) == size) {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
+        wrappedCondition.evaluate(event, context);
+        Iterable<? extends WindupVertexFrame> vertices = Variables.instance(event).findVariable(wrappedCondition.getOutputVariablesName());
+        if (Iterables.size(vertices) == size) {
             return true;
         } else {
             return false;

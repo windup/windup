@@ -43,21 +43,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class CSVExportingTest
-{
+public class CSVExportingTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -74,56 +72,47 @@ public class CSVExportingTest
      * CSV export should be generated only if specified by input in the configuration
      */
     @Test
-    public void testCSVExportGeneration() throws Exception
-    {
+    public void testCSVExportGeneration() throws Exception {
         csvTest(true);
         csvTest(false);
     }
 
-    private void csvTest(boolean exportCSV) throws Exception
-    {
+    private void csvTest(boolean exportCSV) throws Exception {
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
         outputPath.toFile().mkdirs();
-        try (GraphContext context = factory.create(true))
-        {
+        try (GraphContext context = factory.create(true)) {
             fillData(context);
             String inputPath = "src/test/resources";
             Predicate<RuleProvider> predicate = new RuleProviderWithDependenciesPredicate(ExportCSVFileRuleProvider.class);
             WindupConfiguration configuration = new WindupConfiguration()
-                        .setGraphContext(context)
-                        .setRuleProviderFilter(predicate)
-                        .addInputPath(Paths.get(inputPath))
-                        .setOutputDirectory(outputPath)
-                        .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                        .setOptionValue(SourceModeOption.NAME, true);
-            if (exportCSV)
-            {
+                    .setGraphContext(context)
+                    .setRuleProviderFilter(predicate)
+                    .addInputPath(Paths.get(inputPath))
+                    .setOutputDirectory(outputPath)
+                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                    .setOptionValue(SourceModeOption.NAME, true);
+            if (exportCSV) {
                 configuration.setExportingCSV(true);
             }
             processor.execute(configuration);
             Assert.assertEquals(exportCSV, new File(outputPath + "/" + FILE1_NAME + ".csv").exists());
             Assert.assertEquals(exportCSV, new File(outputPath + "/" + FILE2_NAME + ".csv").exists());
-            if (exportCSV)
-            {
+            if (exportCSV) {
                 Path resource = Paths.get("src/test/resources/test-exports/" + FILE1_NAME + ".csv");
                 Path resource2 = Paths.get("src/test/resources/test-exports/" + FILE2_NAME + ".csv");
-                try
-                {
+                try {
                     Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/" + FILE1_NAME + ".csv"));
                     Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/" + FILE2_NAME + ".csv"));
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported CSV file looks like expected. Exception: " + ex);
                 }
             }
         }
     }
 
-    private ProjectModel fillData(GraphContext context)
-    {
+    private ProjectModel fillData(GraphContext context) {
         ProjectModel projectModel = new ProjectService(context).create();
         projectModel.setName("app1");
         ProjectModel projectModel2 = new ProjectService(context).create();
@@ -187,15 +176,13 @@ public class CSVExportingTest
         return projectModel;
     }
 
-    private boolean checkFileAreSame(String filePath1, String filePath2) throws IOException
-    {
+    private boolean checkFileAreSame(String filePath1, String filePath2) throws IOException {
         Set<String> linesFile1 = loadFile(filePath1);
         Set<String> linesFile2 = loadFile(filePath2);
         if (linesFile1.size() != linesFile2.size())
             return false;
 
-        for (String line1 : linesFile1)
-        {
+        for (String line1 : linesFile1) {
             if (!linesFile2.contains(line1))
                 return false;
         }
@@ -203,14 +190,11 @@ public class CSVExportingTest
         return true;
     }
 
-    private Set<String> loadFile(String filePath) throws IOException
-    {
+    private Set<String> loadFile(String filePath) throws IOException {
         HashSet<String> result = new HashSet<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath)))
-        {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            while ((line = br.readLine()) != null)
-            {
+            while ((line = br.readLine()) != null) {
                 result.add(line);
             }
         }

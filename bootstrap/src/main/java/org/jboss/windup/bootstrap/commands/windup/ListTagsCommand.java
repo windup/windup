@@ -15,24 +15,19 @@ import java.util.Set;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ListTagsCommand extends AbstractListCommand implements Command, FurnaceDependent
-{
+public class ListTagsCommand extends AbstractListCommand implements Command, FurnaceDependent {
     private final List<Path> userProvidedPaths;
 
-    public ListTagsCommand(List<String> arguments)
-    {
+    public ListTagsCommand(List<String> arguments) {
         userProvidedPaths = getUserProvidedPaths(arguments);
     }
 
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
         Set<String> result;
-        if (userProvidedPaths.isEmpty())
-        {
+        if (userProvidedPaths.isEmpty()) {
             result = getOptionValuesFromHelp(IncludeTagsOption.NAME);
-        } else
-        {
+        } else {
             RuleProviderRegistryCache ruleProviderRegistryCache = getFurnace().getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
             userProvidedPaths.forEach(userProvidedPath -> ruleProviderRegistryCache.addUserRulesPath(userProvidedPath));
             result = ruleProviderRegistryCache.getAvailableTags();
@@ -42,8 +37,7 @@ public class ListTagsCommand extends AbstractListCommand implements Command, Fur
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return userProvidedPaths.isEmpty() ? CommandPhase.PRE_CONFIGURATION : CommandPhase.PRE_EXECUTION;
     }
 

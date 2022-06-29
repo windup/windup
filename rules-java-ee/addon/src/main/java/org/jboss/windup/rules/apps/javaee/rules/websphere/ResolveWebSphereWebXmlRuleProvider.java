@@ -33,22 +33,18 @@ import org.w3c.dom.Element;
  * Discovers WebSphere Web XML files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- *
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover IBM WebSphere Web Binding Files")
-public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(ResolveWebSphereWebXmlRuleProvider.class.getName());
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.FILE_NAME, "ibm-web-bnd.xmi");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
@@ -64,40 +60,33 @@ public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "WebSphere Web XML", TechnologyTagLevel.IMPORTANT);
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
-        for (Element resourceRef : $(doc).find("resRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("resRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingResourceRef");
         }
-        for (Element resourceRef : $(doc).find("ejbRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("ejbRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingEjbRef");
         }
-        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
-        {
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get()) {
             processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingMessageDestinationRef");
         }
     }
 
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Set<ProjectModel> applications,
-                Element resourceRef, String tagName)
-    {
+                                Element resourceRef, String tagName) {
         String jndiLocation = $(resourceRef).attr("jndiName");
         String resourceId = $(resourceRef).child(tagName).attr("href");
         resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
 
-        if (StringUtils.isBlank(resourceId))
-        {
+        if (StringUtils.isBlank(resourceId)) {
             LOG.info("Issue Element: " + $(resourceRef).toString());
             return;
         }
 
-        if (StringUtils.isNotBlank(jndiLocation))
-        {
+        if (StringUtils.isNotBlank(jndiLocation)) {
             JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
             LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
             // now, look up the resource
-            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-            {
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId)) {
                 LOG.info(" - Associating JNDI: " + jndiLocation + " Resource: " + ref);
                 envRefService.associateEnvironmentToJndi(resource, ref);
             }

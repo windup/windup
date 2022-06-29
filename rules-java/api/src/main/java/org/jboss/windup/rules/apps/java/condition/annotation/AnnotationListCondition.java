@@ -35,15 +35,14 @@ import com.google.common.collect.Iterables;
  * </p>
  *
  * <p>
- *     If the "index" parameter is not specified, then all array entries will be searched. As long as at least one matches,
- *     then the condition will return true. This is useful in cases where the search is for a particular item that may
- *     occur at any point within an array.
+ * If the "index" parameter is not specified, then all array entries will be searched. As long as at least one matches,
+ * then the condition will return true. This is useful in cases where the search is for a particular item that may
+ * occur at any point within an array.
  * </p>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class AnnotationListCondition extends AnnotationCondition
-{
+public class AnnotationListCondition extends AnnotationCondition {
     private static final int ANY = -1;
 
     private final int index;
@@ -53,40 +52,35 @@ public class AnnotationListCondition extends AnnotationCondition
     /**
      * Creates a condition that will search all locations within the array.
      */
-    public AnnotationListCondition()
-    {
+    public AnnotationListCondition() {
         this(ANY);
     }
 
     /**
      * Creates a condition that will search the given position within the array.
      */
-    public AnnotationListCondition(int index)
-    {
+    public AnnotationListCondition(int index) {
         this.index = index;
     }
 
     /**
      * Adds a condition that will be matched on the value in the array.
      */
-    public AnnotationListCondition addCondition(AnnotationCondition condition)
-    {
+    public AnnotationListCondition addCondition(AnnotationCondition condition) {
         this.conditions.add(condition);
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AnnotationListCondition{" +
-                    "index=" + index +
-                    ", conditions=" + conditions +
-                    '}';
+                "index=" + index +
+                ", conditions=" + conditions +
+                '}';
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value) {
         if (!(value instanceof JavaAnnotationListTypeValueModel))
             return false;
 
@@ -97,12 +91,9 @@ public class AnnotationListCondition extends AnnotationCondition
             return false;
 
         boolean matched = false;
-        for (AnnotationCondition condition : conditions)
-        {
-            for (JavaAnnotationTypeValueModel subValue : listTypeValueModel)
-            {
-                if (condition.evaluate(event, context, strategy, subValue))
-                {
+        for (AnnotationCondition condition : conditions) {
+            for (JavaAnnotationTypeValueModel subValue : listTypeValueModel) {
+                if (condition.evaluate(event, context, strategy, subValue)) {
                     matched = true;
                     break;
                 }
@@ -115,24 +106,16 @@ public class AnnotationListCondition extends AnnotationCondition
         return matched;
     }
 
-    private List<JavaAnnotationTypeValueModel> getSelectedValues(JavaAnnotationListTypeValueModel listTypeValueModel)
-    {
+    private List<JavaAnnotationTypeValueModel> getSelectedValues(JavaAnnotationListTypeValueModel listTypeValueModel) {
         List<JavaAnnotationTypeValueModel> selectedValues = new ArrayList<>();
-        if (index == -1)
-        {
-            for (JavaAnnotationTypeValueModel listItem : listTypeValueModel)
-            {
+        if (index == -1) {
+            for (JavaAnnotationTypeValueModel listItem : listTypeValueModel) {
                 selectedValues.add(listItem);
             }
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 selectedValues.add(Iterables.get(listTypeValueModel, index));
-            }
-            catch (IndexOutOfBoundsException e)
-            {
+            } catch (IndexOutOfBoundsException e) {
                 return null;
             }
         }
@@ -140,12 +123,10 @@ public class AnnotationListCondition extends AnnotationCondition
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (conditions != null) {
-            for (AnnotationCondition condition : conditions)
-            {
+            for (AnnotationCondition condition : conditions) {
                 result.addAll(condition.getRequiredParameterNames());
             }
         }

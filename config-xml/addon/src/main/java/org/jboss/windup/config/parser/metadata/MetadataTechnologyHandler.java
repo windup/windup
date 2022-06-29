@@ -19,33 +19,26 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = MetadataTechnologyHandler.TECHNOLOGY_ELEMENT, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public abstract class MetadataTechnologyHandler implements ElementHandler<TechnologyReference>
-{
+public abstract class MetadataTechnologyHandler implements ElementHandler<TechnologyReference> {
     public static final String TECHNOLOGY_ELEMENT = "technology";
     private static final String ID = "id";
     private static final String VERSION_RANGE = "versionRange";
 
     @Override
-    public TechnologyReference processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public TechnologyReference processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String id = element.getAttribute(ID);
         String versionRangeString = element.getAttribute(VERSION_RANGE);
-        if (StringUtils.isBlank(id))
-        {
+        if (StringUtils.isBlank(id)) {
             throw new WindupXMLRulesetParsingException("The '" + element.getTagName() + "' element must have a non-empty '" + ID + "' attribute");
         }
         VersionRange versionRange = null;
-        if (StringUtils.isNotBlank(versionRangeString))
-        {
-            try
-            {
+        if (StringUtils.isNotBlank(versionRangeString)) {
+            try {
                 versionRange = Versions.parseVersionRange(versionRangeString);
-            }
-            catch (VersionException ex)
-            {
+            } catch (VersionException ex) {
                 throw new WindupXMLRulesetParsingException("The '" + VERSION_RANGE + "' attribute with value \"" + versionRangeString
-                            + "\" in the element "
-                            + element.getTagName() + " is not a valid version", ex);
+                        + "\" in the element "
+                        + element.getTagName() + " is not a valid version", ex);
             }
         }
 

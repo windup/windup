@@ -19,47 +19,41 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class AnnotationTypeCondition extends AnnotationCondition
-{
+public class AnnotationTypeCondition extends AnnotationCondition {
     private RegexParameterizedPatternParser pattern;
     private Map<String, AnnotationCondition> conditions = new HashMap<>();
 
     /**
      * Creates an {@link AnnotationTypeCondition} with the provided pattern.
      */
-    public AnnotationTypeCondition(String pattern)
-    {
+    public AnnotationTypeCondition(String pattern) {
         this.pattern = new RegexParameterizedPatternParser(pattern);
     }
 
     /**
      * Adds another condition for an element within this annotation.
      */
-    public AnnotationTypeCondition addCondition(String element, AnnotationCondition condition)
-    {
+    public AnnotationTypeCondition addCondition(String element, AnnotationCondition condition) {
         this.conditions.put(element, condition);
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AnnotationTypeCondition{" +
-                    "pattern=" + pattern +
-                    ", conditions=" + conditions +
-                    '}';
+                "pattern=" + pattern +
+                ", conditions=" + conditions +
+                '}';
     }
 
-    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy, JavaAnnotationTypeValueModel value) {
         if (!(value instanceof JavaAnnotationTypeReferenceModel))
             return false;
 
         JavaAnnotationTypeReferenceModel typeReferenceModel = (JavaAnnotationTypeReferenceModel) value;
 
         // submit the value to the value pattern
-        if (pattern != null)
-        {
+        if (pattern != null) {
             String annotationValue = typeReferenceModel.getResolvedSourceSnippit();
 
             ParameterizedPatternResult referenceResult = pattern.parse(annotationValue);
@@ -73,11 +67,9 @@ public class AnnotationTypeCondition extends AnnotationCondition
     }
 
     protected boolean evaluateChildConditions(GraphRewrite event, EvaluationContext context, EvaluationStrategy strategy,
-                JavaAnnotationTypeReferenceModel annotation)
-    {
+                                              JavaAnnotationTypeReferenceModel annotation) {
         // recursively scan additional conditions
-        for (Map.Entry<String, AnnotationCondition> conditionEntry : conditions.entrySet())
-        {
+        for (Map.Entry<String, AnnotationCondition> conditionEntry : conditions.entrySet()) {
             JavaAnnotationTypeValueModel subValue = annotation.getAnnotationValues().get(conditionEntry.getKey());
 
             if (subValue == null)
@@ -90,15 +82,13 @@ public class AnnotationTypeCondition extends AnnotationCondition
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (pattern != null) {
             result.addAll(pattern.getRequiredParameterNames());
         }
         if (conditions != null) {
-            for (AnnotationCondition condition : conditions.values())
-            {
+            for (AnnotationCondition condition : conditions.values()) {
                 result.addAll(condition.getRequiredParameterNames());
             }
         }

@@ -24,28 +24,23 @@ import org.jboss.windup.util.threading.WindupExecutors;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class BatchASTProcessor
-{
+public class BatchASTProcessor {
     private static final int BATCH_SIZE = 1000 / Runtime.getRuntime().availableProcessors();
 
     /**
      * Process the given batch of files and pass the results back to the listener as each file is processed.
      */
     public static BatchASTFuture analyze(final BatchASTListener listener, final WildcardImportResolver importResolver,
-                final Set<String> libraryPaths,
-                final Set<String> sourcePaths, Set<Path> sourceFiles)
-    {
+                                         final Set<String> libraryPaths,
+                                         final Set<String> sourcePaths, Set<Path> sourceFiles) {
 
         final String[] encodings = null;
         final String[] bindingKeys = new String[0];
         final ExecutorService executor = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
-        final FileASTRequestor requestor = new FileASTRequestor()
-        {
+        final FileASTRequestor requestor = new FileASTRequestor() {
             @Override
-            public void acceptAST(String sourcePath, CompilationUnit ast)
-            {
-                try
-                {
+            public void acceptAST(String sourcePath, CompilationUnit ast) {
+                try {
                     /*
                      * This super() call doesn't do anything, but we call it just to be nice, in case that ever changes.
                      */
@@ -53,13 +48,9 @@ public class BatchASTProcessor
                     ReferenceResolvingVisitor visitor = new ReferenceResolvingVisitor(importResolver, ast, sourcePath);
                     ast.accept(visitor);
                     listener.processed(Paths.get(sourcePath), visitor.getJavaClassReferences());
-                }
-                catch (WindupStopException ex)
-                {
+                } catch (WindupStopException ex) {
                     throw ex;
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     listener.failed(Paths.get(sourcePath), t);
                 }
             }
@@ -67,13 +58,10 @@ public class BatchASTProcessor
 
         List<List<String>> batches = createBatches(sourceFiles);
 
-        for (final List<String> batch : batches)
-        {
-            executor.submit(new Callable<Void>()
-            {
+        for (final List<String> batch : batches) {
+            executor.submit(new Callable<Void>() {
                 @Override
-                public Void call() throws Exception
-                {
+                public Void call() throws Exception {
                     WindupASTParser parser = WindupASTParser.newParser(AST.JLS8);
                     parser.setBindingsRecovery(false);
                     parser.setResolveBindings(true);
@@ -93,9 +81,9 @@ public class BatchASTProcessor
 
                     parser.setCompilerOptions(options);
                     parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]),
-                                sourcePaths.toArray(new String[sourcePaths.size()]),
-                                null,
-                                true);
+                            sourcePaths.toArray(new String[sourcePaths.size()]),
+                            null,
+                            true);
 
                     parser.createASTs(batch.toArray(new String[batch.size()]), encodings, bindingKeys, requestor, null);
                     return null;
@@ -105,40 +93,33 @@ public class BatchASTProcessor
 
         executor.shutdown();
 
-        return new BatchASTFuture()
-        {
+        return new BatchASTFuture() {
             @Override
-            public boolean isDone()
-            {
+            public boolean isDone() {
                 return executor.isTerminated();
             }
         };
     }
 
-    private static List<List<String>> createBatches(Set<Path> sourceSet)
-    {
+    private static List<List<String>> createBatches(Set<Path> sourceSet) {
         List<List<String>> result = new ArrayList<>();
 
         List<Path> sourceFiles = new ArrayList<>(sourceSet);
 
-        while (!sourceFiles.isEmpty())
-        {
+        while (!sourceFiles.isEmpty()) {
             ListIterator<Path> sourceFileIterator = sourceFiles.listIterator();
             Set<String> batchDupeCheck = new HashSet<>();
             List<String> batch = new ArrayList<>(BATCH_SIZE);
             result.add(batch);
-            while (sourceFileIterator.hasNext())
-            {
-                if (batch.size() == BATCH_SIZE)
-                {
+            while (sourceFileIterator.hasNext()) {
+                if (batch.size() == BATCH_SIZE) {
                     batch = new ArrayList<>(BATCH_SIZE);
                     result.add(batch);
                     batchDupeCheck.clear();
                 }
                 Path path = sourceFileIterator.next();
 
-                if (!batchDupeCheck.contains(path.getFileName().toString()))
-                {
+                if (!batchDupeCheck.contains(path.getFileName().toString())) {
                     batch.add(path.toAbsolutePath().toString());
                     batchDupeCheck.add(path.getFileName().toString());
                     sourceFileIterator.remove();

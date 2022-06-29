@@ -7,11 +7,10 @@ import org.jboss.windup.graph.Property;
  * Some of the information are stored in memory, see e.g. {@link RuleExecutionResultsListener}.
  */
 @TypeValue(WindupExecutionModel.TYPE)
-public interface WindupExecutionModel extends WindupVertexFrame
-{
+public interface WindupExecutionModel extends WindupVertexFrame {
     String TYPE = "WindupExecutionModel";
 
-    String STOP_MESSAGE   = "stopMessage";
+    String STOP_MESSAGE = "stopMessage";
 
     /**
      * A message about where Windup stopped on request.

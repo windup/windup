@@ -9,8 +9,7 @@ import java.util.List;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface Classification extends Serializable
-{
+public interface Classification extends Serializable {
     /**
      * Gets the unique identifier of this classification.
      */
@@ -38,6 +37,7 @@ public interface Classification extends Serializable
 
     /**
      * This contains a list of {@link Quickfix}s for follow up in tools
+     *
      * @return
      */
     List<Quickfix> getQuickfixes();

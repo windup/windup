@@ -15,8 +15,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface WindupFrame<T extends Element> extends ElementFrame
-{
+public interface WindupFrame<T extends Element> extends ElementFrame {
     /**
      * Name of the property where vertex/frame types are stored.
      *
@@ -28,33 +27,30 @@ public interface WindupFrame<T extends Element> extends ElementFrame
     String toString();
 
     @JavaHandler(handler = Impl.class)
-    void init ();
+    void init();
 
     @JavaHandler(handler = Impl.class)
     @Override
-    boolean equals (Object other);
+    boolean equals(Object other);
 
     /**
      * Gets the wrapped graph itself, allowing access to the underlying JanusGraph for raw queries.
      */
-    default WrappedFramedGraph<JanusGraph> getWrappedGraph()
-    {
-        return (WrappedFramedGraph<JanusGraph>)getGraph();
+    default WrappedFramedGraph<JanusGraph> getWrappedGraph() {
+        return (WrappedFramedGraph<JanusGraph>) getGraph();
     }
 
     /**
      * A string representation of this vertex, showing it's properties in a JSON-like format.
      */
-    default String toPrettyString()
-    {
+    default String toPrettyString() {
         Element v = getElement();
         StringBuilder result = new StringBuilder();
         result.append("[").append(v.toString()).append("=");
         result.append("{");
 
         boolean hasSome = false;
-        for (String propKey : v.keys())
-        {
+        for (String propKey : v.keys()) {
             hasSome = true;
             Iterator<? extends Property<Object>> propVal = v.properties(propKey);
             List<Object> propValues = new ArrayList<>();
@@ -68,8 +64,7 @@ public interface WindupFrame<T extends Element> extends ElementFrame
             result.append(", ");
         }
 
-        if (hasSome)
-        {
+        if (hasSome) {
             result.delete(result.length() - 2, result.length());
         }
 
@@ -78,24 +73,21 @@ public interface WindupFrame<T extends Element> extends ElementFrame
     }
 
     class Impl {
-        public String toString(ElementFrame frame)
-        {
+        public String toString(ElementFrame frame) {
             if (frame instanceof WindupFrame)
                 return ((WindupFrame) frame).toPrettyString();
             else
                 return frame.toString();
         }
 
-        public void init(ElementFrame frame)
-        {
+        public void init(ElementFrame frame) {
             new DefaultValueInitializer().initalize(frame);
         }
 
-        public boolean equals (ElementFrame thiz, Object o)
-        {
+        public boolean equals(ElementFrame thiz, Object o) {
             Element element;
             if (o instanceof Element)
-                element = (Element)o;
+                element = (Element) o;
             else if (o instanceof ElementFrame)
                 element = ((ElementFrame) o).getElement();
             else

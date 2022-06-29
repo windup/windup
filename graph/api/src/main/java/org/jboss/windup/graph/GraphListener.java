@@ -8,8 +8,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface GraphListener
-{
+public interface GraphListener {
 
     /**
      * Called when a {@link Vertex} is added to the graph.

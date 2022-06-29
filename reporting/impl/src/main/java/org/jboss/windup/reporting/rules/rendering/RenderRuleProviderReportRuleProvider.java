@@ -17,11 +17,9 @@ import org.ocpsoft.rewrite.config.Rule;
  * {@link Rule} execution.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 @RuleMetadata(phase = PostFinalizePhase.class, after = ExecutionTimeReportRuleProvider.class)
-public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
-{
+public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider {
     public static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
     private static final String TEMPLATE = "/reports/templates/ruleprovidersummary.ftl";
 
@@ -29,12 +27,11 @@ public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
     private Furnace furnace;
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         FreeMarkerOperation generateReportOperation =
-                    FreeMarkerOperation.create(furnace, TEMPLATE, OUTPUT_FILENAME);
+                FreeMarkerOperation.create(furnace, TEMPLATE, OUTPUT_FILENAME);
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(generateReportOperation);
+                .addRule()
+                .perform(generateReportOperation);
     }
 }

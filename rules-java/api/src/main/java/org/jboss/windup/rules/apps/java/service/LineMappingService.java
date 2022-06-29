@@ -35,7 +35,7 @@ public class LineMappingService extends GraphService<LineMappingModel> {
                 defl.write(byteBuffer.array());
                 defl.close();
             } catch (IOException e) {
-               return model;
+                return model;
             }
             String encodedData = new String(Base64.encode(out.toByteArray()));
             model.setEncodedMapping(encodedData);
@@ -60,7 +60,7 @@ public class LineMappingService extends GraphService<LineMappingModel> {
         Map<Integer, Integer> lineMapping = new HashMap<>();
 
         String encoded = model.getEncodedMapping();
-        if (encoded != null && !encoded.isEmpty()) { 
+        if (encoded != null && !encoded.isEmpty()) {
             byte[] bytes = Base64.decode(encoded.getBytes());
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             InflaterOutputStream infl = new InflaterOutputStream(out);

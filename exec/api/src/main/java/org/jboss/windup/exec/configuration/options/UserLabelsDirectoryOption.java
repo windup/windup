@@ -19,69 +19,57 @@ import java.util.List;
  * --userLabelsDirectory PATH_1 PATH_2).
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
- *
  */
-public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
-{
+public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption {
 
     public static final String NAME = "userLabelsDirectory";
 
     @Inject
     private LabelLoader labelLoader;
 
-    public UserLabelsDirectoryOption()
-    {
+    public UserLabelsDirectoryOption() {
         super(true);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "User Metadata Directory";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "User Labels Directory (Search pattern: *.windup.label.xml, *.rhamt.label.xml, and *.mta.label.xml). Multiple paths can be specified separated by a space (for example, --userLabelsDirectory PATH_1 PATH_2).";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return File.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.MANY;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return 7500;
     }
 
     @Override
-    public ValidationResult validate(Object fileObject)
-    {
+    public ValidationResult validate(Object fileObject) {
         ValidationResult validate = super.validate(fileObject);
-        if (validate.getLevel().equals(ValidationResult.Level.ERROR))
-        {
+        if (validate.getLevel().equals(ValidationResult.Level.ERROR)) {
             return validate;
         }
 
@@ -90,17 +78,12 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
          * and detect if there are more than one 'LabelSet' using the same ID.
          */
         List<Path> userLabelsPaths = new ArrayList<>();
-        if (fileObject != null)
-        {
-            if (fileObject instanceof Iterable && !(fileObject instanceof Path))
-            {
-                for (Object listItem : (Iterable) fileObject)
-                {
+        if (fileObject != null) {
+            if (fileObject instanceof Iterable && !(fileObject instanceof Path)) {
+                for (Object listItem : (Iterable) fileObject) {
                     userLabelsPaths.add(castToPath(listItem));
                 }
-            }
-            else
-            {
+            } else {
                 userLabelsPaths.add(castToPath(fileObject));
             }
         }
@@ -113,13 +96,10 @@ public class UserLabelsDirectoryOption extends AbstractPathConfigurationOption
         defaultRulePaths.add(PathUtil.getUserLabelsDir());
         defaultRulePaths.addAll(userLabelsPaths);
 
-        try
-        {
+        try {
             RuleLoaderContext labelLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
             labelLoader.loadConfiguration(labelLoaderContext);
-        }
-        catch (WindupException e)
-        {
+        } catch (WindupException e) {
             return new ValidationResult(ValidationResult.Level.ERROR, e.getMessage());
         }
 

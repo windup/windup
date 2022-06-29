@@ -11,12 +11,11 @@ import java.util.List;
 
 /**
  * Contains metadata extracted from the XML configuration file.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(SpringConfigurationFileModel.TYPE)
-public interface SpringConfigurationFileModel extends XmlFileModel
-{
+public interface SpringConfigurationFileModel extends XmlFileModel {
     String SPECIFICATION_VERSION = "specificationVersion";
     String TYPE = "SpringConfigurationFileModel";
 

@@ -18,24 +18,21 @@ import org.junit.runner.RunWith;
 
 /**
  * Covers: https://issues.jboss.org/browse/WINDUP-168
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @RunWith(Arquillian.class)
-public class JavaHandlerSubclassSpecializationTest
-{
+public class JavaHandlerSubclassSpecializationTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class);
+                .addBeansXML()
+                .addClasses(TestFooModel.class, TestFooSubModel.class);
         return archive;
     }
 
@@ -43,10 +40,8 @@ public class JavaHandlerSubclassSpecializationTest
     private GraphContextFactory factory;
 
     @Test
-    public void testSubclassMethodHandling() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testSubclassMethodHandling() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
             TestFooModel model = context.getFramed().addFramedVertex(TestFooModel.class);

@@ -23,8 +23,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 /**
  * Maps from a package to a organization name.
  */
-public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PackageNameMappingWithOrganization, PreRulesetEvaluation
-{
+public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PackageNameMappingWithOrganization, PreRulesetEvaluation {
     private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getName());
 
     private String id = this.getClass().getName() + "_" + UUID.randomUUID();
@@ -33,8 +32,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     private String packagePattern;
 
     @Override
-    public Rule withId(String id)
-    {
+    public Rule withId(String id) {
         this.id = id;
         return this;
     }
@@ -43,21 +41,18 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
      * Sets the organization to map the package to.
      */
     @Override
-    public PackageNameMappingWithOrganization toOrganization(String organization)
-    {
+    public PackageNameMappingWithOrganization toOrganization(String organization) {
         setOrganization(organization);
         return this;
     }
 
     @Override
-    public void preRulesetEvaluation(GraphRewrite event)
-    {
+    public void preRulesetEvaluation(GraphRewrite event) {
         PackageNameMapping.getMappings(event).put(packagePattern, organization);
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         /*
          * This is empty because we only care about PreRulesetEvaluation
          */
@@ -65,42 +60,35 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context) {
         /*
          * This is empty because we only care about PreRulesetEvaluation
          */
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public String getOrganization()
-    {
+    public String getOrganization() {
         return organization;
     }
 
-    public void setOrganization(String organization)
-    {
+    public void setOrganization(String organization) {
         this.organization = organization;
     }
 
-    public String getPackagePattern()
-    {
+    public String getPackagePattern() {
         return packagePattern;
     }
 
-    public void setPackagePattern(String packagePattern)
-    {
+    public void setPackagePattern(String packagePattern) {
         this.packagePattern = packagePattern;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(getClass().getName());
         builder.append(".fromPackage(" + packagePattern + ")");
@@ -111,8 +99,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     /**
      * Sets the package pattern to match against.
      */
-    public static PackageNameMappingWithPackagePattern fromPackage(String packagePattern)
-    {
+    public static PackageNameMappingWithPackagePattern fromPackage(String packagePattern) {
         PackageNameMapping packageNameMapping = new PackageNameMapping();
         packageNameMapping.setPackagePattern(packagePattern);
         return packageNameMapping;
@@ -123,17 +110,14 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
      * packages are in the list of packages given by the client. Generally this indicates that the archive
      * does not contain customer code.
      */
-    public static boolean areAllPackagesKnown(GraphRewrite event, String filePath)
-    {
+    public static boolean areAllPackagesKnown(GraphRewrite event, String filePath) {
         if (!equalsIgnoreCase(substringAfterLast(filePath, "."), "jar"))
             return false;
 
         ZipFile archive;
-        try
-        {
+        try {
             archive = new ZipFile(filePath);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             return false;
         }
 
@@ -153,8 +137,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
 
         // go through all entries...
         ZipEntry entry;
-        while (e.hasMoreElements())
-        {
+        while (e.hasMoreElements()) {
             entry = (ZipEntry) e.nextElement();
             String entryName = entry.getName();
 
@@ -162,22 +145,18 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
                 continue;
 
             String classname = PathUtil.classFilePathToClassname(entryName);
-            if (!containsOnlyKnownPackages)
-            {
+            if (!containsOnlyKnownPackages) {
                 organization = getOrganizationFromMappings(event, classname);
-                if (organization != null)
-                {
+                if (organization != null) {
                     containsOnlyKnownPackages = true;
-                } else
-                {
+                } else {
                     // we couldn't find a package definitively, so ignore the archive
                     break;
                 }
             }
 
             // If the user specified package names and this is in those package names, then scan it anyway
-            if (customerPackagesSpecified && javaConfigurationService.shouldScanPackage(classname))
-            {
+            if (customerPackagesSpecified && javaConfigurationService.shouldScanPackage(classname)) {
                 return false;
             }
         }
@@ -191,15 +170,12 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     /**
      * Gets the organization for the given package (or Maven group id).
      */
-    public static String getOrganizationFromMappings(GraphRewrite event, String pkg)
-    {
+    public static String getOrganizationFromMappings(GraphRewrite event, String pkg) {
         final String pkgComparison = pkg + ".";
         String organization = null;
-        for (Map.Entry<String, String> entry : getMappings(event).entrySet())
-        {
+        for (Map.Entry<String, String> entry : getMappings(event).entrySet()) {
             final String pkgPattern = entry.getKey() + ".";
-            if (StringUtils.startsWith(pkgComparison, pkgPattern))
-            {
+            if (StringUtils.startsWith(pkgComparison, pkgPattern)) {
                 organization = entry.getValue();
                 LOG.info(" -- Found organization: " + organization);
                 break;
@@ -208,12 +184,10 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
         return organization;
     }
 
-    private static Map<String, String> getMappings(GraphRewrite event)
-    {
+    private static Map<String, String> getMappings(GraphRewrite event) {
         @SuppressWarnings("unchecked")
         Map<String, String> map = (Map<String, String>) event.getRewriteContext().get(PackageNameMapping.class);
-        if (map == null)
-        {
+        if (map == null) {
             map = new HashMap<>();
             event.getRewriteContext().put(PackageNameMapping.class, map);
         }

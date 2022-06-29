@@ -9,8 +9,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import java.util.List;
 
 @TypeValue(AmbiguousReferenceModel.TYPE)
-public interface AmbiguousReferenceModel<REFERENCETYPE extends WindupVertexFrame> extends WindupVertexFrame
-{
+public interface AmbiguousReferenceModel<REFERENCETYPE extends WindupVertexFrame> extends WindupVertexFrame {
     String TYPE = "AmbiguousReferenceModel";
 
     @Adjacency(label = "targets", direction = Direction.OUT)

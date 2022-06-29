@@ -23,24 +23,22 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 @Ignore("Updating of rules is disabled temporary, so this test doesn't make sense to test")
-public class WindupUpdateRulesetTest
-{
+public class WindupUpdateRulesetTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(WindupUpdateRulesetTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP);
+                .create(AddonArchive.class)
+                .addBeansXML()
+                .addAsResource(WindupUpdateRulesetTest.class.getResource(TEST_OLD_WINDUP), TEST_OLD_WINDUP);
         return archive;
     }
 
@@ -50,8 +48,7 @@ public class WindupUpdateRulesetTest
     private RulesetsUpdater updater;
 
     @Test
-    public void testUpdateRuleset() throws Exception
-    {
+    public void testUpdateRuleset() throws Exception {
         // Extract the rulesets to a temp dir and move the rules/ to target/rules/ .
         File tempDir = OperatingSystemUtils.createTempDir();
 
@@ -63,25 +60,18 @@ public class WindupUpdateRulesetTest
         System.setProperty(PathUtil.WINDUP_RULESETS_DIR_SYSPROP, rulesetsDir.getAbsolutePath());
         FileUtils.deleteDirectory(tempDir);
 
-        try
-        {
+        try {
             boolean rulesetNeedUpdate = this.updater.rulesetsNeedUpdate(true);
             Assert.assertTrue("Rulesets should need an update.", rulesetNeedUpdate);
             updater.replaceRulesetsDirectoryWithLatestReleaseIfAny();
             Assert.assertFalse("Rulesets should not need an update.", this.updater.rulesetsNeedUpdate(true));
-        }
-        catch (Throwable ex)
-        {
-            if (ex.getClass().getSimpleName().equals("InvocationTargetException"))
-            {
+        } catch (Throwable ex) {
+            if (ex.getClass().getSimpleName().equals("InvocationTargetException")) {
                 final Throwable wrappedEx = ((InvocationTargetException) ex).getTargetException();
                 throw new RuntimeException(wrappedEx.getClass().getSimpleName() + " " + wrappedEx.getMessage(), wrappedEx);
-            }
-            else
+            } else
                 throw ex;
-        }
-        finally
-        {
+        } finally {
             System.getProperties().remove("windup.home");
         }
     }

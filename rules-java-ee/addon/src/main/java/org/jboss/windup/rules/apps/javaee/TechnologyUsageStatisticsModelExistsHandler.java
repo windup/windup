@@ -28,30 +28,23 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = TechnologyUsageStatisticsModelExistsHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class TechnologyUsageStatisticsModelExistsHandler implements ElementHandler<TechnologyUsageStatisticsModelExists>
-{
+public class TechnologyUsageStatisticsModelExistsHandler implements ElementHandler<TechnologyUsageStatisticsModelExists> {
     public static final String ELEMENT_NAME = "technology-statistics-exists";
 
     @Override
-    public TechnologyUsageStatisticsModelExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public TechnologyUsageStatisticsModelExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String technologyName = $(element).attr(TechnologyIdentifiedHandler.NAME);
-        if (StringUtils.isBlank(technologyName))
-        {
+        if (StringUtils.isBlank(technologyName)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + TechnologyIdentifiedHandler.NAME + "' attribute or element");
         }
         int count = TechnologyIdentified.DEFAULT_COUNT;
         String countStr = $(element).attr(TechnologyIdentifiedHandler.NUMBER_FOUND);
 
-        if (StringUtils.isNotBlank(countStr))
-        {
+        if (StringUtils.isNotBlank(countStr)) {
             countStr = countStr.trim();
-            try
-            {
+            try {
                 count = Integer.parseInt(countStr);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new WindupException(e);
             }
         }
@@ -59,10 +52,8 @@ public class TechnologyUsageStatisticsModelExistsHandler implements ElementHandl
         Set<String> tags = new HashSet<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            if (child.getNodeName().equals(TechnologyIdentifiedHandler.TAG))
-            {
+        for (Element child : children) {
+            if (child.getNodeName().equals(TechnologyIdentifiedHandler.TAG)) {
                 String tag = $(child).attr(TechnologyIdentifiedHandler.NAME);
                 if (StringUtils.isBlank(tag))
                     continue;

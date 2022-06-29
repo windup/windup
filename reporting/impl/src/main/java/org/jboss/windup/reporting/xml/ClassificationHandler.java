@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.xml;
 
 import java.util.HashSet;
+
 import static org.joox.JOOX.$;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import org.w3c.dom.Element;
 
 /**
  * Adds the provided {@link Classification} operation to the currently selected items.
- *
+ * <p>
  * Expected format:
  *
  * <pre>
@@ -37,18 +38,15 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 @NamespaceElementHandler(elementName = "classification", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class ClassificationHandler implements ElementHandler<Classification>
-{
+public class ClassificationHandler implements ElementHandler<Classification> {
     private static final Logger LOG = Logger.getLogger(ClassificationHandler.class.getName());
 
     @Override
-    public Classification processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Classification processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String classificationStr = $(element).attr("title");
-        if (StringUtils.isBlank(classificationStr))
-        {
+        if (StringUtils.isBlank(classificationStr)) {
             throw new WindupException(
-                        "Error, 'classification' element must have a non-empty 'title' attribute (eg, 'Decompiled Source File')");
+                    "Error, 'classification' element must have a non-empty 'title' attribute (eg, 'Decompiled Source File')");
         }
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
@@ -61,33 +59,26 @@ public class ClassificationHandler implements ElementHandler<Classification>
         Set<String> tags = new HashSet<>();
 
         Classification classification = (Classification) Classification.as(classificationStr);
-        if (of != null)
-        {
+        if (of != null) {
             classification.setVariableName(of);
         }
-        if (StringUtils.isNotBlank(effortStr))
-        {
-            try
-            {
+        if (StringUtils.isNotBlank(effortStr)) {
+            try {
                 int effort = Integer.parseInt(effortStr);
                 classification.withEffort(effort);
-            }
-            catch (NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 throw new WindupException("Could not parse effort level: " + effortStr + " as an integer!");
             }
         }
 
-        if (StringUtils.isNotBlank(issueCategoryID))
-        {
+        if (StringUtils.isNotBlank(issueCategoryID)) {
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
             IssueCategory issueCategory = issueCategoryRegistry.getByID(issueCategoryID);
             classification.withIssueCategory(issueCategory);
         }
 
         String issueDisplayModeString = $(element).attr("issue-display-mode");
-        if (StringUtils.isNotBlank(issueDisplayModeString))
-        {
+        if (StringUtils.isNotBlank(issueDisplayModeString)) {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
             if (issueDisplayMode == IssueDisplayMode.DETAIL_ONLY && classification.getEffort() != 0)
                 LOG.warning("WARNING: classification: " + classificationStr + " with effort " + effortStr + " is marked as detail only. This is generally a mistake.");
@@ -95,30 +86,26 @@ public class ClassificationHandler implements ElementHandler<Classification>
         }
 
         String description = $(element).child("description").text();
-        if (StringUtils.isNotBlank(description))
-        {
+        if (StringUtils.isNotBlank(description)) {
             description = HintHandler.trimLeadingAndTrailingSpaces(description);
             classification.withDescription(description);
         }
 
         List<Element> children = $(element).children("link").get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Link link = handlerManager.processElement(child);
             classification.with(link);
         }
 
         children = $(element).children("tag").get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             tags.add(child.getTextContent());
         }
         classification.withTags(tags);
-        
+
         // Quickfix parsing 
         children = $(element).children("quickfix").get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Quickfix quickfix = handlerManager.processElement(child);
             classification.withQuickfix(quickfix);
         }

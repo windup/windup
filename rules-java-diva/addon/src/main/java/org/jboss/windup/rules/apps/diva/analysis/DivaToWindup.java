@@ -140,7 +140,7 @@ public class DivaToWindup<T extends WindupVertexFrame> implements Report {
                 builder.build(new DivaToWindup<>(gc, DivaTxModel.class, ((DivaContextModel) model)::addTransaction));
 
             } else if (model instanceof DivaTxModel && key.equals(TRANSACTION)) {
-                int[] counter = new int[] { 0 };
+                int[] counter = new int[]{0};
                 builder.build(new DivaToWindup<>(gc, DivaOpModel.class, op -> {
                     op.setOrdinal(counter[0]++);
                     ((DivaTxModel) model).addOp(op);

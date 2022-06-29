@@ -8,8 +8,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface GraphLoader
-{
+public interface GraphLoader {
 
     /**
      * Returns the {@link ExecutionResults} from a previous run of Windup.

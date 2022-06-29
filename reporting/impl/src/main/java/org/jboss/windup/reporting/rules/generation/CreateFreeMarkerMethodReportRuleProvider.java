@@ -14,27 +14,23 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateFreeMarkerMethodReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateFreeMarkerMethodReportRuleProvider extends AbstractRuleProvider {
     private static final String TEMPLATE = "/reports/templates/windupfreemarkerfunctions.ftl";
     private static final String REPORT_NAME = "Windup FreeMarker Function Report";
     private static final String OUTPUT_FILENAME = "windup_freemarkerfunctions.html";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new CreateMethodReport())
-                    .withId("CreateWindupFreeMarkerFunctionReport");
+                .addRule()
+                .perform(new CreateMethodReport())
+                .withId("CreateWindupFreeMarkerFunctionReport");
     }
 
-    private class CreateMethodReport extends GraphOperation
-    {
+    private class CreateMethodReport extends GraphOperation {
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context) {
             ReportService reportService = new ReportService(event.getGraphContext());
             ReportModel reportModel = reportService.create();
             reportModel.setReportFilename(OUTPUT_FILENAME);
