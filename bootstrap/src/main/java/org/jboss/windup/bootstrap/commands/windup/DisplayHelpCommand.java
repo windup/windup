@@ -14,7 +14,7 @@ public class DisplayHelpCommand implements Command {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: " + theme.getCliName() + " [OPTION]... PARAMETER ... ").append(System.lineSeparator());
+        sb.append("Usage: windup-cli [OPTION]... PARAMETER ... ").append(System.lineSeparator());
         sb.append("Extendable migration analysis, at your fingertips.  ").append(System.lineSeparator());
         sb.append(System.lineSeparator());
 
