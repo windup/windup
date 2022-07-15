@@ -35,15 +35,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This creates SourceReportModel entries for every relevant item within the graph.
- *
+ * <p>
  * Relevancy is based on whether the item has classifications or blacklists attached to it.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 @RuleMetadata(phase = PostReportGenerationPhase.class)
-public class CreateSourceReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateSourceReportRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
     private static final String TEMPLATE = "/reports/templates/source.ftl";
 
@@ -52,60 +50,49 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        GraphOperation addSourceReports = new GraphOperation()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        GraphOperation addSourceReports = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                 ReportService reportService = new ReportService(event.getGraphContext());
                 Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
-                for (FileModel inputApplication : inputApplications)
-                {
+                for (FileModel inputApplication : inputApplications) {
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());
                     traverse(event, projectModelTraversal, reportService);
                 }
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "AddSourceReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(addSourceReports);
+                .addRule()
+                .perform(addSourceReports);
     }
     // @formatter:on
 
-    private void traverse(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService)
-    {
-        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels())
-        {
+    private void traverse(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService) {
+        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels()) {
             if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport())
                 createSourceReport(event, traversal, reportService, fileModel);
         }
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-        {
+        for (ProjectModelTraversal child : traversal.getChildren()) {
             traverse(event, child, reportService);
         }
     }
 
-    private void createSourceReport(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService, FileModel sourceFile)
-    {
+    private void createSourceReport(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService, FileModel sourceFile) {
         ProjectModel application = traversal.getCurrent().getRootProjectModel();
         SourceReportService sourceReportService = new SourceReportService(
                 event.getGraphContext());
         SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(sourceFile);
-        if (sourceReportModel != null)
-        {
-            for (SourceReportToProjectEdgeModel existing : sourceReportModel.getProjectEdges())
-            {
+        if (sourceReportModel != null) {
+            for (SourceReportToProjectEdgeModel existing : sourceReportModel.getProjectEdges()) {
                 if (existing.getProjectModel().equals(application))
                     return;
             }
@@ -133,8 +120,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
         sourceReportModel.setTemplateType(TemplateType.FREEMARKER);
         ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
         ApplicationReportModel mainAppReport = applicationReportService.getMainApplicationReportForFile(sourceFile);
-        if (mainAppReport != null)
-        {
+        if (mainAppReport != null) {
             sourceReportModel.setParentReport(mainAppReport);
         }
 
@@ -142,13 +128,10 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
         reportService.setUniqueFilename(sourceReportModel, sourceFile.getFileName(), "html");
     }
 
-    private String resolveSourceType(FileModel f)
-    {
-        for (SourceTypeResolver resolver : resolvers)
-        {
+    private String resolveSourceType(FileModel f) {
+        for (SourceTypeResolver resolver : resolvers) {
             String resolvedType = resolver.resolveSourceType(f);
-            if (resolvedType != null)
-            {
+            if (resolvedType != null) {
                 return resolvedType;
             }
         }

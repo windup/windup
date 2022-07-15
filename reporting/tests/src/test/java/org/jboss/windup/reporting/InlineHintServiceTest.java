@@ -30,20 +30,18 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.Iterables;
 
 @RunWith(Arquillian.class)
-public class InlineHintServiceTest
-{
+public class InlineHintServiceTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/reports"));
         return archive;
     }
 
@@ -51,11 +49,9 @@ public class InlineHintServiceTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintEffort() throws Exception
-    {
+    public void testHintEffort() throws Exception {
 
-        try (GraphContext context = factory.create(true))
-        {
+        try (GraphContext context = factory.create(true)) {
             InlineHintService inlineHintService = new InlineHintService(context);
 
             ProjectModel projectModel = fillData(context);
@@ -69,16 +65,12 @@ public class InlineHintServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
-            {
-                if (fm.getFilePath().equals("/f1"))
-                {
+            for (FileModel fm : projectModel.getFileModels()) {
+                if (fm.getFilePath().equals("/f1")) {
                     int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(150, fileEffort);
                     foundF1Effort = true;
-                }
-                else if (fm.getFilePath().equals("/f2"))
-                {
+                } else if (fm.getFilePath().equals("/f2")) {
                     int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
@@ -90,10 +82,8 @@ public class InlineHintServiceTest
     }
 
     @Test
-    public void testFindHintsForProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFindHintsForProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             FileService fileService = new FileService(context);
             InlineHintService hintService = new InlineHintService(context);
             ProjectService projectService = new ProjectService(context);
@@ -163,8 +153,7 @@ public class InlineHintServiceTest
             System.out.println("2: " + child2HintFile2);
             System.out.println("3: " + child2_1HintFile1);
 
-            for (InlineHintModel hint : hints)
-            {
+            for (InlineHintModel hint : hints) {
                 hintSet.add(hint);
             }
 
@@ -178,8 +167,7 @@ public class InlineHintServiceTest
         }
     }
 
-    private ProjectModel fillData(GraphContext context)
-    {
+    private ProjectModel fillData(GraphContext context) {
         InlineHintService inlineHintService = new InlineHintService(context);
 
         FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);

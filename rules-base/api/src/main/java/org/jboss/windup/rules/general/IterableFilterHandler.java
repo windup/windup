@@ -15,7 +15,7 @@ import static org.joox.JOOX.$;
 
 /**
  * An {@link ElementHandler} for {@link IterableFilter}
- *
+ * <p>
  * Example:
  *
  * <pre>
@@ -25,14 +25,12 @@ import static org.joox.JOOX.$;
  * </pre>
  */
 @NamespaceElementHandler(elementName = IterableFilterHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class IterableFilterHandler implements ElementHandler<IterableFilter>
-{
+public class IterableFilterHandler implements ElementHandler<IterableFilter> {
     public static final String ELEMENT_NAME = "iterable-filter";
     public static final String SIZE_ATTRIBUTE = "size";
 
     @Override
-    public IterableFilter processElement(ParserContext context, Element element) throws ConfigurationException
-    {
+    public IterableFilter processElement(ParserContext context, Element element) throws ConfigurationException {
         // Read & Validate
         String sizeAttr = $(element).attr(SIZE_ATTRIBUTE);
         List<Element> children = $(element).children().get();
@@ -44,8 +42,7 @@ public class IterableFilterHandler implements ElementHandler<IterableFilter>
 
         // Create the condition
         IterableFilter iterableFilter = new IterableFilter(Integer.parseInt(sizeAttr));
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Object condition = context.processElement(child);
             iterableFilter.withWrappedCondition((GraphCondition) condition);
         }
@@ -53,22 +50,21 @@ public class IterableFilterHandler implements ElementHandler<IterableFilter>
         return iterableFilter;
     }
 
-    private void validateWrappedCondition(Object wrappedCondition)
-    {
-        if(! (wrappedCondition instanceof GraphCondition)) {
-            throw new WindupException("The <" + ELEMENT_NAME + "> element must wrap GraphConditions only." );
+    private void validateWrappedCondition(Object wrappedCondition) {
+        if (!(wrappedCondition instanceof GraphCondition)) {
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must wrap GraphConditions only.");
         }
     }
 
-    private void validateAttributes(String size) throws WindupException{
-        if(!Pattern.matches("[0-9]+",size)) {
-            throw new WindupException("The <" + ELEMENT_NAME + "> element's '" +IterableFilterHandler.SIZE_ATTRIBUTE + " attribute is not a valid number." );
+    private void validateAttributes(String size) throws WindupException {
+        if (!Pattern.matches("[0-9]+", size)) {
+            throw new WindupException("The <" + ELEMENT_NAME + "> element's '" + IterableFilterHandler.SIZE_ATTRIBUTE + " attribute is not a valid number.");
         }
     }
 
-    private void validateChildren(List<Element> children) throws WindupException{
-        if(children.size() != 1) {
-            throw new WindupException("The <" + ELEMENT_NAME + "> element must have exactly 1 child." );
+    private void validateChildren(List<Element> children) throws WindupException {
+        if (children.size() != 1) {
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must have exactly 1 child.");
         }
     }
 }

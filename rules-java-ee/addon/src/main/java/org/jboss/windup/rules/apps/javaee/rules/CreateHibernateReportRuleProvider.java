@@ -38,29 +38,23 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of Hibernate files within the application (eg, session configuration or entity lists).
  */
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Hibernate Report")
-public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateHibernateReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_HIBERNATE_REPORT = "/reports/templates/hibernate.ftl";
     public static final String REPORT_DESCRIPTION = "The Hibernate report contains details on all Hibernate related resources that were found in the application.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         ConditionBuilder applicationProjectModelsFound = Query.fromType(HibernateConfigurationFileModel.class).or(
-                    Query.fromType(HibernateEntityModel.class));
+                Query.fromType(HibernateEntityModel.class));
 
-        GraphOperation addReport = new GraphOperation()
-        {
+        GraphOperation addReport = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                for (FileModel inputPath : windupConfiguration.getInputPaths())
-                {
+                for (FileModel inputPath : windupConfiguration.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
-                    if (application == null)
-                    {
+                    if (application == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createHibernateReport(event.getGraphContext(), application);
@@ -68,30 +62,26 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateHibernateReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(applicationProjectModelsFound)
-                    .perform(addReport);
+                .addRule()
+                .when(applicationProjectModelsFound)
+                .perform(addReport);
     }
 
-    private void createHibernateReport(GraphContext context, ProjectModel application)
-    {
+    private void createHibernateReport(GraphContext context, ProjectModel application) {
         HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(context);
         HibernateEntityService hibernateEntityService = new HibernateEntityService(context);
         List<HibernateConfigurationFileModel> configurationFileModels = new ArrayList<>();
         List<HibernateEntityModel> entityModels = new ArrayList<>();
-        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAllByApplication(application))
-        {
+        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAllByApplication(application)) {
             configurationFileModels.add(hibernateConfig);
         }
-        for (HibernateEntityModel entityModel : hibernateEntityService.findAllByApplication(application))
-        {
+        for (HibernateEntityModel entityModel : hibernateEntityService.findAllByApplication(application)) {
             entityModels.add(entityModel);
         }
 

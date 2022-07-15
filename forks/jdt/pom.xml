@@ -18,68 +18,6 @@
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.16.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.15.100</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.text</artifactId>
-            <version>3.8.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.13.200</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.16.200</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.equinox.common</artifactId>
-            <version>3.14.100</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.equinox.registry</artifactId>
-            <version>3.10.100</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.core.jobs</artifactId>
-            <version>3.10.1100</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.equinox.preferences</artifactId>
-            <version>3.8.200</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.core.contenttype</artifactId>
-            <version>3.7.900</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.equinox.app</artifactId>
-            <version>1.5.100</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -98,8 +36,8 @@
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <stripVersion>true</stripVersion>
                             <excludeTransitive>true</excludeTransitive>
-                            <includeGroupIds>org.eclipse.jdt,org.eclipse.platform</includeGroupIds>
-                            <includeArtifactIds>org.eclipse.jdt.core,org.eclipse.equinox.common,org.eclipse.core.jobs,org.eclipse.core.runtime,org.eclipse.equinox.preferences,org.eclipse.core.contenttype,org.eclipse.core.resources,org.eclipse.osgi</includeArtifactIds>
+                            <includeGroupIds>org.eclipse.jdt</includeGroupIds>
+                            <includeArtifactIds>org.eclipse.jdt.core</includeArtifactIds>
                             <excludes>META-INF/**/*</excludes>
                         </configuration>
                     </execution>

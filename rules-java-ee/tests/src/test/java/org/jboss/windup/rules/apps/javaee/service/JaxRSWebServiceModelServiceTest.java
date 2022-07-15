@@ -29,8 +29,7 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class JaxRSWebServiceModelServiceTest extends AbstractTest
-{
+public class JaxRSWebServiceModelServiceTest extends AbstractTest {
 
     @Inject
     private GraphContextFactory factory;
@@ -41,8 +40,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     private JaxRSWebServiceModelService serviceModelService;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         this.graphPath = getDefaultPath();
         this.context = this.factory.create(graphPath, true);
         this.javaClassService = new JavaClassService(this.context);
@@ -50,15 +48,13 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         this.context.clear();
         FileUtils.deleteDirectory(this.graphPath.toFile());
     }
 
     @Test
-    public void testGetOrCreate_CreationRequired() throws Exception
-    {
+    public void testGetOrCreate_CreationRequired() throws Exception {
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -75,8 +71,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByPath() throws Exception
-    {
+    public void testGetOrCreate_FindByPath() throws Exception {
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -97,8 +92,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByImplementation() throws Exception
-    {
+    public void testGetOrCreate_FindByImplementation() throws Exception {
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -119,8 +113,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     }
 
     @Test
-    public void testGetOrCreate_FindByPathAndImplementation() throws Exception
-    {
+    public void testGetOrCreate_FindByPathAndImplementation() throws Exception {
         String path = "/path/to/com.example.MyService";
         JavaClassModel implementationClass = javaClassService.create("com.example.MyServiceInterfaceImplementation");
 
@@ -140,9 +133,8 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
     }
 
-    Path getDefaultPath()
-    {
+    Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve(getClass().getSimpleName() + "_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

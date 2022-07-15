@@ -15,8 +15,7 @@ import java.util.List;
  * Contains information regarding a JBPM 3 process model.
  */
 @TypeValue(Jbpm3ProcessModel.TYPE)
-public interface Jbpm3ProcessModel extends XmlFileModel
-{
+public interface Jbpm3ProcessModel extends XmlFileModel {
     String TYPE = "Jbpm3ProcessModel";
     String PROCESS_NAME = "processName";
     String STATE_COUNT = "stateCount";
@@ -51,31 +50,31 @@ public interface Jbpm3ProcessModel extends XmlFileModel
      */
     @Adjacency(label = ReportResourceFileModel.TYPE, direction = Direction.OUT)
     void setProcessImage(ReportResourceFileModel processImage);
-    
+
     @Property(DECISION_COUNT)
     Integer getDecisionCount();
 
     @Property(DECISION_COUNT)
     Integer setDecisionCount(Integer decisionCount);
-    
+
     @Property(STATE_COUNT)
     Integer getStateCount();
 
     @Property(STATE_COUNT)
     Integer setStateCount(Integer stateCount);
-    
+
     @Property(NODE_COUNT)
     Integer getNodeCount();
 
     @Property(NODE_COUNT)
     Integer setNodeCount(Integer nodeCount);
-    
+
     @Property(FORK_COUNT)
     Integer getForkCount();
 
     @Property(FORK_COUNT)
     Integer setForkCount(Integer forkCount);
-    
+
     @Property(SUBPROCESS_COUNT)
     Integer getSubProcessCount();
 

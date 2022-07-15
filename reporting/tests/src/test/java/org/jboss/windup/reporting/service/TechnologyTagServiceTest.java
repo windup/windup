@@ -25,20 +25,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class TechnologyTagServiceTest
-{
+public class TechnologyTagServiceTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
         return archive;
     }
 
@@ -46,10 +44,8 @@ public class TechnologyTagServiceTest
     private GraphContextFactory factory;
 
     @Test
-    public void testFindTechnologyTagsByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFindTechnologyTagsByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             TechnologyTagService techTagService = new TechnologyTagService(context);
             FileService fileService = new FileService(context);
@@ -90,8 +86,7 @@ public class TechnologyTagServiceTest
 
             Set<TechnologyTagModel> foundTags = new HashSet<>();
             ProjectModelTraversal traversal = new ProjectModelTraversal(parent);
-            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(traversal))
-            {
+            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(traversal)) {
                 foundTags.add(techTag);
             }
 

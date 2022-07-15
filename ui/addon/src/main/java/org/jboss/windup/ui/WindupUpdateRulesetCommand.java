@@ -23,27 +23,24 @@ import org.jboss.windup.util.ThemeProvider;
  * @author mbriskar
  * @author Ondrej Zizka, ozizka at redhat.com
  */
-public class WindupUpdateRulesetCommand implements UICommand
-{
+public class WindupUpdateRulesetCommand implements UICommand {
 
     @Inject
     private DependencyResolver dependencyResolver;
 
     @Inject
     private RulesetsUpdater updater;
-    
+
 
     @Override
-    public UICommandMetadata getMetadata(UIContext ctx)
-    {
+    public UICommandMetadata getMetadata(UIContext ctx) {
         return Metadata.forCommand(getClass()).name(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " Update Ruleset")
-                    .description("Update the ruleset containing the migration rules")
-                    .category(Categories.create("Platform", "Migration"));
+                .description("Update the ruleset containing the migration rules")
+                .category(Categories.create("Platform", "Migration"));
     }
 
     @Override
-    public Result execute(UIExecutionContext context) throws Exception
-    {
+    public Result execute(UIExecutionContext context) throws Exception {
         return Results.fail("Update was disabled!");
         /* temporary disabled update of rules due possible breakage on compatibility and proper
          * function
@@ -58,21 +55,18 @@ public class WindupUpdateRulesetCommand implements UICommand
 
 
     @Override
-    public boolean isEnabled(UIContext context)
-    {
+    public boolean isEnabled(UIContext context) {
         //temporary disabled
         return false;
     }
 
     @Override
-    public void initializeUI(UIBuilder builder) throws Exception
-    {
+    public void initializeUI(UIBuilder builder) throws Exception {
 
     }
 
     @Override
-    public void validate(UIValidationContext context)
-    {
+    public void validate(UIValidationContext context) {
 
     }
 }

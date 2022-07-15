@@ -12,8 +12,7 @@ import java.util.List;
  * The result of the XmlFile condition
  */
 @TypeValue(XmlTypeReferenceModel.TYPE)
-public interface XmlTypeReferenceModel extends FileLocationModel
-{
+public interface XmlTypeReferenceModel extends FileLocationModel {
     String XPATH = "xpath";
     String NAMESPACES = "namespaces";
     String TYPE = "XmlTypeReferenceModel";

@@ -16,8 +16,7 @@ import java.util.List;
  * Represents a JDNI resource found within the application.
  */
 @TypeValue(JNDIResourceModel.TYPE)
-public interface JNDIResourceModel extends WindupVertexFrame, HasApplications
-{
+public interface JNDIResourceModel extends WindupVertexFrame, HasApplications {
     String TYPE = "JNDIResourceModel";
     String JNDI_LOCATION = "JNDI_LOCATION";
     String APPLICATIONS = TYPE + "-application";
@@ -43,13 +42,10 @@ public interface JNDIResourceModel extends WindupVertexFrame, HasApplications
     /**
      * Indicates whether this {@link JNDIResourceModel} is associated with the given application.
      */
-    default boolean isAssociatedWithApplication(ProjectModel application)
-    {
+    default boolean isAssociatedWithApplication(ProjectModel application) {
         boolean alreadyExists = false;
-        for (ProjectModel existing : getApplications())
-        {
-            if (existing.equals(application))
-            {
+        for (ProjectModel existing : getApplications()) {
+            if (existing.equals(application)) {
                 alreadyExists = true;
                 break;
             }

@@ -14,27 +14,25 @@ import org.jboss.seam.annotations.Out;
 
 @Stateless
 @Name("authenticator")
-public class AuthenticatorAction 
-    implements Authenticator
-{
-    @PersistenceContext 
+public class AuthenticatorAction
+        implements Authenticator {
+    @PersistenceContext
     private EntityManager em;
 
-    @In(required=false)   
-    @Out(required=false, scope = SESSION)
+    @In(required = false)
+    @Out(required = false, scope = SESSION)
     private User user;
-   
-    public boolean authenticate()
-    {
-	List results = em.createQuery("select u from User u where u.username=#{identity.username} and u.password=#{identity.password}")
-                         .getResultList();
-      
-	if (results.size()==0) {
-	    return false;
-	} else {
-	    user = (User) results.get(0);
-	    return true;
-	}
+
+    public boolean authenticate() {
+        List results = em.createQuery("select u from User u where u.username=#{identity.username} and u.password=#{identity.password}")
+                .getResultList();
+
+        if (results.size() == 0) {
+            return false;
+        } else {
+            user = (User) results.get(0);
+            return true;
+        }
     }
-    
+
 }

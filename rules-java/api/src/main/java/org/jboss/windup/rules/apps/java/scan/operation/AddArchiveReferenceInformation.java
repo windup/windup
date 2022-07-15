@@ -11,26 +11,21 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddArchiveReferenceInformation extends AbstractIterationOperation<FileModel>
-{
-    private AddArchiveReferenceInformation(String variableName)
-    {
+public class AddArchiveReferenceInformation extends AbstractIterationOperation<FileModel> {
+    private AddArchiveReferenceInformation(String variableName) {
         super(variableName);
     }
 
-    public AddArchiveReferenceInformation()
-    {
+    public AddArchiveReferenceInformation() {
         super();
     }
 
-    public static AddArchiveReferenceInformation to(String variableName)
-    {
+    public static AddArchiveReferenceInformation to(String variableName) {
         return new AddArchiveReferenceInformation(variableName);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel) {
         File file = new File(fileModel.getFilePath());
         ArchiveModel archiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ArchiveModel.class);
 
@@ -43,8 +38,7 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AddArchiveReferenceInformation";
     }
 }

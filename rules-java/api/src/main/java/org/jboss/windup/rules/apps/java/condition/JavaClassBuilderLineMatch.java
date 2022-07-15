@@ -6,8 +6,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 
-public interface JavaClassBuilderLineMatch
-{
+public interface JavaClassBuilderLineMatch {
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.
      */

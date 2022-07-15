@@ -11,8 +11,7 @@ import java.util.List;
  * can also be used for non-maven dependencies. Additional interfaces may extend this to provide further functionality.
  */
 @TypeValue(ProjectDependencyModel.TYPE)
-public interface ProjectDependencyModel extends WindupVertexFrame
-{
+public interface ProjectDependencyModel extends WindupVertexFrame {
     String TYPE = "ProjectDependencyModel";
     String PROPERTY_SCOPE = "dependencyScope";
     String PROPERTY_CLASSIFIER = "dependencyClassifier";
@@ -56,7 +55,7 @@ public interface ProjectDependencyModel extends WindupVertexFrame
 
     @Adjacency(label = TYPE + ".representedProject", direction = Direction.OUT)
     ProjectModel getProjectModel();
-    
+
     /**
      * Sets the original {@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */

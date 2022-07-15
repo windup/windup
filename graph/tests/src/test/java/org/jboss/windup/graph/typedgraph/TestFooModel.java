@@ -8,12 +8,10 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Property;
 
 /**
- * 
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @TypeValue("Foo")
-public interface TestFooModel extends ResourceModel
-{
+public interface TestFooModel extends ResourceModel {
     @Property("prop1")
     void setProp1(String prop);
 
@@ -40,8 +38,7 @@ public interface TestFooModel extends ResourceModel
     Boolean getProp4();
 
 
-    default String testJavaMethod()
-    {
+    default String testJavaMethod() {
         return "base";
     }
 }

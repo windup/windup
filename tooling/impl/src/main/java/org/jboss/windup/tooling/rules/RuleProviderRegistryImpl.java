@@ -18,22 +18,18 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 
-public class RuleProviderRegistryImpl implements RuleProviderRegistry
-{
+public class RuleProviderRegistryImpl implements RuleProviderRegistry {
     private static final long serialVersionUID = 1L;
 
     private List<RuleProvider> ruleProviders = new ArrayList<>();
 
     @Override
-    public List<RuleProvider> getRuleProviders()
-    {
+    public List<RuleProvider> getRuleProviders() {
         return ruleProviders;
     }
-    
-    public void buildRuleProviders(org.jboss.windup.config.metadata.RuleProviderRegistry registry)
-    {
-        for (org.jboss.windup.config.RuleProvider provider : registry.getProviders())
-        {
+
+    public void buildRuleProviders(org.jboss.windup.config.metadata.RuleProviderRegistry registry) {
+        for (org.jboss.windup.config.RuleProvider provider : registry.getProviders()) {
             RuleProviderMetadata ruleProviderMetadata = provider.getMetadata();
 
             String providerID = ruleProviderMetadata.getID();
@@ -62,8 +58,7 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
 
             List<Rule> rules = new ArrayList<>();
 
-            for (org.ocpsoft.rewrite.config.Rule rule : registry.getRules(provider))
-            {
+            for (org.ocpsoft.rewrite.config.Rule rule : registry.getRules(provider)) {
                 String ruleID = rule.getId();
                 String ruleString = RuleUtils.ruleToRuleContentsString(rule, 0);
 
@@ -76,11 +71,9 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
         }
     }
 
-    private Set<Technology> technologyReferencesToTechnologyList(Collection<TechnologyReference> technologyReferences)
-    {
+    private Set<Technology> technologyReferencesToTechnologyList(Collection<TechnologyReference> technologyReferences) {
         Set<Technology> results = new HashSet<>();
-        for (TechnologyReference technologyReference : technologyReferences)
-        {
+        for (TechnologyReference technologyReference : technologyReferences) {
             Technology technology = new TechnologyImpl();
             technology.setName(technologyReference.getId());
             String versionRange = technologyReference.getVersionRangeAsString();
@@ -91,13 +84,11 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
         return results;
     }
 
-    private void setFileMetaData(RuleProvider ruleProvider)
-    {
+    private void setFileMetaData(RuleProvider ruleProvider) {
         if (ruleProvider.getOrigin() == null)
             return;
 
-        try
-        {
+        try {
             String filePathString = ruleProvider.getOrigin();
 
             if (filePathString.startsWith("file:"))
@@ -115,15 +106,12 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
             // TODO: Can we still find the rules path in order to get the relative path?
             // filePath = Paths.get(ruleProvider.getRulesPath().getPath()).relativize(Paths.get(filePathString));
             ruleProvider.setOrigin(filePath.toString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // not a file path... ignore
         }
     }
 
-    private RuleProvider.RuleProviderType getProviderType(String origin)
-    {
+    private RuleProvider.RuleProviderType getProviderType(String origin) {
         if (origin == null)
             return RuleProvider.RuleProviderType.JAVA;
         else if (origin.startsWith("file:") && (origin.endsWith(".windup.xml") || origin.endsWith(".rhamt.xml") || origin.endsWith(".mta.xml")))

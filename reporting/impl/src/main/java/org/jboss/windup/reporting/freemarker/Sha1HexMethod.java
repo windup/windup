@@ -11,19 +11,15 @@ import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * Returns the SHA1 Hex hash for the provided {@link FileModel}.<br/>
- * 
+ * <p>
  * sha1Hex(FileModel):String
- *
  */
-public class Sha1HexMethod implements WindupFreeMarkerMethod
-{
+public class Sha1HexMethod implements WindupFreeMarkerMethod {
     @Override
-    public String exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
-        if (arguments.size() != 1)
-        {
+    public String exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        if (arguments.size() != 1) {
             throw new TemplateModelException(
-                        "Error, method expects one argument (FileModel)");
+                    "Error, method expects one argument (FileModel)");
         }
         StringModel stringModel = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) stringModel.getWrappedObject();
@@ -31,20 +27,17 @@ public class Sha1HexMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return "sha1Hex";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Returns the SHA1 Hex hash for the provided " + FileModel.class.getSimpleName() + ".";
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
 
     }
 }

@@ -1,6 +1,5 @@
 package org.jboss.windup.reporting.model;
 
-public enum TechnologyTagLevel
-{
+public enum TechnologyTagLevel {
     IMPORTANT, INFORMATIONAL
 }

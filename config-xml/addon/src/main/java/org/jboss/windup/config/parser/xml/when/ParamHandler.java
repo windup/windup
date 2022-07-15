@@ -11,11 +11,9 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "param", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class ParamHandler implements ElementHandler<Condition>
-{
-   @Override
-   public Condition processElement(ParserContext handlerManager, Element element)
-   {
-      return new ParamCondition($(element).attr("name"), $(element).attr("value"));
-   }
+public class ParamHandler implements ElementHandler<Condition> {
+    @Override
+    public Condition processElement(ParserContext handlerManager, Element element) {
+        return new ParamCondition($(element).attr("name"), $(element).attr("value"));
+    }
 }

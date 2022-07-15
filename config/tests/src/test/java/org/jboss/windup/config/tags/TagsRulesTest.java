@@ -1,7 +1,9 @@
 package org.jboss.windup.config.tags;
 
 import java.io.File;
+
 import org.jboss.windup.config.selectables.*;
+
 import java.nio.file.Path;
 
 import javax.inject.Inject;
@@ -32,24 +34,22 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
 @Ignore
-public class TagsRulesTest
-{
+public class TagsRulesTest {
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
-            .addBeansXML()
-            .addAsResource(new File("src/test/java/org/jboss/windup/config/tags/test.tags.xml"), "/")
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                .create(AddonArchive.class)
+                .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/java/org/jboss/windup/config/tags/test.tags.xml"), "/")
+                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                );
         return archive;
     }
 
@@ -57,12 +57,10 @@ public class TagsRulesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testTagsLoading() throws Exception
-    {
+    public void testTagsLoading() throws Exception {
 
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -76,12 +74,9 @@ public class TagsRulesTest
     }
 
 
-
-
-    private Configuration getNoOpRule(GraphContext context)
-    {
+    private Configuration getNoOpRule(GraphContext context) {
         return ConfigurationBuilder.begin().addRule()
-            .when(new True())
-            .perform(Log.message(Logger.Level.INFO, "Operation runs"));
+                .when(new True())
+                .perform(Log.message(Logger.Level.INFO, "Operation runs"));
     }
 }

@@ -15,15 +15,12 @@ import org.ocpsoft.rewrite.config.Operations;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "otherwise", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class OtherwiseHandler implements ElementHandler<Operation>
-{
+public class OtherwiseHandler implements ElementHandler<Operation> {
     @Override
-    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         OperationBuilder result = Operations.create();
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Operation operation = handlerManager.processElement(child);
             result = result.and(operation);
         }

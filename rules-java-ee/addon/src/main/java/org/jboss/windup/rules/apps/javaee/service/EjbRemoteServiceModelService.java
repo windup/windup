@@ -17,18 +17,15 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceModel>
-{
-    public EjbRemoteServiceModelService(GraphContext context)
-    {
+public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceModel> {
+    public EjbRemoteServiceModelService(GraphContext context) {
         super(context, EjbRemoteServiceModel.class);
     }
 
     /**
      * Either creates a new {@link EjbRemoteServiceModel} or returns an existing one if one already exists.
      */
-    public EjbRemoteServiceModel getOrCreate(Iterable<ProjectModel> applications, JavaClassModel remoteInterface, JavaClassModel implementationClass)
-    {
+    public EjbRemoteServiceModel getOrCreate(Iterable<ProjectModel> applications, JavaClassModel remoteInterface, JavaClassModel implementationClass) {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V();
         pipeline.has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
         if (remoteInterface != null)
@@ -38,21 +35,17 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
 
         if (implementationClass != null)
             pipeline.as("implementationClass").out(EjbRemoteServiceModel.EJB_IMPLEMENTATION_CLASS)
-                        .filter(vertexTraverser -> vertexTraverser.get().equals(implementationClass.getElement()))
-                        .select("implementationClass");
+                    .filter(vertexTraverser -> vertexTraverser.get().equals(implementationClass.getElement()))
+                    .select("implementationClass");
 
-        if (pipeline.hasNext())
-        {
+        if (pipeline.hasNext()) {
             EjbRemoteServiceModel result = frame(pipeline.next());
-            for (ProjectModel application : applications)
-            {
+            for (ProjectModel application : applications) {
                 if (!Iterables.contains(result.getApplications(), application))
                     result.addApplication(application);
             }
             return result;
-        }
-        else
-        {
+        } else {
             EjbRemoteServiceModel model = create();
             model.setApplications(applications);
             model.setInterface(remoteInterface);

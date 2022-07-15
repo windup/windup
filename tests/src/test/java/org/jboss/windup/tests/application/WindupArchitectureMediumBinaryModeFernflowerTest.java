@@ -6,15 +6,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureMediumBinaryModeFernflowerTest extends WindupArchitectureMediumBinaryModeTest
-{
+public class WindupArchitectureMediumBinaryModeFernflowerTest extends WindupArchitectureMediumBinaryModeTest {
     @Test
-    public void testRunWindupMediumWithFernflower() throws Exception
-    {
+    public void testRunWindupMediumWithFernflower() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, path, false);
             allDecompiledFilesAreLinked(context);
             validateManifestEntries(context);

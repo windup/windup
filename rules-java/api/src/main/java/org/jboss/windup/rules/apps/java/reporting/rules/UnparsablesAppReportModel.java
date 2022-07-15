@@ -15,8 +15,7 @@ import java.util.List;
  * @author Ondrej Zizka
  */
 @TypeValue(UnparsablesAppReportModel.TYPE)
-public interface UnparsablesAppReportModel extends ApplicationReportModel
-{
+public interface UnparsablesAppReportModel extends ApplicationReportModel {
     String TYPE = "UnparsablesAppReportModel";
     String ALL_SUB_PROJECTS = "allSubProjects";
 

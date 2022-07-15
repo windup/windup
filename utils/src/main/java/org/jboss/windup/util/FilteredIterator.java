@@ -7,8 +7,7 @@ import java.util.logging.Logger;
 /**
  * Wraps the underlying iterator and returns only the matching items.
  */
-public class FilteredIterator<E> implements Iterator<E>
-{
+public class FilteredIterator<E> implements Iterator<E> {
 
     private Iterator<? extends E> iterator;
     private final Filter<E> filter;
@@ -35,14 +34,12 @@ public class FilteredIterator<E> implements Iterator<E>
         return iterateToNextMatch();
     }
 
-    private E iterateToNextMatch()
-    {
+    private E iterateToNextMatch() {
         E oldMatch = nextElement;
 
         while (iterator.hasNext()) {
             E candidate = iterator.next();
-            if (filter.accept(candidate))
-            {
+            if (filter.accept(candidate)) {
                 hasNext = true;
                 nextElement = candidate;
                 return oldMatch;

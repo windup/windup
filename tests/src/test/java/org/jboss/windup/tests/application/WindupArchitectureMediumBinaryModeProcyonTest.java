@@ -9,15 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest
-{
+public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest {
     @Test
     @Ignore
-    public void testRunWindupMediumWithProcyon() throws Exception
-    {
+    public void testRunWindupMediumWithProcyon() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             Properties props = System.getProperties();
             props.setProperty("windup.decompiler", "Procyon");
             super.runTest(context, path, false);

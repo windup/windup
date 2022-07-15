@@ -8,22 +8,18 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Selection of frames having all variables of the given type (regardless of the variable name).
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class TypedFramesSelector implements FramesSelector
-{
+public class TypedFramesSelector implements FramesSelector {
     private final Class<? extends WindupVertexFrame> framesModel;
 
-    public TypedFramesSelector(Class<? extends WindupVertexFrame> framesModel)
-    {
+    public TypedFramesSelector(Class<? extends WindupVertexFrame> framesModel) {
         this.framesModel = framesModel;
     }
 
     @Override
-    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
-    {
+    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context) {
         final Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariableOfType(framesModel);
         return frames;
     }

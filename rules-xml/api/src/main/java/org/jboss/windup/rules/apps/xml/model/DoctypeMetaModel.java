@@ -11,8 +11,7 @@ import org.jboss.windup.graph.Property;
 import java.util.List;
 
 @TypeValue(DoctypeMetaModel.TYPE_ID)
-public interface DoctypeMetaModel extends WindupVertexFrame
-{
+public interface DoctypeMetaModel extends WindupVertexFrame {
     String TYPE_ID = "DoctypeMetaModel";
     String TYPE_PREFIX = TYPE_ID + "-";
 

@@ -24,28 +24,24 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- *  Tests the {@link GenerateJBossEjbDescriptorRuleProvider}
+ * Tests the {@link GenerateJBossEjbDescriptorRuleProvider}
  */
 @RunWith(Arquillian.class)
-public class GenerateJBossEjbDescriptorTest extends AbstractTest
-{
+public class GenerateJBossEjbDescriptorTest extends AbstractTest {
     @Inject
     private GraphContextFactory factory;
 
     @Test
-    public void testRuleProviders() throws Exception
-    {
+    public void testRuleProviders() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             initData(context);
             WindupTestUtilMethods.runOnlyRuleProviders(Collections.singletonList(new GenerateJBossEjbDescriptorRuleProvider()), context);
             checkEjbXmls(context);
         }
     }
 
-    public void initData(GraphContext context)
-    {
+    public void initData(GraphContext context) {
         ProjectModel parentProject1 = context.getFramed().addFramedVertex(ProjectModel.class);
         parentProject1.setName("parentProject1");
         FileModel parentFileModel1 = context.getFramed().addFramedVertex(FileModel.class);
@@ -64,16 +60,15 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
         pm2.setParentProject(parentProject2);
 
         FileModel fm1 = context.getFramed().addFramedVertex(FileModel.class);
-        FileModel fm2 = context.getFramed().addFramedVertex( FileModel.class);
+        FileModel fm2 = context.getFramed().addFramedVertex(FileModel.class);
 
         pm1.addFileModel(fm1);
         pm2.addFileModel(fm2);
 
-        WindupConfigurationModel configurationModel =context.getFramed().addFramedVertex(WindupConfigurationModel.class);
+        WindupConfigurationModel configurationModel = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
-        for (ProjectModel projectModel : Arrays.asList(pm1, pm2))
-        {
-            EjbDeploymentDescriptorModel ejbDescriptor =  ejbDescriptors.create();
+        for (ProjectModel projectModel : Arrays.asList(pm1, pm2)) {
+            EjbDeploymentDescriptorModel ejbDescriptor = ejbDescriptors.create();
             projectModel.addFileModel(ejbDescriptor);
         }
         configurationModel.addInputPath(parentFileModel1);
@@ -81,11 +76,9 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
     }
 
 
-    private void checkEjbXmls(GraphContext context)
-    {
-        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
-        for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptors.findAll())
-        {
+    private void checkEjbXmls(GraphContext context) {
+        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
+        for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptors.findAll()) {
             Iterable<LinkModel> linkModels = ejbDesc.getLinksToTransformedFiles();
             linkModels.forEach(linkModel -> Assert.assertTrue(linkModel.getLink().endsWith("jboss-ejb3.xml")));
             Assert.assertEquals(1, Iterables.size(linkModels));

@@ -16,28 +16,26 @@ import static org.joox.JOOX.$;
 
 /**
  * Creates an {@link AnnotationListCondition} for matching on arrays inside of annotations.
- *
+ * <p>
  * Syntax is as follows:
  * <pre>
  *     &lt;annotation-list-condition index="[optional attribute specified an array index]"&gt;
  *          [... list of subconditions that will match against this element ...]
  *     &lt;/annotation-list-condition&gt;
  * </pre>
- *
+ * <p>
  * If the index is not specified, the condition will be applied to every item in the array. If the conditions apply
  * to any element in the array, then the condition will be matched.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class AnnotationListConditionHandler extends AnnotationConditionHandler implements ElementHandler<AnnotationCondition>
-{
+public class AnnotationListConditionHandler extends AnnotationConditionHandler implements ElementHandler<AnnotationCondition> {
     public static final String ANNOTATION_LIST_CONDITION = "annotation-list";
     private static final String INDEX = "index";
 
     @Override
-    public AnnotationCondition processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public AnnotationCondition processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String indexStr = element.getAttribute(INDEX);
 
         AnnotationListCondition condition;

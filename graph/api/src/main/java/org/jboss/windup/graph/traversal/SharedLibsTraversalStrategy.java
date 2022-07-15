@@ -4,7 +4,9 @@ import com.google.common.base.Function;
 import org.jboss.windup.graph.model.ProjectModel;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import java.util.logging.Logger;
+
 import org.jboss.windup.graph.service.ProjectService;
 
 /**
@@ -36,7 +38,7 @@ import org.jboss.windup.graph.service.ProjectService;
  *      </li>
  *      <li>duplicated.war</li>
  *  </ul>
- *
+ * <p>
  *  Then for root.ear, this will only iterate WEB-INF/lib/duplicated.jar and duplicated.war.
  * </p>
  * <p>
@@ -45,18 +47,15 @@ import org.jboss.windup.graph.service.ProjectService;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class SharedLibsTraversalStrategy implements TraversalStrategy
-{
+public class SharedLibsTraversalStrategy implements TraversalStrategy {
     public static final Logger LOG = Logger.getLogger(SharedLibsTraversalStrategy.class.getName());
 
-    public SharedLibsTraversalStrategy()
-    {
+    public SharedLibsTraversalStrategy() {
         reset();
     }
 
     @Override
-    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal)
-    {
+    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal) {
         if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(traversal.getCanonicalProject().getRootProjectModel().getUniqueID()))
             return ProjectModelTraversal.TraversalState.ALL;
         else
@@ -64,29 +63,23 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
     }
 
     @Override
-    public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)
-    {
+    public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal) {
         ProjectModel canonicalProject = traversal.getCanonicalProject();
 
-        Iterable<ProjectModelTraversal> defaultChildren = Iterables.transform(canonicalProject.getChildProjects(), new Function<ProjectModel, ProjectModelTraversal>()
-        {
+        Iterable<ProjectModelTraversal> defaultChildren = Iterables.transform(canonicalProject.getChildProjects(), new Function<ProjectModel, ProjectModelTraversal>() {
             @Override
-            public ProjectModelTraversal apply(ProjectModel input)
-            {
+            public ProjectModelTraversal apply(ProjectModel input) {
                 return new ProjectModelTraversal(traversal, input, SharedLibsTraversalStrategy.this);
             }
         });
 
-        return Iterables.filter(defaultChildren, new Predicate<ProjectModelTraversal>()
-        {
+        return Iterables.filter(defaultChildren, new Predicate<ProjectModelTraversal>() {
             @Override
-            public boolean apply(ProjectModelTraversal input)
-            {
+            public boolean apply(ProjectModelTraversal input) {
                 // which are shared between apps.
                 ProjectModelTraversal.TraversalState traversalState = getTraversalState(input);
                 return traversalState != ProjectModelTraversal.TraversalState.NONE;

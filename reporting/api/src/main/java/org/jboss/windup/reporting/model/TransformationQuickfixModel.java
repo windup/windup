@@ -13,8 +13,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TransformationQuickfixModel.TYPE)
-public interface TransformationQuickfixModel extends QuickfixModel
-{
+public interface TransformationQuickfixModel extends QuickfixModel {
     String TYPE = "TransformationQuickfixModel";
 
     String TRANSFORMATION_ID = TYPE + "-transformationID";

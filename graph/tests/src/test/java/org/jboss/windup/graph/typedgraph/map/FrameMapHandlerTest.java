@@ -22,18 +22,16 @@ import org.junit.runner.RunWith;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 @RunWith(Arquillian.class)
-public class FrameMapHandlerTest
-{
+public class FrameMapHandlerTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestMapMainModel.class, TestMapValueModel.class);
+                .addBeansXML()
+                .addClasses(TestMapMainModel.class, TestMapValueModel.class);
         return archive;
     }
 
@@ -41,10 +39,8 @@ public class FrameMapHandlerTest
     private GraphContextFactory factory;
 
     @Test
-    public void testMapHandling() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testMapHandling() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
 
             TestMapMainModel mainModel = context.getFramed().addFramedVertex(TestMapMainModel.class);
@@ -68,8 +64,7 @@ public class FrameMapHandlerTest
                     .collect(Collectors.toList());
 
             int numberFound = 0;
-            for (Vertex v : vertices)
-            {
+            for (Vertex v : vertices) {
                 numberFound++;
                 TestMapMainModel framed = (TestMapMainModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 

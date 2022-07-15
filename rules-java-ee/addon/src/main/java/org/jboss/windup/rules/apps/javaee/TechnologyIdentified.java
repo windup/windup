@@ -22,14 +22,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Adds the specified statistics and tag information regarding a technology that has been located in the analyzed application.
- *
+ * <p>
  * If no count is specified, then a default of "1" is assumed.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class TechnologyIdentified extends AbstractIterationOperation<WindupVertexFrame>
-            implements TechnologyIdentifiedWithCount, TechnologyIdentifiedWithName
-{
+        implements TechnologyIdentifiedWithCount, TechnologyIdentifiedWithName {
     public static final int DEFAULT_COUNT = 1;
 
     private static Logger LOG = Logging.get(TechnologyIdentified.class);
@@ -41,19 +40,17 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     /**
      * Creates the operation with the given technology name.
      */
-    public TechnologyIdentified(String technologyName)
-    {
+    public TechnologyIdentified(String technologyName) {
         this.technologyName = technologyName;
     }
 
     /**
      * Creates the operation with the given input variable and technology name.
-     *
+     * <p>
      * This version also specifies the name of the iteration variable for cases in which there are multiple iteration variables being used. See also
      * {@link Iteration} and {@link AbstractIterationOperation}.
      */
-    public TechnologyIdentified(String variableName, String technologyName)
-    {
+    public TechnologyIdentified(String variableName, String technologyName) {
         super(variableName);
         this.technologyName = technologyName;
     }
@@ -61,18 +58,16 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     /**
      * Create the operation with the given technology name.
      */
-    public static TechnologyIdentifiedWithName named(String technologyName)
-    {
+    public static TechnologyIdentifiedWithName named(String technologyName) {
         return new TechnologyIdentified(technologyName);
     }
 
     /**
      * Sets the number of items that have been found by this operation.
-     *
+     * <p>
      * This is optional, and if left unspecified, it will default to {@link TechnologyIdentified#DEFAULT_COUNT}.
      */
-    public TechnologyIdentifiedWithCount numberFound(int count)
-    {
+    public TechnologyIdentifiedWithCount numberFound(int count) {
         this.count = count;
         return this;
     }
@@ -80,8 +75,7 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     /**
      * Specifies a tag to associate with this technology.
      */
-    public TechnologyIdentified withTag(String tag)
-    {
+    public TechnologyIdentified withTag(String tag) {
         this.tags.add(tag);
         return this;
     }
@@ -89,79 +83,62 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     /**
      * Contains the name of the technology identified by this rule.
      */
-    public String getTechnologyName()
-    {
+    public String getTechnologyName() {
         return technologyName;
     }
 
     /**
      * Contains the set of tags identified associated with this technology.
      */
-    public Set<String> getTags()
-    {
+    public Set<String> getTags() {
         return tags;
     }
 
     /**
      * Contains the count of items located by this operation (usually '1', and this is the default if nothing is specified).
      */
-    public int getCount()
-    {
+    public int getCount() {
         return count;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
         Set<ProjectModel> projects = new HashSet<>();
         if (payload instanceof FileReferenceModel)
             payload = ((FileReferenceModel) payload).getFile();
 
-        if (payload instanceof ClassificationModel)
-        {
+        if (payload instanceof ClassificationModel) {
             ((ClassificationModel) payload).getFileModels().forEach(fileModel -> {
                 projects.add(fileModel.getProjectModel());
             });
-        }
-        else if (payload instanceof HasProject)
-        {
+        } else if (payload instanceof HasProject) {
             projects.add(((HasProject) payload).getProjectModel());
-        }
-        else if (payload instanceof HasApplications)
-        {
+        } else if (payload instanceof HasApplications) {
             Iterable<ProjectModel> rootProjectModels = ((HasApplications) payload).getApplications();
 
-            for (ProjectModel projectModel : rootProjectModels)
-            {
+            for (ProjectModel projectModel : rootProjectModels) {
                 projects.add(projectModel);
             }
-        }
-        else if (payload instanceof TechnologyTagModel)
-        {
+        } else if (payload instanceof TechnologyTagModel) {
             ((TechnologyTagModel) payload).getFileModels().forEach(fileModel -> projects.add(fileModel.getProjectModel()));
-        }
-        else
-        {
+        } else {
             LOG.warning("Unrecognized payload for TechnologyIdentified. Payload must be instance of BelongsToProject.");
             LOG.warning(payload.toPrettyString());
             return;
         }
 
-        for (ProjectModel project : projects)
-        {
+        for (ProjectModel project : projects) {
             TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
             TechnologyUsageStatisticsModel stats = service.getOrCreate(project, this.technologyName);
             stats.setOccurrenceCount(stats.getOccurrenceCount() + this.count);
 
             // Update tags
             TagSetModel tagModel = stats.getTagModel();
-            if (tagModel == null)
-            {
+            if (tagModel == null) {
                 tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
                 stats.setTagModel(tagModel);
             }
-            if (!tagModel.getTags().equals(this.tags))
-            {
+            if (!tagModel.getTags().equals(this.tags)) {
                 // Make sure to add any additionally specified tags
                 Set<String> newSet = new HashSet<>(tagModel.getTags());
                 newSet.addAll(this.tags);

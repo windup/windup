@@ -12,12 +12,11 @@ import org.jboss.windup.graph.Property;
 
 /**
  * Contains EJB Session Bean information and related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbSessionBeanModel.TYPE)
-public interface EjbSessionBeanModel extends EjbBeanBaseModel
-{
+public interface EjbSessionBeanModel extends EjbBeanBaseModel {
 
     String TYPE = "EjbSessionBeanModel";
 

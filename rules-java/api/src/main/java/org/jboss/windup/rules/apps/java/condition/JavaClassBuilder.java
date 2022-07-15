@@ -8,16 +8,15 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
  * Fluent builder for {@link JavaClass} {@link Condition}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaClassBuilder extends ConditionBuilder
-{
+public interface JavaClassBuilder extends ConditionBuilder {
     /**
      * Specify the exact regex for the line to match (useful to distinguish hard-coded strings etc.)
      */
     JavaClassBuilderLineMatch matchesSource(String regex);
-    
+
     /**
      * Specify one or more {@link TypeReferenceLocation} where the specified regex is of interest.
      */

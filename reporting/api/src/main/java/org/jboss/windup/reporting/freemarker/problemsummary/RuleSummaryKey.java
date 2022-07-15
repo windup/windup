@@ -5,8 +5,7 @@ package org.jboss.windup.reporting.freemarker.problemsummary;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class RuleSummaryKey
-{
+public class RuleSummaryKey {
     private final int effort;
     private final String ruleID;
     private final String title;
@@ -14,8 +13,7 @@ public class RuleSummaryKey
     /**
      * Creates a key with the given rule id and title.
      */
-    public RuleSummaryKey(Integer effort, String ruleID, String title)
-    {
+    public RuleSummaryKey(Integer effort, String ruleID, String title) {
         this.effort = effort == null ? 0 : effort;
         this.ruleID = ruleID;
         this.title = title;
@@ -24,22 +22,19 @@ public class RuleSummaryKey
     /**
      * Gets the rule id.
      */
-    public String getRuleID()
-    {
+    public String getRuleID() {
         return ruleID;
     }
 
     /**
      * Gets the title.
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof RuleSummaryKey))
@@ -56,8 +51,7 @@ public class RuleSummaryKey
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = effort;
         result = 31 * result + (ruleID != null ? ruleID.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);

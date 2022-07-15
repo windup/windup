@@ -52,20 +52,18 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class XMLHintsClassificationsTest
-{
+public class XMLHintsClassificationsTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -79,17 +77,15 @@ public class XMLHintsClassificationsTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintAndClassificationOperation() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testHintAndClassificationOperation() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -97,24 +93,23 @@ public class XMLHintsClassificationsTest
             pm.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(new NotPredicate(
-                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                                    ))
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                    ))
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
 
             Assert.assertEquals(2, provider.getXmlFileMatches().size());
             List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
             Assert.assertEquals(2, hints.size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-            for (ClassificationModel model : classifications)
-            {
+            for (ClassificationModel model : classifications) {
                 String classification = model.getClassification();
                 Assert.assertNotNull(classification);
             }
@@ -124,43 +119,37 @@ public class XMLHintsClassificationsTest
     }
 
     @Singleton
-    public static class TestXMLHintsClassificationsRuleProvider extends AbstractRuleProvider
-    {
+    public static class TestXMLHintsClassificationsRuleProvider extends AbstractRuleProvider {
         private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        public TestXMLHintsClassificationsRuleProvider()
-        {
+        public TestXMLHintsClassificationsRuleProvider() {
             super(MetadataBuilder.forProvider(TestXMLHintsClassificationsRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
-            {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>() {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
+                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
                     xmlFiles.add(payload);
                 }
             };
 
             return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath("/abc:ejb-jar")
-                                    .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
-                        .perform(Classification.as("Maven POM (pom.xml)")
-                                               .with(Link.to("Apache Maven POM Reference",
-                                                            "http://maven.apache.org/pom.html")).withEffort(0)
-                                               .and(Hint.withText("simple text").withEffort(2))
-                                               .and(addTypeRefToList));
+                    .begin()
+                    .addRule()
+                    .when(XmlFile.matchesXpath("/abc:ejb-jar")
+                            .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
+                    .perform(Classification.as("Maven POM (pom.xml)")
+                            .with(Link.to("Apache Maven POM Reference",
+                                    "http://maven.apache.org/pom.html")).withEffort(0)
+                            .and(Hint.withText("simple text").withEffort(2))
+                            .and(addTypeRefToList));
         }
         // @formatter:on
 
-        public Set<FileLocationModel> getXmlFileMatches()
-        {
+        public Set<FileLocationModel> getXmlFileMatches() {
             return xmlFiles;
         }
     }

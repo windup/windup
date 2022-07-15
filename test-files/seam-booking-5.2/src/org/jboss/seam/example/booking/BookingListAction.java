@@ -30,47 +30,44 @@ import org.jboss.seam.log.Log;
 @Name("bookingList")
 @Restrict("#{identity.loggedIn}")
 @TransactionAttribute(REQUIRES_NEW)
-public class BookingListAction implements BookingList, Serializable
-{
-   private static final long serialVersionUID = 1L;
-   
-   @PersistenceContext
-   private EntityManager em;
-   
-   @In
-   private User user;
-   
-   @DataModel
-   private List<Booking> bookings;
-   @DataModelSelection 
-   private Booking booking;
-   
-   @Logger 
-   private Log log;
-   
-   @Factory
-   @Observer("bookingConfirmed")
-   public void getBookings()
-   {
-      bookings = em.createQuery("select b from Booking b where b.user.username = :username order by b.checkinDate")
-            .setParameter("username", user.getUsername())
-            .getResultList();
-   }
-   
-   public void cancel()
-   {
-      log.info("Cancel booking: #{bookingList.booking.id} for #{user.username}");
-      Booking cancelled = em.find(Booking.class, booking.getId());
-      if (cancelled!=null) em.remove( cancelled );
-      getBookings();
-      FacesMessages.instance().add("Booking cancelled for confirmation number #0", booking.getId());
-   }
-   
-   public Booking getBooking()
-   {
-      return booking;
-   }
-   
-   @Remove
-   public void destroy() {}
+public class BookingListAction implements BookingList, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @In
+    private User user;
+
+    @DataModel
+    private List<Booking> bookings;
+    @DataModelSelection
+    private Booking booking;
+
+    @Logger
+    private Log log;
+
+    @Factory
+    @Observer("bookingConfirmed")
+    public void getBookings() {
+        bookings = em.createQuery("select b from Booking b where b.user.username = :username order by b.checkinDate")
+                .setParameter("username", user.getUsername())
+                .getResultList();
+    }
+
+    public void cancel() {
+        log.info("Cancel booking: #{bookingList.booking.id} for #{user.username}");
+        Booking cancelled = em.find(Booking.class, booking.getId());
+        if (cancelled != null) em.remove(cancelled);
+        getBookings();
+        FacesMessages.instance().add("Booking cancelled for confirmation number #0", booking.getId());
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    @Remove
+    public void destroy() {
+    }
 }

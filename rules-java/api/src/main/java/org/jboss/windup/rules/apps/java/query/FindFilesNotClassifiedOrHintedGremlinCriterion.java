@@ -22,13 +22,11 @@ import java.util.Set;
 /**
  * This provides a helper class that can be used execute a Gremlin search returning all FileModels that do not have associated
  * {@link FileLocationModel}s or @{link ClassificationModel}s.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FindFilesNotClassifiedOrHintedGremlinCriterion
-{
-    public Iterable<Vertex> query(final GraphContext context, Iterable<Vertex> initialVertices)
-    {
+public class FindFilesNotClassifiedOrHintedGremlinCriterion {
+    public Iterable<Vertex> query(final GraphContext context, Iterable<Vertex> initialVertices) {
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.total");
 
         final Set<Vertex> initialVerticesList = Sets.toSet(initialVertices);
@@ -60,28 +58,23 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
             FileModel f = context.getFramed().frameElement(v, FileModel.class);
 
             //1. we don't want to show files with hints/classifications
-            if (allClassifiedOrHintedVertices.contains(v))
-            {
+            if (allClassifiedOrHintedVertices.contains(v)) {
                 return false;
             }
 
             //2. we don't want to show our generated classes in the report
-            if (f.isWindupGenerated() != null && f.isWindupGenerated())
-            {
+            if (f.isWindupGenerated() != null && f.isWindupGenerated()) {
                 return false;
             }
 
             //3. we don't want to show class in case it's .java decompiled file has hints/classifications
-            if (f instanceof JavaClassFileModel)
-            {
+            if (f instanceof JavaClassFileModel) {
                 Iterator<Vertex> decompiled = v.vertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE);
 
-                if (decompiled.hasNext())
-                {
+                if (decompiled.hasNext()) {
                     JavaSourceFileModel source = context.getFramed().frameElement(decompiled.next(), JavaSourceFileModel.class);
 
-                    if (allClassifiedOrHintedVertices.contains(source))
-                    {
+                    if (allClassifiedOrHintedVertices.contains(source)) {
                         return false;
                     }
                 }

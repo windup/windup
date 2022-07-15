@@ -9,8 +9,7 @@ import java.util.List;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface Hint extends Serializable
-{
+public interface Hint extends Serializable {
     /**
      * Contains a unique identifier for this hint.
      */
@@ -48,6 +47,7 @@ public interface Hint extends Serializable
 
     /**
      * This contains a list of {@link Quickfix}s for follow up in tools
+     *
      * @return
      */
     Iterable<Quickfix> getQuickfixes();

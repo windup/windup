@@ -8,8 +8,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TechnologyReferenceModel.TYPE)
-public interface TechnologyReferenceModel extends WindupVertexFrame
-{
+public interface TechnologyReferenceModel extends WindupVertexFrame {
     String TYPE = "TechnologyReferenceModel";
     String TECHNOLOGY_ID = "technologyID";
     String VERSION_RANGE = "versionRange";

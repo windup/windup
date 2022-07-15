@@ -16,21 +16,17 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TagSetService extends GraphService<TagSetModel>
-{
+public class TagSetService extends GraphService<TagSetModel> {
     private static final String TAG_CACHE_KEY = TagSetService.class.getCanonicalName() + "_Cache";
 
-    public TagSetService(GraphContext context)
-    {
+    public TagSetService(GraphContext context) {
         super(context, TagSetModel.class);
     }
 
-    private Map<Set<String>, Vertex> getCache(GraphRewrite event)
-    {
+    private Map<Set<String>, Vertex> getCache(GraphRewrite event) {
         @SuppressWarnings("unchecked")
         Map<Set<String>, Vertex> result = (Map<Set<String>, Vertex>) event.getRewriteContext().get(TAG_CACHE_KEY);
-        if (result == null)
-        {
+        if (result == null) {
             result = new HashMap<>();
             event.getRewriteContext().put(TAG_CACHE_KEY, result);
         }
@@ -40,19 +36,15 @@ public class TagSetService extends GraphService<TagSetModel>
     /**
      * This essentially ensures that we only store a single Vertex for each unique "Set" of tags.
      */
-    public TagSetModel getOrCreate(GraphRewrite event, Set<String> tags)
-    {
+    public TagSetModel getOrCreate(GraphRewrite event, Set<String> tags) {
         Map<Set<String>, Vertex> cache = getCache(event);
         Vertex vertex = cache.get(tags);
-        if (vertex == null)
-        {
+        if (vertex == null) {
             TagSetModel model = create();
             model.setTags(tags);
             cache.put(tags, model.getElement());
             return model;
-        }
-        else
-        {
+        } else {
             return frame(vertex);
         }
     }

@@ -19,16 +19,13 @@ import java.util.Collections;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class HibernateEntityServiceTest extends AbstractTest
-{
+public class HibernateEntityServiceTest extends AbstractTest {
     @Inject
     GraphContextFactory factory;
 
     @Test
-    public void testHibernateEntityFindByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testHibernateEntityFindByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();
             app1.setName("app1");

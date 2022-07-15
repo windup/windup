@@ -15,8 +15,7 @@ import org.jboss.windup.graph.Property;
  * Represents an archive within the input application.
  */
 @TypeValue(ArchiveModel.TYPE)
-public interface ArchiveModel extends FileModel
-{
+public interface ArchiveModel extends FileModel {
     String TYPE = "ArchiveModel";
     String ARCHIVE_NAME = "archiveName";
     String UNZIPPED_DIRECTORY = "unzippedDirectory";
@@ -28,14 +27,10 @@ public interface ArchiveModel extends FileModel
     @Adjacency(label = PARENT_ARCHIVE, direction = Direction.IN)
     ArchiveModel getParentArchiveNotNullSafe();
 
-    default ArchiveModel getParentArchive()
-    {
-        try
-        {
+    default ArchiveModel getParentArchive() {
+        try {
             return getParentArchiveNotNullSafe();
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             return null;
         }
     }
@@ -79,8 +74,7 @@ public interface ArchiveModel extends FileModel
     /**
      * Gets all files in this archive, including subfiles, but not including subfiles of embedded archives.
      */
-    default Set<FileModel> getAllFiles()
-    {
+    default Set<FileModel> getAllFiles() {
         Set<FileModel> results = new LinkedHashSet<>();
 
         for (FileModel child : getFilesInDirectory())
@@ -89,8 +83,7 @@ public interface ArchiveModel extends FileModel
         return results;
     }
 
-    default void addAllFiles(Set<FileModel> files, FileModel file)
-    {
+    default void addAllFiles(Set<FileModel> files, FileModel file) {
         files.add(file);
 
         // don't include children of embedded archives
@@ -111,11 +104,9 @@ public interface ArchiveModel extends FileModel
      * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return null. If the current archive
      * is the root, then this will return itself.
      */
-    default ArchiveModel getRootArchiveModel()
-    {
+    default ArchiveModel getRootArchiveModel() {
         ArchiveModel archiveModel = this;
-        while (archiveModel.getParentArchive() != null)
-        {
+        while (archiveModel.getParentArchive() != null) {
             archiveModel = archiveModel.getParentArchive();
         }
 
@@ -127,8 +118,7 @@ public interface ArchiveModel extends FileModel
     /**
      * Indicates whether or not the passed in {@link ArchiveModel} is a child or other descendant of the current archive.
      */
-    default boolean containsArchive(ArchiveModel archiveModel)
-    {
+    default boolean containsArchive(ArchiveModel archiveModel) {
         if (this.getElement().equals(archiveModel.getElement()))
             return true;
         else if (archiveModel.getParentArchive() != null)

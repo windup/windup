@@ -16,11 +16,9 @@ import org.w3c.dom.Element;
  * Parses any {@link ConfigurationRuleParameterWhere} elements that may be in this ruleset.
  */
 @NamespaceElementHandler(elementName = "where", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class WhereHandler implements ElementHandler<Void>
-{
+public class WhereHandler implements ElementHandler<Void> {
     @Override
-    public Void processElement(ParserContext context, Element element)
-    {
+    public Void processElement(ParserContext context, Element element) {
         ConfigurationRuleBuilderPerform rule = context.getRule();
 
         String name = $(element).attr("param");
@@ -29,8 +27,7 @@ public class WhereHandler implements ElementHandler<Void>
         context.setWhere(where);
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             context.processElement(child);
         }
 

@@ -7,7 +7,6 @@ import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue(WarArchiveModel.TYPE)
 @ArchiveType(".war")
-public interface WarArchiveModel extends ArchiveModel
-{
+public interface WarArchiveModel extends ArchiveModel {
     String TYPE = "WarArchiveModel";
 }

@@ -27,8 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @RunWith(Arquillian.class)
-public class QueryHandlerTest
-{
+public class QueryHandlerTest {
     private static final String XML_RHAMT_FILE = "src/test/resources/query-handler.rhamt.xml";
 
     @Deployment
@@ -39,8 +38,7 @@ public class QueryHandlerTest
             @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                 .addBeansXML();
 
@@ -51,8 +49,7 @@ public class QueryHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testQueryHandler() throws Exception
-    {
+    public void testQueryHandler() throws Exception {
         File fXmlFile = new File(XML_RHAMT_FILE);
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
@@ -63,7 +60,7 @@ public class QueryHandlerTest
         List<Element> queryElementList = $(doc).children(QueryHandler.ELEMENT_NAME).get();
 
         Element firstQueryElement = queryElementList.get(0);
-        Query query = parser.<Query> processElement(firstQueryElement);
+        Query query = parser.<Query>processElement(firstQueryElement);
 
         Assert.assertEquals("test-from", query.getInputVariablesName());
         Assert.assertEquals("test-as", query.getOutputVariablesName());

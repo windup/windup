@@ -36,27 +36,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class XMLTransformationXMLRulesTest
-{
+public class XMLTransformationXMLRulesTest {
 
     private static final String SIMPLE_XSLT_XSL = "simpleXSLT.xsl";
     private static final String XSLT_EXTENSION = "-test-result.html";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("simpleXSLT.xsl")
-                    .addAsResource("simpleRule.windup.xml");
+                .addBeansXML()
+                .addAsResource("simpleXSLT.xsl")
+                .addAsResource("simpleRule.windup.xml");
         return archive;
     }
 
@@ -67,10 +65,8 @@ public class XMLTransformationXMLRulesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testXSLTTransformation() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testXSLTTransformation() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
@@ -79,19 +75,19 @@ public class XMLTransformationXMLRulesTest
             pm.setRootFileModel(inputPath);
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
-                        XsltTransformationModel.class);
+                    XsltTransformationModel.class);
 
             Assert.assertFalse(transformationService.findAll().iterator().hasNext());
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(
-                                    new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(
+                            new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -103,16 +99,13 @@ public class XMLTransformationXMLRulesTest
             Assert.assertEquals(XSLT_EXTENSION, xsltTransformation.getExtension());
             XsltTransformationService xsltTransformationService = new XsltTransformationService(context);
             Path transformedPath = xsltTransformationService.getTransformedXSLTPath(inputPath).resolve(
-                        xsltTransformation.getResult());
+                    xsltTransformation.getResult());
 
             int lineFound = 0;
-            try (BufferedReader br = new BufferedReader(new FileReader(transformedPath.toFile())))
-            {
+            try (BufferedReader br = new BufferedReader(new FileReader(transformedPath.toFile()))) {
                 String line = br.readLine();
-                while (line != null)
-                {
-                    if (line.contains("found GroupId"))
-                    {
+                while (line != null) {
+                    if (line.contains("found GroupId")) {
                         lineFound++;
                     }
                     line = br.readLine();

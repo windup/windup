@@ -42,41 +42,36 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Spring Config Files")
-public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
-    private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class .getSimpleName());
+public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel> {
+    private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "Spring XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "beans");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         SpringConfigurationFileService springConfigurationFileService = new SpringConfigurationFileService(
-                    event.getGraphContext());
+                event.getGraphContext());
         SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
 
         Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
-        if (doc == null)
-        {
+        if (doc == null) {
             // skip if the xml failed to load
             return;
         }
         List<Element> beansElements = $(doc).namespace("s", "http://www.springframework.org/schema/beans")
-                    .xpath("/s:beans").get();
+                .xpath("/s:beans").get();
 
-        if (beansElements.isEmpty())
-        {
+        if (beansElements.isEmpty()) {
             LOG.log(Level.WARNING, "Found [beans] XML without namespace at: " + payload.getFilePath() + ".");
             return;
         }
@@ -85,24 +80,21 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
         Element element = beansElements.get(0);
         SpringConfigurationFileModel springConfigurationModel = springConfigurationFileService
-                    .addTypeToModel(payload);
+                .addTypeToModel(payload);
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
 
         // create bean models
         List<Element> beans = $(element).children("bean").get();
-        for (Element bean : beans)
-        {
+        for (Element bean : beans) {
             String clz = $(bean).attr("class");
             String id = $(bean).attr("id");
             String name = $(bean).attr("name");
 
-            if (StringUtils.isBlank(id) && StringUtils.isNotBlank(name))
-            {
+            if (StringUtils.isBlank(id) && StringUtils.isNotBlank(name)) {
                 id = name;
             }
-            if (StringUtils.isBlank(clz))
-            {
+            if (StringUtils.isBlank(clz)) {
                 LOG.log(Level.WARNING, "Spring Bean did not include class:" + $(bean).toString());
                 continue;
             }
@@ -110,8 +102,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             SpringBeanModel springBeanRef = springBeanService.create();
             springBeanRef.setApplications(applications);
 
-            if (StringUtils.isNotBlank(id))
-            {
+            if (StringUtils.isNotBlank(id)) {
                 springBeanRef.setSpringBeanName(id);
             }
 
@@ -125,17 +116,14 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
              * <bean id="beanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> <property name="jndiName"
              * value="jdbc/ExampleSpringBeanDataSource"/> <property name="expectedType" value="javax.sql.DataSource"/> </bean>
              */
-            if (StringUtils.isNotBlank(clz) && StringUtils.equals("org.springframework.jndi.JndiObjectFactoryBean", clz))
-            {
+            if (StringUtils.isNotBlank(clz) && StringUtils.equals("org.springframework.jndi.JndiObjectFactoryBean", clz)) {
                 String expectedType = $(bean).children("property").filter(attr("name", "expectedType")).first().attr("value");
                 String jndiName = $(bean).children("property").filter(attr("name", "jndiName")).first().attr("value");
 
                 LOG.info("Found JNDI in Bean Spring: " + jndiName);
-                if (StringUtils.isNotBlank(jndiName))
-                {
+                if (StringUtils.isNotBlank(jndiName)) {
                     JNDIResourceModel jndiResource = jndiResourceService.createUnique(applications, jndiName);
-                    if (StringUtils.isNotBlank(expectedType))
-                    {
+                    if (StringUtils.isNotBlank(expectedType)) {
                         LOG.info(" -- Type: " + expectedType);
                         jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
                     }
@@ -152,7 +140,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
          * <entry key="ex" value="val"/>
          * </util:map>
          */
-        for(Element map : $(element).children("map").get()) {
+        for (Element map : $(element).children("map").get()) {
             String id = $(map).attr("id");
 
             SpringBeanModel springBeanRef = springBeanService.create();
@@ -170,7 +158,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
          * <value>ex</value>
          * </util:set>
          */
-        for(Element map : $(element).children("set").get()) {
+        for (Element map : $(element).children("set").get()) {
             String id = $(map).attr("id");
 
             SpringBeanModel springBeanRef = springBeanService.create();
@@ -187,10 +175,8 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
          * <jee:jndi-lookup id="jeeDataSource" jndi-name="jdbc/ExampleSpringJNDIDataSource" expected-type="javax.sql.DataSource" />
          */
         List<Element> jndis = $(element).children("jndi-lookup").get();
-        if (jndis.size() > 0)
-        {
-            for (Element jndi : jndis)
-            {
+        if (jndis.size() > 0) {
+            for (Element jndi : jndis) {
                 String id = $(jndi).attr("id");
                 String jndiName = $(jndi).attr("jndi-name");
                 String expectedType = $(jndi).attr("expected-type");
@@ -202,11 +188,9 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 springBeanRef.setApplications(applications);
 
                 JNDIResourceModel jndiResource = null;
-                if (StringUtils.isNotBlank(jndiName))
-                {
+                if (StringUtils.isNotBlank(jndiName)) {
                     jndiResource = jndiResourceService.createUnique(applications, jndiName);
-                    if (StringUtils.isNotBlank(expectedType))
-                    {
+                    if (StringUtils.isNotBlank(expectedType)) {
                         LOG.info(" -- Type: " + expectedType);
                         jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
                     }
@@ -222,7 +206,6 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 final String clz = "org.springframework.jndi.JndiObjectFactoryBean";
                 JavaClassModel classReference = javaClassService.getOrCreatePhantom(clz);
                 springBeanRef.setJavaClass(classReference);
-
 
 
                 springConfigurationModel.addSpringBeanReference(springBeanRef);

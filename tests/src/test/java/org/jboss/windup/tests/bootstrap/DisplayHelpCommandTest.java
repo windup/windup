@@ -6,34 +6,28 @@ import org.jboss.windup.util.ThemeProvider;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DisplayHelpCommandTest extends AbstractBootstrapTest
-{
+public class DisplayHelpCommandTest extends AbstractBootstrapTest {
     @Before
-    public void insureHelpCacheIsAvailable()
-    {
+    public void insureHelpCacheIsAvailable() {
         bootstrap("--generateCaches");
     }
 
     @Test
-    public void noArgument()
-    {
+    public void noArgument() {
         test();
     }
 
     @Test
-    public void longArgument()
-    {
+    public void longArgument() {
         test("--help");
     }
 
     @Test
-    public void shortArgument()
-    {
+    public void shortArgument() {
         test("-h");
     }
 
-    private void test(String... args)
-    {
+    private void test(String... args) {
         bootstrap(args);
 
         assertTrue(capturedOutput().contains(ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " CLI Options:"));

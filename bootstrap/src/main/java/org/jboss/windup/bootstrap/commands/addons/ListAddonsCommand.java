@@ -17,40 +17,31 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ListAddonsCommand extends AbstractListCommand implements Command, FurnaceDependent
-{
+public class ListAddonsCommand extends AbstractListCommand implements Command, FurnaceDependent {
     private Furnace furnace;
 
     @Override
-    public void setFurnace(Furnace furnace)
-    {
+    public void setFurnace(Furnace furnace) {
         this.furnace = furnace;
     }
 
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
         printValuesSorted("Enabled addons", getEnabledAddons());
         return CommandResult.EXIT;
     }
 
-    private Set<String> getEnabledAddons()
-    {
+    private Set<String> getEnabledAddons() {
         Set<String> addons = new HashSet<>();
-        try
-        {
-            for (AddonRepository repository : furnace.getRepositories())
-            {
+        try {
+            for (AddonRepository repository : furnace.getRepositories()) {
                 System.out.println(repository.getRootDirectory().getCanonicalPath() + ":");
                 List<AddonId> enabledAddons = repository.listEnabled();
-                for (AddonId addon : enabledAddons)
-                {
+                for (AddonId addon : enabledAddons) {
                     addons.add(addon.toCoordinates());
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
         }
@@ -58,8 +49,7 @@ public class ListAddonsCommand extends AbstractListCommand implements Command, F
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return CommandPhase.POST_CONFIGURATION;
     }
 }

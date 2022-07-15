@@ -15,8 +15,7 @@ import org.ocpsoft.rewrite.config.Rule;
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 @TypeValue(RuleExecutionModel.TYPE)
-public interface RuleExecutionModel extends WindupVertexFrame
-{
+public interface RuleExecutionModel extends WindupVertexFrame {
     String TYPE = "RuleExecutionModel";
 
     String RULE_ID = "ruleId";
@@ -83,8 +82,7 @@ public interface RuleExecutionModel extends WindupVertexFrame
     @Property(FAILURE_MESSAGE)
     RuleExecutionModel setFailureMessage(String failureMessage);
 
-    default void setDataFromRuleInfo(RuleExecutionInformationForReading ruleInformation)
-    {
+    default void setDataFromRuleInfo(RuleExecutionInformationForReading ruleInformation) {
         Rule rule = ruleInformation.getRule();
         this.setRuleId(rule.getId());
 
@@ -102,8 +100,7 @@ public interface RuleExecutionModel extends WindupVertexFrame
 
         Throwable failureCase = ruleInformation.getFailureCause();
 
-        if (failureCase != null)
-        {
+        if (failureCase != null) {
             String failureMessage = failureCase.getMessage();
             this.setFailureMessage(failureMessage);
         }

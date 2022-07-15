@@ -13,44 +13,38 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Gets the number of effort points involved in migrating this particular file
- *
+ * <p>
  * Called from a freemarker template as follows:
- *
+ * <p>
  * getMigrationEffortPointsForFile(FileModel):int
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetEffortForFile implements WindupFreeMarkerMethod
-{
+public class GetEffortForFile implements WindupFreeMarkerMethod {
     private static final String NAME = "getMigrationEffortPointsForFile";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.classificationService = new ClassificationService(event.getGraphContext());
         this.inlineHintService = new InlineHintService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + FileModel.class.getSimpleName() + " as a parameter and returns an int containing the effort estimate for this file.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (FileModel)");
         }
         StringModel fileModelArg = (StringModel) arguments.get(0);

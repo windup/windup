@@ -10,12 +10,11 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * Each {@link Addon} that contains {@link RuleProvider} implementations should implement this interface, and by doing
  * so provide some basic metadata about its contents.
- * 
+ *
  * @author Jess Sightler <jesse.sightler@gmail.com>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface RulesetMetadata
-{
+public interface RulesetMetadata {
     /**
      * Returns a unique identifier for the corresponding {@link RuleProvider}. The default is based on the originating
      * {@link Addon} and {@link Class} name, but this can be overridden in subclasses to provide a more readable name.

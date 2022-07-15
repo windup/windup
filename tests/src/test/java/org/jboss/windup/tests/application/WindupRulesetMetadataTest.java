@@ -18,51 +18,42 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupRulesetMetadataTest
-{
+public class WindupRulesetMetadataTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
     }
 
     @Inject
     private Imported<RulesetMetadata> ruleMetadata;
 
     @Test
-    public void testRuleMetadata()
-    {
+    public void testRuleMetadata() {
         Assert.assertNotNull(ruleMetadata);
 
         int count = 0;
         boolean foundJavaRulesetMeta = false;
         boolean foundJavaEERulesetMeta = false;
         boolean foundXMLRulesetMeta = false;
-        for (RulesetMetadata m : this.ruleMetadata)
-        {
+        for (RulesetMetadata m : this.ruleMetadata) {
             count++;
 
-            if (JavaRulesetMetadata.RULE_SET_ID.equals(m.getID()))
-            {
+            if (JavaRulesetMetadata.RULE_SET_ID.equals(m.getID())) {
                 foundJavaRulesetMeta = true;
-            }
-            else if (JavaEERulesetMetadata.RULE_SET_ID.equals(m.getID()))
-            {
+            } else if (JavaEERulesetMetadata.RULE_SET_ID.equals(m.getID())) {
                 foundJavaEERulesetMeta = true;
-            }
-            else if (XmlRulesetMetadata.RULE_SET_ID.equals(m.getID()))
-            {
+            } else if (XmlRulesetMetadata.RULE_SET_ID.equals(m.getID())) {
                 foundXMLRulesetMeta = true;
             }
         }

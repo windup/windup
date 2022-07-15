@@ -8,16 +8,15 @@ import org.jboss.windup.graph.Adjacency;
 
 /**
  * JAX-WS Web Service.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(JaxWSWebServiceModel.TYPE)
-public interface JaxWSWebServiceModel extends WebServiceModel
-{
+public interface JaxWSWebServiceModel extends WebServiceModel {
     String TYPE = "JaxWSWebServiceModel";
     String JAXWS_IMPLEMENTATION_CLASS = "jaxwsImplementationClass";
     String JAXWS_INTERFACE = "jaxwsInterface";
-     
+
     /**
      * Contains the JAX-WS implementation class
      */

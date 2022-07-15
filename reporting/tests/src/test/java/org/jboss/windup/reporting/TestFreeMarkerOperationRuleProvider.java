@@ -12,25 +12,22 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 @RuleMetadata(phase = ReportRenderingPhase.class)
-public class TestFreeMarkerOperationRuleProvider extends AbstractRuleProvider
-{
+public class TestFreeMarkerOperationRuleProvider extends AbstractRuleProvider {
 
     @Inject
     private Furnace furnace;
 
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .perform(
-                                FreeMarkerOperation.create(furnace, "/reports/templates/FreeMarkerOperationTest.ftl",
-                                            getOutputFilename())
-                    );
+                .begin()
+                .addRule()
+                .perform(
+                        FreeMarkerOperation.create(furnace, "/reports/templates/FreeMarkerOperationTest.ftl",
+                                getOutputFilename())
+                );
     }
 
-    public String getOutputFilename()
-    {
+    public String getOutputFilename() {
         return "testapplicationreport.html";
     }
 }

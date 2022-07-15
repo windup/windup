@@ -27,23 +27,18 @@ import org.xml.sax.SAXException;
  * @author Ondrej Zizka, ozizka at redhat.com
  */
 @Singleton
-public class TagService
-{
+public class TagService {
     private final ConcurrentMap<String, Tag> definedTags = new ConcurrentHashMap<>();
 
     /**
      * Read the tag structure from the provided stream.
      */
-    public void readTags(InputStream tagsXML)
-    {
+    public void readTags(InputStream tagsXML) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
-        try
-        {
+        try {
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(tagsXML, new TagsSaxHandler(this));
-        }
-        catch (ParserConfigurationException | SAXException | IOException ex)
-        {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new RuntimeException("Failed parsing the tags definition: " + ex.getMessage(), ex);
         }
     }
@@ -51,36 +46,32 @@ public class TagService
     /**
      * Gets all tags that are "prime" tags.
      */
-    public List<Tag> getPrimeTags()
-    {
+    public List<Tag> getPrimeTags() {
         return this.definedTags.values().stream()
-                    .filter(Tag::isPrime)
-                    .collect(Collectors.toList());
+                .filter(Tag::isPrime)
+                .collect(Collectors.toList());
     }
 
     /**
      * Returns the tags that were root in the definition files. These serve as entry point shortcuts when browsing the graph. We could reduce this to
      * just fewer as the root tags may be connected through parents="...".
      */
-    public List<Tag> getRootTags()
-    {
+    public List<Tag> getRootTags() {
         return this.definedTags.values().stream()
-                    .filter(Tag::isRoot)
-                    .collect(Collectors.toList());
+                .filter(Tag::isRoot)
+                .collect(Collectors.toList());
     }
 
     /**
      * Returns the {@link Tag} with the provided name.
      */
-    public Tag findTag(String tagName)
-    {
+    public Tag findTag(String tagName) {
         if (null == tagName)
             throw new IllegalArgumentException("Looking for null tag name.");
         return definedTags.get(Tag.normalizeName(tagName));
     }
 
-    public Tag getTag(String tagName)
-    {
+    public Tag getTag(String tagName) {
         Tag tag = findTag(tagName);
         if (null == tag)
             throw new WindupException("Tag does not exist: " + tagName);
@@ -89,21 +80,18 @@ public class TagService
 
     /**
      * Gets the {@link Tag} with the given name or creates a new {@link Tag} if one does not already exist.
-     * 
+     *
      * @param isRef True if the given tag name is a reference, in which case it should already exist.
      */
-    public Tag getOrCreateTag(String tagName, boolean isRef)
-    {
+    public Tag getOrCreateTag(String tagName, boolean isRef) {
         if (null == tagName)
             throw new IllegalArgumentException("Looking for a null tag name.");
         tagName = Tag.normalizeName(tagName);
 
-        synchronized (this.definedTags)
-        {
+        synchronized (this.definedTags) {
             if (definedTags.containsKey(tagName))
                 return definedTags.get(tagName);
-            else
-            {
+            else {
                 final Tag tag = new Tag(tagName);
                 definedTags.put(tagName, tag);
                 return tag;
@@ -114,17 +102,14 @@ public class TagService
     /**
      * Returns all tags that designate this tag. E.g., for "tesla-model3", this would return "car", "vehicle", "vendor-tesla" etc.
      */
-    public Set<Tag> getAncestorTags(Tag tag)
-    {
+    public Set<Tag> getAncestorTags(Tag tag) {
         Set<Tag> ancestors = new HashSet<>();
         getAncestorTags(tag, ancestors);
         return ancestors;
     }
 
-    private void getAncestorTags(Tag tag, Set<Tag> putResultsHere)
-    {
-        for (Tag parentTag : tag.getParentTags())
-        {
+    private void getAncestorTags(Tag tag, Set<Tag> putResultsHere) {
+        for (Tag parentTag : tag.getParentTags()) {
             if (!putResultsHere.add(parentTag))
                 continue; // Already visited.
             getAncestorTags(parentTag, putResultsHere);
@@ -134,17 +119,14 @@ public class TagService
     /**
      * Returns all tags that are designated by this tag. E.g., for "vehicle", this would return "ship", "car", "tesla-model3", "bike", etc.
      */
-    public Set<Tag> getDescendantTags(Tag tag)
-    {
+    public Set<Tag> getDescendantTags(Tag tag) {
         Set<Tag> ancestors = new HashSet<>();
         getDescendantTags(tag, ancestors);
         return ancestors;
     }
 
-    private void getDescendantTags(Tag tag, Set<Tag> putResultsHere)
-    {
-        for (Tag childTag : tag.getContainedTags())
-        {
+    private void getDescendantTags(Tag tag, Set<Tag> putResultsHere) {
+        for (Tag childTag : tag.getContainedTags()) {
             if (!putResultsHere.add(childTag))
                 continue; // Already visited.
             getDescendantTags(childTag, putResultsHere);
@@ -154,8 +136,7 @@ public class TagService
     /**
      * Convenience method, calls this.isUnderTag(Tag superTag, Tag subTag).
      */
-    public boolean isUnderTag(String superTagName, String subTagName)
-    {
+    public boolean isUnderTag(String superTagName, String subTagName) {
         if (superTagName == null || subTagName == null)
             throw new IllegalArgumentException("Looking for a null tag name.");
 
@@ -175,8 +156,7 @@ public class TagService
     /**
      * @return true if the subTag is contained directly or indirectly in the superTag.
      */
-    public boolean isUnderTag(Tag superTag, Tag subTag)
-    {
+    public boolean isUnderTag(Tag superTag, Tag subTag) {
         if (superTag == null || subTag == null)
             throw new IllegalArgumentException("Looking for a null tag name.");
 
@@ -188,13 +168,11 @@ public class TagService
         Set<Tag> currentSet = new LinkedHashSet<>();
         currentSet.add(subTag);
 
-        do
-        {
+        do {
             walkedSet.addAll(currentSet);
 
             Set<Tag> nextSet = new LinkedHashSet<>();
-            for (Tag currentTag : currentSet)
-            {
+            for (Tag currentTag : currentSet) {
                 Set<Tag> parentTags = currentTag.getParentTags();
                 if (parentTags.contains(superTag))
                     return true;
@@ -204,8 +182,7 @@ public class TagService
 
             // Prevent infinite loops - detect graph cycles.
             Iterator<Tag> it = walkedSet.iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Tag walkedTag = it.next();
                 if (nextSet.contains(walkedTag))
                     nextSet.remove(walkedTag);
@@ -220,25 +197,22 @@ public class TagService
     /**
      * Writes the JavaScript code describing the tags as Tag classes to given writer.
      */
-    public void writeTagsToJavaScript(Writer writer) throws IOException
-    {
+    public void writeTagsToJavaScript(Writer writer) throws IOException {
         writer.append("function fillTagService(tagService) {\n");
         writer.append("\t// (name, isPrime, isPseudo, color), [parent tags]\n");
-        for (Tag tag : definedTags.values())
-        {
+        for (Tag tag : definedTags.values()) {
             writer.append("\ttagService.registerTag(new Tag(");
             escapeOrNull(tag.getName(), writer);
             writer.append(", ");
             escapeOrNull(tag.getTitle(), writer);
             writer.append(", ").append("" + tag.isPrime())
-                        .append(", ").append("" + tag.isPseudo())
-                        .append(", ");
+                    .append(", ").append("" + tag.isPseudo())
+                    .append(", ");
             escapeOrNull(tag.getColor(), writer);
             writer.append(")").append(", [");
 
             // We only have strings, not references, so we're letting registerTag() getOrCreate() the tag.
-            for (Tag parentTag : tag.getParentTags())
-            {
+            for (Tag parentTag : tag.getParentTags()) {
                 writer.append("'").append(StringEscapeUtils.escapeEcmaScript(parentTag.getName())).append("',");
             }
             writer.append("]);\n");
@@ -246,8 +220,7 @@ public class TagService
         writer.append("}\n");
     }
 
-    private void escapeOrNull(final String string, Writer writer) throws IOException
-    {
+    private void escapeOrNull(final String string, Writer writer) throws IOException {
         if (string == null)
             writer.append("null");
         else
@@ -255,8 +228,7 @@ public class TagService
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "TagService{ definedTags: " + definedTags.size() + '}';
     }
 

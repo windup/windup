@@ -5,8 +5,7 @@ package org.jboss.windup.graph.traversal;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ProjectTraversalVisitor
-{
+public interface ProjectTraversalVisitor {
     /**
      * This will be called for each {@link ProjectModelTraversal} in the traversal.
      */

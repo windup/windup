@@ -8,8 +8,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ReportLink extends Serializable
-{
+public interface ReportLink extends Serializable {
     /**
      * Contains the File path of the file in the input application.
      */

@@ -9,8 +9,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Represents a data source within the application.
  */
 @TypeValue(DataSourceModel.TYPE)
-public interface DataSourceModel extends JNDIResourceModel
-{
+public interface DataSourceModel extends JNDIResourceModel {
     String TYPE = "DataSourceModel";
 
     String NAME = TYPE + "-name";

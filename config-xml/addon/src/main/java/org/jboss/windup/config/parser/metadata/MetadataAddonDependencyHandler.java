@@ -11,17 +11,14 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = MetadataAddonDependencyHandler.ADDON_DEPENDENCY_ELEMENT, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataAddonDependencyHandler implements ElementHandler<AddonId>
-{
+public class MetadataAddonDependencyHandler implements ElementHandler<AddonId> {
     private static final String ID = "id";
-    public static final String  ADDON_DEPENDENCY_ELEMENT = "addon";
+    public static final String ADDON_DEPENDENCY_ELEMENT = "addon";
 
     @Override
-    public AddonId processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public AddonId processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String id = element.getAttribute(ID);
-        if (StringUtils.isBlank(id))
-        {
+        if (StringUtils.isBlank(id)) {
             throw new WindupXMLRulesetParsingException("The '" + ADDON_DEPENDENCY_ELEMENT + "' element must have a non-empty '" + ID + "' attribute");
         }
         AddonId addonId = AddonId.fromCoordinates(id);
