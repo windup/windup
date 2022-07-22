@@ -18,6 +18,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,6 +50,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
     }
 
     @Test
+    @Ignore("Does not apply anymore in binary mode, as both class and java files are analysed")
     public void testRunWindupOnAppWithoutJars() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             final String path = "../test-files/rexster/rexster-onlyclasses";
@@ -64,6 +66,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
     }
 
     @Test
+    @Ignore("Does not apply anymore in binary mode, as both class and java files are analysed")
     public void testRunWindupOnAppWithJars() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             final String path = "../test-files/rexster/rexster-with-jar";

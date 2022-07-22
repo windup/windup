@@ -124,7 +124,6 @@ public class WindupCommand implements UICommand {
                  * do that because the Windup configuration API doesn't understand Forge data types, so instead we
                  * use string comparison and write a test case.
                  */
-                //File inputFile = (File) inputPath.getUnderlyingResourceObject();
                 for (File inputFile : inputPathsIterable) {
                     if (inputFile.equals(outputFile))
                         context.addValidationError(outputPath, "Output file cannot be the same as the input file.");
