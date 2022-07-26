@@ -70,7 +70,7 @@ public class WindupUpdateDistributionCommand implements UICommand {
 
         distUpdater.replaceWindupDirectoryWithDistribution(latestDist);
 
-        return Results.success("Sucessfully updated " + theme.getBrandNameAcronym() + " CLI to version " + latestDist.getVersion() + ". Please restart MTA CLI.");
+        return Results.success("Sucessfully updated " + theme.getBrandNameAcronym() + " CLI to version " + latestDist.getVersion() + ". Please restart Windup CLI.");
     }
 
 

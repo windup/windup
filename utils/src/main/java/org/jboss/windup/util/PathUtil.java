@@ -34,7 +34,7 @@ public class PathUtil {
     public static String BINARY_DIRECTORY_NAME = "bin";
 
     /**
-     * The path $USER_HOME/.rhamt
+     * The path $USER_HOME/.windup
      */
     public static Path getWindupUserDir() {
         String userHome = System.getProperty("user.home");
@@ -43,7 +43,7 @@ public class PathUtil {
             LOG.warning("$USER_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
-        return Paths.get(userHome).resolve(".mta");
+        return Paths.get(userHome).resolve(".windup");
     }
 
     /**
