@@ -55,6 +55,10 @@
 
                     <div class="panel-body">
                         <#include "include/about.ftl">
+
+                        <p>
+                            The Icon Library used in this project is a derivative of the <a target="_blank" href="https://www.redhat.com/en/about/brand/standards/icons/standard-icons">Standard Icons library</a> by <a target="_blank" href="https://www.redhat.com/">Red Hat</a>, used under <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+                        </p>
                     </div>
                 </div>
 
