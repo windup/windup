@@ -579,7 +579,7 @@
                 </property>
             </activation>
             <properties>
-                <distribution.brand.name>Windup Migration Toolkit for Applications</distribution.brand.name>
+                <distribution.brand.name>Windup</distribution.brand.name>
                 <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
                 <distribution.brand.documentation.url>https://github.com/windup/windup</distribution.brand.documentation.url>
                 <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
