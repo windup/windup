@@ -118,6 +118,7 @@
         <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
+        <module>rules-yaml</module>
 
         <module>exec</module>
         <module>tooling</module>
