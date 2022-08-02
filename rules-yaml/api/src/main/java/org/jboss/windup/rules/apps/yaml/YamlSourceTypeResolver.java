@@ -6,8 +6,6 @@ import org.jboss.windup.rules.apps.yaml.model.YamlFileModel;
 
 /**
  * Resolves yaml-related sources to their type for reporting purposes.
- *
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class YamlSourceTypeResolver implements SourceTypeResolver {
     @Override
