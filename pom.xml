@@ -637,6 +637,28 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>mtr</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mtr</value>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Runtimes by Red Hat (MTR)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTR</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mtr-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-mtr</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 
 </project>
