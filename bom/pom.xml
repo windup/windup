@@ -290,6 +290,18 @@
                 <type>zip</type>
                 <version>${version.nexus.index}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data-text</artifactId>
+                <type>zip</type>
+                <version>${version.nexus.index}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${version.nexus.index}</version>
+            </dependency>
 
 
             <!-- Windup Rules - XML - Basic -->
