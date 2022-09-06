@@ -648,7 +648,7 @@
             <properties>
                 <distribution.brand.name>Migration Toolkit for Runtimes by Red Hat (MTR)</distribution.brand.name>
                 <distribution.brand.name-acronym>MTR</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mtr/overview/</distribution.brand.documentation.url>
                 <distribution.brand.cli-name>mtr-cli</distribution.brand.cli-name>
             </properties>
             <build>
