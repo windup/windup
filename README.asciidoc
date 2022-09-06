@@ -5,15 +5,7 @@ Windup  is an assembly of tools that support large-scale Java application modern
 
 === Installation and Usage
 
-Windup is the upstream project that is used to build the downstream Red Hat Migration Toolkit for Applications. link:https://developers.redhat.com/products/mta/overview[The Red Hat Developers website] contains a comprehensive set of link:https://developers.redhat.com/products/mta/getting-started[documentation]. The latest release can be downloaded from link:https://developers.redhat.com/products/mta/download[here].
-
-The cli distribution (link:https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/5.3/html/cli_guide/index[guide]) contains a sample file to try Windup with. Try the following command in a console:
-
-    bin/windup-cli --target eap7 --input samples/jee-example-app-1.0.0.ear
-
-This will create a report next to the scanned archive:
-
-    samples/jee-example-app-1.0.0.ear.report/index.html
+Download the latest Windup release from link:https://windup.github.io/downloads/[here] and refer to the link:https://windup.github.io/blog/getting-started/[getting started blog] to run your first code analysis.
 
 === Issue Tracker
 
