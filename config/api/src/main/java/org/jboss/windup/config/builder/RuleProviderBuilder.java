@@ -60,6 +60,11 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements R
         return this;
     }
 
+    public RuleProviderBuilderAddDependencies addTag(String tag) {
+        metadata.addTag(tag);
+        return this;
+    }
+
     @Override
     public RuleProviderBuilderAddDependencies addExecuteAfter(String id) {
         metadata.addExecuteAfterId(id);
