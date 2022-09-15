@@ -14,11 +14,10 @@ import org.jboss.windup.util.Logging;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
- *
+ * <p>
  * TODO: This should be in Nexus Indexer - Data (client for Nexus Indexer - Core).
  */
-public class LuceneArchiveIdentificationService extends LuceneIndexServiceBase implements ArchiveIdentificationService
-{
+public class LuceneArchiveIdentificationService extends LuceneIndexServiceBase implements ArchiveIdentificationService {
     private static final Logger LOG = Logging.get(LuceneArchiveIdentificationService.class);
 
     private static final String SHA1 = "sha1";
@@ -29,20 +28,18 @@ public class LuceneArchiveIdentificationService extends LuceneIndexServiceBase i
     private static final String VERSION = "version";
 
 
-    public LuceneArchiveIdentificationService(File directory)
-    {
+    public LuceneArchiveIdentificationService(File directory) {
         super(directory);
     }
 
 
     @Override
-    public Coordinate getCoordinate(String sha1)
-    {
+    public Coordinate getCoordinate(String sha1) {
         return this.findSingle(DocTo.Fields.SHA1, sha1, (DocTo<Coordinate>) doc -> CoordinateBuilder.create()
-            .setGroupId(doc.get(GROUP_ID))
-            .setArtifactId(doc.get(ARTIFACT_ID))
-            .setVersion(doc.get(VERSION))
-            .setClassifier(doc.get(CLASSIFIER))
-            .setPackaging(doc.get(PACKAGING)));
+                .setGroupId(doc.get(GROUP_ID))
+                .setArtifactId(doc.get(ARTIFACT_ID))
+                .setVersion(doc.get(VERSION))
+                .setClassifier(doc.get(CLASSIFIER))
+                .setPackaging(doc.get(PACKAGING)));
     }
 }

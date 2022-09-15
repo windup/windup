@@ -10,11 +10,9 @@ import org.jboss.windup.config.LabelProvider;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public final class LabelProviderBuilder extends AbstractLabelProvider
-{
+public final class LabelProviderBuilder extends AbstractLabelProvider {
 
-    public LabelProviderBuilder(LabelProviderMetadata metadata, LabelProviderData data)
-    {
+    public LabelProviderBuilder(LabelProviderMetadata metadata, LabelProviderData data) {
         super(metadata, data);
     }
 

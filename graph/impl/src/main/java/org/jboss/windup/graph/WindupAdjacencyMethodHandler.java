@@ -55,34 +55,31 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     return this.addVertexByTypeTypedEdge(builder, method, annotation);
                 else
                     return this.addVertexByObjectTypedEdge(builder, method, annotation);
-            }
-            else
+            } else
                 throw new IllegalStateException(method.getName() + " was annotated with @Adjacency but had more than 1 arguments.");
         else if (ReflectionUtility.isGetMethod(method))
             if (arguments == null || arguments.length == 0) {
-                if( ReflectionUtility.returnsIterator(method) )
+                if (ReflectionUtility.returnsIterator(method))
                     return this.getVertexesIteratorDefault(builder, method, annotation);
-                else if( ReflectionUtility.returnsList(method) )
+                else if (ReflectionUtility.returnsList(method))
                     return this.getVertexesListDefault(builder, method, annotation);
-                else if( ReflectionUtility.returnsSet(method) )
+                else if (ReflectionUtility.returnsSet(method))
                     return this.getVertexesSetDefault(builder, method, annotation);
 
                 return this.getVertexDefault(builder, method, annotation);
-            }
-            else if (arguments.length == 1) {
+            } else if (arguments.length == 1) {
                 if (!(Class.class.isAssignableFrom(arguments[0].getType())))
                     throw new IllegalStateException(method.getName() + " was annotated with @Adjacency, had a single argument, but that argument was not of the type Class");
 
                 if (ReflectionUtility.returnsIterator(method))
                     return this.getVertexesIteratorByType(builder, method, annotation);
-                else if( ReflectionUtility.returnsList(method) )
+                else if (ReflectionUtility.returnsList(method))
                     return this.getVertexesListByType(builder, method, annotation);
-                else if( ReflectionUtility.returnsSet(method) )
+                else if (ReflectionUtility.returnsSet(method))
                     return this.getVertexesSetByType(builder, method, annotation);
 
                 return this.getVertexByType(builder, method, annotation);
-            }
-            else
+            } else
                 throw new IllegalStateException(method.getName() + " was annotated with @Adjacency but had more than 1 arguments.");
         else if (ReflectionUtility.isRemoveMethod(method))
             if (arguments == null || arguments.length == 0)
@@ -103,8 +100,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     return this.setVertexVertexFrame(builder, method, annotation);
 
                 throw new IllegalStateException(method.getName() + " was annotated with @Adjacency, had a single argument, but that argument was not of the type Iterator or Iterable");
-            }
-            else
+            } else
                 throw new IllegalStateException(method.getName() + " was annotated with @Adjacency but had more than 1 arguments.");
         else
             throw new IllegalStateException(method.getName() + " was annotated with @Adjacency but did not begin with either of the following keywords: add, get, remove");
@@ -192,7 +188,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final String label = annotation.label();
 
             return thiz.traverse(input -> {
-                switch(direction) {
+                switch (direction) {
                     case IN:
                         return input.in(label);
                     case OUT:
@@ -265,7 +261,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final TypeResolver resolver = thiz.getGraph().getTypeResolver();
 
             return thiz.traverse(input -> {
-                switch(direction) {
+                switch (direction) {
                     case IN:
                         return resolver.hasType(input.in(label), type);
                     case OUT:
@@ -290,7 +286,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final TypeResolver resolver = thiz.getGraph().getTypeResolver();
 
             return thiz.traverse(input -> {
-                switch(direction) {
+                switch (direction) {
                     case IN:
                         return resolver.hasType(input.in(label), type);
                     case OUT:
@@ -315,7 +311,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final TypeResolver resolver = thiz.getGraph().getTypeResolver();
 
             return thiz.traverse(input -> {
-                switch(direction) {
+                switch (direction) {
                     case IN:
                         return resolver.hasType(input.in(label), type);
                     case OUT:
@@ -351,8 +347,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                             throw new IllegalStateException("Direction not recognized.");
                     }
                 }).next(VertexFrame.class);
-            } catch (NoSuchElementException e)
-            {
+            } catch (NoSuchElementException e) {
                 return null;
             }
         }
@@ -369,7 +364,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final TypeResolver resolver = thiz.getGraph().getTypeResolver();
 
             return thiz.traverse(input -> {
-                switch(direction) {
+                switch (direction) {
                     case IN:
                         return resolver.hasType(input.in(label), type);
                     case OUT:
@@ -547,7 +542,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             switch (direction) {
                 case BOTH:
                     thiz.unlinkBoth(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(vertexFrame, thiz, label);
@@ -557,7 +552,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     break;
                 case IN:
                     thiz.unlinkIn(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(vertexFrame, thiz, label);
@@ -566,7 +561,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     break;
                 case OUT:
                     thiz.unlinkOut(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(thiz, vertexFrame, label);
@@ -592,7 +587,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             switch (direction) {
                 case BOTH:
                     thiz.unlinkBoth(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(vertexFrame, thiz, label);
@@ -602,7 +597,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     break;
                 case IN:
                     thiz.unlinkIn(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(vertexFrame, thiz, label);
@@ -611,7 +606,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
                     break;
                 case OUT:
                     thiz.unlinkOut(null, label);
-                    ((Iterator<? extends VertexFrame>)vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
+                    ((Iterator<? extends VertexFrame>) vertexSet.iterator()).forEachRemaining(new Consumer<VertexFrame>() {
                         @Override
                         public void accept(VertexFrame vertexFrame) {
                             thiz.getGraph().addFramedEdge(thiz, vertexFrame, label);
@@ -632,8 +627,7 @@ public class WindupAdjacencyMethodHandler extends AbstractMethodHandler {
             final Adjacency annotation = ((CachesReflection) thiz).getReflectionCache().getAnnotation(method, Adjacency.class);
             final Direction direction = annotation.direction();
             final String label = annotation.label();
-            if (vertexFrame == null)
-            {
+            if (vertexFrame == null) {
                 RemoveAllInterceptor.removeVertex(thiz, method);
                 return;
             }

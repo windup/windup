@@ -12,14 +12,13 @@ import org.jboss.windup.graph.Adjacency;
 
 /**
  * Contains a list of {@link WindupVertexFrame} objects and (for convenience) implements the {@link Iterable} interface as well.
- *
+ * <p>
  * NOTE that this currently doesn't keep the order of the elements. It is an unordered collection.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupVertexListModel.TYPE)
-public interface WindupVertexListModel<T extends WindupVertexFrame> extends WindupVertexFrame, Iterable<T>
-{
+public interface WindupVertexListModel<T extends WindupVertexFrame> extends WindupVertexFrame, Iterable<T> {
     String TYPE = "WindupVertexListModel";
 
     /**
@@ -53,18 +52,15 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
     @JavaHandler(handler = Impl.class)
     Iterator<T> iterator();
 
-    class Impl<T extends WindupVertexFrame>
-    {
-        public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, Iterable<T> items)
-        {
+    class Impl<T extends WindupVertexFrame> {
+        public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, Iterable<T> items) {
             for (T item : items)
                 frame.addItem(item);
 
             return frame;
         }
 
-        public Iterator<T> iterator(WindupVertexListModel<T> frame)
-        {
+        public Iterator<T> iterator(WindupVertexListModel<T> frame) {
             return frame.getList().iterator();
         }
     }

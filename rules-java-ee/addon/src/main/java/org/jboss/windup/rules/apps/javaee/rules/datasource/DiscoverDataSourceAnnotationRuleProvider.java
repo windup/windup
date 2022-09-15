@@ -29,60 +29,49 @@ import java.util.Set;
 
 /**
  * Ruleset to discover data sources in annotations
- *
+ * <p>
  * https://docs.oracle.com/cd/E24329_01/web.1211/e24376/ds_annotation.htm#JDBCP1043
  *
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
- *
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
-public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvider {
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext context)
-    {
+    public Configuration getConfiguration(RuleLoaderContext context) {
         String ruleIDPrefix = getClass().getSimpleName();
 
         return ConfigurationBuilder.begin()
                 .addRule()
                 .when(JavaClass.references("javax.annotation.sql.DataSourceDefinition").at(TypeReferenceLocation.ANNOTATION))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         extractDataSourceMetadata(event, payload);
                     }
                 })
                 .withId(ruleIDPrefix + "_DataSourceDefinition");
     }
 
-    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
-    {
+    private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name) {
         JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
 
-        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel)
-        {
+        if (valueModel instanceof JavaAnnotationLiteralTypeValueModel) {
             JavaAnnotationLiteralTypeValueModel literalTypeValue = (JavaAnnotationLiteralTypeValueModel) valueModel;
             return literalTypeValue.getLiteralValue();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    private void extractDataSourceMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
-    {
+    private void extractDataSourceMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference) {
         javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel datasourceClass = getJavaClass(javaTypeReference);
 
         String dataSourceName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(dataSourceName))
-        {
+        if (Strings.isNullOrEmpty(dataSourceName)) {
             dataSourceName = datasourceClass.getClassName();
         }
 
@@ -100,22 +89,18 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
         dataSourceModel.setJndiLocation(dataSourceName);
     }
 
-    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
-    {
+    private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference) {
         JavaClassModel result = null;
         AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-        {
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses()) {
             // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-            {
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic()) {
                 result = javaClassModel;
                 break;
             }
         }
 
-        if (result == null)
-        {
+        if (result == null) {
             // no public classes found, so try to find any class (even non-public ones)
             result = javaSource.getJavaClasses().iterator().next();
         }
@@ -123,8 +108,7 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DiscoverDataSource";
     }
 }

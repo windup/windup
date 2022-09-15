@@ -9,7 +9,6 @@ import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JspSourceFileModel.TYPE)
-public interface JspSourceFileModel extends AbstractJavaSourceModel
-{
+public interface JspSourceFileModel extends AbstractJavaSourceModel {
     String TYPE = "JspSourceFileModel";
 }

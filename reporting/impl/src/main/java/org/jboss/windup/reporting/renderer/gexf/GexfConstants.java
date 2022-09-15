@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.renderer.gexf;
 
-public class GexfConstants
-{
+public class GexfConstants {
     public static final String OPENING_TAG = "<gexf xmlns=\"http://www.gexf.net/1.2draft\" version=\"1.2\">";
     public static final String CLOSING_TAG = "</gexf>";
 

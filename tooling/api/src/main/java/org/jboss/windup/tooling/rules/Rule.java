@@ -2,8 +2,7 @@ package org.jboss.windup.tooling.rules;
 
 import java.io.Serializable;
 
-public interface Rule extends Serializable
-{
+public interface Rule extends Serializable {
     /**
      * Contains a value used for conflict resolution during concurrent updates.
      */

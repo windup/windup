@@ -27,8 +27,7 @@ import org.ocpsoft.rewrite.config.RuleVisit;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class PackageNameMappingRegistry
-{
+public class PackageNameMappingRegistry {
     private static final Logger LOG = Logger.getLogger(PackageNameMappingRegistry.class.getName());
 
     @Inject
@@ -37,20 +36,16 @@ public class PackageNameMappingRegistry
     private RuleProviderRegistryCache cache;
     private GraphRewrite event;
 
-    public String getOrganizationForPackage(String packageName)
-    {
+    public String getOrganizationForPackage(String packageName) {
         return PackageNameMapping.getOrganizationFromMappings(this.event, packageName);
     }
 
-    public void loadPackageMappings()
-    {
+    public void loadPackageMappings() {
         loadPackageMappings(PathUtil.getWindupRulesDir());
     }
 
-    public void loadPackageMappings(Path rulesPath)
-    {
-        try (GraphContext graphContext = graphContextFactory.create(false))
-        {
+    public void loadPackageMappings(Path rulesPath) {
+        try (GraphContext graphContext = graphContextFactory.create(false)) {
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
             FileModel windupRulesPath = new FileService(graphContext).createByFilePath(rulesPath.toString());
             configurationModel.addUserRulesPath(windupRulesPath);
@@ -60,16 +55,13 @@ public class PackageNameMappingRegistry
             this.event = new GraphRewrite(graphContext);
             RuleSubset ruleSubset = RuleSubset.create(registry.getConfiguration());
             new RuleVisit(ruleSubset).accept((r) -> {
-                if (r instanceof PackageNameMapping)
-                {
+                if (r instanceof PackageNameMapping) {
                     ((PackageNameMapping) r).preRulesetEvaluation(event);
                 }
             });
 
             graphContext.clear();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.log(Level.WARNING, "Failed to load rule information due to: " + e.getMessage(), e);
         }
     }

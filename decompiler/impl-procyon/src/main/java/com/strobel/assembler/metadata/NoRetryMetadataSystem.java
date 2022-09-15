@@ -6,32 +6,28 @@ import com.strobel.core.VerifyArgument;
 
 /**
  * Keeps a set of types which failed to load and also uses an LRUCache to reduce the memory footprint for cached lookups.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public final class NoRetryMetadataSystem extends WindupMetadataSystem
-{
+public final class NoRetryMetadataSystem extends WindupMetadataSystem {
     private final static TypeDefinition[] PRIMITIVE_TYPES_BY_NAME = new TypeDefinition['Z' - 'B' + 1];
     private final static TypeDefinition[] PRIMITIVE_TYPES_BY_DESCRIPTOR = new TypeDefinition[16];
     private final LRUMap<String, Boolean> failedTypes = new LRUMap<>(1000);
     private final LRUMap<String, TypeDefinition> resolvedTypes = new LRUMap<>(1000);
     private final ITypeLoader typeLoader;
 
-    public NoRetryMetadataSystem(final ITypeLoader typeLoader)
-    {
+    public NoRetryMetadataSystem(final ITypeLoader typeLoader) {
         super(typeLoader);
         this.typeLoader = typeLoader;
     }
 
-    public void addTypeDefinition(final TypeDefinition type)
-    {
+    public void addTypeDefinition(final TypeDefinition type) {
         VerifyArgument.notNull(type, "type");
         resolvedTypes.put(type.getInternalName(), type);
     }
 
     @Override
-    protected TypeDefinition resolveType(final String descriptor, final boolean mightBePrimitive)
-    {
+    protected TypeDefinition resolveType(final String descriptor, final boolean mightBePrimitive) {
         if (failedTypes.containsKey(descriptor))
             return null;
 
@@ -43,36 +39,27 @@ public final class NoRetryMetadataSystem extends WindupMetadataSystem
         return result;
     }
 
-    protected TypeDefinition resolveTypeInternal(final String descriptor, final boolean mightBePrimitive)
-    {
+    protected TypeDefinition resolveTypeInternal(final String descriptor, final boolean mightBePrimitive) {
         VerifyArgument.notNull(descriptor, "descriptor");
 
-        if (mightBePrimitive)
-        {
-            if (descriptor.length() == 1)
-            {
+        if (mightBePrimitive) {
+            if (descriptor.length() == 1) {
                 final int primitiveHash = descriptor.charAt(0) - 'B';
 
-                if (primitiveHash >= 0 && primitiveHash < PRIMITIVE_TYPES_BY_DESCRIPTOR.length)
-                {
+                if (primitiveHash >= 0 && primitiveHash < PRIMITIVE_TYPES_BY_DESCRIPTOR.length) {
                     final TypeDefinition primitiveType = PRIMITIVE_TYPES_BY_DESCRIPTOR[primitiveHash];
 
-                    if (primitiveType != null)
-                    {
+                    if (primitiveType != null) {
                         return primitiveType;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 final int primitiveHash = hashPrimitiveName(descriptor);
 
-                if (primitiveHash >= 0 && primitiveHash < PRIMITIVE_TYPES_BY_NAME.length)
-                {
+                if (primitiveHash >= 0 && primitiveHash < PRIMITIVE_TYPES_BY_NAME.length) {
                     final TypeDefinition primitiveType = PRIMITIVE_TYPES_BY_NAME[primitiveHash];
 
-                    if (primitiveType != null && descriptor.equals(primitiveType.getName()))
-                    {
+                    if (primitiveType != null && descriptor.equals(primitiveType.getName())) {
                         return primitiveType;
                     }
                 }
@@ -81,15 +68,13 @@ public final class NoRetryMetadataSystem extends WindupMetadataSystem
 
         TypeDefinition cachedDefinition = resolvedTypes.get(descriptor);
 
-        if (cachedDefinition != null)
-        {
+        if (cachedDefinition != null) {
             return cachedDefinition;
         }
 
         final Buffer buffer = new Buffer(0);
 
-        if (!this.typeLoader.tryLoadType(descriptor, buffer))
-        {
+        if (!this.typeLoader.tryLoadType(descriptor, buffer)) {
             return null;
         }
 
@@ -98,18 +83,15 @@ public final class NoRetryMetadataSystem extends WindupMetadataSystem
         cachedDefinition = resolvedTypes.put(descriptor, typeDefinition);
         typeDefinition.setTypeLoader(this.typeLoader);
 
-        if (cachedDefinition != null)
-        {
+        if (cachedDefinition != null) {
             return cachedDefinition;
         }
 
         return typeDefinition;
     }
 
-    private static int hashPrimitiveName(final String name)
-    {
-        if (name.length() < 3)
-        {
+    private static int hashPrimitiveName(final String name) {
+        if (name.length() < 3) {
             return 0;
         }
         return (name.charAt(0) + name.charAt(2)) % 16;

@@ -10,85 +10,71 @@ import java.util.Map;
 
 /**
  * A data transfer object carying information about the dependency
+ *
  * @author <a href="mailto:marcorizzi82@gmail.com>Marco Rizzi</a>
  */
-public class DependencyGraphItem
-{
-   private final Kind kind;
-   private final Map<String, String> metadata;
+public class DependencyGraphItem {
+    private final Kind kind;
+    private final Map<String, String> metadata;
 
-   public DependencyGraphItem(DependencyReportDependencyGroupModel dependencyReportDependencyGroupModel)
-   {
-      this(dependencyReportDependencyGroupModel.getCanonicalProject());
-   }
+    public DependencyGraphItem(DependencyReportDependencyGroupModel dependencyReportDependencyGroupModel) {
+        this(dependencyReportDependencyGroupModel.getCanonicalProject());
+    }
 
-   public DependencyGraphItem(ProjectModel projectModel)
-   {
-      this.metadata = new HashMap<>(1);
-      this.metadata.put("name", projectModel.getRootFileModel().getFileName());
-      this.kind = Kind.getKind(projectModel);
-   }
+    public DependencyGraphItem(ProjectModel projectModel) {
+        this.metadata = new HashMap<>(1);
+        this.metadata.put("name", projectModel.getRootFileModel().getFileName());
+        this.kind = Kind.getKind(projectModel);
+    }
 
-   public String getKind()
-   {
-      return kind.getValue();
-   }
+    public String getKind() {
+        return kind.getValue();
+    }
 
-   public Map<String, String> getMetadata()
-   {
-      return metadata;
-   }
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-   enum Kind
-   {
+    enum Kind {
 
-      EAR("Ear"), WAR_APP("WarApp"), WAR("War"), JAR("Jar"), EXTERNAL_JAR("ExternalJar"), UNKNOWN("unknown");
+        EAR("Ear"), WAR_APP("WarApp"), WAR("War"), JAR("Jar"), EXTERNAL_JAR("ExternalJar"), UNKNOWN("unknown");
 
-      private String value;
+        private String value;
 
-      Kind(String value)
-      {
-         this.value = value;
-      }
+        Kind(String value) {
+            this.value = value;
+        }
 
-      public String getValue()
-      {
-         return value;
-      }
+        public String getValue() {
+            return value;
+        }
 
-      static Kind getKind(ProjectModel projectModel)
-      {
-         String projectType;
-         if (projectModel.getProjectType() == null)
-         {
-            if (!projectModel.getRootFileModel().isDirectory())
-            {
-               projectType = FilenameUtils.getExtension(projectModel.getRootFileModel().getFileName());
+        static Kind getKind(ProjectModel projectModel) {
+            String projectType;
+            if (projectModel.getProjectType() == null) {
+                if (!projectModel.getRootFileModel().isDirectory()) {
+                    projectType = FilenameUtils.getExtension(projectModel.getRootFileModel().getFileName());
+                }
+                // if we're analyzing an exploded app we have a directory
+                else {
+                    projectType = "war";
+                }
+            } else {
+                projectType = projectModel.getProjectType();
             }
-            // if we're analyzing an exploded app we have a directory
-            else
-            {
-               projectType = "war";
+            boolean isChildren = projectModel.getParentProject() != null;
+            boolean isSkipped = projectModel.getRootFileModel() instanceof IdentifiedArchiveModel;
+            switch (projectType.toLowerCase()) {
+                case "jar":
+                    return isSkipped ? EXTERNAL_JAR : JAR;
+                case "war":
+                    return isChildren ? WAR : WAR_APP;
+                case "ear":
+                    return EAR;
+                default:
+                    return UNKNOWN; // should never happen, but who knows...
             }
-         }
-         else
-         {
-            projectType = projectModel.getProjectType();
-         }
-         boolean isChildren = projectModel.getParentProject() != null;
-         boolean isSkipped = projectModel.getRootFileModel() instanceof IdentifiedArchiveModel;
-         switch (projectType.toLowerCase())
-         {
-         case "jar":
-            return isSkipped ? EXTERNAL_JAR : JAR;
-         case "war":
-            return isChildren ? WAR : WAR_APP;
-         case "ear":
-            return EAR;
-         default:
-            return UNKNOWN; // should never happen, but who knows...
-         }
-      }
+        }
 
-   }
+    }
 }

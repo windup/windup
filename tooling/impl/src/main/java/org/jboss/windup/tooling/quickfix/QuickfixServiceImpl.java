@@ -11,8 +11,7 @@ import org.jboss.windup.util.exception.WindupException;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class QuickfixServiceImpl implements QuickfixService
-{
+public class QuickfixServiceImpl implements QuickfixService {
     @Inject
     private QuickfixTransformationRegistry transformationRegistry;
 

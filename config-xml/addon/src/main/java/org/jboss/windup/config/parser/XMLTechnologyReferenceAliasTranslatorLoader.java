@@ -19,25 +19,22 @@ import java.util.List;
 /**
  * Implements a {@link TechnologyReferenceAliasTranslatorLoader} using xml files. The XML files must end with the extension
  * ".windup.technologytransformer.xml".
- *
+ * <p>
  * The format of the file is defined by {@link TechnologyReferenceAliasTranslatorHandler}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class XMLTechnologyReferenceAliasTranslatorLoader implements TechnologyReferenceAliasTranslatorLoader
-{
+public class XMLTechnologyReferenceAliasTranslatorLoader implements TechnologyReferenceAliasTranslatorLoader {
     private static final String XML_EXTENSION = ".windup.technologytransformer.xml";
 
     @Inject
     private Furnace furnace;
 
     @Override
-    public Collection<TechnologyReferenceAliasTranslator> loadTranslators(RuleLoaderContext ruleLoaderContext)
-    {
+    public Collection<TechnologyReferenceAliasTranslator> loadTranslators(RuleLoaderContext ruleLoaderContext) {
         List<TechnologyReferenceAliasTranslator> translators = new ArrayList<>();
 
-        for (Path userRulesPath : ruleLoaderContext.getRulePaths())
-        {
+        for (Path userRulesPath : ruleLoaderContext.getRulePaths()) {
             Visitor<File> visitor = new Visitor<File>() {
                 @Override
                 public void visit(File file) {
@@ -51,8 +48,7 @@ public class XMLTechnologyReferenceAliasTranslatorLoader implements TechnologyRe
         return translators;
     }
 
-    private List<TechnologyReferenceAliasTranslator> loadTranslators(File file)
-    {
+    private List<TechnologyReferenceAliasTranslator> loadTranslators(File file) {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
 

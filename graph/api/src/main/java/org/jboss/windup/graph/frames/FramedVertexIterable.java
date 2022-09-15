@@ -10,21 +10,18 @@ import java.util.Iterator;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FramedVertexIterable<T extends VertexFrame> implements Iterable<T>
-{
+public class FramedVertexIterable<T extends VertexFrame> implements Iterable<T> {
     private final FramedGraph framedGraph;
     private final Iterable<Vertex> vertices;
     private final Class<T> type;
 
-    public FramedVertexIterable()
-    {
+    public FramedVertexIterable() {
         this.framedGraph = null;
         this.vertices = null;
         this.type = null;
     }
 
-    public FramedVertexIterable(FramedGraph framedGraph, Iterable<Vertex> vertices, Class<T> type)
-    {
+    public FramedVertexIterable(FramedGraph framedGraph, Iterable<Vertex> vertices, Class<T> type) {
         this.framedGraph = framedGraph;
         this.vertices = vertices;
         this.type = type;

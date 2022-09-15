@@ -6,6 +6,5 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 /**
  * The base {@link VertexFrame} type implemented by all model types.
  */
-public interface WindupVertexFrame extends VertexFrame, WindupFrame<Vertex>
-{
+public interface WindupVertexFrame extends VertexFrame, WindupFrame<Vertex> {
 }

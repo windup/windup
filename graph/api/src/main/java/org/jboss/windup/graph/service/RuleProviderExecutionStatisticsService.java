@@ -11,22 +11,18 @@ import java.util.List;
 /**
  * This service provides useful methods for dealing with {@link RuleProviderExecutionStatisticsModel} Vertices within
  * the graph
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class RuleProviderExecutionStatisticsService extends GraphService<RuleProviderExecutionStatisticsModel>
-{
-    public RuleProviderExecutionStatisticsService(GraphContext context)
-    {
+public class RuleProviderExecutionStatisticsService extends GraphService<RuleProviderExecutionStatisticsModel> {
+    public RuleProviderExecutionStatisticsService(GraphContext context) {
         super(context, RuleProviderExecutionStatisticsModel.class);
     }
 
     /**
      * Return an {@link Iterable} of all RuleProviderExecutionStatisticsModel ordered by Index (ascending)
      */
-    public Iterable<RuleProviderExecutionStatisticsModel> findAllOrderedByIndex()
-    {
+    public Iterable<RuleProviderExecutionStatisticsModel> findAllOrderedByIndex() {
         List<RuleProviderExecutionStatisticsModel> immutableList = findAll();
         List<RuleProviderExecutionStatisticsModel> mutableList = new ArrayList<>(immutableList.size());
         mutableList.addAll(immutableList);

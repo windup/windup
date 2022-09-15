@@ -49,23 +49,21 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 @RunWith(Arquillian.class)
-public class FileTest
-{
+public class FileTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("xml/FileXmlExample.windup.xml");
+                .addBeansXML()
+                .addAsResource("xml/FileXmlExample.windup.xml");
 
         return archive;
     }
@@ -80,36 +78,33 @@ public class FileTest
     private FileContentTestRuleProvider provider;
 
     @Test
-    public void testFileScan() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testFileScan() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Path inputPath = Paths.get("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class,
-                        MigrationRulesPhase.class));
+                    MigrationRulesPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
             ClassificationService classificationService = new ClassificationService(context);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
-            int count=0;
-            for (ClassificationModel classification : classifications)
-            {
+            int count = 0;
+            for (ClassificationModel classification : classifications) {
                 count++;
             }
             //test the classifications xml windup.xml rules
-            Assert.assertEquals(3,count);
+            Assert.assertEquals(3, count);
             //test the matches from the java rules
             Assert.assertTrue(provider.rule1ResultStrings.contains("file1"));
             Assert.assertTrue(provider.rule1ResultStrings.contains("file2"));
@@ -118,44 +113,41 @@ public class FileTest
     }
 
     @Singleton
-    public static class FileContentTestRuleProvider extends AbstractRuleProvider
-    {
+    public static class FileContentTestRuleProvider extends AbstractRuleProvider {
         private List<String> rule1ResultStrings = new ArrayList<>();
         private List<FileReferenceModel> rule1ResultModels = new ArrayList<>();
 
-        public FileContentTestRuleProvider()
-        {
+        public FileContentTestRuleProvider() {
             super(MetadataBuilder.forProvider(FileContentTestRuleProvider.class)
-                        .setPhase(InitialAnalysisPhase.class).setExecuteAfterIDs(Collections.singletonList("AnalyzeJavaFilesRuleProvider")));
+                    .setPhase(InitialAnalysisPhase.class).setExecuteAfterIDs(Collections.singletonList("AnalyzeJavaFilesRuleProvider")));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-            .addRule()
-            .when(File.inFileNamed("{text}.txt"))
-            .perform(new ParameterizedIterationOperation<FileReferenceModel>() {
-                private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
+                    .addRule()
+                    .when(File.inFileNamed("{text}.txt"))
+                    .perform(new ParameterizedIterationOperation<FileReferenceModel>() {
+                        private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
 
-                @Override
-                public void performParameterized(GraphRewrite event, EvaluationContext context, FileReferenceModel payload) {
-                    rule1ResultStrings.add(textPattern.getBuilder().build(event, context));
-                    rule1ResultModels.add(payload);
-                }
+                        @Override
+                        public void performParameterized(GraphRewrite event, EvaluationContext context, FileReferenceModel payload) {
+                            rule1ResultStrings.add(textPattern.getBuilder().build(event, context));
+                            rule1ResultModels.add(payload);
+                        }
 
-                @Override
-                public Set<String> getRequiredParameterNames() {
-                    return textPattern.getRequiredParameterNames();
-                }
+                        @Override
+                        public Set<String> getRequiredParameterNames() {
+                            return textPattern.getRequiredParameterNames();
+                        }
 
-                @Override
-                public void setParameterStore(ParameterStore store) {
-                    textPattern.setParameterStore(store);
-                }
-            });
-         }
+                        @Override
+                        public void setParameterStore(ParameterStore store) {
+                            textPattern.setParameterStore(store);
+                        }
+                    });
+        }
         // @formatter:on
     }
 

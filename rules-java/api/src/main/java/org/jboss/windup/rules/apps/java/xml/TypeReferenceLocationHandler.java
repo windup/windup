@@ -14,27 +14,24 @@ import org.w3c.dom.Element;
 
 /**
  * /**
- * 
+ * <p>
  * Represents a {@link TypeReferenceLocation}.
- * 
+ * <p>
  * Example:
- * 
+ *
  * <pre>
  *   &lt;location&gt;METHOD_PARAMETER&lt;/location&gt;
  * </pre>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "location", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class TypeReferenceLocationHandler implements ElementHandler<TypeReferenceLocation>
-{
+public class TypeReferenceLocationHandler implements ElementHandler<TypeReferenceLocation> {
     @Override
     public TypeReferenceLocation processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         String location = $(element).text();
-        if (StringUtils.isBlank(location))
-        {
+        if (StringUtils.isBlank(location)) {
             throw new WindupException("Error, 'location' element must have non-empty contents");
         }
 

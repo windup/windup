@@ -10,12 +10,10 @@ import java.util.List;
 import static org.apache.tinkerpop.gremlin.structure.Direction.IN;
 
 /**
- *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @TypeValue("TestIncidenceBbbModel")
-public interface TestIncidenceBbbModel extends WindupVertexFrame
-{
+public interface TestIncidenceBbbModel extends WindupVertexFrame {
     @Property("prop1")
     TestIncidenceBbbModel setProp1(String prop);
 

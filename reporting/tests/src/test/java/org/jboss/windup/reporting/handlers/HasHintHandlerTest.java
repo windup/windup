@@ -31,8 +31,7 @@ import org.w3c.dom.Element;
  * Created by mbriskar on 6/9/15.
  */
 @RunWith(Arquillian.class)
-public class HasHintHandlerTest
-{
+public class HasHintHandlerTest {
 
     private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hashint.windup.xml";
     private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hashint.rhamt.xml";
@@ -40,44 +39,39 @@ public class HasHintHandlerTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static AddonArchive getDeployment()
-    {
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
+    public static AddonArchive getDeployment() {
         return ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML();
+                .create(AddonArchive.class)
+                .addBeansXML();
     }
 
     @Inject
     private Furnace furnace;
 
     @Test
-    public void testWindupHintHandler() throws Exception
-    {
+    public void testWindupHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_WINDUP_FILE);
         testHintHandler(fXmlFile);
     }
 
     @Test
-    public void testRhamtHintHandler() throws Exception
-    {
+    public void testRhamtHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_RHAMT_FILE);
         testHintHandler(fXmlFile);
     }
 
     @Test
-    public void testMtaHintHandler() throws Exception
-    {
+    public void testMtaHintHandler() throws Exception {
         File fXmlFile = new File(HINT_XML_MTA_FILE);
         testHintHandler(fXmlFile);
     }
 
-    public void testHintHandler(File fXmlFile) throws Exception
-    {
+    public void testHintHandler(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ReplacementQuickfixModel.TYPE)
-public interface ReplacementQuickfixModel extends QuickfixModel
-{
+public interface ReplacementQuickfixModel extends QuickfixModel {
     String TYPE = "ReplacementQuickfixModel";
 
     String PROPERTY_SEARCH_STRING = TYPE + "-search";

@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-public class ToolingModeData 
-{
+public class ToolingModeData {
     public Set<String> input;
     public String output;
     public boolean sourceMode;

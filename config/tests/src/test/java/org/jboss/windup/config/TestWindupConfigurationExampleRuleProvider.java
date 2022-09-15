@@ -32,87 +32,77 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProvider
-{
+public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(TestWindupConfigurationExampleRuleProvider.class);
 
     private final List<JavaMethodModel> results = new ArrayList<>();
 
     private WindupConfigurationModel config;
 
-    public TestWindupConfigurationExampleRuleProvider()
-    {
+    public TestWindupConfigurationExampleRuleProvider() {
         super(MetadataBuilder.forProvider(TestWindupConfigurationExampleRuleProvider.class, "TestWindupConfigurationExampleRuleProvider")
-                    .setPhase(DiscoveryPhase.class));
+                .setPhase(DiscoveryPhase.class));
     }
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion() {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
-            {
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                 pipeline.out("javaMethod").has("methodName", "toString");
             }
         };
 
         Configuration configuration = ConfigurationBuilder.begin()
-        .addRule()
+                .addRule()
 
-        /*
-         * Specify a set of conditions that must be met in order for the .perform() clause of this rule to
-         * be evaluated.
-         */
-        .when(
-            /*
-             * Select all java classes with the FQCN matching "com.example.(.*)", store the
-             * resultant list in a parameter named "javaClasses"
-             */
-            Query.fromType(JavaClassModel.class)
-                .withProperty("qualifiedName", QueryPropertyComparisonType.REGEX, "com\\.example\\..*")
-                .as("javaClasses")
+                /*
+                 * Specify a set of conditions that must be met in order for the .perform() clause of this rule to
+                 * be evaluated.
+                 */
+                .when(
+                        /*
+                         * Select all java classes with the FQCN matching "com.example.(.*)", store the
+                         * resultant list in a parameter named "javaClasses"
+                         */
+                        Query.fromType(JavaClassModel.class)
+                                .withProperty("qualifiedName", QueryPropertyComparisonType.REGEX, "com\\.example\\..*")
+                                .as("javaClasses")
 
-                .and(Query.from("javaClasses")
-                    .piped(methodNameCriterion)
-                    .as("javaMethods")
+                                .and(Query.from("javaClasses")
+                                        .piped(methodNameCriterion)
+                                        .as("javaMethods")
+                                )
                 )
-        )
 
-        /*
-         * If all conditions of the .when() clause were satisfied, the following conditions will be
-         * evaluated
-         */
-        .perform(Iteration.over(JavaMethodModel.class,"javaMethods")
-            .perform(new AbstractIterationOperation<JavaMethodModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel)
-                {
-                    TestWindupConfigurationExampleRuleProvider.this.config = WindupConfigurationService
-                                .getConfigurationModel(event.getGraphContext());
+                /*
+                 * If all conditions of the .when() clause were satisfied, the following conditions will be
+                 * evaluated
+                 */
+                .perform(Iteration.over(JavaMethodModel.class, "javaMethods")
+                        .perform(new AbstractIterationOperation<JavaMethodModel>() {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context, JavaMethodModel methodModel) {
+                                TestWindupConfigurationExampleRuleProvider.this.config = WindupConfigurationService
+                                        .getConfigurationModel(event.getGraphContext());
 
-                    results.add(methodModel);
-                    LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
-                        + methodModel.getJavaClass().getQualifiedName());
-                }
-            })
-            .endIteration()
-        );
+                                results.add(methodModel);
+                                LOG.info("Overridden " + methodModel.getMethodName() + " Method in type: "
+                                        + methodModel.getJavaClass().getQualifiedName());
+                            }
+                        })
+                        .endIteration()
+                );
         return configuration;
     }
 
-    public List<JavaMethodModel> getResults()
-    {
+    public List<JavaMethodModel> getResults() {
         return results;
     }
 
-    public WindupConfigurationModel getConfig()
-    {
+    public WindupConfigurationModel getConfig() {
         return config;
     }
 }

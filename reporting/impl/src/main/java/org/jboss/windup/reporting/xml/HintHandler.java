@@ -27,14 +27,14 @@ import org.w3c.dom.Element;
 
 /**
  * Adds the provided {@link Classification} operation to the currently selected items.
- *
+ * <p>
  * Expected format:
  *
  * <pre>
  * &lt;hint message="hint" effort="8" severity="INFO"&gt;
  * &lt;/hint&gt;
  * </pre>
- *
+ * <p>
  * Alternatively, the hint message can be in its own element. This is primary useful for longer hint content:
  *
  * <pre>
@@ -44,19 +44,17 @@ import org.w3c.dom.Element;
  *  &lt;/message&gt;
  * &lt;/hint&gt;
  * </pre>
- *
+ * <p>
  * Also note that markdown formatting is fully supported via the <a href="http://www.pegdown.org/">Pegdown</a> library.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "hint", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class HintHandler implements ElementHandler<Hint>
-{
+public class HintHandler implements ElementHandler<Hint> {
     private static final Logger LOG = Logger.getLogger(HintHandler.class.getName());
 
     @Override
-    public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String title = $(element).attr("title");
         String categoryID = $(element).attr("category-id");
 
@@ -68,15 +66,12 @@ public class HintHandler implements ElementHandler<Hint>
         String in = $(element).attr("in");
         Set<String> tags = new HashSet<>();
 
-        if (StringUtils.isBlank(message))
-        {
+        if (StringUtils.isBlank(message)) {
             StringBuilder messageBuilder = new StringBuilder();
             List<Element> children = $(element).children().get();
-            for (Element child : children)
-            {
-                if (child.getNodeName().equals("message"))
-                {
-                    messageBuilder.append((String)handlerManager.processElement(child));
+            for (Element child : children) {
+                if (child.getNodeName().equals("message")) {
+                    messageBuilder.append((String) handlerManager.processElement(child));
                 }
             }
             message = messageBuilder.toString();
@@ -84,47 +79,37 @@ public class HintHandler implements ElementHandler<Hint>
             message = trimLeadingAndTrailingSpaces(message);
         }
 
-        if (StringUtils.isBlank(message))
-        {
+        if (StringUtils.isBlank(message)) {
             throw new WindupException("Error, 'hint' element must have a non-empty 'message' attribute or element");
         }
 
         String effortStr = $(element).attr("effort");
 
         HintText hint;
-        if (!StringUtils.isBlank(title))
-        {
+        if (!StringUtils.isBlank(title)) {
             hint = Hint.in(in).titled(title).withText(message);
-        }
-        else
-        {
+        } else {
             hint = Hint.in(in).withText(message);
         }
 
-        if (StringUtils.isNotBlank(categoryID))
-        {
+        if (StringUtils.isNotBlank(categoryID)) {
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
             IssueCategory issueCategory = issueCategoryRegistry.getByID(categoryID);
             hint.withIssueCategory(issueCategory);
         }
 
         int effort = 0;
-        if (!StringUtils.isBlank(effortStr))
-        {
-            try
-            {
+        if (!StringUtils.isBlank(effortStr)) {
+            try {
                 effort = Integer.parseInt(effortStr);
                 hint.withEffort(effort);
-            }
-            catch (NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 throw new WindupException("Could not parse effort level: " + effortStr + " as an integer!");
             }
         }
 
         String issueDisplayModeString = $(element).attr("issue-display-mode");
-        if (StringUtils.isNotBlank(issueDisplayModeString))
-        {
+        if (StringUtils.isNotBlank(issueDisplayModeString)) {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
             if (issueDisplayMode == IssueDisplayMode.DETAIL_ONLY && effort != 0)
                 LOG.warning("WARNING: hint: " + title + " with effort " + effort + " is marked as detail only. This is generally a mistake.");
@@ -132,10 +117,8 @@ public class HintHandler implements ElementHandler<Hint>
         }
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            switch (child.getNodeName())
-            {
+        for (Element child : children) {
+            switch (child.getNodeName()) {
                 case "link":
                     Link link = handlerManager.processElement(child);
                     hint.with(link);
@@ -154,21 +137,17 @@ public class HintHandler implements ElementHandler<Hint>
         return (Hint) hint;
     }
 
-    public static String trimLeadingAndTrailingSpaces(String markdown)
-    {
+    public static String trimLeadingAndTrailingSpaces(String markdown) {
         StringBuilder markdownSB = new StringBuilder();
 
         StringBuilder currentLine = new StringBuilder();
 
         String firstLineIndent = null;
-        for (int i = 0; i < markdown.length(); i++)
-        {
+        for (int i = 0; i < markdown.length(); i++) {
             char currentChar = markdown.charAt(i);
-            if (currentChar == '\r' || currentChar == '\n')
-            {
+            if (currentChar == '\r' || currentChar == '\n') {
                 String currentLineString = currentLine.toString();
-                if (firstLineIndent == null && !StringUtils.isEmpty(currentLineString))
-                {
+                if (firstLineIndent == null && !StringUtils.isEmpty(currentLineString)) {
                     int firstNonWhitespaceIndex = StringUtils.indexOfAnyBut(currentLineString, " \t");
                     if (firstNonWhitespaceIndex != -1)
                         firstLineIndent = currentLineString.substring(0, firstNonWhitespaceIndex);
@@ -181,13 +160,10 @@ public class HintHandler implements ElementHandler<Hint>
                 currentLine.setLength(0);
 
                 // skip the next line separator for \r\n cases
-                if (currentChar == '\r' && markdown.length() > (i + 1) && markdown.charAt(i + 1) == '\n')
-                {
+                if (currentChar == '\r' && markdown.length() > (i + 1) && markdown.charAt(i + 1) == '\n') {
                     i++;
                 }
-            }
-            else
-            {
+            } else {
                 currentLine.append(currentChar);
             }
         }

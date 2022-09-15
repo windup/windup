@@ -15,31 +15,25 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
-{
+public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile {
 
-    public String getPath(JavaClassFileModel jcfm)
-    {
+    public String getPath(JavaClassFileModel jcfm) {
         return jcfm.getJavaClass().getQualifiedName();
     }
 
-    public String getPath(ReportResourceFileModel model)
-    {
+    public String getPath(ReportResourceFileModel model) {
         return "resources/" + model.getPrettyPath();
     }
 
-    public String getPath(FileModel model)
-    {
+    public String getPath(FileModel model) {
         return model.getPrettyPathWithinProject();
     }
 
-    public String getPath(JavaSourceFileModel javaSourceModel)
-    {
+    public String getPath(JavaSourceFileModel javaSourceModel) {
         String filename = javaSourceModel.getFileName();
         String packageName = javaSourceModel.getPackageName();
 
-        if (filename.endsWith(".java"))
-        {
+        if (filename.endsWith(".java")) {
             filename = filename.substring(0, filename.length() - 5);
         }
 

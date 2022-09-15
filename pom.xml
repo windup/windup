@@ -11,15 +11,15 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
-    <version>5.3.1-SNAPSHOT</version>
+    <version>6.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Parent</name>
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.9.2.Final</version.forge>
-        <version.furnace>2.28.4.Final</version.furnace>
+        <version.forge>3.10.0.Final</version.forge>
+        <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
@@ -115,8 +115,10 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
+        <module>rules-yaml</module>
 
         <module>exec</module>
         <module>tooling</module>
@@ -572,10 +574,32 @@
         </profile>
 
         <profile>
-            <id>mta</id>
+            <id>windup</id>
             <activation>
                 <property>
                     <name>!downstream</name>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Windup</distribution.brand.name>
+                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://github.com/windup/windup</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-windup</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mta</value>
                 </property>
             </activation>
             <properties>
@@ -610,6 +634,28 @@
                 <resources>
                     <resource>
                         <directory>src/main/resources-tackle</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>mtr</id>
+            <activation>
+                <property>
+                    <name>downstream</name>
+                    <value>mtr</value>
+                </property>
+            </activation>
+            <properties>
+                <distribution.brand.name>Migration Toolkit for Runtimes by Red Hat (MTR)</distribution.brand.name>
+                <distribution.brand.name-acronym>MTR</distribution.brand.name-acronym>
+                <distribution.brand.documentation.url>https://developers.redhat.com/products/mtr/overview/</distribution.brand.documentation.url>
+                <distribution.brand.cli-name>mtr-cli</distribution.brand.cli-name>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-mtr</directory>
                     </resource>
                 </resources>
             </build>

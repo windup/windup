@@ -22,27 +22,23 @@ import java.util.stream.StreamSupport;
 /**
  * Provides useful methods for querying, creating, and updating {@link ProjectModel} instances.
  */
-public class ProjectService extends GraphService<ProjectModel>
-{
+public class ProjectService extends GraphService<ProjectModel> {
     public static final String SHARED_LIBS_UNIQUE_ID = "<shared-libs>";
     public static final String SHARED_LIBS_APP_NAME = "Archives shared by multiple applications";
     public static final String SHARED_LIBS_FILENAME = "shared-libs";
 
-    public ProjectService(GraphContext context)
-    {
+    public ProjectService(GraphContext context) {
         super(context, ProjectModel.class);
     }
 
     /**
      * Gets a {@link ProjectModel} with the given name.
      */
-    public ProjectModel getByName(String name)
-    {
+    public ProjectModel getByName(String name) {
         return getUnique(getQuery().getRawTraversal().has(ProjectModel.NAME, name));
     }
 
-    public ProjectModel getByUniqueID(String id)
-    {
+    public ProjectModel getByUniqueID(String id) {
         return getUnique(getQuery().getRawTraversal().has(ProjectModel.UNIQUE_ID, id));
     }
 
@@ -50,12 +46,10 @@ public class ProjectService extends GraphService<ProjectModel>
      * Gets the project model used for shared libraries (libraries duplicated in multiple places within one or
      * more applications).
      */
-    public ProjectModel getOrCreateSharedLibsProject()
-    {
+    public ProjectModel getOrCreateSharedLibsProject() {
         ProjectService service = new ProjectService(getGraphContext());
         ProjectModel sharedLibsProject = service.getByUniqueID(SHARED_LIBS_UNIQUE_ID);
-        if (sharedLibsProject == null)
-        {
+        if (sharedLibsProject == null) {
             sharedLibsProject = service.create();
             sharedLibsProject.setName(SHARED_LIBS_APP_NAME);
             sharedLibsProject.setUniqueID(SHARED_LIBS_UNIQUE_ID);
@@ -80,15 +74,12 @@ public class ProjectService extends GraphService<ProjectModel>
         return sharedLibsProject;
     }
 
-    public Map<ProjectModel, ProjectModel> getProjectToRootProjectMap()
-    {
+    public Map<ProjectModel, ProjectModel> getProjectToRootProjectMap() {
         Map<ProjectModel, ProjectModel> projectModels = new HashMap<>();
 
-        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths())
-        {
+        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths()) {
             ProjectModel rootProjectModel = inputPath.getProjectModel();
-            if (rootProjectModel == null)
-            {
+            if (rootProjectModel == null) {
                 continue;
             }
 
@@ -99,24 +90,19 @@ public class ProjectService extends GraphService<ProjectModel>
         return projectModels;
     }
 
-    public Set<ProjectModel> getFilteredProjectModels(Collection<String> selectedPaths)
-    {
+    public Set<ProjectModel> getFilteredProjectModels(Collection<String> selectedPaths) {
         Set<ProjectModel> projectModels = new HashSet<>();
 
-        if (selectedPaths.isEmpty())
-        {
+        if (selectedPaths.isEmpty()) {
             return projectModels;
         }
 
-        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths())
-        {
+        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths()) {
             String filePath = inputPath.getFilePath();
 
-            if (selectedPaths.contains(filePath))
-            {
+            if (selectedPaths.contains(filePath)) {
                 ProjectModel rootProjectModel = inputPath.getProjectModel();
-                if (rootProjectModel == null)
-                {
+                if (rootProjectModel == null) {
                     continue;
                 }
 
@@ -128,8 +114,7 @@ public class ProjectService extends GraphService<ProjectModel>
         return projectModels;
     }
 
-    public Set<ProjectModel> getRootProjectModels()
-    {
+    public Set<ProjectModel> getRootProjectModels() {
         Iterable<FileModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
 
         return StreamSupport.stream(fileModelIterable.spliterator(), false)

@@ -32,21 +32,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @RunWith(Arquillian.class)
-public class QuickfixHandlerTest
-{
+public class QuickfixHandlerTest {
     private static final String QUICKFIX_XML_WINDUP_FILE = "src/test/resources/handler/quickfix.windup.xml";
     private static final String QUICKFIX_XML_RHAMT_FILE = "src/test/resources/handler/quickfix.rhamt.xml";
     private static final String QUICKFIX_XML_MTA_FILE = "src/test/resources/handler/quickfix.mta.xml";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static AddonArchive getDeployment()
-    {
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -54,28 +52,24 @@ public class QuickfixHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testWindupClassificationParsing() throws Exception
-    {
+    public void testWindupClassificationParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_WINDUP_FILE);
         testClassificationParsing(fXmlFile);
     }
 
     @Test
-    public void testRhamtClassificationParsing() throws Exception
-    {
+    public void testRhamtClassificationParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
         testClassificationParsing(fXmlFile);
     }
 
     @Test
-    public void testMtaClassificationParsing() throws Exception
-    {
+    public void testMtaClassificationParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_MTA_FILE);
         testClassificationParsing(fXmlFile);
     }
 
-    public void testClassificationParsing(File fXmlFile) throws Exception
-    {
+    public void testClassificationParsing(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -87,7 +81,7 @@ public class QuickfixHandlerTest
         Assert.assertEquals(2, classificationList.size());
 
         Element firstClassification = classificationList.get(0);
-        Classification classification = parser.<Classification> processElement(firstClassification);
+        Classification classification = parser.<Classification>processElement(firstClassification);
 
         Assert.assertEquals(0, classification.getEffort());
         Assert.assertEquals("test-classification", classification.getClassificationPattern().toString());
@@ -98,7 +92,7 @@ public class QuickfixHandlerTest
         checkQuickfix(quickfixes.get(1), "test2 qf", QuickfixType.REPLACE, null, "test1", "test2");
 
         Element secondClassification = classificationList.get(1);
-        classification = parser.<Classification> processElement(secondClassification);
+        classification = parser.<Classification>processElement(secondClassification);
 
         Assert.assertEquals(null, classification.getVariableName());
         Assert.assertEquals(1, classification.getEffort());
@@ -120,28 +114,24 @@ public class QuickfixHandlerTest
     }
 
     @Test
-    public void testWindupHintParsing() throws Exception
-    {
+    public void testWindupHintParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_WINDUP_FILE);
         testHintParsing(fXmlFile);
     }
 
     @Test
-    public void testRhamtHintParsing() throws Exception
-    {
+    public void testRhamtHintParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
         testHintParsing(fXmlFile);
     }
 
     @Test
-    public void testMtaHintParsing() throws Exception
-    {
+    public void testMtaHintParsing() throws Exception {
         File fXmlFile = new File(QUICKFIX_XML_MTA_FILE);
         testHintParsing(fXmlFile);
     }
 
-    public void testHintParsing(File fXmlFile) throws Exception
-    {
+    public void testHintParsing(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -161,25 +151,21 @@ public class QuickfixHandlerTest
         List<Link> links = hint.getLinks();
         Assert.assertEquals("url1", links.get(0).getLink());
         Assert.assertEquals("description1", links.get(0).getTitle());
-        
+
         Assert.assertEquals(3, hint.getQuickfixes().size());
         checkQuickfix(hint.getQuickfixes().get(0), "test1 quickfix", QuickfixType.DELETE_LINE, null, null, null);
         checkQuickfix(hint.getQuickfixes().get(2), "test3 quickfix", QuickfixType.REPLACE, null, "what", "when");
         checkQuickfix(hint.getQuickfixes().get(1), "test2 quickfix", QuickfixType.INSERT_LINE, "something new", null, null);
     }
 
-    private void checkQuickfix(Quickfix fix, String name, QuickfixType type, String newlineStr, String searchStr, String replacementStr)
-    {
+    private void checkQuickfix(Quickfix fix, String name, QuickfixType type, String newlineStr, String searchStr, String replacementStr) {
         System.out.println(fix);
 
         Assert.assertEquals(name, fix.getName());
         Assert.assertEquals(type, fix.getType());
-        if (type == QuickfixType.INSERT_LINE)
-        {
+        if (type == QuickfixType.INSERT_LINE) {
             Assert.assertEquals(newlineStr, fix.getNewline());
-        }
-        else if (type == QuickfixType.REPLACE)
-        {
+        } else if (type == QuickfixType.REPLACE) {
             Assert.assertEquals(replacementStr, fix.getReplacementStr());
             Assert.assertEquals(searchStr, fix.getSearchStr());
         }

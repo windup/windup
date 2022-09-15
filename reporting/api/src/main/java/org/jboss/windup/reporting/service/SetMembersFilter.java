@@ -11,21 +11,18 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public final class SetMembersFilter implements Predicate<Traverser<Vertex>>
-{
+public final class SetMembersFilter implements Predicate<Traverser<Vertex>> {
     private final Set<Vertex> initialVertices;
 
     /**
      * Only items that match the provided set of vertices will be passed through the pipeline.
      */
-    public SetMembersFilter(Set<Vertex> initialVertices)
-    {
+    public SetMembersFilter(Set<Vertex> initialVertices) {
         this.initialVertices = initialVertices;
     }
 
     @Override
-    public boolean test(Traverser<Vertex> vertexTraverser)
-    {
+    public boolean test(Traverser<Vertex> vertexTraverser) {
         return initialVertices.contains(vertexTraverser.get());
     }
 }

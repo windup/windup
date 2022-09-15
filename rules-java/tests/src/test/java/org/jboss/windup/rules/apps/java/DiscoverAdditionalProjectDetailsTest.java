@@ -43,8 +43,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverAdditionalProjectDetailsTest
-{
+public class DiscoverAdditionalProjectDetailsTest {
     @Inject
     private WindupProcessor processor;
     @Inject
@@ -52,33 +51,30 @@ public class DiscoverAdditionalProjectDetailsTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Test
-    public void testLog4jNameFound() throws Exception
-    {
+    public void testLog4jNameFound() throws Exception {
         String inputPath = "../../test-files/jee-example-app-1.0.0.ear";
         final Path outputPath = getDefaultPath();
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-        try (GraphContext context = factory.create(outputPath, true))
-        {
+        try (GraphContext context = factory.create(outputPath, true)) {
             final WindupConfiguration processorConfig = new WindupConfiguration();
-            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(SourceModeOption.NAME, false);
 
             Predicate<RuleProvider> ruleFilter = new AndPredicate(new RuleProviderWithDependenciesPredicate(MigrationRulesPhase.class),
-                        new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class,
-                                    BeforeDecompileClassesRuleProvider.class)));
+                    new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class,
+                            BeforeDecompileClassesRuleProvider.class)));
 
             processorConfig.setRuleProviderFilter(ruleFilter);
             processorConfig.setGraphContext(context);
@@ -92,14 +88,12 @@ public class DiscoverAdditionalProjectDetailsTest
             boolean manifestFound = false;
             boolean jarNameFound = false;
             boolean jarVersionFound = false;
-            for (ArchiveModel archiveModel : archiveService.findAllByProperty(ArchiveModel.ARCHIVE_NAME, "log4j-1.2.6.jar"))
-            {
+            for (ArchiveModel archiveModel : archiveService.findAllByProperty(ArchiveModel.ARCHIVE_NAME, "log4j-1.2.6.jar")) {
                 if (archiveModel instanceof DuplicateArchiveModel)
-                    archiveModel = ((DuplicateArchiveModel)archiveModel).getCanonicalArchive();
+                    archiveModel = ((DuplicateArchiveModel) archiveModel).getCanonicalArchive();
 
                 JarManifestService jarManifestService = new JarManifestService(context);
-                for (JarManifestModel manifest : jarManifestService.getManifestsByArchive(archiveModel))
-                {
+                for (JarManifestModel manifest : jarManifestService.getManifestsByArchive(archiveModel)) {
                     manifestFound = true;
 
                     if ("log4j".equals(manifest.getName()))
@@ -119,10 +113,9 @@ public class DiscoverAdditionalProjectDetailsTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_classmetadatatest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_classmetadatatest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
 }

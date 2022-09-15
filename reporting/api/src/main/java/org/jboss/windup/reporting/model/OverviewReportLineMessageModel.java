@@ -16,8 +16,7 @@ import org.jboss.windup.graph.Property;
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(OverviewReportLineMessageModel.TYPE)
-public interface OverviewReportLineMessageModel extends WindupVertexFrame
-{
+public interface OverviewReportLineMessageModel extends WindupVertexFrame {
     String TYPE = "OverviewReportLineMessageModel";
     String PROPERTY_RULE_ID = TYPE + "-ruleID";
     String PROJECT_MODEL = TYPE + "-project";

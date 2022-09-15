@@ -11,8 +11,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaApplicationOverviewReportModel.TYPE)
-public interface JavaApplicationOverviewReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
-{
+public interface JavaApplicationOverviewReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel {
     String TYPE = "JavaApplicationOverviewReportModel";
 
 

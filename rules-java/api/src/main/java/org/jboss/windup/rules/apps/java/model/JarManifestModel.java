@@ -14,8 +14,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Contains information from the META-INF/MANIFEST.MF file within an archive.
  */
 @TypeValue(JarManifestModel.TYPE)
-public interface JarManifestModel extends FileModel, SourceFileModel, ElementFrame
-{
+public interface JarManifestModel extends FileModel, SourceFileModel, ElementFrame {
     String TYPE = "JarManifestModel";
     String ARCHIVE = TYPE + "-archiveToManifest";
 
@@ -36,14 +35,12 @@ public interface JarManifestModel extends FileModel, SourceFileModel, ElementFra
     @Adjacency(label = ARCHIVE, direction = Direction.IN)
     void setArchive(final ArchiveModel archive);
 
-    default String getName()
-    {
+    default String getName() {
         String name = StringUtils.defaultIfBlank(getProperty(SPEC_TITLE), getProperty(BUNDLE_NAME));
         return StringUtils.defaultIfBlank(name, getProperty(IMPLEMENTATION_TITLE));
     }
 
-    default String getVendor()
-    {
+    default String getVendor() {
         return StringUtils.defaultIfBlank(getProperty(SPEC_VENDOR), getProperty(BUNDLE_VENDOR));
     }
 
@@ -51,8 +48,7 @@ public interface JarManifestModel extends FileModel, SourceFileModel, ElementFra
         return getProperty(IMPLEMENTATION_VERSION);
     }
 
-    default String getDescription()
-    {
+    default String getDescription() {
         return getProperty(BUNDLE_DESCRIPTION);
     }
 

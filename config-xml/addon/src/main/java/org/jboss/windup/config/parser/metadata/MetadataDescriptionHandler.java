@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 
 /**
  * Contains simple descriptive text describing this ruleset.
- *
+ * <p>
  * For example:
  *
  * <pre>
@@ -20,14 +20,12 @@ import org.w3c.dom.Element;
  * </pre>
  */
 @NamespaceElementHandler(elementName = MetadataDescriptionHandler.DESCRIPTION, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataDescriptionHandler implements ElementHandler<String>
-{
+public class MetadataDescriptionHandler implements ElementHandler<String> {
 
     public static final String DESCRIPTION = "description";
 
     @Override
-    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         return element.getTextContent();
     }
 

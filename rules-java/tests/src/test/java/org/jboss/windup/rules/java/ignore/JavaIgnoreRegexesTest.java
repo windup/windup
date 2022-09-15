@@ -62,19 +62,17 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaIgnoreRegexesTest
-{
+public class JavaIgnoreRegexesTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -88,16 +86,14 @@ public class JavaIgnoreRegexesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testRegexIgnore() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testRegexIgnore() throws Exception {
+        try (GraphContext context = factory.create(true)) {
 
             Assert.assertNotNull(context);
 
             // Output dir.
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -119,13 +115,12 @@ public class JavaIgnoreRegexesTest
             fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
             pm.addFileModel(fileModel);
 
-            try
-            {
+            try {
                 Predicate<RuleProvider> predicate =
-                            new AndPredicate(
-                                        new RuleProviderWithDependenciesPredicate(JavaIgnoreRegexesTestRuleProvider.class),
-                                        new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
-                            );
+                        new AndPredicate(
+                                new RuleProviderWithDependenciesPredicate(JavaIgnoreRegexesTestRuleProvider.class),
+                                new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
+                        );
 
                 IgnoredFileRegexModel ignoredFileRegexModel = new GraphService<IgnoredFileRegexModel>(context, IgnoredFileRegexModel.class).create();
                 ignoredFileRegexModel.setRegex(".*JavaClassTestFile1.*");
@@ -133,21 +128,21 @@ public class JavaIgnoreRegexesTest
                 WindupJavaConfigurationService.getJavaConfigurationModel(context).addIgnoredFileRegex(ignoredFileRegexModel);
 
                 WindupConfiguration configuration = new WindupConfiguration()
-                            .setGraphContext(context)
-                            .setRuleProviderFilter(predicate)
-                            .addInputPath(Paths.get(inputPath))
-                            .setOutputDirectory(outputPath)
-                            .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                            .setOptionValue(SourceModeOption.NAME, true);
+                        .setGraphContext(context)
+                        .setRuleProviderFilter(predicate)
+                        .addInputPath(Paths.get(inputPath))
+                        .setOutputDirectory(outputPath)
+                        .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                        .setOptionValue(SourceModeOption.NAME, true);
 
                 processor.execute(configuration);
 
                 GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
                 GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                            ClassificationModel.class);
+                        ClassificationModel.class);
 
                 GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                            JavaTypeReferenceModel.class);
+                        JavaTypeReferenceModel.class);
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
@@ -158,30 +153,19 @@ public class JavaIgnoreRegexesTest
                 boolean foundAddonDep2 = false;
                 boolean foundIterators = false;
                 boolean foundCallables = false;
-                for (InlineHintModel hint : hints)
-                {
+                for (InlineHintModel hint : hints) {
                     System.out.println("Hint: " + hint.getHint());
-                    if (hint.getHint().contains("AddonDependencyEntry"))
-                    {
-                        if (!foundAddonDep1)
-                        {
+                    if (hint.getHint().contains("AddonDependencyEntry")) {
+                        if (!foundAddonDep1) {
                             foundAddonDep1 = true;
-                        }
-                        else if (!foundAddonDep2)
-                        {
+                        } else if (!foundAddonDep2) {
                             foundAddonDep2 = true;
-                        }
-                        else
-                        {
+                        } else {
                             Assert.fail("Found too many references to AddonDependencyEntry");
                         }
-                    }
-                    else if (hint.getHint().contains("util.Callables"))
-                    {
+                    } else if (hint.getHint().contains("util.Callables")) {
                         foundCallables = true;
-                    }
-                    else if (hint.getHint().contains("util.Iterators"))
-                    {
+                    } else if (hint.getHint().contains("util.Iterators")) {
                         foundIterators = true;
                     }
                 }
@@ -196,9 +180,7 @@ public class JavaIgnoreRegexesTest
 
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
                 Assert.assertEquals(1, Iterators.asList(fileModels).size());
-            }
-            finally
-            {
+            } finally {
                 FileUtils.deleteDirectory(outputPath.toFile());
             }
         }
@@ -206,47 +188,41 @@ public class JavaIgnoreRegexesTest
     }
 
     @Singleton
-    public static class JavaIgnoreRegexesTestRuleProvider extends AbstractRuleProvider
-    {
+    public static class JavaIgnoreRegexesTestRuleProvider extends AbstractRuleProvider {
         private Set<JavaTypeReferenceModel> typeReferences = new HashSet<>();
 
-        public JavaIgnoreRegexesTestRuleProvider()
-        {
+        public JavaIgnoreRegexesTestRuleProvider() {
             super(MetadataBuilder.forProvider(JavaIgnoreRegexesTestRuleProvider.class)
-                        .setPhase(InitialAnalysisPhase.class)
-                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class)
-                        .addExecuteAfter(IndexJavaSourceFilesRuleProvider.class));
+                    .setPhase(InitialAnalysisPhase.class)
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class)
+                    .addExecuteAfter(IndexJavaSourceFilesRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            AbstractIterationOperation<JavaTypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<JavaTypeReferenceModel>()
-            {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            AbstractIterationOperation<JavaTypeReferenceModel> addTypeRefToList = new AbstractIterationOperation<JavaTypeReferenceModel>() {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                {
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                     typeReferences.add(payload);
                 }
             };
 
             return ConfigurationBuilder.begin()
-            .addRule()
-            .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
-            .perform(
-                Classification.as("Furnace Service {file}").withDescription("Described by {file}").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
-                    .and(Hint.withText("Furnace type references (such as {name}) imply that the client code must be run within a Furnace container.")
-                             .withEffort(8)
-                    .and(addTypeRefToList))
-            )
-            .where("suffix").matches("\\d");
+                    .addRule()
+                    .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
+                    .perform(
+                            Classification.as("Furnace Service {file}").withDescription("Described by {file}").with(Link.to("JBoss Forge", "http://forge.jboss.org")).withEffort(0)
+                                    .and(Hint.withText("Furnace type references (such as {name}) imply that the client code must be run within a Furnace container.")
+                                            .withEffort(8)
+                                            .and(addTypeRefToList))
+                    )
+                    .where("suffix").matches("\\d");
 
         }
         // @formatter:on
 
-        public Set<JavaTypeReferenceModel> getTypeReferences()
-        {
+        public Set<JavaTypeReferenceModel> getTypeReferences() {
             return typeReferences;
         }
     }

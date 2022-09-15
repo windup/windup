@@ -7,23 +7,19 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TagsLibTest
-{
+public class TagsLibTest {
     @Test
-    public void testTagsLoading() throws Exception
-    {
+    public void testTagsLoading() throws Exception {
         final TagService tagService = new TagService();
 
         File file = new File("src/test/java/org/jboss/windup/config/tags/test2.tags.xml");
-        try(InputStream is = new FileInputStream(file))
-        {
+        try (InputStream is = new FileInputStream(file)) {
             tagService.readTags(is);
-        }
-        catch( IOException ex )
-        {
+        } catch (IOException ex) {
             throw ex;
         }
         Assert.assertNotNull(tagService.getTag("a-prime"));
@@ -89,17 +85,13 @@ public class TagsLibTest
 
 
     @Test
-    public void testTagsExportingToJavaScript() throws Exception
-    {
+    public void testTagsExportingToJavaScript() throws Exception {
         final TagService tagService = new TagService();
 
         File file = new File("src/test/java/org/jboss/windup/config/tags/java-ee.test.tags.xml");
-        try(InputStream is = new FileInputStream(file))
-        {
+        try (InputStream is = new FileInputStream(file)) {
             tagService.readTags(is);
-        }
-        catch( IOException ex )
-        {
+        } catch (IOException ex) {
             throw ex;
         }
 

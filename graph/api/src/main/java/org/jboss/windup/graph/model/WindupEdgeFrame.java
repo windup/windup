@@ -8,6 +8,5 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface WindupEdgeFrame extends EdgeFrame, WindupFrame<Edge>
-{
+public interface WindupEdgeFrame extends EdgeFrame, WindupFrame<Edge> {
 }

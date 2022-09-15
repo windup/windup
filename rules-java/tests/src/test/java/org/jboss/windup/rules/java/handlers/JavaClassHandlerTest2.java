@@ -28,8 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @RunWith(Arquillian.class)
-public class JavaClassHandlerTest2
-{
+public class JavaClassHandlerTest2 {
 
     private static final String JAVA_CLASS_XML_WINDUP_FILE = "src/test/resources/handler/javaclass-enumconst.windup.xml";
     private static final String JAVA_CLASS_XML_RHAMT_FILE = "src/test/resources/handler/javaclass-enumconst.rhamt.xml";
@@ -37,16 +36,15 @@ public class JavaClassHandlerTest2
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
 
         return archive;
     }
@@ -55,28 +53,24 @@ public class JavaClassHandlerTest2
     private Furnace furnace;
 
     @Test
-    public void testWindupJavaClassEnumLocationCondition() throws Exception
-    {
+    public void testWindupJavaClassEnumLocationCondition() throws Exception {
         File fXmlFile = new File(JAVA_CLASS_XML_WINDUP_FILE);
         testJavaClassEnumLocationCondition(fXmlFile);
     }
 
     @Test
-    public void testRhamtJavaClassEnumLocationCondition() throws Exception
-    {
+    public void testRhamtJavaClassEnumLocationCondition() throws Exception {
         File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
         testJavaClassEnumLocationCondition(fXmlFile);
     }
 
     @Test
-    public void testMtaJavaClassEnumLocationCondition() throws Exception
-    {
+    public void testMtaJavaClassEnumLocationCondition() throws Exception {
         File fXmlFile = new File(JAVA_CLASS_XML_MTA_FILE);
         testJavaClassEnumLocationCondition(fXmlFile);
     }
 
-    public void testJavaClassEnumLocationCondition(File fXmlFile) throws Exception
-    {
+    public void testJavaClassEnumLocationCondition(File fXmlFile) throws Exception {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -86,7 +80,7 @@ public class JavaClassHandlerTest2
         List<Element> javaClassList = $(doc).children("javaclass").get();
 
         Element firstJavaClass = javaClassList.get(0);
-        JavaClass javaClassCondition = parser.<JavaClass> processElement(firstJavaClass);
+        JavaClass javaClassCondition = parser.<JavaClass>processElement(firstJavaClass);
 
         Assert.assertEquals("testVariable", javaClassCondition.getVarname());
         Assert.assertEquals(null, javaClassCondition.getInputVariablesName());

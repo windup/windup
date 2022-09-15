@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,10 +35,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * </pre>
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
-public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo, FileMappingWithID
-{
+public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo, FileMappingWithID {
     private static final Logger LOG = Logging.get(FileMapping.class);
 
 
@@ -47,19 +46,17 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
 
     private String id;
 
-    private FileMapping(Pattern pattern)
-    {
+    private FileMapping(Pattern pattern) {
         this.pattern = pattern;
 
         String normalizedPattern = StringUtils.replacePattern(pattern.pattern(), "\\s", "_");
         normalizedPattern = StringUtils.substring(normalizedPattern, 0, 10);
-        this.id = this.getClass().getSimpleName()+ "_" + normalizedPattern
+        this.id = this.getClass().getSimpleName() + "_" + normalizedPattern
                 + "_" + RandomStringUtils.randomAlphanumeric(2);
     }
 
     @Override
-    public FileMappingWithID withId(String ruleID)
-    {
+    public FileMappingWithID withId(String ruleID) {
         this.id = ruleID;
         return this;
     }
@@ -67,14 +64,12 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     /**
      * Create a new {@link FileMapping}
      */
-    public static FileMappingFrom from(String regex)
-    {
+    public static FileMappingFrom from(String regex) {
         return new FileMapping(Pattern.compile(regex));
     }
 
     @Override
-    public FileMappingTo to(Class<? extends WindupVertexFrame> type)
-    {
+    public FileMappingTo to(Class<? extends WindupVertexFrame> type) {
         Assert.notNull(type, "Model type must not be null.");
         this.types.add(type);
         return this;
@@ -82,8 +77,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
 
     @Override
     @SuppressWarnings("unchecked")
-    public FileMappingTo to(Class<? extends WindupVertexFrame>... types)
-    {
+    public FileMappingTo to(Class<? extends WindupVertexFrame>... types) {
         Assert.notNull(types, "Model type list must not be null.");
         this.types.addAll(Arrays.asList(types));
         return this;
@@ -91,19 +85,16 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
 
 
     @Override
-    public FileMappingTo onParseError(OnParseError onParseError)
-    {
+    public FileMappingTo onParseError(OnParseError onParseError) {
         this.onParseError = onParseError;
         return this;
     }
 
 
     @Override
-    public void preRulesetEvaluation(GraphRewrite event)
-    {
+    public void preRulesetEvaluation(GraphRewrite event) {
         LOG.info("Added " + toString());
-        for (Class<? extends WindupVertexFrame> type : types)
-        {
+        for (Class<? extends WindupVertexFrame> type : types) {
             addMapping(event, pattern.pattern(), type);
         }
 
@@ -111,18 +102,16 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
          * Handle mapping any files that were directly inserted in the graph before this executed.
          */
         Map<String, List<Class<? extends WindupVertexFrame>>> mappings = FileMapping
-                    .getMappings(event);
+                .getMappings(event);
 
         FileService fileService = new FileService(event.getGraphContext());
-        for (Entry<String, List<Class<? extends WindupVertexFrame>>> entry : mappings.entrySet())
-        {
+        for (Entry<String, List<Class<? extends WindupVertexFrame>>> entry : mappings.entrySet()) {
             String pattern = entry.getKey();
             List<Class<? extends WindupVertexFrame>> types = entry.getValue();
 
             Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(FileModel.FILE_PATH, pattern);
 
-            for (FileModel model : models)
-            {
+            for (FileModel model : models) {
                 if (model.isDirectory())
                     continue;
 
@@ -133,7 +122,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
                     model.setOnParseError(OnParseError.IGNORE);
 
                 LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
-                            + "] types: " + types);
+                        + "] types: " + types);
             }
         }
     }
@@ -142,12 +131,10 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
      * Get the list of pattern to {@link WindupVertexFrame} type mappings for the {@link GraphRewrite} event.
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, List<Class<? extends WindupVertexFrame>>> getMappings(GraphRewrite event)
-    {
+    public static Map<String, List<Class<? extends WindupVertexFrame>>> getMappings(GraphRewrite event) {
         Map<String, List<Class<? extends WindupVertexFrame>>> map = (Map<String, List<Class<? extends WindupVertexFrame>>>) event
-                    .getRewriteContext().get(FileMapping.class);
-        if (map == null)
-        {
+                .getRewriteContext().get(FileMapping.class);
+        if (map == null) {
             map = new HashMap<>();
             event.getRewriteContext().put(FileMapping.class, map);
         }
@@ -157,12 +144,10 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     /**
      * Get the list of {@link WindupVertexFrame} type mappings for the given pattern and {@link GraphRewrite} event.
      */
-    public static List<Class<? extends WindupVertexFrame>> getMappings(GraphRewrite event, String pattern)
-    {
+    public static List<Class<? extends WindupVertexFrame>> getMappings(GraphRewrite event, String pattern) {
         Map<String, List<Class<? extends WindupVertexFrame>>> mappings = getMappings(event);
         List<Class<? extends WindupVertexFrame>> result = mappings.get(pattern);
-        if (result == null)
-        {
+        if (result == null) {
             result = new ArrayList<>();
             mappings.put(pattern, result);
         }
@@ -173,32 +158,27 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
      * Add a {@link WindupVertexFrame} type to the list of mappings for the given pattern and {@link GraphRewrite}
      * event.
      */
-    public static void addMapping(GraphRewrite event, String pattern, Class<? extends WindupVertexFrame> type)
-    {
+    public static void addMapping(GraphRewrite event, String pattern, Class<? extends WindupVertexFrame> type) {
         getMappings(event, pattern).add(type);
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         return true;
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context) {
         // No-op
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(getClass().getName());
         builder.append(".from(").append(pattern).append(")");

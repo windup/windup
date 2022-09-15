@@ -14,18 +14,15 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * 
  * Given a {@link ProjectModel}, return the {@link ApplicationReportIndexModel} that is associated with the application.
- * 
+ * <p>
  * The function takes one parameter, and can be called from a freemarker template as follows:
- * 
+ * <p>
  * projectModelToApplicationIndex(projectModel)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMethod
-{
+public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMethod {
     private static final Logger LOG = Logging.get(ProjectModelToApplicationIndexMethod.class);
 
     private static final String NAME = "projectModelToApplicationIndex";
@@ -33,43 +30,36 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
     private ApplicationReportIndexService service;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.service = new ApplicationReportIndexService(event.getGraphContext());
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a parameter of type " + ProjectModel.class.getSimpleName() + " and returns the associated "
-                    + ApplicationReportIndexModel.class.getSimpleName() + ".";
+                + ApplicationReportIndexModel.class.getSimpleName() + ".";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (ProjectModel)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        if (stringModelArg == null)
-        {
+        if (stringModelArg == null) {
             throw new IllegalArgumentException("FreeMarker Method " + NAME + " called with null project model");
         }
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
         ApplicationReportIndexModel index = service.getApplicationReportIndexForProjectModel(projectModel);
-        if (index == null)
-        {
+        if (index == null) {
             LOG.warning("Could not find an application index for project model: " + projectModel.getName() + " (Vertex ID: "
-                        + projectModel.getElement().id() + ")");
+                    + projectModel.getElement().id() + ")");
         }
         ExecutionStatistics.get().end(NAME);
         return index;

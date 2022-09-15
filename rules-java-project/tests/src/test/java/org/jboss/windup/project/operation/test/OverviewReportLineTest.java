@@ -47,22 +47,20 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class OverviewReportLineTest
-{
+public class OverviewReportLineTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(TestProjectProvider.class);
+                .addBeansXML()
+                .addClass(TestProjectProvider.class);
     }
 
     @Inject
@@ -75,10 +73,8 @@ public class OverviewReportLineTest
     private GraphContextFactory factory;
 
     @Test
-    public void testOverviewReportLine() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testOverviewReportLine() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             ProjectModel subProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
@@ -110,7 +106,7 @@ public class OverviewReportLineTest
             subsubinputPath.setFilePath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                        + UUID.randomUUID().toString());
+                    + UUID.randomUUID().toString());
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -122,7 +118,7 @@ public class OverviewReportLineTest
             subsubProject.setRootFileModel(subsubinputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setGraphContext(context);
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
@@ -130,8 +126,7 @@ public class OverviewReportLineTest
             GraphService<OverviewReportLineMessageModel> overviewLineService = new GraphService<>(context, OverviewReportLineMessageModel.class);
             List<OverviewReportLineMessageModel> allOverviewLines = overviewLineService.findAll();
             Assert.assertEquals(1, allOverviewLines.size());
-            for (OverviewReportLineMessageModel line : allOverviewLines)
-            {
+            for (OverviewReportLineMessageModel line : allOverviewLines) {
                 Assert.assertEquals("Just some test message", line.getMessage());
             }
             Assert.assertEquals(1, provider.getMatchCount());
@@ -139,45 +134,38 @@ public class OverviewReportLineTest
     }
 
     @Singleton
-    public static class TestProjectProvider extends AbstractRuleProvider
-    {
+    public static class TestProjectProvider extends AbstractRuleProvider {
 
         private int matchCount;
 
-        public TestProjectProvider()
-        {
+        public TestProjectProvider() {
             super(MetadataBuilder.forProvider(TestProjectProvider.class)
-                        .setPhase(PostMigrationRulesPhase.class));
+                    .setPhase(PostMigrationRulesPhase.class));
         }
 
-        public void addMatchCount()
-        {
+        public void addMatchCount() {
             matchCount++;
         }
 
-        public int getMatchCount()
-        {
+        public int getMatchCount() {
             return matchCount;
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            AbstractIterationOperation<FileReferenceModel> addMatch = new AbstractIterationOperation<FileReferenceModel>()
-            {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            AbstractIterationOperation<FileReferenceModel> addMatch = new AbstractIterationOperation<FileReferenceModel>() {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileReferenceModel payload)
-                {
+                public void perform(GraphRewrite event, EvaluationContext context, FileReferenceModel payload) {
                     addMatchCount();
                 }
             };
 
             return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(Project.dependsOnArtifact(Artifact.withArtifactId("abc")))
-                        .perform(LineItem.withMessage("Just some test message").and(addMatch));
+                    .begin()
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withArtifactId("abc")))
+                    .perform(LineItem.withMessage("Just some test message").and(addMatch));
         }
         // @formatter:on
     }

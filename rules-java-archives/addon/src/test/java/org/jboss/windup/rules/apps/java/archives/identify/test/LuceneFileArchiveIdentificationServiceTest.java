@@ -9,15 +9,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class LuceneFileArchiveIdentificationServiceTest
-{
+public class LuceneFileArchiveIdentificationServiceTest {
 
     @Test
-    public void testGetCoordinateFromSHA1() throws Exception
-    {
+    public void testGetCoordinateFromSHA1() throws Exception {
         final File file = new File("target/test-nexus-data/lucene/");
         Assert.assertTrue("Test file does not exist", file.exists());
         LuceneArchiveIdentificationService ident = new LuceneArchiveIdentificationService(file);
@@ -50,8 +47,7 @@ public class LuceneFileArchiveIdentificationServiceTest
         check(ident, "d6153f8fc60c479ab0f9efb35c034526436a4953", "com.fasterxml.jackson.core:jackson-databind:jar::2.12.3");
     }
 
-    private static void check(ArchiveIdentificationService ident, String hash, String coordString)
-    {
+    private static void check(ArchiveIdentificationService ident, String hash, String coordString) {
         Coordinate coord = ident.getCoordinate(hash);
         Assert.assertNotNull("Coordinate not found for " + hash, coord);
         Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coord));
@@ -59,8 +55,7 @@ public class LuceneFileArchiveIdentificationServiceTest
 
 
     // GROUP_ID:ARTIFACT_ID[:PACKAGING[:CLASSIFIER]]:VERSION
-    private static String coordToString(Coordinate coord)
-    {
+    private static String coordToString(Coordinate coord) {
         StringBuilder sb = new StringBuilder();
         sb.append(coord.getGroupId()).append(':').append(coord.getArtifactId());
         if (coord.getPackaging() != null)

@@ -15,28 +15,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DuplicateTypeValueTest
-{
+public class DuplicateTypeValueTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestSimpleModel.class, TestSimple2Model.class);
+                .addBeansXML()
+                .addClasses(TestSimpleModel.class, TestSimple2Model.class);
     }
 
     @Inject
     private GraphContextFactory factory;
 
     @Test(expected = Exception.class)
-    public void testDuplicateTypeValue() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testDuplicateTypeValue() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             Assert.assertNotNull(context);
             context.getFramed().addFramedVertex(TestSimpleModel.class);
         }

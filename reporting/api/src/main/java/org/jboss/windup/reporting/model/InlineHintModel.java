@@ -17,8 +17,7 @@ import java.util.List;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel
-{
+public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel {
     String TYPE = "InlineHintModel";
     String TYPE_PREFIX = TYPE + "-";
     String TITLE = TYPE_PREFIX + "title";

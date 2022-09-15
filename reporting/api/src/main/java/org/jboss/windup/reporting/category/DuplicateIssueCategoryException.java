@@ -7,10 +7,8 @@ import org.jboss.windup.util.exception.WindupException;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class DuplicateIssueCategoryException extends WindupException
-{
-    public DuplicateIssueCategoryException(String message)
-    {
+public class DuplicateIssueCategoryException extends WindupException {
+    public DuplicateIssueCategoryException(String message) {
         super(message);
     }
 }

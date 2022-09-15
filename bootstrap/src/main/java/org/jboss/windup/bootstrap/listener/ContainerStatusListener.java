@@ -15,52 +15,43 @@ import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
 /**
  * @author <a href="mailto:mrizzi@redhat.com">Marco Rizzi</a>
  */
-public class ContainerStatusListener implements ContainerLifecycleListener
-{
+public class ContainerStatusListener implements ContainerLifecycleListener {
     private ContainerStatus containerStatus = ContainerStatus.STOPPED;
 
-    public ContainerStatusListener()
-    {
+    public ContainerStatusListener() {
     }
 
-    public ContainerStatus getContainerStatus()
-    {
+    public ContainerStatus getContainerStatus() {
         return containerStatus;
     }
 
     @Override
-    public void beforeStart(Furnace furnace) throws ContainerException
-    {
+    public void beforeStart(Furnace furnace) throws ContainerException {
         containerStatus = ContainerStatus.STARTING;
     }
 
     @Override
-    public void afterStart(Furnace furnace) throws ContainerException
-    {
+    public void afterStart(Furnace furnace) throws ContainerException {
         containerStatus = ContainerStatus.STARTED;
     }
 
     @Override
-    public void beforeStop(Furnace forge) throws ContainerException
-    {
+    public void beforeStop(Furnace forge) throws ContainerException {
         // Do nothing
     }
 
     @Override
-    public void afterStop(Furnace forge) throws ContainerException
-    {
+    public void afterStop(Furnace forge) throws ContainerException {
         containerStatus = ContainerStatus.STOPPED;
     }
 
     @Override
-    public void beforeConfigurationScan(Furnace forge) throws ContainerException
-    {
+    public void beforeConfigurationScan(Furnace forge) throws ContainerException {
         containerStatus = ContainerStatus.RELOADING;
     }
 
     @Override
-    public void afterConfigurationScan(Furnace forge) throws ContainerException
-    {
+    public void afterConfigurationScan(Furnace forge) throws ContainerException {
         containerStatus = ContainerStatus.STARTED;
     }
 

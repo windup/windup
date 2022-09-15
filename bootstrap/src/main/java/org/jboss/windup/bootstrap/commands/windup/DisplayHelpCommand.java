@@ -8,22 +8,19 @@ import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 
-public class DisplayHelpCommand implements Command
-{
+public class DisplayHelpCommand implements Command {
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: " + theme.getCliName() + " [OPTION]... PARAMETER ... ").append(System.lineSeparator());
+        sb.append("Usage: windup-cli [OPTION]... PARAMETER ... ").append(System.lineSeparator());
         sb.append("Extendable migration analysis, at your fingertips.  ").append(System.lineSeparator());
         sb.append(System.lineSeparator());
 
-        sb.append(System.lineSeparator()).append(theme.getBrandNameAcronym() +" CLI Options:").append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append(theme.getBrandNameAcronym() + " CLI Options:").append(System.lineSeparator());
 
-        for (OptionDescription option : Help.load().getOptions())
-        {
+        for (OptionDescription option : Help.load().getOptions()) {
             sb.append("--").append(option.getName()).append(System.lineSeparator());
             sb.append("\t");
             sb.append(option.isRequired() ? "(Required) " : "");
@@ -80,8 +77,7 @@ public class DisplayHelpCommand implements Command
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return CommandPhase.PRE_CONFIGURATION;
     }
 }

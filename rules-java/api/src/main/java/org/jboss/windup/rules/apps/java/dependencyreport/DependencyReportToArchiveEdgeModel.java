@@ -10,11 +10,9 @@ import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * @author mnovotny
- *
  */
 @TypeValue(DependencyReportToArchiveEdgeModel.TYPE)
-public interface DependencyReportToArchiveEdgeModel extends WindupEdgeFrame
-{
+public interface DependencyReportToArchiveEdgeModel extends WindupEdgeFrame {
     String TYPE = "DependencyReportToArchiveEdgeModel";
 
     String FULL_PATH = "fullPath";

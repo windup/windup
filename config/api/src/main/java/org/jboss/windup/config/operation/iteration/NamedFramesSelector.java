@@ -14,21 +14,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class NamedFramesSelector implements FramesSelector
-{
+public class NamedFramesSelector implements FramesSelector {
     private final String varName;
 
-    public NamedFramesSelector(String varName)
-    {
+    public NamedFramesSelector(String varName) {
         this.varName = varName;
     }
 
     @Override
     public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
-                throws IllegalStateException
-    {
+            throws IllegalStateException {
         java.lang.Iterable<? extends WindupVertexFrame> result = Variables.instance(event).findVariable(varName);
         if (result == null)
             throw new IllegalStateException("No such variable [" + varName + "] was found in Variables stack.");
@@ -36,8 +32,7 @@ public class NamedFramesSelector implements FramesSelector
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getClass().getName() + " [" + varName + "]";
     }
 }

@@ -19,11 +19,9 @@ import org.jboss.windup.graph.Property;
  * Contains metadata related to JPA Persistence Units.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- *
  */
 @TypeValue(JPAPersistenceUnitModel.TYPE)
-public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplications
-{
+public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplications {
     String TYPE = "JPAPersistenceUnitModel";
 
     String DATASOURCE = "datasource";
@@ -92,15 +90,12 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplicati
     @Override
     boolean belongsToProject(ProjectModel projectModel);
 
-    class Impl
-    {
-        public List<ProjectModel> getApplications(JPAPersistenceUnitModel model)
-        {
+    class Impl {
+        public List<ProjectModel> getApplications(JPAPersistenceUnitModel model) {
             return model.getJPAConfigurationFileModel().getApplications();
         }
 
-        public boolean belongsToProject(JPAPersistenceUnitModel model, ProjectModel projectModel)
-        {
+        public boolean belongsToProject(JPAPersistenceUnitModel model, ProjectModel projectModel) {
             return model.getJPAConfigurationFileModel().belongsToProject(projectModel);
         }
     }

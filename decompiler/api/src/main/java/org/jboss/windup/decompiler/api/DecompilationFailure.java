@@ -8,38 +8,32 @@ import java.util.List;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DecompilationFailure
-{
+public class DecompilationFailure {
     private final List<String> sourceClassPaths;
     private final String message;
     private final Throwable cause;
 
-    public DecompilationFailure()
-    {
+    public DecompilationFailure() {
         this.sourceClassPaths = null;
         this.message = null;
         this.cause = null;
     }
 
-    public DecompilationFailure(String message, List<String> sourceClassPaths, Throwable cause)
-    {
+    public DecompilationFailure(String message, List<String> sourceClassPaths, Throwable cause) {
         this.message = message;
         this.cause = cause;
         this.sourceClassPaths = sourceClassPaths;
     }
 
-    public List<String> getPath()
-    {
+    public List<String> getPath() {
         return sourceClassPaths;
     }
 
-    public Throwable getCause()
-    {
+    public Throwable getCause() {
         return cause;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 

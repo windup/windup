@@ -44,8 +44,7 @@ import java.util.Collections;
 import java.util.logging.Logger;
 
 @RunWith(Arquillian.class)
-public class TechnologyIdentifiedTest
-{
+public class TechnologyIdentifiedTest {
 
     public static final String SHARED_LIBS_TECH = "shared-libs-tech";
 
@@ -60,8 +59,7 @@ public class TechnologyIdentifiedTest
             @AddonDependency(name = "org.jboss.windup.tests:test-util"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -77,10 +75,8 @@ public class TechnologyIdentifiedTest
     private GraphContextFactory factory;
 
     @Test
-    public void testTechnologyIdentified() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
-        {
+    public void testTechnologyIdentified() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true)) {
             final String inputDir = "src/test/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -103,10 +99,8 @@ public class TechnologyIdentifiedTest
             boolean foundUsage = false;
             int numberOfModelsFound = 0;
             int totalOccurrenceCount = 0;
-            for (TechnologyUsageStatisticsModel model : service.findAll())
-            {
-                if ("test-tech".equals(model.getName()))
-                {
+            for (TechnologyUsageStatisticsModel model : service.findAll()) {
+                if ("test-tech".equals(model.getName())) {
                     foundUsage = true;
                     numberOfModelsFound++;
                     totalOccurrenceCount += model.getOccurrenceCount();
@@ -120,14 +114,12 @@ public class TechnologyIdentifiedTest
     }
 
     @Test
-    public void testDuplicateArchiveHandling() throws Exception
-    {
+    public void testDuplicateArchiveHandling() throws Exception {
         Path baseOutputPath = WindupTestUtilMethods.getTempDirectoryForGraph();
         Path graphPath = baseOutputPath.resolve("graph");
         Path reportPath = baseOutputPath.resolve("reports");
 
-        try (GraphContext context = factory.create(graphPath, true))
-        {
+        try (GraphContext context = factory.create(graphPath, true)) {
             final String basePath = "../../test-files/duplicate/duplicate-ear-test-";
             final String[] inputPaths = new String[]{
                     basePath + "1.ear",
@@ -139,16 +131,13 @@ public class TechnologyIdentifiedTest
             Files.createDirectories(reportPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
-//            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-//                    TechnologyIdentifiedRuleProvider.class));
             processorConfig.setGraphContext(context);
-            for (String inputPath : inputPaths)
-            {
+            for (String inputPath : inputPaths) {
                 processorConfig.addInputPath(Paths.get(inputPath));
             }
             processorConfig.setOutputDirectory(reportPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
-            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(SourceModeOption.NAME, false);
             processorConfig.setOptionValue(KeepWorkDirsOption.NAME, true);
 
             processor.execute(processorConfig);
@@ -156,8 +145,7 @@ public class TechnologyIdentifiedTest
             TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(context);
             int numberFound = 0;
             boolean foundMigrationSupportModule = false;
-            for (TechnologyUsageStatisticsModel model : service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, SHARED_LIBS_TECH))
-            {
+            for (TechnologyUsageStatisticsModel model : service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, SHARED_LIBS_TECH)) {
                 LOG.info("Technology Usage Statistics Model: " + model);
                 ProjectModel project = model.getProjectModel();
                 if (project.getRootFileModel() != null && project.getRootFileModel().getFileName().equals("migration-support-1.0.0.jar"))
@@ -172,21 +160,18 @@ public class TechnologyIdentifiedTest
     }
 
     @Singleton
-    public static class TechnologyIdentifiedRuleProvider extends AbstractRuleProvider
-    {
-        public TechnologyIdentifiedRuleProvider()
-        {
+    public static class TechnologyIdentifiedRuleProvider extends AbstractRuleProvider {
+        public TechnologyIdentifiedRuleProvider() {
             super(MetadataBuilder.forProvider(TechnologyIdentifiedRuleProvider.class)
                     .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
                     .addRule().when(
-                        JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
+                            JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
                     ).perform(
                             TechnologyIdentified.named("test-tech").withTag("test-tag")
                     )

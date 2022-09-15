@@ -27,8 +27,7 @@ import java.util.UUID;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest
-{
+public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 
@@ -36,15 +35,13 @@ public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest
     private GraphContextFactory factory;
 
     @Test
-    public void testDataSourceDiscovery() throws Exception
-    {
+    public void testDataSourceDiscovery() throws Exception {
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "DiscoverDataSourceTest_"
                 + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath, true))
-        {
+        try (GraphContext context = factory.create(outputPath, true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
@@ -63,17 +60,14 @@ public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest
 
             GraphService<DataSourceModel> service = new GraphService<>(context, DataSourceModel.class);
             boolean resultFound = false;
-            for (DataSourceModel model : service.findAllByProperty(DataSourceModel.NAME, "java:comp/env/HelloStatefulEJB_DataSource"))
-            {
-                if (model.getXa() != null && model.getXa())
-                {
+            for (DataSourceModel model : service.findAllByProperty(DataSourceModel.NAME, "java:comp/env/HelloStatefulEJB_DataSource")) {
+                if (model.getXa() != null && model.getXa()) {
                     resultFound = true;
                 }
             }
 
             Assert.assertTrue(resultFound);
-        } finally
-        {
+        } finally {
             FileUtils.deleteDirectory(outputPath.toFile());
         }
     }

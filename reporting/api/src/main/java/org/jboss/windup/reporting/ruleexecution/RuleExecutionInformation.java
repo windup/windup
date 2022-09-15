@@ -11,12 +11,10 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 /**
  * Contains information about a {@link Rule} and how it was executed by Windup (whether it was evaluated and executed, whether it failed, and various
  * statistics on what it performed.
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class RuleExecutionInformation implements RuleExecutionInformationForReading
-{
+public class RuleExecutionInformation implements RuleExecutionInformationForReading {
     private final Rule rule;
     private boolean evaluationResult;
     private boolean executed;
@@ -31,8 +29,7 @@ public class RuleExecutionInformation implements RuleExecutionInformationForRead
     /**
      * Create an instance for the provided rule.
      */
-    public RuleExecutionInformation(Rule rule)
-    {
+    public RuleExecutionInformation(Rule rule) {
         Assert.notNull(rule, "Rule object must not be null");
         this.rule = rule;
     }
@@ -40,8 +37,7 @@ public class RuleExecutionInformation implements RuleExecutionInformationForRead
     /**
      * Gets the {@link Rule}.
      */
-    public Rule getRule()
-    {
+    public Rule getRule() {
         return rule;
     }
 
@@ -49,8 +45,7 @@ public class RuleExecutionInformation implements RuleExecutionInformationForRead
      * Gets the result of the evaluation stage of the {@link Rule}. A false value here indicates that the "perform" function of the {@link Rule} would
      * not have executed.
      */
-    public boolean getEvaluationResult()
-    {
+    public boolean getEvaluationResult() {
         return evaluationResult;
     }
 
@@ -58,127 +53,111 @@ public class RuleExecutionInformation implements RuleExecutionInformationForRead
      * Sets the result of the evaluation stage of the {@link Rule}. A false value here indicates that the "perform" function of the {@link Rule} would
      * not have executed.
      */
-    void setEvaluationResult(boolean evaluationResult)
-    {
+    void setEvaluationResult(boolean evaluationResult) {
         this.evaluationResult = evaluationResult;
     }
 
     /**
      * Gets an indication of whether or not this rule was executed by Windup.
      */
-    public boolean isExecuted()
-    {
+    public boolean isExecuted() {
         return executed;
     }
 
     /**
      * Sets the indication of whether or not this rule was executed by Windup.
      */
-    void setExecuted(boolean executed)
-    {
+    void setExecuted(boolean executed) {
         this.executed = executed;
     }
 
     /**
      * Contains the failure status of the {@link Rule}.
      */
-    public boolean isFailed()
-    {
+    public boolean isFailed() {
         return failed;
     }
 
     /**
      * Contains the failure status of the {@link Rule}.
      */
-    void setFailed(boolean failed)
-    {
+    void setFailed(boolean failed) {
         this.failed = failed;
     }
 
     /**
      * Contains the failure cause of the {@link Rule} (if any).
      */
-    public Throwable getFailureCause()
-    {
+    public Throwable getFailureCause() {
         return failureCause;
     }
 
     /**
      * Contains the failure cause of the {@link Rule} (if any).
      */
-    void setFailureCause(Throwable failureCause)
-    {
+    void setFailureCause(Throwable failureCause) {
         this.failureCause = failureCause;
     }
 
     /**
      * Contains the IDs of any {@link Edge}s added by this {@link Rule}.
      */
-    public int getEdgeIDsAdded()
-    {
+    public int getEdgeIDsAdded() {
         return this.edgeIDsAdded.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex}s added by this {@link Rule}.
      */
-    public int getVertexIDsAdded()
-    {
+    public int getVertexIDsAdded() {
         return this.vertexIDsAdded.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex} added by this {@link Rule}.
      */
-    public void addVertexIDAdded(Object vID)
-    {
+    public void addVertexIDAdded(Object vID) {
         this.vertexIDsAdded.incrementAndGet();
     }
 
     /**
      * Contains the IDs of any {@link Edge}s added by this {@link Rule}.
      */
-    public void addEdgeIDAdded(Object edgeID)
-    {
+    public void addEdgeIDAdded(Object edgeID) {
         this.edgeIDsAdded.incrementAndGet();
     }
 
     /**
      * Contains the IDs of any {@link Edge}s removed by this {@link Rule}.
      */
-    public int getEdgeIDsRemoved()
-    {
+    public int getEdgeIDsRemoved() {
         return this.edgeIDsRemoved.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex} removed by this {@link Rule}.
      */
-    public int getVertexIDsRemoved()
-    {
+    public int getVertexIDsRemoved() {
         return this.vertexIDsRemoved.get();
     }
 
     /**
      * Contains the IDs of any {@link Vertex} removed by this {@link Rule}.
      */
-    public void addVertexIDRemoved(Object vID)
-    {
+    public void addVertexIDRemoved(Object vID) {
         this.vertexIDsRemoved.incrementAndGet();
     }
 
     /**
      * Contains the IDs of any {@link Edge} removed by this {@link Rule}.
      */
-    public void addEdgeIDRemoved(Object edgeID)
-    {
+    public void addEdgeIDRemoved(Object edgeID) {
         this.edgeIDsRemoved.incrementAndGet();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RuleExecutionInformation [rule=" + rule + ", evaluationResult=" + evaluationResult + ", executed="
-                    + executed + ", failed=" + failed + ", failureCause=" + failureCause + "]";
+                + executed + ", failed=" + failed + ", failureCause=" + failureCause + "]";
     }
 }

@@ -6,12 +6,12 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
- *  A vertex used to test default value settings
+ * A vertex used to test default value settings
+ *
  * @author <a href="mailto:mbriskar@redhat.com">Matej Briskar</a>
  */
 @TypeValue("DefaultValueTestModel")
-public interface DefaultValueTestModel extends WindupVertexFrame
-{
+public interface DefaultValueTestModel extends WindupVertexFrame {
 
     @Property("defaultFalse")
     @FrameBooleanDefaultValue(false)

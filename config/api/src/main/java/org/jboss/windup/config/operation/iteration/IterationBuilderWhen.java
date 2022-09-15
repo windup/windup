@@ -11,12 +11,10 @@ import org.ocpsoft.rewrite.config.Operation;
 
 /**
  * Intermediate step to construct an {@link Iteration}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public interface IterationBuilderWhen
-{
+public interface IterationBuilderWhen {
     /**
      * Perform the given {@link Operation} when the conditions set in this {@link Iteration} are met.
      */

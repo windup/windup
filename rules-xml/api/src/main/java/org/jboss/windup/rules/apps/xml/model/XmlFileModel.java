@@ -17,8 +17,7 @@ import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 
 @TypeValue(XmlFileModel.TYPE)
-public interface XmlFileModel extends FileModel, SourceFileModel
-{
+public interface XmlFileModel extends FileModel, SourceFileModel {
     Logger LOG = Logger.getLogger(XmlFileModel.class.getName());
 
     String NOT_VALID_XML = "XML File is not valid";
@@ -49,30 +48,21 @@ public interface XmlFileModel extends FileModel, SourceFileModel
     @Property(ROOT_TAG_NAME)
     void setRootTagName(String rootTagName);
 
-    default Document asDocument()
-    {
+    default Document asDocument() {
         XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(this);
         Document document;
-        if (cacheResult.isParseFailure())
-        {
+        if (cacheResult.isParseFailure()) {
             throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
-        }
-        else if (cacheResult.getDocument() == null)
-        {
+        } else if (cacheResult.getDocument() == null) {
             FileModel fileModel = getGraph().frameElement(getElement(), FileModel.class);
-            try (InputStream is = fileModel.asInputStream())
-            {
+            try (InputStream is = fileModel.asInputStream()) {
                 document = LocationAwareXmlReader.readXML(is);
                 XMLDocumentCache.cache(this, document);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 XMLDocumentCache.cacheParseFailure(this);
                 throw new WindupException("Exception reading document due to: " + e.getMessage(), e);
             }
-        }
-        else
-        {
+        } else {
             document = cacheResult.getDocument();
         }
 

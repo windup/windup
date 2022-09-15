@@ -68,69 +68,58 @@ import org.jboss.windup.util.ThemeProvider;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Bootstrap
-{
+public class Bootstrap {
     public static final String WINDUP_HOME = "windup.home";
     private final AtomicBoolean batchMode = new AtomicBoolean(false);
     private Furnace furnace;
     private final ContainerStatusListener containerStatusListener = new ContainerStatusListener();
 
-    public static void main(final String[] args)
-    {
+    public static void main(final String[] args) {
         final List<String> bootstrapArgs = new ArrayList<>();
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             if (!handleAsSystemProperty(arg))
                 bootstrapArgs.add(arg);
         }
 
         File rulesDir = getUserRulesDir();
-        if (!rulesDir.exists())
-        {
+        if (!rulesDir.exists()) {
             rulesDir.mkdirs();
         }
 
         File runtimeLabelsDir = getUserRuntimeLabelsDir();
-        if (!runtimeLabelsDir.exists())
-        {
+        if (!runtimeLabelsDir.exists()) {
             runtimeLabelsDir.mkdirs();
         }
 
-        final String defaultLog = new File(getUserWindupDir(), "log/mta.log").getAbsolutePath();
+        final String defaultLog = new File(getUserWindupDir(), "log/windup.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
         System.setProperty("org.jboss.forge.log.file", logDir);
 
         final String logManagerName = getServiceName(Bootstrap.class.getClassLoader(), "java.util.logging.LogManager");
-        if (logManagerName != null)
-        {
+        if (logManagerName != null) {
             System.setProperty("java.util.logging.manager", logManagerName);
         }
 
         Bootstrap bootstrap = new Bootstrap();
-        if (!bootstrap.serverMode(bootstrapArgs) && !bootstrap.toolingMode(bootstrapArgs))
-        {
+        if (!bootstrap.serverMode(bootstrapArgs) && !bootstrap.toolingMode(bootstrapArgs)) {
             bootstrap.run(bootstrapArgs);
             bootstrap.stop();
         }
     }
 
-    private static boolean handleAsSystemProperty(String argument)
-    {
+    private static boolean handleAsSystemProperty(String argument) {
         if (!argument.startsWith("-D"))
             return false;
 
         final String name;
         final String value;
         final int index = argument.indexOf('=');
-        if (index == -1)
-        {
+        if (index == -1) {
             name = argument.substring(2);
             value = "true";
-        }
-        else
-        {
+        } else {
             name = argument.substring(2, index);
             value = argument.substring(index + 1);
         }
@@ -138,13 +127,10 @@ public class Bootstrap
         return true;
     }
 
-    private static boolean containsMutableRepository(List<AddonRepository> repositories)
-    {
+    private static boolean containsMutableRepository(List<AddonRepository> repositories) {
         boolean result = false;
-        for (AddonRepository repository : repositories)
-        {
-            if (repository instanceof MutableAddonRepository)
-            {
+        for (AddonRepository repository : repositories) {
+            if (repository instanceof MutableAddonRepository) {
                 result = true;
                 break;
             }
@@ -152,17 +138,14 @@ public class Bootstrap
         return result;
     }
 
-    public static String promptForListItem(String message, Collection<String> items, String defaultValue)
-    {
-        while (true)
-        {
+    public static String promptForListItem(String message, Collection<String> items, String defaultValue) {
+        while (true) {
             List<String> sorted = new ArrayList<>(items);
             Collections.sort(sorted);
 
             System.out.println();
             System.out.println(message);
-            for (String item : sorted)
-            {
+            for (String item : sorted) {
                 System.out.println("\t" + item);
             }
 
@@ -177,14 +160,10 @@ public class Bootstrap
         }
     }
 
-    public static boolean prompt(String message, boolean defaultValue, boolean batchMode)
-    {
-        if (batchMode)
-        {
+    public static boolean prompt(String message, boolean defaultValue, boolean batchMode) {
+        if (batchMode) {
             return defaultValue;
-        }
-        else
-        {
+        } else {
             String defaultMessage = defaultValue ? " [Y,n] " : " [y,N] ";
             String line = System.console().readLine(message + defaultMessage).trim();
             if ("y".equalsIgnoreCase(line))
@@ -195,18 +174,14 @@ public class Bootstrap
         }
     }
 
-    private static String getServiceName(final ClassLoader classLoader, final String className)
-    {
-        try (final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className))
-        {
+    private static String getServiceName(final ClassLoader classLoader, final String className) {
+        try (final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className)) {
             if (stream == null)
                 return null;
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream)))
-            {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
                 String line;
-                while ((line = reader.readLine()) != null)
-                {
+                while ((line = reader.readLine()) != null) {
                     /*
                      * Ignore comments in the file.
                      */
@@ -221,64 +196,51 @@ public class Bootstrap
                     return line;
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // ignore
         }
         return null;
     }
 
-    public static String getVersion()
-    {
+    public static String getVersion() {
         return getRuntimeAPIVersion().toString();
     }
 
-    public static String getVersionString()
-    {
+    public static String getVersionString() {
         return "> " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
-    public static Version getRuntimeAPIVersion()
-    {
+    public static Version getRuntimeAPIVersion() {
         String version = Bootstrap.class.getPackage().getImplementationVersion();
-        if (version != null)
-        {
+        if (version != null) {
             return SingleVersion.valueOf(version);
         }
         return EmptyVersion.getInstance();
     }
 
-    private static File getUserRulesDir()
-    {
+    private static File getUserRulesDir() {
         return new File(getUserWindupDir(), "rules");
     }
 
-    private static File getUserRuntimeLabelsDir()
-    {
+    private static File getUserRuntimeLabelsDir() {
         return new File(getUserWindupDir(), "labels");
     }
 
-    public static File getUserWindupDir()
-    {
+    public static File getUserWindupDir() {
         String userHome = System.getProperty("user.home");
-        if (userHome == null)
-        {
+        if (userHome == null) {
             Path path = new File("").toPath();
             return path.toFile();
         }
-        return Paths.get(userHome).resolve(".mta").toFile();
+        return Paths.get(userHome).resolve(".windup").toFile();
     }
 
-    private static File getUserAddonsDir()
-    {
+    private static File getUserAddonsDir() {
         return getUserWindupDir().toPath().resolve(".addons").toFile();
     }
 
-    private boolean serverMode(List<String> arguments)
-    {
-        if (ServerModeCommand.isServerMode(arguments))
-        {
+    private boolean serverMode(List<String> arguments) {
+        if (ServerModeCommand.isServerMode(arguments)) {
             ServerModeCommand serverCommand = new ServerModeCommand(arguments);
             serverCommand.execute();
             return true;
@@ -286,12 +248,10 @@ public class Bootstrap
         return false;
     }
 
-    private void run(List<String> args)
-    {
+    private void run(List<String> args) {
         Theme theme = ThemeProvider.getInstance().getTheme();
 
-        try
-        {
+        try {
             furnace = FurnaceFactory.getInstance();
             furnace.setServerMode(true);
 
@@ -303,15 +263,13 @@ public class Bootstrap
             if (!executePhase(CommandPhase.CONFIGURATION, commands))
                 return;
 
-            if (commands.isEmpty())
-            {
+            if (commands.isEmpty()) {
                 // no commands are available, just print the help and exit
                 new DisplayHelpCommand().execute();
                 return;
             }
 
-            if (!containsMutableRepository(furnace.getRepositories()))
-            {
+            if (!containsMutableRepository(furnace.getRepositories())) {
                 furnace.addRepository(AddonRepositoryMode.MUTABLE, getUserAddonsDir());
             }
 
@@ -319,13 +277,10 @@ public class Bootstrap
                 return;
 
             furnace.addContainerLifecycleListener(containerStatusListener);
-            try
-            {
+            try {
                 startFurnace();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Failed to start "+ theme.getBrandNameAcronym() + "!");
+            } catch (Exception e) {
+                System.out.println("Failed to start " + theme.getBrandNameAcronym() + "!");
                 if (e.getMessage() != null)
                     System.out.println("Failure reason: " + e.getMessage());
                 e.printStackTrace();
@@ -338,15 +293,13 @@ public class Bootstrap
 
             // Now see if there are any server SPIs that need to run
             Imported<WindupServerProvider> serverProviders = furnace.getAddonRegistry().getServices(WindupServerProvider.class);
-            for (WindupServerProvider serverProvider : serverProviders)
-            {
+            for (WindupServerProvider serverProvider : serverProviders) {
                 String expectedArgName = serverProvider.getName();
 
                 boolean matches = args.stream().anyMatch(arg ->
-                    arg.equals(expectedArgName) || arg.equals("--" + expectedArgName)
+                        arg.equals(expectedArgName) || arg.equals("--" + expectedArgName)
                 );
-                if (matches)
-                {
+                if (matches) {
                     serverProvider.runServer(args.toArray(new String[args.size()]));
                     return;
                 }
@@ -358,41 +311,33 @@ public class Bootstrap
             if (!executePhase(CommandPhase.POST_EXECUTION, commands) || commands.isEmpty())
                 return;
 
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
     }
 
-    private void startFurnace() throws InterruptedException, ExecutionException
-    {
+    private void startFurnace() throws InterruptedException, ExecutionException {
         Future<Furnace> future = furnace.startAsync();
         future.get(); // use future.get() to wait until it is started
         long startTime = System.currentTimeMillis();
         long maxWait = 1000L * 30L; // only wait at most 30 seconds for addons to start
-        while (true)
-        {
+        while (true) {
             long currentTime = System.currentTimeMillis();
             long timeWaited = currentTime - startTime;
 
             boolean allStarted = true;
-            for (Addon addon : furnace.getAddonRegistry().getAddons())
-            {
-                if (!addon.getStatus().isStarted())
-                {
+            for (Addon addon : furnace.getAddonRegistry().getAddons()) {
+                if (!addon.getStatus().isStarted()) {
                     allStarted = false;
                 }
             }
             if (allStarted)
                 break;
 
-            if (timeWaited > maxWait)
-            {
+            if (timeWaited > maxWait) {
                 System.err.println("WARN: Not all addons started!");
-                for (Addon addon : furnace.getAddonRegistry().getAddons())
-                {
+                for (Addon addon : furnace.getAddonRegistry().getAddons()) {
                     if (!addon.getStatus().isStarted())
                         System.err.println("WARN: " + addon.getId() + " status: " + addon.getStatus());
                 }
@@ -401,12 +346,10 @@ public class Bootstrap
         }
     }
 
-    private void stop()
-    {
+    private void stop() {
         if (furnace != null && !furnace.getStatus().isStopped())
             furnace.stop();
-        while (!containerStatusListener.getContainerStatus().isStopped())
-        {
+        while (!containerStatusListener.getContainerStatus().isStopped()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -416,93 +359,56 @@ public class Bootstrap
         }
     }
 
-    private List<Command> processArguments(List<String> arguments)
-    {
+    private List<Command> processArguments(List<String> arguments) {
         List<String> unknownArgs = new ArrayList<>();
 
         List<Command> commands = new ArrayList<>();
 
         boolean versionCommandAdded = false;
-        for (int i = 0; i < arguments.size(); i++)
-        {
+        for (int i = 0; i < arguments.size(); i++) {
             final String arg = arguments.get(i);
 
-            if ("--batchMode".equals(arg) || "-b".equals(arg))
-            {
+            if ("--batchMode".equals(arg) || "-b".equals(arg)) {
                 batchMode.set(true);
-            }
-            else if ("--debug".equals(arg) || "-d".equals(arg))
-            {
+            } else if ("--debug".equals(arg) || "-d".equals(arg)) {
                 /*
                  * This is to avoid the "Unknown option: --debug" message generated by Windup when it receives an option it doesn't understand.
                  */
-            }
-            else if (arg.equals("-help") || arg.equals("--help") || arg.equals("-h") ||
-                        arg.equals("/?") || arg.equals("/help"))
-            {
+            } else if (arg.equals("-help") || arg.equals("--help") || arg.equals("-h") ||
+                    arg.equals("/?") || arg.equals("/help")) {
                 commands.add(new DisplayHelpCommand());
-            }
-            else if ("--install".equals(arg) || "-i".equals(arg))
-            {
+            } else if ("--install".equals(arg) || "-i".equals(arg)) {
                 commands.add(new InstallAddonCommand(arguments.get(++i), batchMode));
-            }
-            else if ("--remove".equals(arg) || "-r".equals(arg))
-            {
+            } else if ("--remove".equals(arg) || "-r".equals(arg)) {
                 commands.add(new RemoveAddonCommand(arguments.get(++i), batchMode));
-            }
-            else if ("--list".equals(arg) || "-l".equals(arg))
-            {
+            } else if ("--list".equals(arg) || "-l".equals(arg)) {
                 commands.add(new ListAddonsCommand());
-            }
-            else if ("--addonDir".equals(arg) || "-a".equals(arg))
-            {
+            } else if ("--addonDir".equals(arg) || "-a".equals(arg)) {
                 commands.add(new AddAddonDirectoryCommand(arguments.get(++i)));
-            }
-            else if ("--immutableAddonDir".equals(arg) || "-m".equals(arg))
-            {
+            } else if ("--immutableAddonDir".equals(arg) || "-m".equals(arg)) {
                 commands.add(new AddImmutableAddonDirectoryCommand(arguments.get(++i)));
-            }
-            else if ("--version".equals(arg) || "-v".equals(arg))
-            {
+            } else if ("--version".equals(arg) || "-v".equals(arg)) {
                 versionCommandAdded = true;
                 commands.add(new DisplayVersionCommand());
-            }
-            else if ("--listTags".equals(arg))
-            {
+            } else if ("--listTags".equals(arg)) {
                 commands.add(new ListTagsCommand(arguments));
-            }
-            else if ("--listSourceTechnologies".equals(arg))
-            {
+            } else if ("--listSourceTechnologies".equals(arg)) {
                 commands.add(new ListSourceTechnologiesCommand(arguments));
-            }
-            else if ("--listTargetTechnologies".equals(arg))
-            {
+            } else if ("--listTargetTechnologies".equals(arg)) {
                 commands.add(new ListTargetTechnologiesCommand(arguments));
-            }
-            else if ("--generateCompletionData".equals(arg))
-            {
+            } else if ("--generateCompletionData".equals(arg)) {
                 commands.add(new GenerateCompletionDataCommand(true));
-            }
-            else if (arg.equals("--generateHelp"))
-            {
+            } else if (arg.equals("--generateHelp")) {
                 commands.add(new GenerateHelpCacheCommand());
-            }
-            else if ("--generateCaches".equals(arg))
-            {
+            } else if ("--generateCaches".equals(arg)) {
                 commands.add(new GenerateCompletionDataCommand(true));
                 commands.add(new GenerateHelpCacheCommand());
-            }
-            else if ("--discoverPackages".equals(arg))
-            {
+            } else if ("--discoverPackages".equals(arg)) {
                 unknownArgs.add(arg);
                 commands.add(new DiscoverPackagesCommand(unknownArgs));
-            }
-            else if (arg.startsWith("--updateRules"))
-            {
+            } else if (arg.startsWith("--updateRules")) {
                 commands.add(new UpdateRulesetsCommand());
-            }
-            else
-            {
+            } else {
                 unknownArgs.add(arg);
             }
         }
@@ -510,8 +416,7 @@ public class Bootstrap
             commands.add(0, new DisplayVersionCommand(CommandResult.CONTINUE));
 
         List<String> windupArguments = new ArrayList<>(unknownArgs);
-        if (!windupArguments.isEmpty())
-        {
+        if (!windupArguments.isEmpty()) {
             // go ahead and regenerate this every time just in case there are user-added addons that affect the result
             commands.add(new GenerateHelpCacheCommand());
             commands.add(new GenerateCompletionDataCommand(true));
@@ -522,12 +427,9 @@ public class Bootstrap
         return commands;
     }
 
-    private boolean executePhase(CommandPhase phase, CopyOnWriteArrayList<Command> commands)
-    {
-        for (Command command : commands)
-        {
-            if (phase.equals(command.getPhase()))
-            {
+    private boolean executePhase(CommandPhase phase, CopyOnWriteArrayList<Command> commands) {
+        for (Command command : commands) {
+            if (phase.equals(command.getPhase())) {
                 commands.remove(command);
                 if (command instanceof FurnaceDependent)
                     ((FurnaceDependent) command).setFurnace(furnace);
@@ -540,10 +442,8 @@ public class Bootstrap
         return true;
     }
 
-    private boolean toolingMode(List<String> arguments)
-    {
-        if (ToolingModeCommand.isToolingMode(arguments))
-        {
+    private boolean toolingMode(List<String> arguments) {
+        if (ToolingModeCommand.isToolingMode(arguments)) {
             ToolingModeCommand toolingCommand = new ToolingModeCommand(arguments);
             toolingCommand.execute();
             return true;

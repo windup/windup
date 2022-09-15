@@ -7,8 +7,7 @@ import org.jboss.windup.graph.SetInProperties;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface IncludeAndExcludeTagsModel
-{
+public interface IncludeAndExcludeTagsModel {
     String INCLUDE_TAGS = "includeTags";
     String EXCLUDE_TAGS = "excludeTags";
 

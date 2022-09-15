@@ -4,12 +4,10 @@ import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 /**
- * 
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @TypeValue("FooSub")
-public interface TestFooSubModel extends TestFooModel
-{
+public interface TestFooSubModel extends TestFooModel {
 
     @Property("fooProperty")
     String getFoo();
@@ -18,8 +16,7 @@ public interface TestFooSubModel extends TestFooModel
     void setFoo(String foo);
 
     @Override
-    default String testJavaMethod()
-    {
+    default String testJavaMethod() {
         return "subclass";
     }
 }

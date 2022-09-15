@@ -25,10 +25,8 @@ import freemarker.template.TemplateException;
  * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration context.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
- *
  */
-public class FreeMarkerOperation extends GraphOperation
-{
+public class FreeMarkerOperation extends GraphOperation {
     private static final Logger LOG = Logger.getLogger(FreeMarkerOperation.class.getName());
 
     private final Furnace furnace;
@@ -36,8 +34,7 @@ public class FreeMarkerOperation extends GraphOperation
     private final String outputFilename;
     private List<String> variableNames = new ArrayList<>();
 
-    protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
-    {
+    protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames) {
         this.furnace = furnace;
         this.templatePath = templatePath.replace('\\', '/');
         this.outputFilename = outputFilename;
@@ -46,26 +43,23 @@ public class FreeMarkerOperation extends GraphOperation
 
     /**
      * Create a FreeMarkerOperation with the provided furnace instance template path, and varNames.
-     *
+     * <p>
      * The variables in varNames will be provided to the template, and a new ReportModel will be created with these variables attached.
      */
     public static FreeMarkerOperation create(Furnace furnace, String templatePath, String outputFilename,
-                String... varNames)
-    {
+                                             String... varNames) {
         return new FreeMarkerOperation(furnace, templatePath, outputFilename, varNames);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
-        try
-        {
+    public void perform(GraphRewrite event, EvaluationContext context) {
+        try {
             ReportService reportService = new ReportService(event.getGraphContext());
             Path outputDir = reportService.getReportDirectory();
             Path outputPath = outputDir.resolve(outputFilename);
 
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
-                        + outputPath.toAbsolutePath().toString() + "\"");
+                    + outputPath.toAbsolutePath().toString() + "\"");
 
             freemarker.template.Configuration freemarkerConfig = FreeMarkerUtil.getDefaultFreemarkerConfiguration();
             Template template = freemarkerConfig.getTemplate(templatePath);
@@ -74,7 +68,7 @@ public class FreeMarkerOperation extends GraphOperation
 
             // just the variables
             Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
-                        variableNames.toArray(new String[variableNames.size()]));
+                    variableNames.toArray(new String[variableNames.size()]));
 
             vars.put("event", event);
 
@@ -84,24 +78,18 @@ public class FreeMarkerOperation extends GraphOperation
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);
 
-            try (FileWriter fw = new FileWriter(outputPath.toFile()))
-            {
+            try (FileWriter fw = new FileWriter(outputPath.toFile())) {
                 template.process(objects, fw);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new WindupException("Failed to write template results due to: " + e.getMessage(), e);
-        }
-        catch (TemplateException e)
-        {
+        } catch (TemplateException e) {
             throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "FreeMarkerOperation[template=" + templatePath + ", output=" + outputFilename + "]";
     }
 }

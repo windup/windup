@@ -17,17 +17,14 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-class ClassificationServiceCache extends AbstractRuleLifecycleListener implements RuleLifecycleListener
-{
+class ClassificationServiceCache extends AbstractRuleLifecycleListener implements RuleLifecycleListener {
     /**
      * Keep a cache of items files associated with classification in order to improve performance.
      */
     @SuppressWarnings("unchecked")
-    private static synchronized Map<String, Boolean> getCache(GraphRewrite event)
-    {
-        Map<String, Boolean> result = (Map<String, Boolean>)event.getRewriteContext().get(ClassificationServiceCache.class);
-        if (result == null)
-        {
+    private static synchronized Map<String, Boolean> getCache(GraphRewrite event) {
+        Map<String, Boolean> result = (Map<String, Boolean>) event.getRewriteContext().get(ClassificationServiceCache.class);
+        if (result == null) {
             result = Collections.synchronizedMap(new LRUMap(30000));
             event.getRewriteContext().put(ClassificationServiceCache.class, result);
         }
@@ -36,18 +33,16 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
 
     /**
      * Indicates whether or not the given {@link FileModel} is already attached to the {@link ClassificationModel}.
-     *
+     * <p>
      * Note that this assumes all {@link ClassificationModel} attachments are handled via the {@link ClassificationService}.
-     *
+     * <p>
      * Outside of tests, this should be a safe assumption to make.
      */
-    static boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
-    {
+    static boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel) {
         String key = getClassificationFileModelCacheKey(classificationModel, fileModel);
         Boolean linked = getCache(event).get(key);
 
-        if (linked == null)
-        {
+        if (linked == null) {
             GraphTraversal<Vertex, Vertex> existenceCheck = new GraphTraversalSource(event.getGraphContext().getGraph()).V(classificationModel.getElement());
             existenceCheck.out(ClassificationModel.FILE_MODEL);
             existenceCheck.filter(vertexTraverser -> vertexTraverser.get().equals(fileModel.getElement()));
@@ -61,14 +56,12 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     /**
      * Cache the status of the link between the provided {@link ClassificationModel} and the given {@link FileModel}.
      */
-    static void cacheClassificationFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel, boolean linked)
-    {
+    static void cacheClassificationFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel, boolean linked) {
         String key = getClassificationFileModelCacheKey(classificationModel, fileModel);
         getCache(event).put(key, linked);
     }
 
-    private static String getClassificationFileModelCacheKey(ClassificationModel classificationModel, FileModel fileModel)
-    {
+    private static String getClassificationFileModelCacheKey(ClassificationModel classificationModel, FileModel fileModel) {
         StringBuilder builder = new StringBuilder();
         if (classificationModel != null)
             builder.append(classificationModel.getElement().id());
@@ -79,14 +72,12 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     }
 
     @Override
-    public void beforeExecution(GraphRewrite event)
-    {
+    public void beforeExecution(GraphRewrite event) {
         getCache(event).clear();
     }
 
     @Override
-    public void afterExecution(GraphRewrite event)
-    {
+    public void afterExecution(GraphRewrite event) {
         getCache(event).clear();
     }
 }

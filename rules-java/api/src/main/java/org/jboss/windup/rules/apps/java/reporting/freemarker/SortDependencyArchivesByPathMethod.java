@@ -14,7 +14,7 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Takes a list of DependencyReportToArchiveEdgeModel and orders them according to their path.
- *
+ * <p>
  * For example, DependencyReportToArchiveEdgeModel with this structure:
  *
  * <ul>
@@ -22,7 +22,7 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/AProject</li>
  * </ul>
- *
+ * <p>
  * Will be returned as:
  *
  * <ul>
@@ -30,38 +30,31 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/CProject</li>
  * </ul>
- *
  */
-public class SortDependencyArchivesByPathMethod implements WindupFreeMarkerMethod
-{
+public class SortDependencyArchivesByPathMethod implements WindupFreeMarkerMethod {
     private static final String NAME = "sortDependencyArchivesByPathAscending";
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes an Iterable<" + DependencyReportToArchiveEdgeModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (Iterable<DependencyReportToArchiveEdgeModel>)");
         }
 
         Iterable<DependencyReportToArchiveEdgeModel> edges = (Iterable<DependencyReportToArchiveEdgeModel>) FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
 
         List<DependencyReportToArchiveEdgeModel> list = new ArrayList<>();
-        for (DependencyReportToArchiveEdgeModel edge : edges)
-        {
+        for (DependencyReportToArchiveEdgeModel edge : edges) {
             list.add(edge);
         }
         Collections.sort(list, new DependencyReportToEdgeComparator());

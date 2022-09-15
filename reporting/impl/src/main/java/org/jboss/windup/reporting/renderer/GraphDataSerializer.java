@@ -8,8 +8,7 @@ import java.io.OutputStream;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface GraphDataSerializer
-{
+public interface GraphDataSerializer {
     /**
      * Serialize the data to the given output stream.
      */

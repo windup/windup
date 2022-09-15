@@ -1,6 +1,7 @@
 package org.jboss.windup.config.metadata;
 
 import org.jboss.windup.config.loader.RuleLoaderContext;
+
 import java.util.Collection;
 
 /**
@@ -9,7 +10,6 @@ import java.util.Collection;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface TechnologyReferenceAliasTranslatorLoader
-{
+public interface TechnologyReferenceAliasTranslatorLoader {
     Collection<TechnologyReferenceAliasTranslator> loadTranslators(RuleLoaderContext ruleLoaderContext);
 }

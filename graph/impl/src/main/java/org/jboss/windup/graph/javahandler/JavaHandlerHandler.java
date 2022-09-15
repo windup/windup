@@ -31,38 +31,31 @@ import net.bytebuddy.implementation.bind.annotation.This;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class JavaHandlerHandler extends AbstractMethodHandler implements MethodHandler
-{
+public class JavaHandlerHandler extends AbstractMethodHandler implements MethodHandler {
     @Override
-    public Class<JavaHandler> getAnnotationType()
-    {
+    public Class<JavaHandler> getAnnotationType() {
         return JavaHandler.class;
     }
 
     @Override
-    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
-    {
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
         return createInterceptor(builder, method);
     }
 
-    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
-    {
+    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method) {
 //        return builder.method(ElementMatchers.is(method))
 //                    .intercept(MethodDelegation.to(JavaHandlerHandler.JavaHandlerInterceptor.class));
         return builder.define(method).intercept(MethodDelegation.to(JavaHandlerHandler.JavaHandlerInterceptor.class))
                 .annotateMethod(method.getAnnotations());
     }
 
-    public static final class JavaHandlerInterceptor
-    {
+    public static final class JavaHandlerInterceptor {
         @RuntimeType
-        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments Object[] args)
-        {
+        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments Object[] args) {
             ReflectionCache reflectionCache = ((CachesReflection) thisFrame).getReflectionCache();
             final JavaHandler ann = reflectionCache.getAnnotation(method, JavaHandler.class);
 
-            try
-            {
+            try {
                 Class<?> handlerClass = ann.handler();
                 Method handlerMethod = findMethodHandler(method, handlerClass);
                 if (handlerMethod == null)
@@ -71,8 +64,7 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
                 Object handler = handlerClass.newInstance();
 
                 // If there is one additional parameter, assume that the first parameter should be the frame itself
-                if (handlerMethod.getParameterTypes().length == (args.length+1))
-                {
+                if (handlerMethod.getParameterTypes().length == (args.length + 1)) {
                     List<Object> newArgs = new ArrayList<>();
                     newArgs.add(thisFrame);
                     newArgs.addAll(Arrays.asList(args));
@@ -80,9 +72,7 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
                 }
 
                 return handlerMethod.invoke(handler, args);
-            }
-            catch (IllegalAccessException | InstantiationException | InvocationTargetException e)
-            {
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 throw new WindupException(e);
             }
         }
@@ -90,10 +80,8 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
         /**
          * NOTE: Polymorphism is not currently supported.
          */
-        private static Method findMethodHandler(Method originalMethod, Class handlerClass)
-        {
-            for (Method candidateMethod : handlerClass.getMethods())
-            {
+        private static Method findMethodHandler(Method originalMethod, Class handlerClass) {
+            for (Method candidateMethod : handlerClass.getMethods()) {
                 if (candidateMethod.getName().equals(originalMethod.getName()))
                     return candidateMethod;
             }

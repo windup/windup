@@ -11,9 +11,8 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Completed step to construct an {@link Iteration}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface IterationBuilderComplete extends OperationBuilder
-{
+public interface IterationBuilderComplete extends OperationBuilder {
 }
