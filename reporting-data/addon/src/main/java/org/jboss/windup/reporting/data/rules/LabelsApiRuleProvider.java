@@ -7,11 +7,10 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.LabelDto;
-import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -21,8 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = PostReportGenerationPhase.class,
-        before = AttachApplicationReportsToIndexRuleProvider.class,
+        phase = ReportRenderingPhase.class,
         haltOnException = true
 )
 public class LabelsApiRuleProvider extends AbstractApiRuleProvider {

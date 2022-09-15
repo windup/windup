@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.AllTraversalStrategy;
@@ -10,7 +10,6 @@ import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.data.dto.ApplicationDto;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
-import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -25,8 +24,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = PostReportGenerationPhase.class,
-        before = AttachApplicationReportsToIndexRuleProvider.class,
+        phase = ReportRenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {

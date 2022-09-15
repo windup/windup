@@ -5,11 +5,10 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
-import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.reporting.data.dto.RuleDto;
 import org.jboss.windup.reporting.data.dto.TechnologyDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
-import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = PostReportGenerationPhase.class,
-        before = AttachApplicationReportsToIndexRuleProvider.class,
+        phase = ReportRenderingPhase.class,
         haltOnException = true
 )
 public class RulesApiRuleProvider extends AbstractApiRuleProvider {

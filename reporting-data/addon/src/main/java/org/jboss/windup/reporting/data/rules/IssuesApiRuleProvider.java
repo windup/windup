@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.data.rules;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -20,7 +20,6 @@ import org.jboss.windup.reporting.data.dto.IssueFileDto;
 import org.jboss.windup.reporting.data.dto.LinkDto;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
-import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -38,8 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RuleMetadata(
-        phase = PostReportGenerationPhase.class,
-        before = AttachApplicationReportsToIndexRuleProvider.class,
+        phase = ReportRenderingPhase.class,
         haltOnException = true
 )
 public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
