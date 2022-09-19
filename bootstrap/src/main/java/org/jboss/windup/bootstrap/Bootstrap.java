@@ -56,7 +56,6 @@ import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.ToolingModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
-import org.jboss.windup.bootstrap.listener.GreetingListener;
 import org.jboss.windup.server.WindupServerProvider;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
@@ -207,7 +206,8 @@ public class Bootstrap {
     }
 
     public static String getVersionString() {
-        return "> " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " CLI, version " + getRuntimeAPIVersion() + ".";
+        Theme theme = ThemeProvider.getInstance().getTheme();
+        return "> " + theme.getBrandName() + " CLI, version " + getRuntimeAPIVersion() + ", " + theme.getBrandDocumentationUrl();
     }
 
     public static Version getRuntimeAPIVersion() {
@@ -288,8 +288,6 @@ public class Bootstrap {
 
             if (!executePhase(CommandPhase.PRE_EXECUTION, commands) || commands.isEmpty())
                 return;
-
-            furnace.addContainerLifecycleListener(new GreetingListener());
 
             // Now see if there are any server SPIs that need to run
             Imported<WindupServerProvider> serverProviders = furnace.getAddonRegistry().getServices(WindupServerProvider.class);

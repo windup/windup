@@ -39,7 +39,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
     public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the " +
-            ThemeProvider.getInstance().getTheme().getBrandNameLong() +
+            ThemeProvider.getInstance().getTheme().getBrandName() +
             " configuration. See the '--userIgnorePath' option in the User Guide.";
 
     // @formatter:off

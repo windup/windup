@@ -2,24 +2,30 @@ package org.jboss.windup.util;
 
 public class Theme {
 
-    private final String brandNameLong;
+    private final String brandName;
     private final String brandNameAcronym;
+    private final String brandWebsiteUrl;
     private final String brandDocumentationUrl;
     private final String cliName;
 
-    public Theme(String brandNameLong, String brandNameAcronym, String brandDocumentationUrl, String cliName) {
-        this.brandNameLong = brandNameLong;
+    public Theme(String brandName, String brandNameAcronym, String brandWebsiteUrl, String brandDocumentationUrl, String cliName) {
+        this.brandName = brandName;
         this.brandNameAcronym = brandNameAcronym;
+        this.brandWebsiteUrl = brandWebsiteUrl;
         this.brandDocumentationUrl = brandDocumentationUrl;
         this.cliName = cliName;
     }
 
-    public String getBrandNameLong() {
-        return brandNameLong;
+    public String getBrandName() {
+        return brandName;
     }
 
     public String getBrandNameAcronym() {
         return brandNameAcronym;
+    }
+
+    public String getBrandWebsiteUrl() {
+        return brandWebsiteUrl;
     }
 
     public String getBrandDocumentationUrl() {
