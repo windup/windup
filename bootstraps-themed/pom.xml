@@ -12,25 +12,59 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-resolver-maven</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-se</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ocpsoft.rewrite</groupId>
+                    <artifactId>rewrite-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-server-provider-spi</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tinkerpop.gremlin</groupId>
+                    <artifactId>gremlin-groovy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.tinkerpop.blueprints</groupId>
+                    <artifactId>blueprints-graph-sail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.thinkaurelius.titan</groupId>
+                    <artifactId>titan-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
