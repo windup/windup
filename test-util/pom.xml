@@ -42,7 +42,6 @@
             </exclusions>
         </dependency>
 
-
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -74,6 +73,10 @@
                 <exclusion>
                     <groupId>org.jboss.windup.rules.apps</groupId>
                     <artifactId>windup-rules-java-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
