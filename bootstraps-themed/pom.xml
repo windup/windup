@@ -12,6 +12,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bootstrap</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>
         </dependency>
