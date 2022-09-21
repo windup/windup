@@ -26,6 +26,10 @@
             <artifactId>furnace-se</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
