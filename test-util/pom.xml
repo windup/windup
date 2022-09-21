@@ -65,6 +65,13 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-bootstrap-windup</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- excluded since it's already imported, via forge-addon, above -->
+                    <groupId>org.jboss.windup.config</groupId>
+                    <artifactId>windup-config-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Test Dependencies -->
