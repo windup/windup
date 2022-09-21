@@ -71,6 +71,10 @@
                     <groupId>org.jboss.windup.config</groupId>
                     <artifactId>windup-config-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.windup.rules.apps</groupId>
+                    <artifactId>windup-rules-java-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
