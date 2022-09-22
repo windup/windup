@@ -22,7 +22,7 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Build on JDK 11
-      run: mvn clean install -DskipTests -B -U && mvn -B test -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
+      run: mvn clean install -DskipTests -B -U && mvn -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
 
   windup-build-with-unit-tests-2:
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Build on JDK 11
-      run: mvn clean install -DskipTests -B -U && mvn -B test -pl 'rules-java/tests,rules-xml/tests,config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
+      run: mvn clean install -DskipTests -B -U && mvn -B clean install -pl 'rules-java/tests,rules-xml/tests,config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
 
   windup-tests:
     runs-on: ubuntu-latest
@@ -56,4 +56,4 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Build on JDK 11
-      run: mvn clean install -DskipTests -B -U && mvn -B test -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver -f tests
+      run: mvn clean install -DskipTests -B -U && mvn -B clean install -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver -f tests
