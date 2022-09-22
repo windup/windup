@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -8,13 +9,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.RuleMetadataType;
+import org.jboss.windup.config.metadata.RuleProviderMetadata;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
@@ -29,6 +38,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
@@ -115,6 +125,17 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.setEffort(effort);
             hintModel.setIssueDisplayMode(this.issueDisplayMode);
 
+            Rule rule = (Rule) context.get(Rule.class);
+            Context ruleContext = rule instanceof Context ? (Context) rule : null;
+            if (ruleContext != null) {
+                AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
+
+                WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                List<TechnologyReferenceModel> targetTechnologies = extractTargetTechnologies(configuration, ruleProvider.getMetadata());
+                hintModel.setTargetTechnologies(targetTechnologies);
+                hintModel.setSourceTechnologies(extractSourceTechnologies(configuration, ruleProvider.getMetadata()));
+            }
+
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
             IssueCategoryModel issueCategoryModel;
             if (this.issueCategory == null)
@@ -170,6 +191,26 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         } finally {
             ExecutionStatistics.get().end("Hint.performParameterized");
         }
+    }
+
+    private List<TechnologyReferenceModel> extractSourceTechnologies(WindupConfigurationModel configuration, RuleProviderMetadata ruleProviderMetadata) {
+        List<TechnologyReferenceModel> configuredSourceTechnologies = configuration.getSourceTechnologies();
+        Set<TechnologyReference> ruleSourceTechnologies = ruleProviderMetadata.getSourceTechnologies();
+
+        return intersectTechnologies(configuredSourceTechnologies, ruleSourceTechnologies);
+    }
+
+    private List<TechnologyReferenceModel> extractTargetTechnologies(WindupConfigurationModel configuration, RuleProviderMetadata ruleProviderMetadata) {
+        List<TechnologyReferenceModel> configuredTargetTechnologies = configuration.getTargetTechnologies();
+        Set<TechnologyReference> ruleTargetTechnologies = ruleProviderMetadata.getTargetTechnologies();
+
+        return intersectTechnologies(configuredTargetTechnologies, ruleTargetTechnologies);
+    }
+
+    private List<TechnologyReferenceModel> intersectTechnologies(Collection<TechnologyReferenceModel> configuredTechnologies, Collection<TechnologyReference> ruleTechnologies) {
+        return configuredTechnologies.stream()
+                .filter(trm -> ruleTechnologies.contains(new TechnologyReference(trm)))
+                .collect(Collectors.toList());
     }
 
     @Override

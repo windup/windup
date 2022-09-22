@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
@@ -27,6 +28,8 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
     String QUICKFIXES = TYPE_PREFIX + "quickfixes";
     String ISSUE_DISPLAY_MODE = "issueDisplayMode";
+    String SOURCE_TECHNOLOGIES = "sourceTechnologies";
+    String TARGET_TECHNOLOGIES = "targetTechnologies";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -105,4 +108,16 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      */
     @Property(RULE_ID)
     String getRuleID();
+
+    @Adjacency(label = SOURCE_TECHNOLOGIES, direction = Direction.OUT)
+    List<TechnologyReferenceModel> getSourceTechnologies();
+
+    @Adjacency(label = SOURCE_TECHNOLOGIES, direction = Direction.OUT)
+    void setSourceTechnologies(List<TechnologyReferenceModel> sourceTechnologies);
+
+    @Adjacency(label = TARGET_TECHNOLOGIES, direction = Direction.OUT)
+    List<TechnologyReferenceModel> getTargetTechnologies();
+
+    @Adjacency(label = TARGET_TECHNOLOGIES, direction = Direction.OUT)
+    void setTargetTechnologies(List<TechnologyReferenceModel> targetTechnologies);
 }

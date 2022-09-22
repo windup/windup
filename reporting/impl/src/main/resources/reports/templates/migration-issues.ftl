@@ -106,6 +106,26 @@
             /* Reduce the padding, default is too big. */
             .hint-detail-panel > .panel-body { padding-bottom: 0; }
 
+            .technology {
+                display: inline-block;
+                padding: 5px;
+                margin: auto;
+                border-radius: 3px;
+                color: white;
+            }
+
+            .source {
+                background-color: green;
+            }
+
+            .target {
+                background-color: orange;
+            }
+
+            .tech-list {
+                margin-left: 5px;
+            }
+
             /* Colors of various effort levels. */
             /* Commented out for now (jsight - 2016/02/15)
             tr.problemSummary.effortINFO td.level { color: #1B540E; }
@@ -249,7 +269,6 @@
                                     </div>
                                     <div class="panel-body">
                                         {{{../description}}}
-                                    </div>
 
                                     {{#if ../resourceLinks}}
                                         <div class="panel-body">
@@ -260,6 +279,27 @@
                                             </ul>
                                         </div>
                                     {{/if}}
+
+                                    {{#if ../sts}}
+                                    Sources:</br>
+                                    <div class="tech-list">
+                                        {{#each ../sts}}
+                                        <span class="technology source">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                    {{/if}}
+
+                                    {{#if ../tts}}
+                                    Targets:</br>
+                                    <div class="tech-list">
+                                        {{#each ../tts}}
+                                        <span class="technology target">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                    {{/if}}
+                                    </div>
+
+                                    </br>
                                 </div>
                             </td>
                         {{/if}}

@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -74,7 +76,9 @@ public class ProblemSummaryService {
 
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null) {
-                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getIssueCategory(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                List<String> sourceTechnologies = hint.getSourceTechnologies().stream().map(TechnologyReference::new).map(TechnologyReference::toString).collect(Collectors.toList());
+                List<String> targetTechnologies = hint.getTargetTechnologies().stream().map(TechnologyReference::new).map(TechnologyReference::toString).collect(Collectors.toList());
+                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getIssueCategory(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort(), sourceTechnologies, targetTechnologies);
                 for (LinkModel link : hint.getLinks()) {
                     summary.addLink(link.getDescription(), link.getLink());
                 }
@@ -113,7 +117,7 @@ public class ProblemSummaryService {
             if (summary == null) {
                 summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getIssueCategory(), classification.getRuleID(),
                         classification.getClassification(),
-                        0, classification.getEffort());
+                        0, classification.getEffort(), List.of(), List.of());
                 for (LinkModel link : classification.getLinks()) {
                     summary.addLink(link.getDescription(), link.getLink());
                 }
