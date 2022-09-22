@@ -23,7 +23,6 @@ public class ProblemSummary {
     private final Map<String, Map<FileModel, ProblemFileSummary>> descriptionToFiles = new LinkedHashMap<>();
     private final List<Link> links = new ArrayList<>();
 
-    // TODO: add targets here?
     private final List<String> sourceTechnologies;
     private final List<String> targetTechnologies;
 
