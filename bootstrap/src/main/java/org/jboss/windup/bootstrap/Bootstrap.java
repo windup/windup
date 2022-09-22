@@ -9,6 +9,7 @@ package org.jboss.windup.bootstrap;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,6 +58,7 @@ import org.jboss.windup.bootstrap.commands.windup.ToolingModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
 import org.jboss.windup.server.WindupServerProvider;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 
@@ -207,7 +209,24 @@ public class Bootstrap {
 
     public static String getVersionString() {
         Theme theme = ThemeProvider.getInstance().getTheme();
-        return "> " + theme.getBrandName() + " CLI, version " + getRuntimeAPIVersion() + ", " + theme.getBrandDocumentationUrl();
+        return String.format("> %s CLI %s (Windup Core %s) %s",
+                theme.getBrandName(),
+                getCliVersion(),
+                getRuntimeAPIVersion(),
+                theme.getBrandDocumentationUrl());
+    }
+
+    public static Version getCliVersion() {
+        // this file is available in the home folder of the CLI only
+        final File cliVersion = PathUtil.getWindupHome().resolve("cli-version.txt").toFile();
+        if (cliVersion.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(cliVersion))) {
+                return SingleVersion.valueOf(br.readLine());
+            } catch (Exception e) {
+                // do nothing because the execution continues with the fallback method below
+            }
+        }
+        return getRuntimeAPIVersion();
     }
 
     public static Version getRuntimeAPIVersion() {
