@@ -35,7 +35,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider {
-    public static final String REPORT_DESCRIPTION = "This describes the version of " + ThemeProvider.getInstance().getTheme().getBrandName() + " used to generate this report and provides helpful links for further assistance.";
+    public static final String REPORT_DESCRIPTION = "This describes the version of %s used to generate this report and provides helpful links for further assistance.";
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
 
@@ -80,7 +80,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider {
 
         applicationReportModel.setReportPriority(10000);
         applicationReportModel.setReportName(REPORT_NAME);
-        applicationReportModel.setDescription(REPORT_DESCRIPTION);
+        applicationReportModel.setDescription(String.format(REPORT_DESCRIPTION, ThemeProvider.getInstance().getTheme().getBrandName()));
         applicationReportModel.setReportIconClass("fa fa-question-circle");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
