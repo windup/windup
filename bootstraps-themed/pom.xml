@@ -41,12 +41,6 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.ocpsoft.rewrite</groupId>
-                    <artifactId>rewrite-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>
