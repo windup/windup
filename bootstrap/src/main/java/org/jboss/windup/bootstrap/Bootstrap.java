@@ -209,32 +209,15 @@ public class Bootstrap {
 
     public static String getVersionString() {
         Theme theme = ThemeProvider.getInstance().getTheme();
-        return String.format("> %s CLI %s (Windup Core %s) %s",
+        return String.format("> %s CLI %s (Windup Components %s) %s",
                 theme.getBrandName(),
-                getCliVersion(),
-                getRuntimeAPIVersion(),
+                theme.getCliVersion(),
+                theme.getComponentsVersion(),
                 theme.getBrandDocumentationUrl());
     }
 
-    public static Version getCliVersion() {
-        // this file is available in the home folder of the CLI only
-        final File cliVersion = PathUtil.getWindupHome().resolve("cli-version.txt").toFile();
-        if (cliVersion.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(cliVersion))) {
-                return SingleVersion.valueOf(br.readLine());
-            } catch (Exception e) {
-                // do nothing because the execution continues with the fallback method below
-            }
-        }
-        return getRuntimeAPIVersion();
-    }
-
     public static Version getRuntimeAPIVersion() {
-        String version = Bootstrap.class.getPackage().getImplementationVersion();
-        if (version != null) {
-            return SingleVersion.valueOf(version);
-        }
-        return EmptyVersion.getInstance();
+        return SingleVersion.valueOf(ThemeProvider.getInstance().getTheme().getComponentsVersion());
     }
 
     private static File getUserRulesDir() {

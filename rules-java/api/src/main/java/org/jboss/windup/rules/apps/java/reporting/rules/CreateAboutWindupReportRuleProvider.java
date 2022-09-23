@@ -23,6 +23,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -80,7 +81,8 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider {
 
         applicationReportModel.setReportPriority(10000);
         applicationReportModel.setReportName(REPORT_NAME);
-        applicationReportModel.setDescription(String.format(REPORT_DESCRIPTION, ThemeProvider.getInstance().getTheme().getBrandName()));
+        final Theme theme = ThemeProvider.getInstance().getTheme();
+        applicationReportModel.setDescription(String.format(REPORT_DESCRIPTION, theme.getBrandName()));
         applicationReportModel.setReportIconClass("fa fa-question-circle");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
@@ -96,7 +98,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider {
         Map<String, WindupVertexFrame> related = new HashMap<>();
         AboutWindupModel aboutWindupModel = context.getFramed().addFramedVertex(AboutWindupModel.class);
 
-        aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());
+        aboutWindupModel.setWindupRuntimeVersion(theme.getCliVersion());
         related.put("windupAbout", aboutWindupModel);
 
         applicationReportModel.setRelatedResource(related);

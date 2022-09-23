@@ -7,13 +7,17 @@ public class Theme {
     private final String brandWebsiteUrl;
     private final String brandDocumentationUrl;
     private final String cliName;
+    private final String cliVersion;
+    private final String componentsVersion;
 
-    public Theme(String brandName, String brandNameAcronym, String brandWebsiteUrl, String brandDocumentationUrl, String cliName) {
+    public Theme(String brandName, String brandNameAcronym, String brandWebsiteUrl, String brandDocumentationUrl, String cliName, String cliVersion, String componentsVersion) {
         this.brandName = brandName;
         this.brandNameAcronym = brandNameAcronym;
         this.brandWebsiteUrl = brandWebsiteUrl;
         this.brandDocumentationUrl = brandDocumentationUrl;
         this.cliName = cliName;
+        this.cliVersion = cliVersion;
+        this.componentsVersion = componentsVersion;
     }
 
     public String getBrandName() {
@@ -36,4 +40,11 @@ public class Theme {
         return cliName;
     }
 
+    public String getCliVersion() {
+        return cliVersion;
+    }
+
+    public String getComponentsVersion() {
+        return componentsVersion;
+    }
 }
