@@ -1,13 +1,17 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -30,6 +34,7 @@ import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -96,6 +101,10 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.getId() + "'] = ");
                     objectMapper.writer(filters).writeValue(issueSummaryWriter, summariesBySeverity);
                     issueSummaryWriter.write(";" + NEWLINE);
+                    if (windupConfiguration.isExportingSummary())
+                    {
+                        writeExportSummaryFile(windupConfiguration,summariesBySeverity, inputApplication);
+                    }
                 }
 
                 issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
@@ -132,6 +141,38 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
     @JsonFilter("graphFilter")
     public static class PropertyFilterMixin {
+
+    }
+
+    private void writeExportSummaryFile(WindupConfigurationModel windupConfig, Map<String, List<ProblemSummary>> summariesBySeverity, ProjectModel project){
+        String outputFolderPath = windupConfig.getOutputPath().getFilePath() + File.separator;
+
+        Map<String, Integer> translatedResults = new HashMap<>();
+
+        summariesBySeverity.forEach((k, v) -> translatedResults.put(k, v.stream().map(summary -> summary.getNumberFound())));
+        Map<String, Map<String,Integer>> resultsWithTitle = new HashMap<>();
+        resultsWithTitle.put("Incidents By Category", translatedResults);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+
+        FileWriter writer = null;
+        try {
+            json = mapper.writeValueAsString(resultsWithTitle);
+            String filename = PathUtil.cleanFileName(t.getCurrent().getRootFileModel().getFileName()) + ".json";
+            writer = new FileWriter(outputFolderPath + filename);
+            writer.write(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Couldn't convert given map to a JSON: " + e.getMessage());
+        } catch (IOException ioe) {
+            throw new RuntimeException("Couldn't write summary to file: " + ioe.getMessage());
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 }
