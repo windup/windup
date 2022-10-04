@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -147,11 +145,49 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
     private void writeExportSummaryFile(WindupConfigurationModel windupConfig, Map<String, List<ProblemSummary>> summariesBySeverity, ProjectModel project){
         String outputFolderPath = windupConfig.getOutputPath().getFilePath() + File.separator;
 
-        Map<String, Integer> translatedResults = new HashMap<>();
+        Map<String, Map<String,Integer>> translatedResults = new HashMap<>();
 
-        summariesBySeverity.forEach((k, v) -> translatedResults.put(k, v.stream().map(summary -> summary.getNumberFound())));
-        Map<String, Map<String,Integer>> resultsWithTitle = new HashMap<>();
+
+        summariesBySeverity.forEach((k, v) -> {
+            int incidents = 0;
+            int effortPoints = 0;
+            for (ProblemSummary summary: v) {
+                incidents += summary.getNumberFound();
+                effortPoints += summary.getNumberFound() * summary.getEffortPerIncident();
+            }
+            HashMap<String,Integer> results = new HashMap<>();
+            results.put("incidents", incidents);
+            results.put("totalStoryPoints", effortPoints);
+            translatedResults.put(k,results);
+            });
+                    
+                
+        Map<String, Map<String,Map<String,Integer>>> resultsWithTitle = new HashMap<>();
         resultsWithTitle.put("Incidents By Category", translatedResults);
+
+        List<ProblemSummary> mandatorySummaries = summariesBySeverity.get("mandatory");
+        Map<Integer,Integer> incidentsByEffort = new HashMap<>();
+
+        mandatorySummaries.forEach(ps -> {
+
+            if (!incidentsByEffort.containsKey(ps.getEffortPerIncident()) ) {
+                incidentsByEffort.put(ps.getEffortPerIncident(), ps.getNumberFound());
+            } else {
+                incidentsByEffort.replace(ps.getEffortPerIncident(), incidentsByEffort.get(ps.getEffortPerIncident()) + ps.getNumberFound());
+            }
+        });
+
+        Map<String, Map<String,Integer>> translatedEffortResults = new HashMap<>();
+
+        incidentsByEffort.forEach((k,v) -> {
+            HashMap<String,Integer> results = new HashMap<>();
+
+            results.put("incidents", v);
+            results.put("totalStoryPoints", k * v);
+            translatedEffortResults.put(getEffortDescription(k),results);
+        });
+
+        resultsWithTitle.put("Mandatory Incidents By Type", translatedEffortResults);
 
         ObjectMapper mapper = new ObjectMapper();
         String json;
@@ -159,11 +195,11 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
         FileWriter writer = null;
         try {
             json = mapper.writeValueAsString(resultsWithTitle);
-            String filename = PathUtil.cleanFileName(t.getCurrent().getRootFileModel().getFileName()) + ".json";
+            String filename = PathUtil.cleanFileName(project.getRootFileModel().getFileName()) + ".json";
             writer = new FileWriter(outputFolderPath + filename);
             writer.write(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Couldn't convert given map to a JSON: " + e.getMessage());
+            throw new RuntimeException("Couldn't convert given map to JSON: " + e.getMessage());
         } catch (IOException ioe) {
             throw new RuntimeException("Couldn't write summary to file: " + ioe.getMessage());
         } finally {
@@ -174,5 +210,24 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
             }
         }
 
+    }
+
+    private String getEffortDescription(Integer effort){
+        switch (effort) {
+            case 0:
+                return "Info";
+            case 1:
+                return "Trivial";
+            case 3:
+                return "Complex";
+            case 5:
+                return "Redesign";
+            case 7:
+                return "Architectural";
+            case 13:
+                return "Unknown";
+            default:
+                return null;
+        }
     }
 }
