@@ -98,7 +98,7 @@ public class ToolingModeTest {
     }
 
     @Test
-    public void testTooingModeResults() throws Exception {
+    public void testToolingModeResults() throws Exception {
         Assert.assertNotNull(furnace);
 
         Set<String> input = Sets.newHashSet(Paths.get("../../test-files/src_example").toString());

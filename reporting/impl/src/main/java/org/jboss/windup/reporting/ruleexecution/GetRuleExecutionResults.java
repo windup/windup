@@ -30,7 +30,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod {
     @Override
     public String getDescription() {
         return "Takes a parameter of type " + AbstractRuleProvider.class.getSimpleName() + " and returns a List<"
-                + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " execution.";
+                + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current " + ThemeProvider.getInstance().getTheme().getBrandName() + " execution.";
     }
 
     @Override

@@ -46,8 +46,8 @@ public class WindupUpdateDistributionCommand implements UICommand {
     @Override
     public UICommandMetadata getMetadata(UIContext ctx) {
         Theme theme = ThemeProvider.getInstance().getTheme();
-        return Metadata.forCommand(getClass()).name(theme.getBrandNameLong() + " CLI Update Distribution")
-                .description("Update the whole " + theme.getBrandNameLong() + " CLI installation")
+        return Metadata.forCommand(getClass()).name(theme.getBrandName() + " CLI Update Distribution")
+                .description("Update the whole " + theme.getBrandName() + " CLI installation")
                 .category(Categories.create("Platform", "Migration"));
     }
 
