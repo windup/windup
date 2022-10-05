@@ -42,8 +42,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
  * Discovers the hibernate.hbm.xml files.
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.hbm.xml files")
-public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
-{
+public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel> {
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getName());
 
     private static final String TECH_TAG = "Hibernate Mapping";
@@ -53,18 +52,15 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
 
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
 
-        QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
-        {
+        QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion() {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
-            {
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                 pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.textRegex(REGEX_HIBERNATE));
 
                 Traversal<?, ?> systemIDQuery = event.getGraphContext().getQuery(DoctypeMetaModel.class)
-                            .getRawTraversal().has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
+                        .getRawTraversal().has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
                 GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(systemIDQuery.toList());
 
                 pipeline.union(systemIdPipeline);
@@ -77,11 +73,10 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, DoctypeMetaModel payload) {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         HibernateMappingFileService hibernateMappingFileService = new HibernateMappingFileService(
-                    event.getGraphContext());
+                event.getGraphContext());
         HibernateEntityService hibernateEntityService = new HibernateEntityService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
@@ -92,15 +87,13 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
         // extract the version information from the public / system ID.
         String versionInformation = extractVersion(publicId, systemId);
 
-        for (XmlFileModel xml : payload.getXmlResources())
-        {
+        for (XmlFileModel xml : payload.getXmlResources()) {
             // create a facet, and then identify the XML.
             HibernateMappingFileModel hibernateMapping = hibernateMappingFileService.addTypeToModel(xml);
 
             Document doc = xmlFileService.loadDocumentQuiet(event, context, hibernateMapping);
 
-            if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null))
-            {
+            if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null)) {
                 LOG.log(Level.INFO, "Docment does not contain Hibernate Mapping.");
                 continue;
             }
@@ -111,8 +104,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             String schemaName = $(doc).xpath("/hibernate-mapping/class").attr("schema");
             String catalogName = $(doc).xpath("/hibernate-mapping/class").attr("catalog");
 
-            if (StringUtils.isBlank(clzName))
-            {
+            if (StringUtils.isBlank(clzName)) {
                 LOG.log(Level.FINE, "Docment does not contain class name. Skipping.");
                 continue;
             }
@@ -120,8 +112,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
 
             // prepend with package name.
-            if (StringUtils.isNotBlank(clzPkg) && !StringUtils.startsWith(clzName, clzPkg))
-            {
+            if (StringUtils.isNotBlank(clzPkg) && !StringUtils.startsWith(clzName, clzPkg)) {
                 clzName = clzPkg + "." + clzName;
             }
 
@@ -140,32 +131,26 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             // map the entity back to the XML mapping.
             hibernateMapping.addHibernateEntity(hibernateEntity);
 
-            if (StringUtils.isNotBlank(versionInformation))
-            {
+            if (StringUtils.isNotBlank(versionInformation)) {
                 hibernateEntity.setSpecificationVersion(versionInformation);
                 hibernateMapping.setSpecificationVersion(versionInformation);
             }
         }
     }
 
-    private String extractVersion(String publicId, String systemId)
-    {
+    private String extractVersion(String publicId, String systemId) {
         Pattern pattern = Pattern.compile("[0-9][0-9a-zA-Z.-]+");
 
-        if (StringUtils.isNotBlank(publicId))
-        {
+        if (StringUtils.isNotBlank(publicId)) {
             Matcher matcher = pattern.matcher(publicId);
-            if (matcher.find())
-            {
+            if (matcher.find()) {
                 return matcher.group();
             }
         }
 
-        if (StringUtils.isNotBlank(systemId))
-        {
+        if (StringUtils.isNotBlank(systemId)) {
             Matcher matcher = pattern.matcher(systemId);
-            if (matcher.find())
-            {
+            if (matcher.find()) {
                 String match = matcher.group();
 
                 // for system ID, make sure to remove the ".dtd" that could come in.

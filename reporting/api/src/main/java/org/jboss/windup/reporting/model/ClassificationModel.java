@@ -21,8 +21,7 @@ import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MOD
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel
-{
+public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel {
     String TYPE = "ClassificationModel";
     String TYPE_PREFIX = TYPE + "-";
     String RULE_ID = TYPE_PREFIX + "ruleID";
@@ -100,8 +99,7 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     List<QuickfixModel> getQuickfixes();
 
     @Override
-    default List<FileModel> transformToFileModel()
-    {
+    default List<FileModel> transformToFileModel() {
         return this.getFileModels();
     }
 }

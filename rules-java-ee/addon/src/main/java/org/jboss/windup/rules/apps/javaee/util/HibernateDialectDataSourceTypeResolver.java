@@ -7,66 +7,39 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-public class HibernateDialectDataSourceTypeResolver
-{
+public class HibernateDialectDataSourceTypeResolver {
     /**
      * Converts the given dislect to a human-readable datasource type.
      */
-    public static String resolveDataSourceTypeFromDialect(String dialect)
-    {
-        if (StringUtils.contains(dialect, "Oracle"))
-        {
+    public static String resolveDataSourceTypeFromDialect(String dialect) {
+        if (StringUtils.contains(dialect, "Oracle")) {
             return "Oracle";
-        }
-        else if (StringUtils.contains(dialect, "MySQL"))
-        {
+        } else if (StringUtils.contains(dialect, "MySQL")) {
             return "MySQL";
-        }
-        else if (StringUtils.contains(dialect, "DB2390Dialect"))
-        {
+        } else if (StringUtils.contains(dialect, "DB2390Dialect")) {
             return "DB2/390";
-        }
-        else if (StringUtils.contains(dialect, "DB2400Dialect"))
-        {
+        } else if (StringUtils.contains(dialect, "DB2400Dialect")) {
             return "DB2/400";
-        }
-        else if (StringUtils.contains(dialect, "DB2"))
-        {
+        } else if (StringUtils.contains(dialect, "DB2")) {
             return "DB2";
-        }
-        else if (StringUtils.contains(dialect, "Ingres"))
-        {
+        } else if (StringUtils.contains(dialect, "Ingres")) {
             return "Ingres";
-        }
-        else if (StringUtils.contains(dialect, "Derby"))
-        {
+        } else if (StringUtils.contains(dialect, "Derby")) {
             return "Derby";
-        }
-        else if (StringUtils.contains(dialect, "Pointbase"))
-        {
+        } else if (StringUtils.contains(dialect, "Pointbase")) {
             return "Pointbase";
-        }
-        else if (StringUtils.contains(dialect, "Postgres"))
-        {
+        } else if (StringUtils.contains(dialect, "Postgres")) {
             return "Postgres";
-        }
-        else if (StringUtils.contains(dialect, "SQLServer"))
-        {
+        } else if (StringUtils.contains(dialect, "SQLServer")) {
             return "SQLServer";
-        }
-        else if (StringUtils.contains(dialect, "Sybase"))
-        {
+        } else if (StringUtils.contains(dialect, "Sybase")) {
             return "Sybase";
-        }
-        else if (StringUtils.contains(dialect, "HSQLDialect"))
-        {
+        } else if (StringUtils.contains(dialect, "HSQLDialect")) {
             return "HyperSQL";
-        }
-        else if (StringUtils.contains(dialect, "H2Dialect"))
-        {
+        } else if (StringUtils.contains(dialect, "H2Dialect")) {
             return "H2";
         }
-        
+
         return dialect;
 
     }

@@ -23,12 +23,12 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class JavaMethodServiceTest {
 
-    @AddonDependencies({ @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+    @AddonDependencies({@AddonDependency(name = "org.jboss.windup.config:windup-config"),
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
     public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
@@ -79,7 +79,7 @@ public class JavaMethodServiceTest {
 
             JavaMethodService methodService = new JavaMethodService(context);
             JavaMethodModel foundMethod = methodService.createJavaMethod(classModel1, "foo", classModel2);
-            Assert.assertEquals((Object)methodModelSomeMethod.getId(), (Object)foundMethod.getId());
+            Assert.assertEquals((Object) methodModelSomeMethod.getId(), (Object) foundMethod.getId());
 
             methodService.createJavaMethod(classModel1, "bar");
             Assert.assertEquals(2, classModel1.getJavaMethods().size());

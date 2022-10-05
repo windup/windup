@@ -21,37 +21,30 @@ import org.jboss.windup.util.exception.WindupException;
 
 /**
  * A service class keeping the set of skipped archives and handling their lookup.
- *
+ * <p>
  * Data file format: GROUP_ID:ARTIFACT_ID:VERSION_OR_RANGE[:CLASSIFIER]
- *
+ * <p>
  * Examples: org.apache.commons.*:*:* org.hibernate.*:hibernate-core:(3.2,4.0]:jar
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class SkippedArchives
-{
+public class SkippedArchives {
     private static final Map<Coordinate, VersionRange> map = new HashMap<>();
 
     /**
      * Load the given configuration file.
      */
-    public static void load(File file)
-    {
-        try(FileInputStream inputStream = new FileInputStream(file))
-        {
+    public static void load(File file) {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
             LineIterator it = IOUtils.lineIterator(inputStream, "UTF-8");
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 String line = it.next();
-                if (!line.startsWith("#") && !line.trim().isEmpty())
-                {
+                if (!line.startsWith("#") && !line.trim().isEmpty()) {
                     add(line);
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new WindupException("Failed loading archive ignore patterns from [" + file.toString() + "]", e);
         }
     }
@@ -60,29 +53,27 @@ public class SkippedArchives
         map.clear();
     }
 
-    public static void add(String line)
-    {
+    public static void add(String line) {
         Assert.notNull(line, "Archive coordinate pattern must not be null.");
         CoordinatePattern pattern = fromCoordinatePattern(line);
         map.put(pattern.getCoordinate(), pattern.getVersion());
     }
 
-    static CoordinatePattern fromCoordinatePattern(String coordinates)
-    {
+    static CoordinatePattern fromCoordinatePattern(String coordinates) {
         String[] parts = coordinates.split("\\s*:\\s*");
         if (parts.length < 3)
             throw new IllegalArgumentException("Expected GAV definition format is 'GROUP_ID:ARTIFACT_ID:VERSION_OR_RANGE[:CLASSIFIER]', was: "
-                        + coordinates);
+                    + coordinates);
 
         CoordinateBuilder coordinate = CoordinateBuilder.create()
-                    .setGroupId(parts[0])
-                    .setArtifactId(parts[1]);
+                .setGroupId(parts[0])
+                .setArtifactId(parts[1]);
 
         VersionRange version = null;
 
         if (parts[2].equals("*"))
             version = new EmptyVersionRange();
-        //  Range - (1.0,2.0]  or [1.0,2.0) etc.
+            //  Range - (1.0,2.0]  or [1.0,2.0) etc.
         else if (parts[2].matches("^(\\[|\\()[^,]+(,[^,]+)?(\\]|\\))$"))
             version = Versions.parseMultipleVersionRange(parts[2]);
         else
@@ -94,29 +85,25 @@ public class SkippedArchives
         return new CoordinatePattern(coordinate, version);
     }
 
-    public static boolean isSkipped(ArchiveCoordinateModel coordinate)
-    {
+    public static boolean isSkipped(ArchiveCoordinateModel coordinate) {
         return isSkipped(CoordinateBuilder.create()
-                    .setArtifactId(coordinate.getArtifactId())
-                    .setGroupId(coordinate.getGroupId())
-                    .setClassifier(coordinate.getClassifier())
-                    .setVersion(coordinate.getVersion()));
+                .setArtifactId(coordinate.getArtifactId())
+                .setGroupId(coordinate.getGroupId())
+                .setClassifier(coordinate.getClassifier())
+                .setVersion(coordinate.getVersion()));
     }
 
     /*
      * Public for testing purposes
      */
-    public static boolean isSkipped(Coordinate coordinate)
-    {
-        for (Entry<Coordinate, VersionRange> entry : map.entrySet())
-        {
+    public static boolean isSkipped(Coordinate coordinate) {
+        for (Entry<Coordinate, VersionRange> entry : map.entrySet()) {
             Coordinate pattern = entry.getKey();
             VersionRange range = entry.getValue();
 
             if (isPatternMatch(pattern.getGroupId(), coordinate.getGroupId())
-                        && isPatternMatch(pattern.getArtifactId(), coordinate.getArtifactId())
-                        && isPatternMatch(pattern.getClassifier(), coordinate.getClassifier()))
-            {
+                    && isPatternMatch(pattern.getArtifactId(), coordinate.getArtifactId())
+                    && isPatternMatch(pattern.getClassifier(), coordinate.getClassifier())) {
                 if (range.isEmpty() || range.includes(new SingleVersion(coordinate.getVersion())))
                     return true;
             }
@@ -124,12 +111,11 @@ public class SkippedArchives
         return false;
     }
 
-    private static boolean isPatternMatch(String pattern, String value)
-    {
+    private static boolean isPatternMatch(String pattern, String value) {
         if ("*".equals(pattern))
             return true;
 
-        if(pattern == value)
+        if (pattern == value)
             return true;
 
         if (pattern != null && pattern.equals(value))
@@ -145,30 +131,25 @@ public class SkippedArchives
     /*
      * Public for testing purposes.
      */
-    public static int getCount()
-    {
+    public static int getCount() {
         return map.size();
     }
 
-    private static class CoordinatePattern
-    {
+    private static class CoordinatePattern {
 
         private final CoordinateBuilder coordinate;
         private final VersionRange version;
 
-        public CoordinatePattern(CoordinateBuilder coordinate, VersionRange version)
-        {
+        public CoordinatePattern(CoordinateBuilder coordinate, VersionRange version) {
             this.coordinate = coordinate;
             this.version = version;
         }
 
-        public CoordinateBuilder getCoordinate()
-        {
+        public CoordinateBuilder getCoordinate() {
             return coordinate;
         }
 
-        public VersionRange getVersion()
-        {
+        public VersionRange getVersion() {
             return version;
         }
 

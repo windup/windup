@@ -29,21 +29,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @RunWith(Arquillian.class)
-public class ProjectHandlerTest
-{
+public class ProjectHandlerTest {
 
     private static final String PROJECT_XML_FILE = "src/test/resources/xml/project.xml";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static AddonArchive getDeployment()
-    {
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")})
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -51,8 +49,7 @@ public class ProjectHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testLineItemWithMessage() throws Exception
-    {
+    public void testLineItemWithMessage() throws Exception {
         File fXmlFile = new File(PROJECT_XML_FILE);
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
@@ -62,7 +59,7 @@ public class ProjectHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> projectList = $(doc).children("project").get();
         Element projectElement = projectList.get(0);
-        Project project = parser.<Project> processElement(projectElement);
+        Project project = parser.<Project>processElement(projectElement);
         Artifact artifact = project.getArtifact();
         String artifactId = artifact.getArtifactId().toString();
         String groupId = artifact.getGroupId().toString();

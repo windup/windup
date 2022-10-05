@@ -12,38 +12,31 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class NamedIterationPayloadManager implements IterationPayloadManager
-{
+public class NamedIterationPayloadManager implements IterationPayloadManager {
     private final String var;
 
-    public NamedIterationPayloadManager(String var)
-    {
+    public NamedIterationPayloadManager(String var) {
         this.var = var;
     }
 
     @Override
-    public void setCurrentPayload(Variables varStack, WindupVertexFrame element)
-    {
+    public void setCurrentPayload(Variables varStack, WindupVertexFrame element) {
         Iteration.setCurrentPayload(varStack, var, element);
     }
 
     @Override
-    public void removeCurrentPayload(Variables varStack)
-    {
+    public void removeCurrentPayload(Variables varStack) {
         Iteration.removeCurrentPayload(varStack, null, var);
     }
 
     @Override
-    public String getPayLoadName()
-    {
+    public String getPayLoadName() {
         return var;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getClass().getName() + " [" + var + "]";
     }
 

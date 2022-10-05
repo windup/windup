@@ -17,46 +17,38 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 /**
  * Returns true if there are {@link InlineHintModel} entries that match the given message text.
  */
-public class HintExists extends GraphCondition
-{
+public class HintExists extends GraphCondition {
     private String filename;
     private String messagePattern;
 
-    private HintExists(String messagePattern)
-    {
+    private HintExists(String messagePattern) {
         this.messagePattern = "[\\s\\S]*" + messagePattern + "[\\s\\S]*";
     }
 
     /**
      * Use the given message regular expression to match against {@link InlineHintModel#getHint()} property.
      */
-    public static HintExists withMessage(String messagePattern)
-    {
+    public static HintExists withMessage(String messagePattern) {
         return new HintExists(messagePattern);
     }
 
     /**
      * Only match {@link InlineHintModel}s that reference the given filename.
      */
-    public HintExists in(String filename)
-    {
+    public HintExists in(String filename) {
         this.filename = filename;
         return this;
     }
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         QueryBuilderFind q = Query.fromType(InlineHintModel.class);
-        if (StringUtils.isNotBlank(filename))
-        {
-            q.piped(new QueryGremlinCriterion()
-            {
+        if (StringUtils.isNotBlank(filename)) {
+            q.piped(new QueryGremlinCriterion() {
                 private static final String HINT_STEP = "hintModel";
 
                 @Override
-                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
-                {
+                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                     pipeline.as(HINT_STEP);
                     pipeline.out(InlineHintModel.FILE_MODEL);
                     pipeline.has(FileModel.FILE_NAME, filename);
@@ -70,9 +62,10 @@ public class HintExists extends GraphCondition
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "HintExists.withMessage('" + messagePattern + "').in(" + filename + ")";
 
-    };
+    }
+
+    ;
 }

@@ -9,17 +9,16 @@ import org.jboss.windup.graph.Adjacency;
 
 /**
  * JAX-RPC Web Service.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(JaxRPCWebServiceModel.TYPE)
-public interface JaxRPCWebServiceModel extends WebServiceModel
-{
+public interface JaxRPCWebServiceModel extends WebServiceModel {
     String TYPE = "JaxRPCWebServiceModel";
     String JAXRPC_IMPLEMENTATION_CLASS = "jaxrpcImplementationClass";
     String JAXRPC_INTERFACE = "jaxrpcInterface";
     String JAXRPC_XML_DESCRIPTOR = "jaxrpcXmlDescriptor";
-    
+
     /**
      * Contains the JAX-WS implementation class
      */
@@ -43,8 +42,8 @@ public interface JaxRPCWebServiceModel extends WebServiceModel
      */
     @Adjacency(label = JAXRPC_INTERFACE, direction = Direction.OUT)
     JavaClassModel getInterface();
-    
-    
+
+
     /**
      * Contains the JAX-WS implementation class
      */

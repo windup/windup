@@ -4,6 +4,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.jboss.windup.graph.Property;
+
 import java.util.Comparator;
 
 /**
@@ -12,8 +13,7 @@ import java.util.Comparator;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(RulePhaseExecutionStatisticsModel.TYPE)
-public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
-{
+public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame {
     String ORDER_EXECUTED = "orderExecuted";
     String RULE_PHASE = "rulePhase";
     String TYPE = "RulePhaseExecutionStatisticsModel";
@@ -55,12 +55,10 @@ public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
     @Property(ORDER_EXECUTED)
     void setOrderExecuted(int orderExecuted);
 
-    Comparator<RulePhaseExecutionStatisticsModel> BY_ORDER_EXECUTED = new Comparator<RulePhaseExecutionStatisticsModel>()
-        {
-            @Override
-            public int compare(RulePhaseExecutionStatisticsModel o1, RulePhaseExecutionStatisticsModel o2)
-            {
-                return o1.getOrderExecuted() - o2.getOrderExecuted();
-            }
-        };
+    Comparator<RulePhaseExecutionStatisticsModel> BY_ORDER_EXECUTED = new Comparator<RulePhaseExecutionStatisticsModel>() {
+        @Override
+        public int compare(RulePhaseExecutionStatisticsModel o1, RulePhaseExecutionStatisticsModel o2) {
+            return o1.getOrderExecuted() - o2.getOrderExecuted();
+        }
+    };
 }

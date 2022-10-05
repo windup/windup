@@ -28,7 +28,7 @@ public class DivaStackTraceService extends GraphService<DivaStackTraceModel> {
     }
 
     public DivaStackTraceModel getOrCreate(FileModel fileModel, int lineNumber, int columnNumber, int length,
-            DivaStackTraceModel parent, JavaMethodModel method) {
+                                           DivaStackTraceModel parent, JavaMethodModel method) {
 
         List<? extends FileLocationModel> locs = fileModel
                 .traverse(g -> g.in(FileReferenceModel.FILE_MODEL).has(WindupFrame.TYPE_PROP, FileLocationModel.TYPE)

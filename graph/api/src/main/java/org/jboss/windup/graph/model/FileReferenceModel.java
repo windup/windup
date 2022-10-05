@@ -7,13 +7,11 @@ import org.jboss.windup.graph.Adjacency;
 
 /**
  * Isolated file reference interface from the other models.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @TypeValue(FileReferenceModel.TYPE)
-public interface FileReferenceModel extends WindupVertexFrame
-{
+public interface FileReferenceModel extends WindupVertexFrame {
     String TYPE = "FileReferenceModel";
     String FILE_MODEL = "file";
 

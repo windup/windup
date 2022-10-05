@@ -20,33 +20,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class GraphServiceLookupTest
-{
+public class GraphServiceLookupTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addClass(TestSampleModel.class)
-                    .addBeansXML();
+                .addClass(TestSampleModel.class)
+                .addBeansXML();
     }
 
     @Inject
     private GraphContextFactory factory;
 
     @Test
-    public void testServiceLookup() throws Exception
-    {
-        try (GraphContext graphContext = factory.create(true))
-        {
+    public void testServiceLookup() throws Exception {
+        try (GraphContext graphContext = factory.create(true)) {
             Assert.assertNotNull(graphContext);
 
             FileService fileModelService = new FileService(graphContext);

@@ -9,27 +9,26 @@ import java.util.Set;
  * Represents the content of a Label. In case the label is inside an XML file, then this
  * class should load the information inside the tag <label id="id">...<label>. E.g.:
  * <labelset>
- *     <labels>
- *         <label id="id">
- *             <name>name</name>
- *             <description>description</description>
- *             <supported>
- *                 <tag>tag</tag>
- *             </supported>
- *             <unsuitable>
- *                 <tag>tag</tag>
- *             </unsuitable>
- *             <neutral>
- *                 <tag>tag</tag>
- *             </neutral>
- *         </label>
- *     </labels>
+ * <labels>
+ * <label id="id">
+ * <name>name</name>
+ * <description>description</description>
+ * <supported>
+ * <tag>tag</tag>
+ * </supported>
+ * <unsuitable>
+ * <tag>tag</tag>
+ * </unsuitable>
+ * <neutral>
+ * <tag>tag</tag>
+ * </neutral>
+ * </label>
+ * </labels>
  * </labelset>
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public class Label
-{
+public class Label {
     private final String id;
     private final String name;
     private final String description;
@@ -44,79 +43,65 @@ public class Label
      */
     private String labelString;
 
-    public Label(String id, String name)
-    {
+    public Label(String id, String name) {
         this.id = id;
         this.name = name;
         this.description = null;
     }
 
-    public Label(String id, String name, String description)
-    {
+    public Label(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public Label(String id, String name, String description, String labelString)
-    {
+    public Label(String id, String name, String description, String labelString) {
         this(id, name, description);
         this.labelString = labelString;
     }
 
-    public void addSupportedTags(Collection<String> tags)
-    {
+    public void addSupportedTags(Collection<String> tags) {
         this.supported.addAll(tags);
     }
 
-    public void addUnsuitableTags(Collection<String> tags)
-    {
+    public void addUnsuitableTags(Collection<String> tags) {
         this.unsuitable.addAll(tags);
     }
 
-    public void addNeutralTags(Collection<String> tags)
-    {
+    public void addNeutralTags(Collection<String> tags) {
         this.neutral.addAll(tags);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public Set<String> getSupported()
-    {
+    public Set<String> getSupported() {
         return supported;
     }
 
-    public Set<String> getUnsuitable()
-    {
+    public Set<String> getUnsuitable() {
         return unsuitable;
     }
 
-    public Set<String> getNeutral()
-    {
+    public Set<String> getNeutral() {
         return neutral;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public String getLabelString()
-    {
+    public String getLabelString() {
         return labelString;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -126,8 +111,7 @@ public class Label
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(name);
     }
 }

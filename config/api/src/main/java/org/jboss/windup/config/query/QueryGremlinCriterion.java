@@ -8,7 +8,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface QueryGremlinCriterion
-{
+public interface QueryGremlinCriterion {
     void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline);
 }

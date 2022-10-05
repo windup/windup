@@ -2,7 +2,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="SimpleEntityTable")
+@Table(name = "SimpleEntityTable")
 public class BaseEntity {
 
 }

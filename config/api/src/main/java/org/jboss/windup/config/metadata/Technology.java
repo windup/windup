@@ -7,13 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * A descriptor for {@link RuleMetadata#sourceTechnology()} and {@link RuleMetadata#targetTechnology()}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Technology
-{
+public @interface Technology {
     /**
      * Returns a unique identifier for the technology being described.
      */

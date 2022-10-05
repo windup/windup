@@ -12,28 +12,23 @@ import org.jboss.windup.util.exception.WindupException;
  * to determine whether to validate as a file or as a directory.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public abstract class AbstractPathConfigurationOption extends AbstractConfigurationOption
-{
+public abstract class AbstractPathConfigurationOption extends AbstractConfigurationOption {
     private boolean mustExist = false;
 
     /**
      * If mustExist is set to true, then the path will fail to validate if it does not already exist.
      */
-    protected AbstractPathConfigurationOption(boolean mustExist)
-    {
+    protected AbstractPathConfigurationOption(boolean mustExist) {
         this.mustExist = mustExist;
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return File.class;
     }
 
-    protected Path castToPath(Object file)
-    {
+    protected Path castToPath(Object file) {
         if (file instanceof File)
             return ((File) file).toPath();
         else if (file instanceof Path)
@@ -42,24 +37,15 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             throw new WindupException("Unrecognized type: " + file.getClass().getCanonicalName());
     }
 
-    private ValidationResult validatePath(Path path)
-    {
-        if (mustExist)
-        {
-            if (getUIType() == InputType.DIRECTORY && !Files.isDirectory(path))
-            {
+    private ValidationResult validatePath(Path path) {
+        if (mustExist) {
+            if (getUIType() == InputType.DIRECTORY && !Files.isDirectory(path)) {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a directory!");
-            }
-            else if (getUIType() == InputType.FILE && !Files.isRegularFile(path))
-            {
+            } else if (getUIType() == InputType.FILE && !Files.isRegularFile(path)) {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a regular file!");
-            }
-            else if (getUIType() == InputType.FILE_OR_DIRECTORY && !Files.exists(path))
-            {
+            } else if (getUIType() == InputType.FILE_OR_DIRECTORY && !Files.exists(path)) {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
-            }
-            else if (!Files.exists(path))
-            {
+            } else if (!Files.exists(path)) {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
             }
         }
@@ -68,23 +54,17 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
 
     @SuppressWarnings("rawtypes")
     @Override
-    public ValidationResult validate(Object fileObject)
-    {
-        if ( (fileObject == null && isRequired()) ||
-             (fileObject instanceof Collection && isRequired() && ((Collection) fileObject).isEmpty()) )
-        {
+    public ValidationResult validate(Object fileObject) {
+        if ((fileObject == null && isRequired()) ||
+                (fileObject instanceof Collection && isRequired() && ((Collection) fileObject).isEmpty())) {
             return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must be specified.");
-        }
-        else if (fileObject == null)
-        {
+        } else if (fileObject == null) {
             return ValidationResult.SUCCESS;
         }
 
         // Path isn't the type of iterable we are looking for
-        if (fileObject instanceof Iterable && !(fileObject instanceof Path))
-        {
-            for (Object listItem : (Iterable) fileObject)
-            {
+        if (fileObject instanceof Iterable && !(fileObject instanceof Path)) {
+            for (Object listItem : (Iterable) fileObject) {
                 ValidationResult result = validatePath(castToPath(listItem));
                 if (result.getLevel() != ValidationResult.Level.SUCCESS)
                     return result;

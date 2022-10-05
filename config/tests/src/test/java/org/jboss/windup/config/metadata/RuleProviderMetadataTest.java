@@ -24,23 +24,21 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class RuleProviderMetadataTest
-{
+public class RuleProviderMetadataTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(ExecutedProviders.class,
-                                MetadataTestRuleProvider1.class,
-                                MetadataTestRuleProvider2.class,
-                                MetadataTestRuleProvider4.class);
+                .addBeansXML()
+                .addClasses(ExecutedProviders.class,
+                        MetadataTestRuleProvider1.class,
+                        MetadataTestRuleProvider2.class,
+                        MetadataTestRuleProvider4.class);
         return archive;
     }
 
@@ -51,15 +49,13 @@ public class RuleProviderMetadataTest
     private GraphContextFactory contextFactory;
 
     @Test
-    public void testMetadataPickedUp() throws Exception
-    {
-        try (GraphContext context = contextFactory.create(true))
-        {
+    public void testMetadataPickedUp() throws Exception {
+        try (GraphContext context = contextFactory.create(true)) {
             WindupConfiguration windupConfig = new WindupConfiguration();
             windupConfig.setGraphContext(context);
 
             windupConfig.setRuleProviderFilter(
-                        new RuleProviderWithDependenciesPredicate(MetadataTestRuleProvider4.class));
+                    new RuleProviderWithDependenciesPredicate(MetadataTestRuleProvider4.class));
             windupConfig.addInputPath(Paths.get("src/test/resources/empty.war"));
             windupConfig.setOutputDirectory(Paths.get("target/WindupReport"));
 

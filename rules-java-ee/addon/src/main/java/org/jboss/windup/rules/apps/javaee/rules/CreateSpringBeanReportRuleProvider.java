@@ -38,29 +38,23 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
         phase = ReportGenerationPhase.class,
         id = "Create Spring Bean Report"
 )
-public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_SPRING_REPORT = "/reports/templates/spring.ftl";
     public static final String REPORT_DESCRIPTION = "This report contains a list of Spring beans found during the analysis.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         // only build this when there are spring beans to report.
         ConditionBuilder applicationProjectModelsFound = Query.fromType(SpringBeanModel.class);
 
-        GraphOperation addReport = new GraphOperation()
-        {
+        GraphOperation addReport = new GraphOperation() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context) {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService
-                            .getConfigurationModel(event.getGraphContext());
-                for (FileModel inputPath : windupConfiguration.getInputPaths())
-                {
+                        .getConfigurationModel(event.getGraphContext());
+                for (FileModel inputPath : windupConfiguration.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
-                    if (application == null)
-                    {
+                    if (application == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createSpringBeanReport(event.getGraphContext(), application);
@@ -68,24 +62,21 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateSpringBeanReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(applicationProjectModelsFound)
-                    .perform(addReport);
+                .addRule()
+                .when(applicationProjectModelsFound)
+                .perform(addReport);
     }
 
-    private void createSpringBeanReport(GraphContext context, ProjectModel application)
-    {
+    private void createSpringBeanReport(GraphContext context, ProjectModel application) {
         SpringBeanService springBeanService = new SpringBeanService(context);
         Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(application);
-        if (!models.iterator().hasNext())
-        {
+        if (!models.iterator().hasNext()) {
             return;
         }
         ApplicationReportService applicationReportService = new ApplicationReportService(context);

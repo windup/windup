@@ -78,8 +78,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     /**
      * Gets a human readable description of the location in the file
      */
-    default String getDescription()
-    {
+    default String getDescription() {
         if (null == getSourceSnippit())
             return "";
         return StringEscapeUtils.escapeHtml4(
@@ -87,8 +86,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     }
 
     @Override
-    default List<FileModel> transformToFileModel()
-    {
+    default List<FileModel> transformToFileModel() {
         return Collections.singletonList(getFile());
     }
 }

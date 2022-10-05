@@ -25,8 +25,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MapInAdjacentVertices
-{
+public @interface MapInAdjacentVertices {
     /**
      * The edge label for this relationship.
      */

@@ -36,8 +36,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode
-{
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode {
     private static final Logger LOG = Logging.get(Hint.class);
 
     private RegexParameterizedPatternParser hintTitlePattern;
@@ -49,37 +48,32 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private List<Quickfix> quickfixes = new ArrayList<>();
     private IssueDisplayMode issueDisplayMode = IssueDisplayMode.Defaults.DEFAULT_DISPLAY_MODE;
 
-    protected Hint(String variable)
-    {
+    protected Hint(String variable) {
         super(variable);
     }
 
-    protected Hint()
-    {
+    protected Hint() {
         super();
     }
 
     /**
      * Create a new {@link Hint} in the {@link FileLocationModel} resolved by the given variable.
      */
-    public static HintBuilderIn in(String fileVariable)
-    {
+    public static HintBuilderIn in(String fileVariable) {
         return new HintBuilderIn(fileVariable);
     }
 
     /**
      * Create a new {@link Hint} with the specified title.
      */
-    public static HintBuilderTitle titled(String title)
-    {
+    public static HintBuilderTitle titled(String title) {
         return new HintBuilderTitle(title);
     }
 
     /**
      * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
      */
-    public static HintText withText(String text)
-    {
+    public static HintText withText(String text) {
         Assert.notNull(text, "Hint text must not be null.");
         Hint hint = new Hint();
         hint.setText(text);
@@ -87,15 +81,13 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     }
 
     @Override
-    public HintWithIssueCategory withIssueCategory(IssueCategory issueCategory)
-    {
+    public HintWithIssueCategory withIssueCategory(IssueCategory issueCategory) {
         this.issueCategory = issueCategory;
         return this;
     }
 
     @Override
-    public HintText withDisplayMode(IssueDisplayMode displayMode)
-    {
+    public HintText withDisplayMode(IssueDisplayMode displayMode) {
         this.issueDisplayMode = displayMode;
         return this;
     }
@@ -103,17 +95,14 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     /**
      * Returns the currently set {@link IssueCategory}.
      */
-    public IssueCategory getIssueCategory()
-    {
+    public IssueCategory getIssueCategory() {
         return this.issueCategory;
     }
 
     @Override
-    public void performParameterized(final GraphRewrite event, final EvaluationContext context, final FileLocationModel locationModel)
-    {
+    public void performParameterized(final GraphRewrite event, final EvaluationContext context, final FileLocationModel locationModel) {
         ExecutionStatistics.get().begin("Hint.performParameterized");
-        try
-        {
+        try {
             GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
             InlineHintModel hintModel = service.create();
@@ -134,40 +123,30 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 issueCategoryModel = issueCategoryRegistry.loadFromGraph(event.getGraphContext(), this.issueCategory.getCategoryID());
 
             hintModel.setIssueCategory(issueCategoryModel);
-            if (hintTitlePattern != null)
-            {
-                try
-                {
+            if (hintTitlePattern != null) {
+                try {
                     hintModel.setTitle(StringUtils.trim(hintTitlePattern.getBuilder().build(event, context)));
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
                     hintModel.setTitle(hintTitlePattern.toString().trim());
                 }
-            }
-            else
-            {
+            } else {
                 // If there is no title, just use the description of the location
                 // (eg, 'Constructing com.otherproduct.Foo()')
                 hintModel.setTitle(locationModel.getDescription());
             }
 
             String hintText;
-            try
-            {
+            try {
                 hintText = hintTextPattern.getBuilder().build(event, context);
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
                 hintText = hintTextPattern.toString();
             }
             hintModel.setHint(StringUtils.trim(hintText));
 
             GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
-            for (Link link : links)
-            {
+            for (Link link : links) {
                 LinkModel linkModel = linkService.create();
                 linkModel.setDescription(StringUtils.trim(link.getTitle()));
                 linkModel.setLink(StringUtils.trim(link.getLink()));
@@ -175,8 +154,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             }
 
             GraphService<QuickfixModel> quickfixService = new GraphService<>(event.getGraphContext(), QuickfixModel.class);
-            for (Quickfix quickfix : quickfixes)
-            {
+            for (Quickfix quickfix : quickfixes) {
                 hintModel.addQuickfix(quickfix.createQuickfix(event.getGraphContext()));
             }
 
@@ -189,30 +167,25 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 
             LOG.fine("Hint added to " + locationModel.getFile().getPrettyPathWithinProject()
                     + ":\n    " + this.toString(hintModel.getTitle(), null));
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end("Hint.performParameterized");
         }
     }
 
     @Override
-    public HintEffort withEffort(int effort)
-    {
+    public HintEffort withEffort(int effort) {
         this.effort = effort;
         return this;
     }
 
     @Override
-    public OperationBuilder withTags(Set<String> tags)
-    {
+    public OperationBuilder withTags(Set<String> tags) {
         this.tags = tags;
         return this;
     }
 
     @Override
-    public HintLink with(Link link)
-    {
+    public HintLink with(Link link) {
         this.links.add(link);
         return this;
     }
@@ -221,39 +194,32 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
      * Set the inner hint text on this instance.
      */
 
-    protected void setText(String text)
-    {
+    protected void setText(String text) {
         this.hintTextPattern = new RegexParameterizedPatternParser(text);
     }
 
-    protected void setTitle(String title)
-    {
+    protected void setTitle(String title) {
         this.hintTitlePattern = new RegexParameterizedPatternParser(title);
     }
 
-    public RegexParameterizedPatternParser getHintText()
-    {
+    public RegexParameterizedPatternParser getHintText() {
         return hintTextPattern;
     }
 
-    public int getEffort()
-    {
+    public int getEffort() {
         return effort;
     }
 
-    public List<Link> getLinks()
-    {
+    public List<Link> getLinks() {
         return links;
     }
 
-    public Set<String> getTags()
-    {
+    public Set<String> getTags() {
         return Collections.unmodifiableSet(tags);
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         final Set<String> result = new LinkedHashSet<>();
         result.addAll(hintTextPattern.getRequiredParameterNames());
         if (hintTitlePattern != null)
@@ -262,24 +228,21 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         hintTextPattern.setParameterStore(store);
         if (hintTitlePattern != null)
             hintTitlePattern.setParameterStore(store);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String title = "";
         if (hintTitlePattern != null)
             title = hintTitlePattern.getPattern();
         return toString(title, hintTextPattern.getPattern());
     }
 
-    private String toString(String title, String text)
-    {
+    private String toString(String title, String text) {
         StringBuilder result = new StringBuilder();
         result.append("Hint");
         if (title != null)
@@ -298,16 +261,14 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     /**
      * @return the quickfixes
      */
-    public List<Quickfix> getQuickfixes()
-    {
+    public List<Quickfix> getQuickfixes() {
         return quickfixes;
     }
 
     /**
      * @param quickfix the quickfixes to set
      */
-    public HintQuickfix withQuickfix(Quickfix quickfix)
-    {
+    public HintQuickfix withQuickfix(Quickfix quickfix) {
         this.quickfixes.add(quickfix);
         return this;
     }

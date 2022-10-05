@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebServlet(name = "TradeAppServlet", urlPatterns = { "/app" })
+@WebServlet(name = "TradeAppServlet", urlPatterns = {"/app"})
 public class TestServlet extends HttpServlet {
 
     static Context context;

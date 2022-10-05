@@ -14,17 +14,14 @@ import org.jboss.windup.project.condition.Project;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "project", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class ProjectHandler implements ElementHandler<Project>
-{
+public class ProjectHandler implements ElementHandler<Project> {
 
     @Override
     public Project processElement(ParserContext handlerManager, Element element)
-                throws ConfigurationException
-    {
+            throws ConfigurationException {
         List<Element> children = $(element).children("artifact").get();
         Artifact artifact = null;
-        for (Element child : children)
-        {
+        for (Element child : children) {
             artifact = handlerManager.processElement(child);
         }
 

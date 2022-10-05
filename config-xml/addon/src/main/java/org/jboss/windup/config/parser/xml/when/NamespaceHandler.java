@@ -10,15 +10,13 @@ import org.jboss.windup.util.xml.NamespaceEntry;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "namespace", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class NamespaceHandler implements ElementHandler<NamespaceEntry>
-{
-   @Override
-   public NamespaceEntry processElement(ParserContext handlerManager, Element element)
-   {
-       String prefix = $(element).attr("prefix");
-       String namespaceURI = $(element).attr("uri");
-       NamespaceEntry entry = new NamespaceEntry(prefix, namespaceURI);
-       return entry;
-   }
+public class NamespaceHandler implements ElementHandler<NamespaceEntry> {
+    @Override
+    public NamespaceEntry processElement(ParserContext handlerManager, Element element) {
+        String prefix = $(element).attr("prefix");
+        String namespaceURI = $(element).attr("uri");
+        NamespaceEntry entry = new NamespaceEntry(prefix, namespaceURI);
+        return entry;
+    }
 
 }

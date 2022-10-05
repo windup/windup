@@ -6,12 +6,10 @@ import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 /**
  * Contains the methods that can be called after the {@link IssueCategory} has been set.
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ClassificationWithIssueCategory
-{
+public interface ClassificationWithIssueCategory {
     /**
      * Sets the {@link IssueDisplayMode}.
      */

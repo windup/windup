@@ -9,8 +9,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public interface RuleLifecycleListener
-{
+public interface RuleLifecycleListener {
     /**
      * Called immediately before any {@link Rule} instances are executed.
      */
@@ -64,8 +63,7 @@ public interface RuleLifecycleListener
      * Not all listeners need to return true - just one returning true is a reason to stop execution.
      * Queried by various rule implementations so we can stop as soon as possible.
      */
-    public default boolean shouldWindupStop()
-    {
+    public default boolean shouldWindupStop() {
         return false;
     }
 }

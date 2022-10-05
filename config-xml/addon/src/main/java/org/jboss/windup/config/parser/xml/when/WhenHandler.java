@@ -17,15 +17,12 @@ import org.w3c.dom.Element;
  * Parses the "when" element, which will contain {@link Condition} that will be combined together via {@link And}.
  */
 @NamespaceElementHandler(elementName = "when", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class WhenHandler implements ElementHandler<And>
-{
+public class WhenHandler implements ElementHandler<And> {
     @Override
-    public And processElement(ParserContext handlerManager, Element element)
-    {
+    public And processElement(ParserContext handlerManager, Element element) {
         List<Condition> conditions = new ArrayList<>();
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Condition condition = handlerManager.processElement(child);
             conditions.add(condition);
         }

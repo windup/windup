@@ -14,8 +14,7 @@ import java.util.List;
  * Contains thread pool information (max pool size, pool name, etc).
  */
 @TypeValue(ThreadPoolModel.TYPE)
-public interface ThreadPoolModel extends WindupVertexFrame
-{
+public interface ThreadPoolModel extends WindupVertexFrame {
     String TYPE = "ThreadPoolModel";
     String POOL_NAME = "poolName";
     String MIN_POOL_SIZE = "minPoolSize";

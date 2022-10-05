@@ -13,8 +13,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(IdentifiedArchiveModel.TYPE)
-public interface IdentifiedArchiveModel extends ArchiveModel
-{
+public interface IdentifiedArchiveModel extends ArchiveModel {
     String TYPE = "IdentifiedArchiveModel";
     String COORDINATE = TYPE + "-coordinate";
 

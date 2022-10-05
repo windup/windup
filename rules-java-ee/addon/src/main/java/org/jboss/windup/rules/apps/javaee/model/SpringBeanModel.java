@@ -16,11 +16,9 @@ import java.util.Set;
  * Contains metadata associated with a Spring Bean.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 @TypeValue(SpringBeanModel.TYPE)
-public interface SpringBeanModel extends WindupVertexFrame
-{
+public interface SpringBeanModel extends WindupVertexFrame {
     String TYPE = "SpringBeanModel";
     String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
     String SPRING_CONFIGURATION = "springConfiguration";

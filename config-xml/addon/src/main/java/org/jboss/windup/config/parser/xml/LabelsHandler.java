@@ -17,16 +17,13 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
 @NamespaceElementHandler(elementName = "labels", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelsHandler implements ElementHandler<List<Label>>
-{
+public class LabelsHandler implements ElementHandler<List<Label>> {
     @Override
-    public List<Label> processElement(ParserContext context, Element element)
-    {
+    public List<Label> processElement(ParserContext context, Element element) {
         List<Label> labels = new ArrayList<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             labels.add(context.processElement(child));
         }
 

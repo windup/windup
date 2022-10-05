@@ -12,19 +12,16 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GraphLoaderImpl implements GraphLoader
-{
+public class GraphLoaderImpl implements GraphLoader {
     @Inject
     private GraphContextFactory graphContextFactory;
     @Inject
     private ToolingXMLService toolingXMLService;
 
     @Override
-    public ExecutionResults loadResults(Path reportDirectory) throws IOException
-    {
+    public ExecutionResults loadResults(Path reportDirectory) throws IOException {
         Path graphDirectory = reportDirectory.resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
-        try (GraphContext graphContext = graphContextFactory.load(graphDirectory))
-        {
+        try (GraphContext graphContext = graphContextFactory.load(graphDirectory)) {
             return new ExecutionResultsImpl(graphContext, toolingXMLService);
         }
     }

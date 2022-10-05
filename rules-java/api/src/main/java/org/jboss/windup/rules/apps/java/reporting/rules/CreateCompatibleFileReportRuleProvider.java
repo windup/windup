@@ -25,22 +25,18 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates the report HTML page for compatible files - "lift and shift" files.
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
     public static final String REPORT_DESCRIPTION = "This provides a list of files that are believed to be compatible, potentially requiring no migration effort.";
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
 
-        GraphCondition graphCondition = new GraphCondition()
-        {
+        GraphCondition graphCondition = new GraphCondition() {
             @Override
-            public boolean evaluate(GraphRewrite event, EvaluationContext context)
-            {
-                Boolean generateReport = (Boolean)event.getGraphContext().getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
+            public boolean evaluate(GraphRewrite event, EvaluationContext context) {
+                Boolean generateReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
                 if (generateReport == null)
                     generateReport = false;
 
@@ -48,16 +44,12 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
             }
         };
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-            {
-                for (FileModel inputPath : payload.getInputPaths())
-                {
+            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload) {
+                for (FileModel inputPath : payload.getInputPaths()) {
                     ProjectModel application = inputPath.getProjectModel();
-                    if (application == null)
-                    {
+                    if (application == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createApplicationReport(event.getGraphContext(), application);
@@ -65,22 +57,20 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateCompatibleFilesApplicationReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(graphCondition)
-                    .perform(addApplicationReport);
+                .addRule()
+                .when(graphCondition)
+                .perform(addApplicationReport);
 
     }
     // @formatter:on
 
-    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel application)
-    {
+    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel application) {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(200);

@@ -24,21 +24,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ApplicationReportIndexModelServiceTest
-{
+public class ApplicationReportIndexModelServiceTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/reports"));
         return archive;
     }
 
@@ -46,10 +44,8 @@ public class ApplicationReportIndexModelServiceTest
     private GraphContextFactory factory;
 
     @Test
-    public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel projectModel = new ProjectService(context).create();
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
@@ -82,7 +78,7 @@ public class ApplicationReportIndexModelServiceTest
             m4.setProjectModel(projectModel);
 
             ApplicationReportIndexModel result = applicationReportIndexService
-                        .getApplicationReportIndexForProjectModel(projectModel);
+                    .getApplicationReportIndexForProjectModel(projectModel);
             Assert.assertNotNull(result);
             Assert.assertEquals(idx1.getElement().id(), result.getElement().id());
         }

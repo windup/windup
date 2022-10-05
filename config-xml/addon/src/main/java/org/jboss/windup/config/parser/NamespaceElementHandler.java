@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface NamespaceElementHandler {
-	public String elementName();
+    public String elementName();
+
     public String namespace();
 }

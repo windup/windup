@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>5.3.1-SNAPSHOT</version>
+        <version>6.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.tests</groupId>
@@ -42,7 +42,6 @@
             </exclusions>
         </dependency>
 
-
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -61,6 +60,25 @@
             <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bootstrap-windup</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- excluded since it's already imported, via forge-addon, above -->
+                    <groupId>org.jboss.windup.config</groupId>
+                    <artifactId>windup-config-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.windup.rules.apps</groupId>
+                    <artifactId>windup-rules-java-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Test Dependencies -->

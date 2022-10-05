@@ -37,37 +37,33 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  * Testing the Iteration.over() approach.
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
- *
  */
 @RunWith(Arquillian.class)
-public class RuleIterationOverDefaultListVariableTest
-{
+public class RuleIterationOverDefaultListVariableTest {
     public static int TestSimple2ModelCounter = 0;
     public static int TestSimple1ModelCounter = 0;
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(
-                                TestRuleIterationOverDefaultListVariableProvider.class,
-                                TestSimple1Model.class,
-                                TestSimple2Model.class);
+                .addBeansXML()
+                .addClasses(
+                        TestRuleIterationOverDefaultListVariableProvider.class,
+                        TestSimple1Model.class,
+                        TestSimple2Model.class);
         return archive;
     }
 
     @Inject
     private GraphContextFactory factory;
 
-    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
+    private DefaultEvaluationContext createEvalContext(GraphRewrite event) {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
@@ -75,11 +71,9 @@ public class RuleIterationOverDefaultListVariableTest
     }
 
     @Test
-    public void testTypeSelection() throws Exception
-    {
+    public void testTypeSelection() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             TestSimple1Model vertex = context.getFramed().addFramedVertex(TestSimple1Model.class);
             context.getFramed().addFramedVertex(TestSimple2Model.class);
@@ -91,7 +85,7 @@ public class RuleIterationOverDefaultListVariableTest
             WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+                    .getAbsolutePath()));
 
             TestRuleIterationOverDefaultListVariableProvider provider = new TestRuleIterationOverDefaultListVariableProvider();
             Configuration configuration = provider.getConfiguration(null);
@@ -108,46 +102,39 @@ public class RuleIterationOverDefaultListVariableTest
         }
     }
 
-    public class TestRuleIterationOverDefaultListVariableProvider extends AbstractRuleProvider
-    {
-        public TestRuleIterationOverDefaultListVariableProvider()
-        {
+    public class TestRuleIterationOverDefaultListVariableProvider extends AbstractRuleProvider {
+        public TestRuleIterationOverDefaultListVariableProvider() {
             super(MetadataBuilder.forProvider(TestRuleIterationOverDefaultListVariableProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             Configuration configuration = ConfigurationBuilder.begin()
-            .addRule()
-            .when(Query.fromType(TestSimple2Model.class).as("abc"))
-            .perform(Iteration
-                .over()
-                .perform(new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        TestSimple2ModelCounter++;
-                    }
-                })
-                .endIteration()
-            )
-            .addRule()
-            .when(Query.fromType(TestSimple1Model.class))
-            .perform(Iteration
-                .over()
-                .perform(new GraphOperation()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context)
-                    {
-                        TestSimple1ModelCounter++;
-                    }
-                })
-                .endIteration()
-            );
+                    .addRule()
+                    .when(Query.fromType(TestSimple2Model.class).as("abc"))
+                    .perform(Iteration
+                            .over()
+                            .perform(new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    TestSimple2ModelCounter++;
+                                }
+                            })
+                            .endIteration()
+                    )
+                    .addRule()
+                    .when(Query.fromType(TestSimple1Model.class))
+                    .perform(Iteration
+                            .over()
+                            .perform(new GraphOperation() {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context) {
+                                    TestSimple1ModelCounter++;
+                                }
+                            })
+                            .endIteration()
+                    );
             return configuration;
         }
         // @formatter:on

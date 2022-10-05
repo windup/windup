@@ -11,10 +11,12 @@ import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
+import org.jboss.windup.graph.model.IgnoredArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
-import org.jboss.windup.graph.model.IgnoredArchiveModel;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -28,19 +30,20 @@ import javax.inject.Inject;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ArchiveExtractionPhase.class)
-public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
-{
+public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider {
     @Inject
     private CompositeArchiveIdentificationService identificationService;
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         UnzipArchiveToOutputFolder unzipArchives = new UnzipArchiveToOutputFolder(identificationService);
 
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class))
+            .when(Query.fromType(ArchiveModel.class), SourceMode.isEnabled())
+            .perform(new IgnoreArchivesInSourceModeOperation())
+            .addRule()
+            .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class), SourceMode.isDisabled())
             .perform(
                 unzipArchives,
                 IterationProgress.monitoring("Unzipped archive", 1),
@@ -52,18 +55,27 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
     }
 
     /**
+     * Operation to ignore all archives when running in source mode
+     */
+    private class IgnoreArchivesInSourceModeOperation extends AbstractIterationOperation<ArchiveModel> {
+
+        @Override
+        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload) {
+            IgnoredArchiveModel ignoredArchive = GraphService.addTypeToModel(event.getGraphContext(), payload, IgnoredArchiveModel.class);
+            ignoredArchive.setIgnoredRegex("Archives ignored in source mode");
+        }
+    }
+
+    /**
      * Processes {@link ArchiveModel}s and makes sure that any that have duplicates are removed from the tree and
      * replaced with a {@link DuplicateArchiveModel} that links to them.
      */
-    private class DuplicateArchiveOperation extends AbstractIterationOperation<ArchiveModel>
-    {
+    private class DuplicateArchiveOperation extends AbstractIterationOperation<ArchiveModel> {
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel canonicalArchive)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel canonicalArchive) {
             // Skip if there were no duplicates
-            if (!canonicalArchive.getDuplicateArchives().iterator().hasNext())
-            {
+            if (!canonicalArchive.getDuplicateArchives().iterator().hasNext()) {
                 return;
             }
 
@@ -78,10 +90,8 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
              * This is the root of the current archive hierarchy.
              */
             ArchiveModel rootArchive = canonicalArchive.getRootArchiveModel();
-            for (DuplicateArchiveModel duplicateArchiveModel : canonicalArchive.getDuplicateArchives())
-            {
-                if (!rootArchive.containsArchive(duplicateArchiveModel))
-                {
+            for (DuplicateArchiveModel duplicateArchiveModel : canonicalArchive.getDuplicateArchives()) {
+                if (!rootArchive.containsArchive(duplicateArchiveModel)) {
                     exclusiveToApplication = false;
                     break;
                 }

@@ -35,45 +35,37 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of JBPM 3 Process Image Report
  */
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JBPM Report")
-public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
-{
+public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jbpm.ftl";
     public static final String REPORT_DESCRIPTION = "This report contains all of the JBPM related resources that were discovered during analysis.";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .when(Query.fromType(Jbpm3ProcessModel.class))
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                // configuration of current execution
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                for (FileModel inputPath : configurationModel.getInputPaths())
-                {
-                    ProjectModel application = inputPath.getProjectModel();
-                    createJbpmReport(event.getGraphContext(), application);
-                }
-            }
+                .addRule()
+                .when(Query.fromType(Jbpm3ProcessModel.class))
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        // configuration of current execution
+                        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                        for (FileModel inputPath : configurationModel.getInputPaths()) {
+                            ProjectModel application = inputPath.getProjectModel();
+                            createJbpmReport(event.getGraphContext(), application);
+                        }
+                    }
 
-            @Override
-            public String toString()
-            {
-                return "CreateJBPM3Report";
-            }
-        });
+                    @Override
+                    public String toString() {
+                        return "CreateJBPM3Report";
+                    }
+                });
     }
 
-    private void createJbpmReport(GraphContext context, ProjectModel application)
-    {
+    private void createJbpmReport(GraphContext context, ProjectModel application) {
         GraphService<Jbpm3ProcessModel> jbpmProcessService = new GraphService<>(context, Jbpm3ProcessModel.class);
         List<Jbpm3ProcessModel> processModelList = new ArrayList<>();
-        for (Jbpm3ProcessModel processModel : jbpmProcessService.findAll())
-        {
+        for (Jbpm3ProcessModel processModel : jbpmProcessService.findAll()) {
             Set<ProjectModel> applicationsContainingFile = ProjectTraversalCache.getApplicationsForProject(context, processModel.getProjectModel());
             if (applicationsContainingFile.contains(application))
                 processModelList.add(processModel);

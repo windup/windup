@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-tooling-parent</artifactId>
-        <version>5.3.1-SNAPSHOT</version>
+        <version>6.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-tooling-tests</artifactId>
@@ -83,6 +83,12 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-module-spec</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>

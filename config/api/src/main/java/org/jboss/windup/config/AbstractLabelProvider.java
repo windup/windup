@@ -9,35 +9,29 @@ import org.ocpsoft.rewrite.context.ContextBase;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public abstract class AbstractLabelProvider extends ContextBase implements LabelProvider
-{
+public abstract class AbstractLabelProvider extends ContextBase implements LabelProvider {
     private final LabelProviderMetadata metadata;
     private final LabelProviderData data;
 
-    public AbstractLabelProvider(LabelProviderMetadata metadata, LabelProviderData data)
-    {
+    public AbstractLabelProvider(LabelProviderMetadata metadata, LabelProviderData data) {
         this.metadata = metadata;
         this.data = data;
     }
 
     @Override
-    public LabelProviderMetadata getMetadata()
-    {
+    public LabelProviderMetadata getMetadata() {
         return metadata;
     }
 
     @Override
-    public LabelProviderData getData()
-    {
+    public LabelProviderData getData() {
         return data;
     }
 
     @Override
-    public boolean equals(Object other)
-    {
+    public boolean equals(Object other) {
         boolean result = false;
-        if (other instanceof AbstractLabelProvider)
-        {
+        if (other instanceof AbstractLabelProvider) {
             AbstractLabelProvider that = (AbstractLabelProvider) other;
             result = this.getMetadata().equals(that.getMetadata());
         }
@@ -45,19 +39,16 @@ public abstract class AbstractLabelProvider extends ContextBase implements Label
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getMetadata().hashCode();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(metadata.getID());
 
-        if (!metadata.getID().equals(metadata.getOrigin()))
-        {
+        if (!metadata.getID().equals(metadata.getOrigin())) {
             builder.append(" from ").append(metadata.getOrigin());
         }
 

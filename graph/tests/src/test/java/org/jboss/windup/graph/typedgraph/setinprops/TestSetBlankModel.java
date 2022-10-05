@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("SetInPropsBlankModel")
-public interface TestSetBlankModel extends WindupVertexFrame
-{
+public interface TestSetBlankModel extends WindupVertexFrame {
     @SetInProperties(propertyPrefix = "")
     Set<String> getNaturalSet();
 

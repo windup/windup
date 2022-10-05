@@ -15,34 +15,28 @@ import org.jboss.windup.util.ThemeProvider;
  * Returns information about which {@link Rule}s have been evaluated by windup as well as their execution results.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
-public class GetRuleExecutionResults implements WindupFreeMarkerMethod
-{
+public class GetRuleExecutionResults implements WindupFreeMarkerMethod {
 
     public static final String NAME = "getRuleExecutionResults";
 
     private GraphRewrite event;
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a parameter of type " + AbstractRuleProvider.class.getSimpleName() + " and returns a List<"
-            + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " execution.";
+                + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current " + ThemeProvider.getInstance().getTheme().getBrandName() + " execution.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (AbstractRuleProvider)");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
@@ -53,8 +47,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.event = event;
     }
 

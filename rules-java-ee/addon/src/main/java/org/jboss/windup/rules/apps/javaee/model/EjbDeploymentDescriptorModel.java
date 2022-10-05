@@ -11,13 +11,11 @@ import java.util.List;
 
 /**
  * Contains metadata associated with EJB deployment descriptors.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(EjbDeploymentDescriptorModel.TYPE)
-public interface EjbDeploymentDescriptorModel extends XmlFileModel
-{
+public interface EjbDeploymentDescriptorModel extends XmlFileModel {
 
     String MESSAGE_DRIVEN = "messageDriven";
     String EJB_ENTITY_BEAN = "ejbEntityBean";

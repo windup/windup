@@ -10,29 +10,23 @@ import org.jboss.windup.exec.updater.RulesetsUpdater;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UpdateRulesetsCommand implements Command, FurnaceDependent
-{
+public class UpdateRulesetsCommand implements Command, FurnaceDependent {
     private Furnace furnace;
 
     @Override
-    public void setFurnace(Furnace furnace)
-    {
+    public void setFurnace(Furnace furnace) {
         this.furnace = furnace;
     }
 
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
         System.out.println("Checking for rulesets updates...");
-        try
-        {
+        try {
             RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
             String newVersion = updater.replaceRulesetsDirectoryWithLatestReleaseIfAny();
             if (newVersion != null)
                 System.out.println("Updated the rulesets to version " + newVersion + ".");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.err.println("Could not update the rulesets: " + e.getMessage());
             e.printStackTrace(System.err);
             return CommandResult.EXIT;
@@ -41,8 +35,7 @@ public class UpdateRulesetsCommand implements Command, FurnaceDependent
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return CommandPhase.PRE_EXECUTION;
     }
 }

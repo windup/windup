@@ -13,8 +13,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * Contains metadata related to Java annotations (eg, attribute values).
  */
 @TypeValue(JavaAnnotationTypeReferenceModel.TYPE)
-public interface JavaAnnotationTypeReferenceModel extends JavaTypeReferenceModel, JavaAnnotationTypeValueModel
-{
+public interface JavaAnnotationTypeReferenceModel extends JavaTypeReferenceModel, JavaAnnotationTypeValueModel {
     String ANNOTATION_VALUE_MAP = "annotationValueMap";
     String TYPE = "JavaAnnotationTypeReferenceModel";
     String ORIGINAL_ANNOTATED_TYPE = "originalAnnotatedType";

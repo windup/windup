@@ -26,22 +26,19 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @NamespaceElementHandler(elementName = FileHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class FileHandler implements ElementHandler<File>
-{
+public class FileHandler implements ElementHandler<File> {
     public static final String ELEM_NAME = "file";
     private static final String ATTR_FILENAME = "filename";
     private static final String ATTR_FROM = "from";
     private static final Logger LOG = Logging.get(FileHandler.class);
 
     @Override
-    public File processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public File processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String filenamePattern = $(element).attr(ATTR_FILENAME);
         String from = $(element).attr(ATTR_FROM);
         String as = $(element).attr("as");
 
-        if (StringUtils.isBlank(filenamePattern))
-        {
+        if (StringUtils.isBlank(filenamePattern)) {
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_FILENAME + "' attribute");
         }
 
@@ -51,32 +48,24 @@ public class FileHandler implements ElementHandler<File>
         //At least filename should have matched (otherwise exception would be thrown),
         // so FileContent instance should have been created
         File f = (File) obj;
-        if(as!=null)
-        {
+        if (as != null) {
             f.as(as);
         }
         return f;
     }
 
-    private Object applyFrom(Object fileContentBuilder, String from)
-    {
-        if (from != null)
-        {
+    private Object applyFrom(Object fileContentBuilder, String from) {
+        if (from != null) {
             fileContentBuilder = File.from(from);
         }
         return fileContentBuilder;
     }
 
-    private Object applyFileName(Object fileContentBuilder, String fileName)
-    {
-        if (fileName != null)
-        {
-            if (fileContentBuilder == null)
-            {
+    private Object applyFileName(Object fileContentBuilder, String fileName) {
+        if (fileName != null) {
+            if (fileContentBuilder == null) {
                 fileContentBuilder = File.inFileNamed(fileName);
-            }
-            else
-            {
+            } else {
                 fileContentBuilder = ((File) fileContentBuilder).inFileNamed(fileName);
             }
         }

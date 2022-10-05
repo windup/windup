@@ -26,23 +26,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = PreReportGenerationPhase.class)
-public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvider
-{
+public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         ConditionBuilder applicationsFound = Query.fromType(WindupConfigurationModel.class);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReportIndex = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReportIndex = new AbstractIterationOperation<WindupConfigurationModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-            {
-                for (FileModel inputPath : payload.getInputPaths())
-                {
+            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload) {
+                for (FileModel inputPath : payload.getInputPaths()) {
                     ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
-                    {
+                    if (projectModel == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createApplicationReportIndex(event.getGraphContext(), projectModel);
@@ -50,16 +44,15 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "AddApplicationReportIndex";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(applicationsFound)
-                    .perform(addApplicationReportIndex);
+                .addRule()
+                .when(applicationsFound)
+                .perform(addApplicationReportIndex);
 
     }
 
@@ -67,8 +60,7 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
      * Create the index and associate it with all project models in the Application
      */
     private ApplicationReportIndexModel createApplicationReportIndex(GraphContext context,
-                ProjectModel applicationProjectModel)
-    {
+                                                                     ProjectModel applicationProjectModel) {
         ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(context);
         ApplicationReportIndexModel index = applicationReportIndexService.create();
 
@@ -81,11 +73,9 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
      * Attach all project models within the application to the index. This will make it easy to navigate from the
      * projectModel to the application index.
      */
-    private void addAllProjectModels(ApplicationReportIndexModel navIdx, ProjectModel projectModel)
-    {
+    private void addAllProjectModels(ApplicationReportIndexModel navIdx, ProjectModel projectModel) {
         navIdx.addProjectModel(projectModel);
-        for (ProjectModel childProject : projectModel.getChildProjects())
-        {
+        for (ProjectModel childProject : projectModel.getChildProjects()) {
             if (!Iterators.asSet(navIdx.getProjectModels()).contains(childProject))
                 addAllProjectModels(navIdx, childProject);
         }

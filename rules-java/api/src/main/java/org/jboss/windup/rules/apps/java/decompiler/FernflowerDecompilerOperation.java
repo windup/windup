@@ -47,8 +47,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
-{
+public class FernflowerDecompilerOperation extends AbstractDecompilerOperation {
     private static final Logger LOG = Logging.get(FernflowerDecompilerOperation.class);
 
     private static final String TECH_TAG = "Decompiled Java File";
@@ -57,14 +56,12 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
     /**
      * Let the variable name to be set by the current Iteration.
      */
-    public FernflowerDecompilerOperation()
-    {
+    public FernflowerDecompilerOperation() {
         super();
     }
 
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext context)
-    {
+    public void perform(final GraphRewrite event, final EvaluationContext context) {
         ExecutionStatistics.get().begin("FernflowerDecompilationOperation.perform");
         int threads = WindupExecutors.getDefaultThreadCount();
         LOG.info("Decompiling with " + threads + " threads");
@@ -74,14 +71,11 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 
         int totalWork = 0;
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
-        for (JavaClassFileModel classFileModel : filesToDecompile)
-        {
+        for (JavaClassFileModel classFileModel : filesToDecompile) {
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
-            if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
-            {
+            if (configurationService.shouldScanPackage(classFileModel.getPackageName())) {
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
-                if (!classFileModel.getFilePath().contains("$"))
-                {
+                if (!classFileModel.getFilePath().contains("$")) {
                     // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
                     totalWork++;
                 }
@@ -106,8 +100,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
      *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
      */
-    private class AddDecompiledItemsToGraph implements DecompilationListener
-    {
+    private class AddDecompiledItemsToGraph implements DecompilationListener {
         private final ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
         private final AtomicInteger queueSize = new AtomicInteger(0);
 
@@ -116,8 +109,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         private final ProgressEstimate progressEstimate;
         private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
-        private AddDecompiledItemsToGraph(List<ClassDecompileRequest> requests, ProgressEstimate progressEstimate, GraphRewrite event)
-        {
+        private AddDecompiledItemsToGraph(List<ClassDecompileRequest> requests, ProgressEstimate progressEstimate, GraphRewrite event) {
             this.requestMap = new HashMap<>(requests.size());
             for (ClassDecompileRequest request : requests)
                 requestMap.put(request.getClassFile().toString(), request);
@@ -126,44 +118,33 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public void decompilationProcessComplete()
-        {
-            executorService.submit(new Runnable()
-            {
+        public void decompilationProcessComplete() {
+            executorService.submit(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     LOG.info("Performing final commit for decompilation process!");
                     event.getGraphContext().commit();
                 }
             });
             executorService.shutdown();
-            try
-            {
+            try {
                 executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 throw new IllegalStateException("Thread pool failed to complete.");
             }
         }
 
         @Override
-        public void decompilationFailed(List<String> inputPath, String message)
-        {
+        public void decompilationFailed(List<String> inputPath, String message) {
             ClassDecompileRequest request = requestMap.get(inputPath);
             ProcyonDecompiler procyon = new ProcyonDecompiler();
 
             DecompilationResult result = procyon.decompileClassFile(request.getRootDirectory(), request.getClassFile(), request.getOutputDirectory());
-            if (!result.getFailures().isEmpty())
-            {
+            if (!result.getFailures().isEmpty()) {
                 LOG.warning("Failsafe Procyon decompilation of " + inputPath + " failed!");
                 progressEstimate.addWork(1);
-            }
-            else
-            {
-                for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet())
-                {
+            } else {
+                for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet()) {
                     LOG.info("Failsafe Procyon decompilation of " + inputPath + " successful!");
                     fileDecompiled(Collections.singletonList(decompiledFile.getKey()), decompiledFile.getValue());
                 }
@@ -172,8 +153,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public boolean isCancelled()
-        {
+        public boolean isCancelled() {
             return this.event.shouldWindupStop();
         }
 
@@ -183,27 +163,22 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile, int[] lineMapping)
-        {
-            if (event.shouldWindupStop())
-            {
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile, int[] lineMapping) {
+            if (event.shouldWindupStop()) {
                 LOG.warning("Request to stop received.");
                 throw new WindupStopException("Request to stop received.");
             }
 
-            Runnable saveDecompiledRunnable = new Runnable()
-            {
+            Runnable saveDecompiledRunnable = new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     queueSize.decrementAndGet();
                     progressEstimate.addWork(1);
-                    if (progressEstimate.getWorked() % 250 == 0)
-                    {
+                    if (progressEstimate.getWorked() % 250 == 0) {
                         long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
                         if (remainingTimeMillis > 1000)
                             event.ruleEvaluationProgress("Decompilation", progressEstimate.getWorked(), progressEstimate.getTotal(),
-                                        (int) remainingTimeMillis / 1000);
+                                    (int) remainingTimeMillis / 1000);
                     }
 
                     String mainClassFile = inputPath.get(0);
@@ -212,19 +187,16 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     Path classFilePath = Paths.get(mainClassFile);
 
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                                decompiledOutputFile);
+                            decompiledOutputFile);
 
-                    if (decompiledFileModel == null)
-                    {
+                    if (decompiledFileModel == null) {
                         decompiledFileModel = createDecompiledFileModel(fileService);
                     }
 
-                    if (decompiledOutputFile.endsWith(".java"))
-                    {
+                    if (decompiledOutputFile.endsWith(".java")) {
                         JavaSourceFileModel sourceFileModel = handleDecompiledJavaFile(decompiledFileModel, fileService, classFilePath);
 
-                        if (lineMapping != null && lineMapping.length > 0)
-                        {
+                        if (lineMapping != null && lineMapping.length > 0) {
                             LineMappingService mappingService = new LineMappingService(event.getGraphContext());
                             LineMappingModel mappingModel = mappingService.create(lineMapping);
                             sourceFileModel.setLineMapping(mappingModel);
@@ -232,15 +204,13 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     }
 
 
-                    if (atomicInteger.incrementAndGet() % 100 == 0)
-                    {
+                    if (atomicInteger.incrementAndGet() % 100 == 0) {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ")");
                         event.getGraphContext().commit();
                     }
                 }
 
-                private FileModel createDecompiledFileModel(FileService fileService)
-                {
+                private FileModel createDecompiledFileModel(FileService fileService) {
                     FileModel decompiledFileModel;
                     FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
                             .getParent()
@@ -249,21 +219,18 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     // (it can happen that it does not if PROCYON puts the decompiled .java file in an unexpected
                     // place, for example in the case
                     // of war files)
-                    if (parentFileModel == null)
-                    {
+                    if (parentFileModel == null) {
                         List<Path> lineage = new LinkedList<>();
                         Path parentPath = Paths.get(decompiledOutputFile).getParent();
                         FileModel existingParentFM = parentFileModel;
-                        while (existingParentFM == null)
-                        {
+                        while (existingParentFM == null) {
                             lineage.add(0, parentPath);
                             parentPath = parentPath.getParent();
                             existingParentFM = fileService.findByPath(parentPath.toString());
                         }
 
                         FileModel currentParent = existingParentFM;
-                        for (Path p : lineage)
-                        {
+                        for (Path p : lineage) {
                             currentParent = fileService.createByFilePath(currentParent, p.toString());
                         }
                         parentFileModel = currentParent;
@@ -272,10 +239,8 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     return decompiledFileModel;
                 }
 
-                private JavaSourceFileModel handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException
-                {
-                    if (!(decompiledFileModel instanceof JavaSourceFileModel))
-                    {
+                private JavaSourceFileModel handleDecompiledJavaFile(FileModel decompiledFileModel, FileService fileService, Path classFilePath) throws RuntimeException, NonUniqueResultException {
+                    if (!(decompiledFileModel instanceof JavaSourceFileModel)) {
                         decompiledFileModel = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class)
                                 .addTypeToModel(decompiledFileModel);
                     }
@@ -289,13 +254,11 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 
                     FileModel classFileModel = fileService.getUniqueByProperty(
                             FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
-                    if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
-                    {
+                    if (classFileModel != null && classFileModel instanceof JavaClassFileModel) {
                         ProjectModel projectModel = classFileModel.getProjectModel();
 
                         // only add it to the project model if it is not already there
-                        if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
-                        {
+                        if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel)) {
                             projectModel.addFileModel(decompiledFileModel);
                         }
 
@@ -303,23 +266,20 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                         classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                         decompiledSourceFileModel.setPackageName(classModel.getPackageName());
                         decompiledSourceFileModel.setWindupGenerated(true);
-                        setupClassToJavaConnections(event.getGraphContext(),inputPath,decompiledSourceFileModel);
+                        setupClassToJavaConnections(event.getGraphContext(), inputPath, decompiledSourceFileModel);
 
                         // Set the root path of this source file (if possible). Procyon should always be placing the file
                         // into a location that is appropriate for the package name, so this should always yield
                         // a non-null root path.
                         Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
                                 classModel.getPackageName());
-                        if (rootSourcePath != null)
-                        {
+                        if (rootSourcePath != null) {
                             FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
                             decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
                         }
                         if (classModel.getJavaClass() != null)
                             decompiledSourceFileModel.addJavaClass(classModel.getJavaClass());
-                    }
-                    else
-                    {
+                    } else {
                         throw new WindupException(
                                 "Failed to find original JavaClassFileModel for decompiled Java file: "
                                         + decompiledOutputFile + " at: " + classFilePath.toString());
@@ -332,23 +292,18 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
             queueSize.incrementAndGet();
             executorService.submit(saveDecompiledRunnable);
 
-            while (queueSize.get() > 100000)
-            {
-                try
-                {
+            while (queueSize.get() > 100000) {
+                try {
                     LOG.warning("Decompiler queue size got over 1000, waiting for 250 ms.");
                     Thread.sleep(250L);
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     // noop
                 }
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "DecompileWithProcyon";
         }
     }

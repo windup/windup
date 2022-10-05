@@ -17,19 +17,17 @@ import org.ocpsoft.rewrite.config.Operation;
 /**
  * To be used by the config {@link Operation} and {@link Condition} implementations to get a reference to
  * {@link Furnace} if required.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FurnaceHolder
-{
+public class FurnaceHolder {
     private static Furnace furnace;
     private static AddonRegistry addonRegistry;
 
     /**
      * Called by the {@link Furnace} container. <b>*** Do not use. ***</b>
      */
-    public void setFurnace(@Observes PostStartup event, Furnace furnace, AddonRegistry registry)
-    {
+    public void setFurnace(@Observes PostStartup event, Furnace furnace, AddonRegistry registry) {
         FurnaceHolder.addonRegistry = registry;
         FurnaceHolder.furnace = furnace;
     }
@@ -37,16 +35,14 @@ public class FurnaceHolder
     /**
      * Get the current running instance of {@link Furnace}.
      */
-    public static Furnace getFurnace()
-    {
+    public static Furnace getFurnace() {
         return furnace;
     }
 
     /**
      * Return the {@link AddonRegistry} in which this Windup instance is running.
      */
-    public static AddonRegistry getAddonRegistry()
-    {
+    public static AddonRegistry getAddonRegistry() {
         return addonRegistry;
     }
 }

@@ -9,57 +9,48 @@ import org.jboss.windup.config.ValidationResult;
  *
  * @author Ondrej Zizka
  */
-public class ExplodedAppInputOption extends AbstractConfigurationOption
-{
+public class ExplodedAppInputOption extends AbstractConfigurationOption {
     public static final String NAME = "explodedApp";
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "If the input path points to a directory, it should be treated as an unzipped application, "
                 + "instead of a directory containing applications (default).";
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Unzipped Applications Input";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Boolean.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object valueObj)
-    {
+    public ValidationResult validate(Object valueObj) {
         return ValidationResult.SUCCESS;
     }
 
 
     @Override
-    public Object getDefaultValue()
-    {
+    public Object getDefaultValue() {
         return Boolean.FALSE;
     }
 

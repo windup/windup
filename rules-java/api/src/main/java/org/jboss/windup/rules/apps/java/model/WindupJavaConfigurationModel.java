@@ -15,12 +15,11 @@ import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Configuration options that are specific to the Java Ruleset
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupJavaConfigurationModel.TYPE)
-public interface WindupJavaConfigurationModel extends WindupVertexFrame, ElementFrame
-{
+public interface WindupJavaConfigurationModel extends WindupVertexFrame, ElementFrame {
     String TYPE = "WindupJavaConfigurationModel";
     String SOURCE_MODE = "sourceMode";
     String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
@@ -56,14 +55,12 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
     /**
      * Specifies which Java packages should be scanned by windup
      */
-    default void setScanJavaPackageList(Iterable<String> pkgs)
-    {
+    default void setScanJavaPackageList(Iterable<String> pkgs) {
         setScanJavaPackages(new ArrayList<PackageModel>());
         if (pkgs == null)
             return;
 
-        for (String pkg : pkgs)
-        {
+        for (String pkg : pkgs) {
             PackageModel m = getGraph().addFramedVertex(PackageModel.class);
             m.setPackageName(pkg);
             addScanJavaPackages(m);
@@ -85,14 +82,12 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
     /**
      * What Java packages to exclude during scanning of applications.
      */
-    default void setExcludeJavaPackageList(Iterable<String> pkgs)
-    {
+    default void setExcludeJavaPackageList(Iterable<String> pkgs) {
         setExcludeJavaPackages(new ArrayList<PackageModel>());
         if (pkgs == null)
             return;
 
-        for (String pkg : pkgs)
-        {
+        for (String pkg : pkgs) {
             PackageModel m = getGraph().addFramedVertex(PackageModel.class);
             m.setPackageName(pkg);
             addExcludeJavaPackage(m);

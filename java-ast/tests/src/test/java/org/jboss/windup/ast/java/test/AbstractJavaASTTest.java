@@ -13,38 +13,33 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public abstract class AbstractJavaASTTest
-{
+public abstract class AbstractJavaASTTest {
     private Set<String> libraryPaths = new HashSet<>();
     private Set<String> sourcePaths;
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.ast:windup-java-ast"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.ast:windup-java-ast"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addPackage(AbstractJavaASTTest.class.getPackage());
+                .addBeansXML()
+                .addPackage(AbstractJavaASTTest.class.getPackage());
         return archive;
     }
 
     @Before
-    public void before()
-    {
+    public void before() {
         sourcePaths = new HashSet<>();
         sourcePaths.add("src/test/resources");
     }
 
-    Set<String> getLibraryPaths()
-    {
+    Set<String> getLibraryPaths() {
         return libraryPaths;
     }
 
-    Set<String> getSourcePaths()
-    {
+    Set<String> getSourcePaths() {
         return sourcePaths;
     }
 

@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import java.util.logging.Logger;
 
 @TypeValue(CssFileModel.TYPE)
-public interface CssFileModel extends FileModel, SourceFileModel
-{
+public interface CssFileModel extends FileModel, SourceFileModel {
     Logger LOG = Logger.getLogger(CssFileModel.class.getName());
 
     String TYPE = "CssFile";

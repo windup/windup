@@ -16,18 +16,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = PostMigrationRulesPhase.class, perform = "Mark EJB Remote Class Files")
-public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSessionBeanModel>
-{
+public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSessionBeanModel> {
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(EjbSessionBeanModel.class);
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, EjbSessionBeanModel payload)
-    {
-        if (payload.getEjbRemote() != null)
-        {
+    public void perform(GraphRewrite event, EvaluationContext context, EjbSessionBeanModel payload) {
+        if (payload.getEjbRemote() != null) {
             EjbRemoteServiceModelService service = new EjbRemoteServiceModelService(event.getGraphContext());
             service.getOrCreate(payload.getApplications(), payload.getEjbRemote(), payload.getEjbClass());
         }

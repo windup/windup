@@ -53,23 +53,21 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * directory.
  */
 @RunWith(Arquillian.class)
-public class XmlAndJavaParameterizedTest
-{
+public class XmlAndJavaParameterizedTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
 
         return archive;
     }
@@ -81,10 +79,8 @@ public class XmlAndJavaParameterizedTest
     private GraphContextFactory factory;
 
     @Test
-    public void testXmlAndJavaSearchParams() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testXmlAndJavaSearchParams() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
@@ -98,10 +94,10 @@ public class XmlAndJavaParameterizedTest
             pm.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(new NotPredicate(
-                                    new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
-                                    ))
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(new NotPredicate(
+                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
+                    ))
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
@@ -109,8 +105,7 @@ public class XmlAndJavaParameterizedTest
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             int count = 0;
-            for (InlineHintModel model : hintService.findAll())
-            {
+            for (InlineHintModel model : hintService.findAll()) {
                 String text = model.getHint();
                 System.out.println("Model: " + text + ", full: " + model);
                 Assert.assertNotNull(text);
@@ -121,48 +116,42 @@ public class XmlAndJavaParameterizedTest
         }
     }
 
-    public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider
-    {
+    public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider {
         private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
-        public TestParameterizedXmlRuleProvider()
-        {
+        public TestParameterizedXmlRuleProvider() {
             super(MetadataBuilder.forProvider(TestParameterizedXmlRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
-            {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>() {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
+                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
                     xmlFiles.add(payload);
                 }
             };
 
             return ConfigurationBuilder.begin()
-                .addRule()
-                .when(XmlFile.matchesXpath(
-                        "/javaclasses/javaclass[windup:matches(text(), '{classname}')]"
-                    ).as("javaclassnamesfromxml")
-                    .and(
-                        JavaClass.references("{classname}").as("javaClasses")
+                    .addRule()
+                    .when(XmlFile.matchesXpath(
+                                            "/javaclasses/javaclass[windup:matches(text(), '{classname}')]"
+                                    ).as("javaclassnamesfromxml")
+                                    .and(
+                                            JavaClass.references("{classname}").as("javaClasses")
+                                    )
                     )
-                )
-                .perform(
-                    Iteration.over("javaClasses").perform(
-                        Hint.withText("Found value: {classname}").withEffort(2)
-                        .and(addTypeRefToList)
-                    ).endIteration()
-                 );
+                    .perform(
+                            Iteration.over("javaClasses").perform(
+                                    Hint.withText("Found value: {classname}").withEffort(2)
+                                            .and(addTypeRefToList)
+                            ).endIteration()
+                    );
         }
         // @formatter:on
 
-        public Set<FileLocationModel> getXmlFileMatches()
-        {
+        public Set<FileLocationModel> getXmlFileMatches() {
             return xmlFiles;
         }
     }

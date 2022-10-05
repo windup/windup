@@ -22,12 +22,11 @@ import org.junit.Test;
 
 /**
  * Base class for decompiler tests .
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class DecompilerTestBase
-{
+public abstract class DecompilerTestBase {
     protected static final Logger log = Logger.getLogger(DecompilerTestBase.class.getName());
 
     protected Path testTempDir;
@@ -43,24 +42,21 @@ public abstract class DecompilerTestBase
     protected abstract boolean isResultValid(DecompilationResult res);
 
     @Before
-    public void setUp() throws IOException
-    {
+    public void setUp() throws IOException {
         this.testTempDir = Paths.get("target").resolve("testTmp");
         FileUtils.deleteQuietly(testTempDir.toFile());
         Files.createDirectory(this.testTempDir);
     }
 
     @After
-    public void tearDown() throws IOException
-    {
+    public void tearDown() throws IOException {
     }
 
     /**
      * Single class.
      */
     @Test
-    public void testDecompileSingleClass() throws DecompilationException, IOException
-    {
+    public void testDecompileSingleClass() throws DecompilationException, IOException {
         final Decompiler dec = this.getDecompiler();
 
         Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
@@ -75,13 +71,11 @@ public abstract class DecompilerTestBase
 
         Assert.assertNotNull("Results object was returned.", res);
 
-        if (!res.getFailures().isEmpty())
-        {
+        if (!res.getFailures().isEmpty()) {
             final StringBuilder sb = new StringBuilder();
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
-            for (final DecompilationFailure e : res.getFailures())
-            {
-                sb.append(System.lineSeparator()+"    ").append(e.getMessage());
+            for (final DecompilationFailure e : res.getFailures()) {
+                sb.append(System.lineSeparator() + "    ").append(e.getMessage());
                 final Throwable cause = e.getCause();
                 cause.printStackTrace();
                 if (cause instanceof NullPointerException)
@@ -96,7 +90,7 @@ public abstract class DecompilerTestBase
                 log.severe(sb.toString());
         }
         log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
-                    + " failed.");
+                + " failed.");
 
         final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
         Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.toString(), Files.exists(sampleFile));
@@ -107,48 +101,40 @@ public abstract class DecompilerTestBase
      * Decompile test .jar.
      */
     @Test
-    public void testDecompileWicketJar() throws DecompilationException
-    {
+    public void testDecompileWicketJar() throws DecompilationException {
         Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
         Path decompDir = testTempDir.resolve("decompiled");
 
         final Decompiler dec = this.getDecompiler();
-        final DecompilationResult res = dec.decompileArchive(archive, decompDir, new CountClassesFilter(100), new DecompilationListener()
-        {
+        final DecompilationResult res = dec.decompileArchive(archive, decompDir, new CountClassesFilter(100), new DecompilationListener() {
             @Override
-            public void decompilationProcessComplete()
-            {
+            public void decompilationProcessComplete() {
                 // noop
             }
 
             @Override
-            public void decompilationFailed(List<String> inputPath, String message)
-            {
+            public void decompilationFailed(List<String> inputPath, String message) {
 
             }
 
             @Override
-            public void fileDecompiled(List<String> inputPath, String outputPath)
-            {
+            public void fileDecompiled(List<String> inputPath, String outputPath) {
                 // noop
             }
 
             @Override
-            public boolean isCancelled()
-            {
+            public boolean isCancelled() {
                 return false;
             }
         });
 
         Assert.assertNotNull("Results object returned", res);
 
-        if (!res.getFailures().isEmpty())
-        {
+        if (!res.getFailures().isEmpty()) {
             final StringBuilder sb = new StringBuilder();
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
-            for (final DecompilationFailure dex : res.getFailures())
-            {
-                sb.append(System.lineSeparator()+"    ").append(dex.getMessage());
+            for (final DecompilationFailure dex : res.getFailures()) {
+                sb.append(System.lineSeparator() + "    ").append(dex.getMessage());
             }
 
             if (!this.isResultValid(res))
@@ -157,7 +143,7 @@ public abstract class DecompilerTestBase
                 log.severe(sb.toString());
         }
         log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
-                    + " failed.");
+                + " failed.");
 
         final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
         Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.toString(), Files.exists(sampleFile));

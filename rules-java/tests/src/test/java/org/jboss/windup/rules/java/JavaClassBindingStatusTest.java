@@ -52,26 +52,24 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class JavaClassBindingStatusTest
-{
+public class JavaClassBindingStatusTest {
     private static final String METADATA_FILENAME = "JavaClassBindingStatusTest.technology.metadata.xml";
     private static final String JAR_FILENAME = "commons-io-2.1.jar";
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/" + METADATA_FILENAME), METADATA_FILENAME)
-                    .addAsResource(new File("src/test/resources/lib/" + JAR_FILENAME), JAR_FILENAME);
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/" + METADATA_FILENAME), METADATA_FILENAME)
+                .addAsResource(new File("src/test/resources/lib/" + JAR_FILENAME), JAR_FILENAME);
 
     }
 
@@ -85,33 +83,29 @@ public class JavaClassBindingStatusTest
     private ClassBindingTestRuleProvider provider;
 
     @Test
-    public void testResolutionStatus() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+    public void testResolutionStatus() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
 
             Path rulesPath = FileUtils.getTempDirectory().toPath().resolve("Windup")
-                        .resolve("testrulespath_" + RandomStringUtils.randomAlphanumeric(6));
+                    .resolve("testrulespath_" + RandomStringUtils.randomAlphanumeric(6));
             System.out.println("Using rules path: " + rulesPath);
             Files.createDirectories(rulesPath);
             try (InputStream is = getClass().getResourceAsStream("/" + METADATA_FILENAME);
-                        OutputStream os = new FileOutputStream(rulesPath.resolve(METADATA_FILENAME).toFile()))
-            {
+                 OutputStream os = new FileOutputStream(rulesPath.resolve(METADATA_FILENAME).toFile())) {
                 IOUtils.copy(is, os);
             }
             Path rulesLibPath = rulesPath.resolve("lib");
             Files.createDirectories(rulesLibPath);
             try (InputStream is = getClass().getResourceAsStream("/" + JAR_FILENAME);
-                        OutputStream os = new FileOutputStream(rulesLibPath.resolve(JAR_FILENAME).toFile()))
-            {
+                 OutputStream os = new FileOutputStream(rulesLibPath.resolve(JAR_FILENAME).toFile())) {
                 IOUtils.copy(is, os);
             }
 
@@ -135,27 +129,21 @@ public class JavaClassBindingStatusTest
             boolean nioPathResolved = false;
             boolean fileUtilsResolved = false;
             boolean fileModelRecovered = false;
-            for (JavaTypeReferenceModel typeReference : typeReferences)
-            {
+            for (JavaTypeReferenceModel typeReference : typeReferences) {
                 if (typeReference.getResolvedSourceSnippit().equals("Path"))
                     Assert.fail("Path should resolve to java.nio.Path");
 
-                if (typeReference.getResolvedSourceSnippit().equals("java.nio.file.Path"))
-                {
+                if (typeReference.getResolvedSourceSnippit().equals("java.nio.file.Path")) {
                     if (typeReference.getResolutionStatus() != ResolutionStatus.RESOLVED)
                         Assert.fail("Failed to resolve java.nio.Path");
                     else
                         nioPathResolved = true;
-                }
-                else if (typeReference.getResolvedSourceSnippit().equals("org.apache.commons.io.FileUtils"))
-                {
+                } else if (typeReference.getResolvedSourceSnippit().equals("org.apache.commons.io.FileUtils")) {
                     if (typeReference.getResolutionStatus() != ResolutionStatus.RESOLVED)
                         Assert.fail("Failed to resolve Commons IO FileUtils");
                     else
                         fileUtilsResolved = true;
-                }
-                else if (typeReference.getResolvedSourceSnippit().equals("org.jboss.windup.graph.model.resource.FileModel"))
-                {
+                } else if (typeReference.getResolvedSourceSnippit().equals("org.jboss.windup.graph.model.resource.FileModel")) {
                     if (typeReference.getResolutionStatus() == ResolutionStatus.RESOLVED)
                         Assert.fail("FileModel is not on the library path and should not be resolved");
                     else
@@ -168,25 +156,21 @@ public class JavaClassBindingStatusTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("JavaClassBindingStatusTest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("JavaClassBindingStatusTest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
     @Singleton
-    public static class ClassBindingTestRuleProvider extends AbstractRuleProvider
-    {
-        public ClassBindingTestRuleProvider()
-        {
+    public static class ClassBindingTestRuleProvider extends AbstractRuleProvider {
+        public ClassBindingTestRuleProvider() {
             super(MetadataBuilder.forProvider(ClassBindingTestRuleProvider.class)
-                        .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
                     .addRule()
                     .when(

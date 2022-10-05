@@ -14,13 +14,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  * Discovers .class files from the applications being analyzed.
  */
 @RuleMetadata(phase = ClassifyFileTypesPhase.class)
-public class JavaFileMappingRuleProvider extends AbstractRuleProvider
-{
+public class JavaFileMappingRuleProvider extends AbstractRuleProvider {
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule(FileMapping.from(".*\\.java$").to(JavaSourceFileModel.class))
-        .addRule(FileMapping.from(".*\\.class$").to(JavaClassFileModel.class));
+                .addRule(FileMapping.from(".*\\.java$").to(JavaSourceFileModel.class))
+                .addRule(FileMapping.from(".*\\.class$").to(JavaClassFileModel.class));
     }
 }

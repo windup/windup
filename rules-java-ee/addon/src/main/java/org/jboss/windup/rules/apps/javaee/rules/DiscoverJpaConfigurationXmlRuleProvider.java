@@ -43,36 +43,30 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover JPA Persistence XML Files")
-public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
-{
+public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel> {
     private static final String TECH_TAG = "JPA XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(NamespaceMetaModel.class).withProperty(NamespaceMetaModel.NAMESPACE_URI, "http://java.sun.com/xml/ns/persistence");
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, NamespaceMetaModel payload)
-    {
-        for (XmlFileModel xml : payload.getXmlResources())
-        {
+    public void perform(GraphRewrite event, EvaluationContext context, NamespaceMetaModel payload) {
+        for (XmlFileModel xml : payload.getXmlResources()) {
             if (!StringUtils.equals(xml.getRootTagName(), "persistence"))
                 continue;
 
             try {
                 Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, xml);
                 extractMetadata(event.getGraphContext(), xml, doc);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 xml.setParseError("Failed to parse JPA configuration: " + ex.getMessage());
             }
         }
     }
 
-    private void extractMetadata(GraphContext graphContext, XmlFileModel xmlFileModel, Document doc)
-    {
+    private void extractMetadata(GraphContext graphContext, XmlFileModel xmlFileModel, Document doc) {
         DataSourceService dataSourceService = new DataSourceService(graphContext);
         JavaClassService javaClassService = new JavaClassService(graphContext);
         JPAConfigurationFileService jpaConfigurationFileService = new JPAConfigurationFileService(graphContext);
@@ -83,21 +77,18 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
         String version = $(doc).attr("version");
-        if (StringUtils.isNotBlank(version))
-        {
+        if (StringUtils.isNotBlank(version)) {
             technologyTag.setVersion(version);
         }
 
         // check the root XML node.
         JPAConfigurationFileModel jpaConfigurationModel = jpaConfigurationFileService.addTypeToModel(xmlFileModel);
-        if (StringUtils.isNotBlank(version))
-        {
+        if (StringUtils.isNotBlank(version)) {
             jpaConfigurationModel.setSpecificationVersion(version);
         }
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(graphContext, xmlFileModel.getProjectModel());
-        for (Element element : $(doc).find("persistence-unit").get())
-        {
+        for (Element element : $(doc).find("persistence-unit").get()) {
             JPAPersistenceUnitModel persistenceUnitModel = jpaPersistenceUnitService.create();
             persistenceUnitModel.setApplication(xmlFileModel.getApplication());
             String persistenceUnitName = $(element).attr("name");
@@ -105,12 +96,10 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
 
             jpaConfigurationModel.addPersistenceUnit(persistenceUnitModel);
 
-            if ($(element).find("jta-data-source").isNotEmpty())
-            {
+            if ($(element).find("jta-data-source").isNotEmpty()) {
                 final String dataSourceJndiName = $(element).find("jta-data-source").text();
                 String dataSourceName = dataSourceJndiName;
-                if (StringUtils.contains(dataSourceName, "/"))
-                {
+                if (StringUtils.contains(dataSourceName, "/")) {
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
@@ -119,12 +108,10 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
-            if ($(element).find("non-jta-data-source").isNotEmpty())
-            {
+            if ($(element).find("non-jta-data-source").isNotEmpty()) {
                 final String dataSourceJndiName = $(element).find("non-jta-data-source").text();
                 String dataSourceName = dataSourceJndiName;
-                if (StringUtils.contains(dataSourceName, "/"))
-                {
+                if (StringUtils.contains(dataSourceName, "/")) {
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
@@ -132,8 +119,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
-            for (Element clz : $(element).find("class").get())
-            {
+            for (Element clz : $(element).find("class").get()) {
                 String clzName = $(clz).text();
                 JavaClassModel javaClz = javaClassService.getOrCreatePhantom(clzName);
 
@@ -143,18 +129,15 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
             }
 
             Map<String, String> persistenceUnitProperties = new HashMap<>();
-            for (Element propElement : $(element).find("property"))
-            {
+            for (Element propElement : $(element).find("property")) {
                 String propKey = $(propElement).attr("name");
                 String propValue = $(propElement).attr("value");
                 persistenceUnitProperties.put(propKey, propValue);
             }
 
-            if (persistenceUnitProperties.containsKey("hibernate.dialect"))
-            {
+            if (persistenceUnitProperties.containsKey("hibernate.dialect")) {
                 String dialect = persistenceUnitProperties.get("hibernate.dialect");
-                for (DataSourceModel datasource : persistenceUnitModel.getDataSources())
-                {
+                for (DataSourceModel datasource : persistenceUnitModel.getDataSources()) {
                     datasource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
                 }
             }

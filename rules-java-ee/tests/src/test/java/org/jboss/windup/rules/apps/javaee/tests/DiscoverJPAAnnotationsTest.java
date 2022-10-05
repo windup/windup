@@ -24,8 +24,7 @@ import java.util.UUID;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverJPAAnnotationsTest extends AbstractTest
-{
+public class DiscoverJPAAnnotationsTest extends AbstractTest {
     @Inject
     private WindupProcessor processor;
 
@@ -33,10 +32,8 @@ public class DiscoverJPAAnnotationsTest extends AbstractTest
     private GraphContextFactory factory;
 
     @Test
-    public void testJPAMetadataExtraction() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testJPAMetadataExtraction() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             String inputPath = "src/test/resources/jpa";
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
@@ -53,8 +50,7 @@ public class DiscoverJPAAnnotationsTest extends AbstractTest
 
             GraphService<JPAEntityModel> jpaEntityModelService = new GraphService<>(context, JPAEntityModel.class);
             int jpaEntitiesFound = 0;
-            for (JPAEntityModel jpaEntityModel : jpaEntityModelService.findAll())
-            {
+            for (JPAEntityModel jpaEntityModel : jpaEntityModelService.findAll()) {
                 //Assert.assertEquals("ChatBeanDestination", msgDriven.getDestination().getJndiLocation());
                 if (jpaEntityModel.getEntityName().equals("SubclassWithDiscriminator"))
                     Assert.assertEquals("SimpleEntityTable", jpaEntityModel.getTableName());
