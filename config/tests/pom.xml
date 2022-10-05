@@ -31,6 +31,12 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Rules Dependencies -->
         <dependency>

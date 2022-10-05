@@ -324,10 +324,25 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Windup Engine - Bootstrap -->
+            <!-- Windup Engine - Themed Bootstraps -->
             <dependency>
                 <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-bootstrap</artifactId>
+                <artifactId>windup-bootstrap-windup</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bootstrap-mtr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bootstrap-mta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bootstrap-tackle</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

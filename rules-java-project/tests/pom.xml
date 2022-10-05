@@ -75,5 +75,11 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

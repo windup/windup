@@ -87,12 +87,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting</artifactId>
             <classifier>forge-addon</classifier>
@@ -134,12 +128,6 @@
         <dependency>
             <groupId>org.jboss.windup.tests</groupId>
             <artifactId>test-util</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
