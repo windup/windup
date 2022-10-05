@@ -7,14 +7,12 @@ import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class TopLayerSingletonFramesSelector implements FramesSelector
-{
+public class TopLayerSingletonFramesSelector implements FramesSelector {
 
     private String varName;
 
     @Override
-    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
-    {
+    public Iterable<? extends WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context) {
         Variables variables = Variables.instance(event);
         this.varName = Iteration.getPayloadVariableName(event, context);
         return variables.findVariable(varName);

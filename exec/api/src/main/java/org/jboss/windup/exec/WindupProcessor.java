@@ -10,12 +10,11 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 /**
  * The entry point of the Windup engine.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public interface WindupProcessor
-{
+public interface WindupProcessor {
     /**
      * Executes Windup using the given {@link WindupConfiguration}.
      */

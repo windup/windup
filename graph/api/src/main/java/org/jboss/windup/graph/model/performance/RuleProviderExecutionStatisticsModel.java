@@ -7,13 +7,11 @@ import org.jboss.windup.graph.Property;
 
 /**
  * This model stores the time taken to execute all of the rules provided by a particular RuleProvider.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(RuleProviderExecutionStatisticsModel.TYPE)
-public interface RuleProviderExecutionStatisticsModel extends WindupVertexFrame
-{
+public interface RuleProviderExecutionStatisticsModel extends WindupVertexFrame {
     String TYPE = "RuleProviderExecutionStatisticsModel";
     String TIME_TAKEN = "timeTaken";
     String RULE_INDEX = "ruleIndex";

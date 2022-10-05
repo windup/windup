@@ -9,16 +9,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetadataTestRuleProvider2 extends SingleRuleProvider
-{
-    public MetadataTestRuleProvider2()
-    {
+public class MetadataTestRuleProvider2 extends SingleRuleProvider {
+    public MetadataTestRuleProvider2() {
         super(MetadataBuilder.forProvider(MetadataTestRuleProvider2.class).setPhase(DependentPhase.class));
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context) {
         ExecutedProviders.executedProvider(this);
     }
 }

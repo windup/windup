@@ -15,16 +15,14 @@ import org.junit.Test;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ArchiveCoordinateIdentificationTest
-{
+public class ArchiveCoordinateIdentificationTest {
     private static final String DATA_PATH = "src/test/resources/";
     private static final File SKIPLIST_FILE = new File(DATA_PATH + "/skippedArchives.txt");
 
     InMemoryArchiveIdentificationService identifier = new InMemoryArchiveIdentificationService();
 
     @Test
-    public void testIdentifyArchive() throws IOException
-    {
+    public void testIdentifyArchive() throws IOException {
         final File mappingFile = new File(DATA_PATH + "/test.archive-metadata.txt");
         identifier.addMappingsFrom(mappingFile);
         Coordinate gav = identifier.getCoordinate("11856de4eeea74ce134ef3f910ff8d6f989dab2e");
@@ -36,20 +34,17 @@ public class ArchiveCoordinateIdentificationTest
     }
 
     @BeforeClass
-    public static void loadSkipList()
-    {
+    public static void loadSkipList() {
         SkippedArchives.load(SKIPLIST_FILE);
     }
 
     @Test
-    public void testSkippedArchivesLoaded() throws IOException
-    {
+    public void testSkippedArchivesLoaded() throws IOException {
         Assert.assertNotEquals(0, SkippedArchives.getCount());
     }
 
     @Test
-    public void testArtifactIdSuffixWithWildcards() throws IOException
-    {
+    public void testArtifactIdSuffixWithWildcards() throws IOException {
         // org.jboss.windup.*:*:*
         Assert.assertTrue(SkippedArchives.isSkipped(CoordinateBuilder.create("org.jboss.windup:windup-foo:1.2.3")));
         // org.apache.commons.*:*:*
@@ -57,8 +52,7 @@ public class ArchiveCoordinateIdentificationTest
     }
 
     @Test
-    public void testGroupIdSuffixWithVersionAndClassifierWildcard() throws IOException
-    {
+    public void testGroupIdSuffixWithVersionAndClassifierWildcard() throws IOException {
         // org.jboss.bar:bar-*:*:*
         Assert.assertTrue(SkippedArchives.isSkipped(CoordinateBuilder.create("org.jboss.bar:bar-foo:1.2.3")));
         Assert.assertFalse(SkippedArchives.isSkipped(CoordinateBuilder.create("org.jboss.bar:just-foo:1.2.3")));
@@ -66,8 +60,7 @@ public class ArchiveCoordinateIdentificationTest
     }
 
     @Test
-    public void testVersionRangeAndArtifactIdSuffixPattern() throws IOException
-    {
+    public void testVersionRangeAndArtifactIdSuffixPattern() throws IOException {
         // org.hibernate.*:hibernate-core:[3.0,5.0)
         Assert.assertTrue(SkippedArchives.isSkipped(CoordinateBuilder.create("org.hibernate.foo:hibernate-core:3.2.1")));
         Assert.assertFalse(SkippedArchives.isSkipped(CoordinateBuilder.create("org.hibernate.foo:hibernate-core:1.2.3")));
@@ -77,8 +70,7 @@ public class ArchiveCoordinateIdentificationTest
     }
 
     @Test
-    public void testAllButClassifier() throws IOException
-    {
+    public void testAllButClassifier() throws IOException {
         // org.freemarker:freemarker-core:3.1
         Assert.assertTrue(SkippedArchives.isSkipped(CoordinateBuilder.create("org.freemarker.foo:freemarker-core:3.1")));
         Assert.assertFalse(SkippedArchives.isSkipped(CoordinateBuilder.create("org.freemarker.foo:freemarker-core:3.1.1")));
@@ -86,8 +78,7 @@ public class ArchiveCoordinateIdentificationTest
     }
 
     @Test
-    public void testUnlistedArchivesAreNotSkipped() throws IOException
-    {
+    public void testUnlistedArchivesAreNotSkipped() throws IOException {
         Assert.assertFalse(SkippedArchives.isSkipped(CoordinateBuilder.create("com.example.foo:example-foo:1.2.3")));
     }
 }

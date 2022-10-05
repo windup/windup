@@ -32,22 +32,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JavaClassXmlRulesTest
-{
+public class JavaClassXmlRulesTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource("org/jboss/windup/rules/java/JavaClassXmlRulesTest.windup.xml");
+                .addBeansXML()
+                .addAsResource("org/jboss/windup/rules/java/JavaClassXmlRulesTest.windup.xml");
     }
 
     @Inject
@@ -57,14 +55,12 @@ public class JavaClassXmlRulesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(getDefaultPath(), true))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(getDefaultPath(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -97,16 +93,15 @@ public class JavaClassXmlRulesTest
             processor.execute(processorConfig);
 
             GraphService<JavaTypeReferenceModel> typeRefService = new GraphService<>(context,
-                        JavaTypeReferenceModel.class);
+                    JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
 
             int count = 0;
-            for (JavaTypeReferenceModel ref : typeReferences)
-            {
+            for (JavaTypeReferenceModel ref : typeReferences) {
                 String sourceSnippit = ref.getResolvedSourceSnippit();
                 System.out.println("Ref: " + ref);
                 if (sourceSnippit.contains("org.apache.commons")
-                            || sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"))
+                        || sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"))
                     count++;
             }
             Assert.assertTrue(count >= 13);
@@ -115,16 +110,14 @@ public class JavaClassXmlRulesTest
             Iterable<InlineHintModel> hints = hintService.findAll();
 
             count = 0;
-            for (InlineHintModel hint : hints)
-            {
+            for (InlineHintModel hint : hints) {
                 if (hint.getHint().contains("Rule1"))
                     count++;
             }
             Assert.assertEquals(3, count);
 
             count = 0;
-            for (InlineHintModel hint : hints)
-            {
+            for (InlineHintModel hint : hints) {
                 if (hint.getHint().contains("Rule2"))
                     count++;
             }
@@ -132,9 +125,8 @@ public class JavaClassXmlRulesTest
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
+                .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }
 }

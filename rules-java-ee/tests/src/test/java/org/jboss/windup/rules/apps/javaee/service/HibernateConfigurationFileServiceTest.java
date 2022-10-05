@@ -19,16 +19,13 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class HibernateConfigurationFileServiceTest extends AbstractTest
-{
+public class HibernateConfigurationFileServiceTest extends AbstractTest {
     @Inject
     GraphContextFactory factory;
 
     @Test
-    public void testHibernateConfigurationFindByProject() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testHibernateConfigurationFindByProject() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();
             app1.setName("app1");

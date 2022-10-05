@@ -30,8 +30,7 @@ import org.junit.runner.RunWith;
  * au
  */
 @RunWith(Arquillian.class)
-public class SpringDataSourceExtractionTest extends AbstractTest
-{
+public class SpringDataSourceExtractionTest extends AbstractTest {
     private static String SPRING_XMLS = "../../test-files/spring-hibernate-jndi-test";
 
     @Inject
@@ -42,42 +41,39 @@ public class SpringDataSourceExtractionTest extends AbstractTest
 
 
     @Test
-    public void testSpringBeans() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testSpringBeans() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             startWindup(SPRING_XMLS, context);
             GraphService<DataSourceModel> dataSourceService = new GraphService<>(context, DataSourceModel.class);
 
             int countDataSources = 0;
             //validate all have a datasource type
-            for(DataSourceModel model : dataSourceService.findAll()) {
+            for (DataSourceModel model : dataSourceService.findAll()) {
                 countDataSources++;
-                
+
                 String type = model.getDatabaseTypeName();
                 Assert.assertTrue(StringUtils.isNotBlank(type));
-                
+
             }
             Assert.assertEquals(countDataSources, 10);
         }
     }
 
-    private void startWindup(String xmlFilePath, GraphContext context) throws IOException
-    {
+    private void startWindup(String xmlFilePath, GraphContext context) throws IOException {
         ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
         pm.setName("Main Project");
         FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
         inputPath.setFilePath(xmlFilePath);
 
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
-                    + UUID.randomUUID().toString());
+                + UUID.randomUUID().toString());
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
         pm.addFileModel(inputPath);
         pm.setRootFileModel(inputPath);
         WindupConfiguration windupConfiguration = new WindupConfiguration()
-                    .setGraphContext(context);
+                .setGraphContext(context);
         windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
         windupConfiguration.setOutputDirectory(outputPath);
         processor.execute(windupConfiguration);

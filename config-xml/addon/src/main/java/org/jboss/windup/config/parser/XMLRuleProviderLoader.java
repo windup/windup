@@ -43,10 +43,8 @@ import org.w3c.dom.Document;
  * addons, with filenames that end in ".windup.xml" or ".rhamt.xml".
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
-public class XMLRuleProviderLoader implements RuleProviderLoader
-{
+public class XMLRuleProviderLoader implements RuleProviderLoader {
     private static final Logger LOG = Logging.get(XMLRuleProviderLoader.class);
 
     private static final String XML_RULES_WINDUP_EXTENSION = "windup.xml";
@@ -59,37 +57,29 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     private FurnaceClasspathScanner scanner;
 
     @Override
-    public boolean isFileBased()
-    {
+    public boolean isFileBased() {
         return true;
     }
 
     @Override
-    public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
-    {
+    public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext) {
         List<RuleProvider> providers = new ArrayList<>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder;
 
-        try
-        {
+        try {
             dBuilder = dbFactory.newDocumentBuilder();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new WindupException("Failed to build xml parser due to: " + e.getMessage(), e);
         }
 
-        for (Map.Entry<Addon, List<URL>> addonFiles : getAddonWindupXmlFiles().entrySet())
-        {
+        for (Map.Entry<Addon, List<URL>> addonFiles : getAddonWindupXmlFiles().entrySet()) {
             Addon addon = addonFiles.getKey();
             List<URL> urls = addonFiles.getValue();
-            for (URL resource : urls)
-            {
-                try
-                {
+            for (URL resource : urls) {
+                try {
                     Document doc = dBuilder.parse(resource.toURI().toString());
                     ParserContext parser = new ParserContext(furnace, ruleLoaderContext);
 
@@ -99,29 +89,24 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                     List<AbstractRuleProvider> parsedProviders = parser.getRuleProviders();
                     setOrigin(parsedProviders, resource);
                     providers.addAll(parsedProviders);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString()
-                                + " due to: " + e.getMessage(), e);
+                            + " due to: " + e.getMessage(), e);
                 }
             }
         }
 
-        for (Path userRulesPath : ruleLoaderContext.getRulePaths())
-        {
+        for (Path userRulesPath : ruleLoaderContext.getRulePaths()) {
             // Log the files found
             final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesPath);
-            StringBuilder sb = new StringBuilder(System.lineSeparator()+"Found " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
+            StringBuilder sb = new StringBuilder(System.lineSeparator() + "Found " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
             for (URL resource : userXmlRulesetFiles)
                 sb.append(System.lineSeparator()).append("\t").append(resource.toString());
             LOG.info(sb.toString());
 
             // Parse each file
-            for (URL resource : userXmlRulesetFiles)
-            {
-                try
-                {
+            for (URL resource : userXmlRulesetFiles) {
+                try {
                     Document doc = dBuilder.parse(resource.toURI().toString());
                     ParserContext parser = new ParserContext(furnace, ruleLoaderContext);
 
@@ -132,9 +117,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                     List<AbstractRuleProvider> parsedProviders = parser.getRuleProviders();
                     setOrigin(parsedProviders, resource);
                     providers.addAll(parsedProviders);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: " + e.getMessage(), e);
                 }
             }
@@ -143,40 +126,33 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         return providers;
     }
 
-    private void setOrigin(List<AbstractRuleProvider> providers, URL resource)
-    {
-        for (AbstractRuleProvider provider : providers)
-        {
-            if (provider instanceof RuleProviderBuilder)
-            {
+    private void setOrigin(List<AbstractRuleProvider> providers, URL resource) {
+        for (AbstractRuleProvider provider : providers) {
+            if (provider instanceof RuleProviderBuilder) {
                 ((RuleProviderBuilder) provider).setOrigin(resource.toExternalForm());
             }
         }
     }
 
-    private Map<Addon, List<URL>> getAddonWindupXmlFiles()
-    {
+    private Map<Addon, List<URL>> getAddonWindupXmlFiles() {
         Map<Addon, List<URL>> addon = scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_WINDUP_EXTENSION));
         addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_RHAMT_EXTENSION)));
         addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_MTA_EXTENSION)));
         return addon;
     }
 
-    private Collection<URL> getWindupUserDirectoryXmlFiles(Path userRulesPath)
-    {
+    private Collection<URL> getWindupUserDirectoryXmlFiles(Path userRulesPath) {
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesPath == null)
             return Collections.emptyList();
 
 
-        try
-        {
+        try {
             // Deal with the case of a single file here
             if (Files.isRegularFile(userRulesPath) && pathMatchesNamePattern(userRulesPath))
                 return Collections.singletonList(userRulesPath.toUri().toURL());
 
-            if (!Files.isDirectory(userRulesPath))
-            {
+            if (!Files.isDirectory(userRulesPath)) {
                 LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
                 return Collections.emptyList();
             }
@@ -184,31 +160,25 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
             // create the results as a copy (as we will be adding user xml files to them)
             final List<URL> results = new ArrayList<>();
 
-            Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
-            {
+            Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                {
-                    if (pathMatchesNamePattern(file))
-                    {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (pathMatchesNamePattern(file)) {
                         results.add(file.toUri().toURL());
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
             return results;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for XML rules due to: "
-                        + e.getMessage(), e);
+                    + e.getMessage(), e);
         }
     }
 
-    private boolean pathMatchesNamePattern(Path file)
-    {
+    private boolean pathMatchesNamePattern(Path file) {
         return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_WINDUP_EXTENSION)
-                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION)
-                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_MTA_EXTENSION);
+                || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION)
+                || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_MTA_EXTENSION);
     }
 }

@@ -21,8 +21,7 @@ import java.util.List;
  * This references a particular location within a Java source file, as well as the contents of that location.
  */
 @TypeValue(JavaTypeReferenceModel.TYPE)
-public interface JavaTypeReferenceModel extends FileLocationModel
-{
+public interface JavaTypeReferenceModel extends FileLocationModel {
 
     String TYPE = "JavaTypeReferenceModel";
     String REFERENCE_TYPE = "referenceType";
@@ -54,7 +53,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      */
     @Property(RESOLVED_SOURCE_SNIPPIT)
     String getResolvedSourceSnippit();
-    
+
     /**
      * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
      */
@@ -84,8 +83,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     /**
      * Gets a human readable description of the location in the file
      */
-    default String getDescription()
-    {
+    default String getDescription() {
         TypeReferenceLocation location = getReferenceLocation();
 
         return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";

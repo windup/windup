@@ -1,7 +1,6 @@
 package org.jboss.windup.config.query;
 
-public enum QueryPropertyComparisonType
-{
+public enum QueryPropertyComparisonType {
     EQUALS,
     NOT_EQUALS,
     CONTAINS_TOKEN,

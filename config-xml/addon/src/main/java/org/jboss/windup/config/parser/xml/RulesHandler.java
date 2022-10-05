@@ -10,14 +10,11 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "rules", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class RulesHandler implements ElementHandler<Void>
-{
+public class RulesHandler implements ElementHandler<Void> {
     @Override
-    public Void processElement(ParserContext handlerManager, Element element)
-    {
+    public Void processElement(ParserContext handlerManager, Element element) {
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             handlerManager.processElement(child);
         }
         return null;

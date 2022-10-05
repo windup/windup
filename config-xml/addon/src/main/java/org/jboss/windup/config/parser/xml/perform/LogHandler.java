@@ -13,11 +13,9 @@ import org.ocpsoft.rewrite.config.Operation;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "log", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class LogHandler implements ElementHandler<Operation>
-{
+public class LogHandler implements ElementHandler<Operation> {
     @Override
-    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Operation processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String message = $(element).attr("message");
         return Log.message(Level.INFO, message);
     }

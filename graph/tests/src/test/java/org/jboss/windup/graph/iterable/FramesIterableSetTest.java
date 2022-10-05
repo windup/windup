@@ -26,18 +26,16 @@ import java.util.Set;
  * Testing the FramesIterableSet
  */
 @RunWith(Arquillian.class)
-public class FramesIterableSetTest
-{
+public class FramesIterableSetTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClasses(TestSimpleModel.class);
+                .addBeansXML()
+                .addClasses(TestSimpleModel.class);
 
         return archive;
     }
@@ -46,34 +44,28 @@ public class FramesIterableSetTest
     private GraphContextFactory factory;
 
     @Test
-    public void testIterableSetEmpty() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testIterableSetEmpty() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             FramesSetIterable iterable = new FramesSetIterable(new ArrayList<>());
             checkForDuplicates(iterable);
-            Assert.assertEquals(0,getIterableSize(iterable));
+            Assert.assertEquals(0, getIterableSize(iterable));
         }
     }
 
     @Test
-    public void testIterableSetWithoutDuplicates() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testIterableSetWithoutDuplicates() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             FramesSetIterable iterable = new FramesSetIterable(models);
             checkForDuplicates(iterable);
-            Assert.assertEquals(4,getIterableSize(iterable));
+            Assert.assertEquals(4, getIterableSize(iterable));
         }
     }
 
     @Test
-    public void testIterableSetWithDuplicates() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testIterableSetWithDuplicates() throws IOException {
+        try (GraphContext context = factory.create(true)) {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             models.add(models.get(0));
             models.add(models.get(0));
@@ -81,15 +73,15 @@ public class FramesIterableSetTest
             models.add(models.get(2));
             FramesSetIterable<WindupVertexFrame> iterable = new FramesSetIterable(models);
             checkForDuplicates(iterable);
-            Assert.assertEquals(4,getIterableSize(iterable));
+            Assert.assertEquals(4, getIterableSize(iterable));
         }
     }
 
     private void checkForDuplicates(FramesSetIterable<WindupVertexFrame> iterable) {
         Set<String> ids = new HashSet<>();
-        for(WindupVertexFrame frame : iterable) {
+        for (WindupVertexFrame frame : iterable) {
             String frameId = frame.getElement().id().toString();
-            if(ids.contains(frameId)){
+            if (ids.contains(frameId)) {
                 Assert.fail("FramesSetIterable should not return multiple vertices with same ID. However, it contained twice ID " + frameId);
             }
         }
@@ -97,17 +89,17 @@ public class FramesIterableSetTest
 
     private int getIterableSize(Iterable<WindupVertexFrame> iterable) {
         int size = 0;
-        for(WindupVertexFrame frame : iterable) {
+        for (WindupVertexFrame frame : iterable) {
             size++;
         }
         return size;
     }
 
     private List<WindupVertexFrame> fillInTestDataAndReturn(GraphContext context) {
-        WindupVertexFrame model1= context.getFramed().addFramedVertex(TestSimpleModel.class);
-        WindupVertexFrame model2= context.getFramed().addFramedVertex(TestSimpleModel.class);
-        WindupVertexFrame model3= context.getFramed().addFramedVertex(TestSimpleModel.class);
-        WindupVertexFrame model4= context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model1 = context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model2 = context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model3 = context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model4 = context.getFramed().addFramedVertex(TestSimpleModel.class);
         List<WindupVertexFrame> models = new ArrayList<>();
         models.add(model1);
         models.add(model2);

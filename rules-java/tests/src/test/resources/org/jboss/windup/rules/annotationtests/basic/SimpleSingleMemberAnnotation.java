@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.annotationtests.basic;
 
-public @interface SimpleSingleMemberAnnotation
-{
+public @interface SimpleSingleMemberAnnotation {
     String value();
 }

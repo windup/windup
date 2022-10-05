@@ -16,40 +16,33 @@ import org.jboss.windup.config.metadata.TechnologyReference;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class SourceAndTargetPredicate implements Predicate<RuleProvider>
-{
+public class SourceAndTargetPredicate implements Predicate<RuleProvider> {
     private final Map<String, VersionRange> sources;
     private final Map<String, VersionRange> targets;
 
     /**
      * Creates a new instance with the given set of source and target filters.
      */
-    public SourceAndTargetPredicate(Collection<String> sources, Collection<String> targets)
-    {
+    public SourceAndTargetPredicate(Collection<String> sources, Collection<String> targets) {
         this.sources = initSet(sources);
         this.targets = initSet(targets);
     }
 
     @Override
-    public boolean accept(RuleProvider type)
-    {
+    public boolean accept(RuleProvider type) {
         Set<TechnologyReference> providerSources = type.getMetadata().getSourceTechnologies();
         Set<TechnologyReference> providerTargets = type.getMetadata().getTargetTechnologies();
 
         return (techMatches(sources, providerSources) && techMatches(targets, providerTargets));
     }
 
-    private boolean techMatches(Map<String, VersionRange> techs, Set<TechnologyReference> technologyReferences)
-    {
-        if (techs.isEmpty() || technologyReferences.isEmpty())
-        {
+    private boolean techMatches(Map<String, VersionRange> techs, Set<TechnologyReference> technologyReferences) {
+        if (techs.isEmpty() || technologyReferences.isEmpty()) {
             return true;
         }
 
-        for (TechnologyReference technologyReference : technologyReferences)
-        {
-            if (techs.containsKey(technologyReference.getId()))
-            {
+        for (TechnologyReference technologyReference : technologyReferences) {
+            if (techs.containsKey(technologyReference.getId())) {
                 VersionRange expectedRange = techs.get(technologyReference.getId());
                 return technologyReference.versionRangesOverlap(expectedRange);
             }
@@ -58,16 +51,13 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
         return false;
     }
 
-    private Map<String, VersionRange> initSet(Collection<String> values)
-    {
-        if (values == null)
-        {
+    private Map<String, VersionRange> initSet(Collection<String> values) {
+        if (values == null) {
             return Collections.emptyMap();
         }
 
         Map<String, VersionRange> result = new HashMap<>();
-        for (String value : values)
-        {
+        for (String value : values) {
             TechnologyReference reference = TechnologyReference.parseFromIDAndVersion(value);
             result.put(reference.getId(), reference.getVersionRange());
             result.put(value, null);
@@ -77,8 +67,7 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "SourceAndTargetPredicate{" + "sources=" + sources + ", targets=" + targets + '}';
     }
 }

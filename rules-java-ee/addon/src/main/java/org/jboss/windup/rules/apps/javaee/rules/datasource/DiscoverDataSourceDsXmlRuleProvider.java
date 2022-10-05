@@ -29,26 +29,22 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class, perform = "Discover datasources")
-public class DiscoverDataSourceDsXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class DiscoverDataSourceDsXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final String DATASOURCES_ROOT_TAG = "datasources";
     private static final String SINGLE_DATASOURCE_TAG = "datasource";
     private static final String SINGLE_DATASOURCE_XA_TAG = "xa-datasource";
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, DATASOURCES_ROOT_TAG);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         createDataSourceModel(event, context, payload);
     }
 
-    private void createDataSourceModel(GraphRewrite event, EvaluationContext context, XmlFileModel xmlFileModel)
-    {
+    private void createDataSourceModel(GraphRewrite event, EvaluationContext context, XmlFileModel xmlFileModel) {
         GraphContext graphContext = event.getGraphContext();
         DataSourceService dataSourceService = new DataSourceService(graphContext);
 
@@ -57,10 +53,8 @@ public class DiscoverDataSourceDsXmlRuleProvider extends IteratingRuleProvider<X
 
         Document doc = new XmlFileService(graphContext).loadDocumentQuiet(event, context, xmlFileModel);
 
-        for (String tagName : Arrays.asList(SINGLE_DATASOURCE_TAG, SINGLE_DATASOURCE_XA_TAG))
-        {
-            for (Element element : $(doc).find(tagName).get())
-            {
+        for (String tagName : Arrays.asList(SINGLE_DATASOURCE_TAG, SINGLE_DATASOURCE_XA_TAG)) {
+            for (Element element : $(doc).find(tagName).get()) {
                 DataSourceModel dataSourceModel = dataSourceService.create();
 
                 boolean isXa = tagName.equals(SINGLE_DATASOURCE_XA_TAG);

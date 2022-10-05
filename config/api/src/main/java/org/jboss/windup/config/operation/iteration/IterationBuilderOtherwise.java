@@ -10,11 +10,10 @@ import org.jboss.windup.config.operation.Iteration;
 
 /**
  * Intermediate step to construct an {@link Iteration}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface IterationBuilderOtherwise
-{
+public interface IterationBuilderOtherwise {
     /**
      * End the {@link Iteration}
      */

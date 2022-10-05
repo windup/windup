@@ -14,8 +14,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(EjbEntityBeanModel.TYPE)
-public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel
-{
+public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel {
     public static final String TYPE = "EjbEntityBeanModel";
 
     public static final String EJB_HOME = TYPE + "-ejbHome";

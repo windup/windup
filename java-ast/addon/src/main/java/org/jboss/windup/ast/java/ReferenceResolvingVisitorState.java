@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ReferenceResolvingVisitorState
-{
+public class ReferenceResolvingVisitorState {
     /**
      * Contains all wildcard imports (import com.example.*) lines from the source file.
-     *
+     * <p>
      * These are used for type resolution throughout the class.
      */
     private final List<String> wildcardImports = new ArrayList<>();
@@ -36,28 +35,23 @@ public class ReferenceResolvingVisitorState
      */
     private final Map<String, String> nameInstance = new HashMap<>();
 
-    public List<String> getWildcardImports()
-    {
+    public List<String> getWildcardImports() {
         return wildcardImports;
     }
 
-    public Set<String> getClassNameLookedUp()
-    {
+    public Set<String> getClassNameLookedUp() {
         return classNameLookedUp;
     }
 
-    public Map<String, String> getClassNameToFQCN()
-    {
+    public Map<String, String> getClassNameToFQCN() {
         return classNameToFQCN;
     }
 
-    public Set<String> getNames()
-    {
+    public Set<String> getNames() {
         return names;
     }
 
-    public Map<String, String> getNameInstance()
-    {
+    public Map<String, String> getNameInstance() {
         return nameInstance;
     }
 }

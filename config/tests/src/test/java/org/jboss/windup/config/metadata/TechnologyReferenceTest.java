@@ -8,12 +8,10 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TechnologyReferenceTest
-{
+public class TechnologyReferenceTest {
 
     @Test
-    public void testVersionRangeIntersectionSimple()
-    {
+    public void testVersionRangeIntersectionSimple() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(12,17]");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -23,8 +21,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionRangeIntersectionSimpleExclusiveBegin()
-    {
+    public void testVersionRangeIntersectionSimpleExclusiveBegin() {
         VersionRange versionRange1 = Versions.parseVersionRange("[10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("[10,17]");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -34,8 +31,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionRangeIntersectionSingleVersionExclusiveBegin()
-    {
+    public void testVersionRangeIntersectionSingleVersionExclusiveBegin() {
         VersionRange versionRange1 = Versions.parseVersionRange("[10]");
         VersionRange versionRange2 = Versions.parseVersionRange("(10,17]");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -45,8 +41,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionRangeIntersectionSingleVersionInclusiveBegin()
-    {
+    public void testVersionRangeIntersectionSingleVersionInclusiveBegin() {
         VersionRange versionRange1 = Versions.parseVersionRange("[10]");
         VersionRange versionRange2 = Versions.parseVersionRange("[10,17]");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -56,8 +51,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionRangeIntersectionSimpleNoOverlap()
-    {
+    public void testVersionRangeIntersectionSimpleNoOverlap() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(8,9]");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -67,8 +61,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionPartialOverlapAcrossMax()
-    {
+    public void testVersionPartialOverlapAcrossMax() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(18,22)");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -78,8 +71,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionPartialOverlapAcrossMaxReverse()
-    {
+    public void testVersionPartialOverlapAcrossMaxReverse() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(18,22)");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange2);
@@ -89,8 +81,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionPartialOverlapAcrossMin()
-    {
+    public void testVersionPartialOverlapAcrossMin() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(7,13)");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
@@ -100,8 +91,7 @@ public class TechnologyReferenceTest
     }
 
     @Test
-    public void testVersionPartialOverlapAcrossMinReverse()
-    {
+    public void testVersionPartialOverlapAcrossMinReverse() {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(7,13)");
         TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);

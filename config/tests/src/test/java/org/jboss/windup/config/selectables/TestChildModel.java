@@ -8,8 +8,7 @@ import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 
 @TypeValue("child")
-public interface TestChildModel extends WindupVertexFrame
-{
+public interface TestChildModel extends WindupVertexFrame {
     String PARENT = "parent";
     String NAME = "name";
 

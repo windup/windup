@@ -170,11 +170,11 @@ public class DependencyTest {
 
             FileLocationService fileLocationService = new FileLocationService(context);
             FileLocationModel fileLocationModel = fileLocationService.getUnique(
-                        provider.getMatches().get(0).getFile(),
-                        provider.getMatches().get(0).getLineNumber(),
-                        provider.getMatches().get(0).getLineNumber(),
-                        provider.getMatches().get(0).getLength(),
-                        provider.getMatches().get(0).getSourceSnippit());
+                    provider.getMatches().get(0).getFile(),
+                    provider.getMatches().get(0).getLineNumber(),
+                    provider.getMatches().get(0).getLineNumber(),
+                    provider.getMatches().get(0).getLength(),
+                    provider.getMatches().get(0).getSourceSnippit());
             Assert.assertNotNull(fileLocationModel);
         }
     }
@@ -184,13 +184,11 @@ public class DependencyTest {
 
         private List<FileLocationModel> matches = new ArrayList<>();
 
-        public TestDependencyProvider()
-        {
+        public TestDependencyProvider() {
             super(MetadataBuilder.forProvider(DependencyTest.TestDependencyProvider.class).setPhase(MigrationRulesPhase.class));
         }
 
-        public void addMatch(FileLocationModel match)
-        {
+        public void addMatch(FileLocationModel match) {
             this.matches.add(match);
         }
 

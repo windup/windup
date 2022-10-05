@@ -10,12 +10,11 @@ import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains EJB Message Driven model information and related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(EjbMessageDrivenModel.TYPE)
-public interface EjbMessageDrivenModel extends EjbBeanBaseModel
-{
+public interface EjbMessageDrivenModel extends EjbBeanBaseModel {
 
     String TYPE = "EjbMessageDrivenModel";
     String DESTINATION = "destination";

@@ -6,42 +6,35 @@ import org.jboss.windup.config.InputType;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class AdditionalClasspathOption extends AbstractPathConfigurationOption
-{
+public class AdditionalClasspathOption extends AbstractPathConfigurationOption {
     public static final String NAME = "additionalClasspath";
 
-    public AdditionalClasspathOption()
-    {
+    public AdditionalClasspathOption() {
         super(true);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Additional Classpath";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Adds additional files or directories to the classpath";
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.MANY;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 }

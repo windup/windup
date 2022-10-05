@@ -23,6 +23,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -34,9 +35,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Create a report HTML page about Windup.
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
-{
-    public static final String REPORT_DESCRIPTION = "This describes the version of " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " used to generate this report and provides helpful links for further assistance.";
+public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider {
+    public static final String REPORT_DESCRIPTION = "This describes the version of %s used to generate this report and provides helpful links for further assistance.";
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
 
@@ -45,22 +45,17 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         ConditionBuilder windupConfigurationFound = Query.fromType(WindupConfigurationModel.class);
 
-        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
-        {
+        AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload) {
                 createAboutWindup(event.getGraphContext(), null);
 
-                for (FileModel inputPath : payload.getInputPaths())
-                {
+                for (FileModel inputPath : payload.getInputPaths()) {
                     ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
-                    {
+                    if (projectModel == null) {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
                     createAboutWindup(event.getGraphContext(), projectModel);
@@ -68,27 +63,26 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "CreateAboutWindupReport";
             }
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(windupConfigurationFound)
-                    .perform(addApplicationReport);
+                .addRule()
+                .when(windupConfigurationFound)
+                .perform(addApplicationReport);
     }
     // @formatter:on
 
-    private ApplicationReportModel createAboutWindup(GraphContext context, ProjectModel projectModel)
-    {
+    private ApplicationReportModel createAboutWindup(GraphContext context, ProjectModel projectModel) {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
 
         applicationReportModel.setReportPriority(10000);
         applicationReportModel.setReportName(REPORT_NAME);
-        applicationReportModel.setDescription(REPORT_DESCRIPTION);
+        final Theme theme = ThemeProvider.getInstance().getTheme();
+        applicationReportModel.setDescription(String.format(REPORT_DESCRIPTION, theme.getBrandName()));
         applicationReportModel.setReportIconClass("fa fa-question-circle");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
@@ -104,7 +98,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         Map<String, WindupVertexFrame> related = new HashMap<>();
         AboutWindupModel aboutWindupModel = context.getFramed().addFramedVertex(AboutWindupModel.class);
 
-        aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());
+        aboutWindupModel.setWindupRuntimeVersion(theme.getCliVersion());
         related.put("windupAbout", aboutWindupModel);
 
         applicationReportModel.setRelatedResource(related);

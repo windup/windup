@@ -22,28 +22,24 @@ import java.nio.file.Path;
 import java.util.Collections;
 
 /**
- *  Tests the {@link GenerateJBossWebDescriptorRuleProvider}
+ * Tests the {@link GenerateJBossWebDescriptorRuleProvider}
  */
 @RunWith(Arquillian.class)
-public class GenerateJbossWebDescriptorTest extends AbstractTest
-{
+public class GenerateJbossWebDescriptorTest extends AbstractTest {
     @Inject
     private GraphContextFactory factory;
 
     @Test
-    public void testRuleProviders() throws Exception
-    {
+    public void testRuleProviders() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             initData(context);
             WindupTestUtilMethods.runOnlyRuleProviders(Collections.singletonList(new GenerateJBossWebDescriptorRuleProvider()), context);
             checkWebXmls(context);
         }
     }
 
-    public void initData(GraphContext context)
-    {
+    public void initData(GraphContext context) {
         ProjectModel parentProject1 = context.getFramed().addFramedVertex(ProjectModel.class);
         parentProject1.setName("parentProject1");
         FileModel parentFileModel1 = context.getFramed().addFramedVertex(FileModel.class);
@@ -54,24 +50,23 @@ public class GenerateJbossWebDescriptorTest extends AbstractTest
         FileModel parentFileModel2 = context.getFramed().addFramedVertex(FileModel.class);
         parentProject2.addFileModel(parentFileModel2);
 
-        ProjectModel pm1 =context.getFramed().addFramedVertex(ProjectModel.class);
+        ProjectModel pm1 = context.getFramed().addFramedVertex(ProjectModel.class);
         pm1.setName("pm1");
         pm1.setParentProject(parentProject1);
 
-        ProjectModel pm2 =context.getFramed().addFramedVertex(ProjectModel.class);
+        ProjectModel pm2 = context.getFramed().addFramedVertex(ProjectModel.class);
         pm2.setParentProject(parentProject2);
 
-        FileModel fm1 =context.getFramed().addFramedVertex(FileModel.class);
-        FileModel fm2 =context.getFramed().addFramedVertex(FileModel.class);
+        FileModel fm1 = context.getFramed().addFramedVertex(FileModel.class);
+        FileModel fm2 = context.getFramed().addFramedVertex(FileModel.class);
 
         pm1.addFileModel(fm1);
         pm2.addFileModel(fm2);
-        WindupConfigurationModel configurationModel =context.getFramed().addFramedVertex(WindupConfigurationModel.class);
+        WindupConfigurationModel configurationModel = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
         GraphService<ProjectModel> projectModels = new GraphService<>(context, ProjectModel.class);
         GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
-        for (ProjectModel projectModel : projectModels.findAll())
-        {
-            WebXmlModel webXmlModel =  webDescriptors.create();
+        for (ProjectModel projectModel : projectModels.findAll()) {
+            WebXmlModel webXmlModel = webDescriptors.create();
             projectModel.addFileModel(webXmlModel);
         }
         configurationModel.addInputPath(parentFileModel1);
@@ -79,11 +74,9 @@ public class GenerateJbossWebDescriptorTest extends AbstractTest
     }
 
 
-    private void checkWebXmls(GraphContext context)
-    {
-        GraphService<WebXmlModel> webXmls = new GraphService<>(context,WebXmlModel.class);
-        for (WebXmlModel webXml : webXmls.findAll())
-        {
+    private void checkWebXmls(GraphContext context) {
+        GraphService<WebXmlModel> webXmls = new GraphService<>(context, WebXmlModel.class);
+        for (WebXmlModel webXml : webXmls.findAll()) {
             Assert.assertEquals(1, Iterables.size(webXml.getLinksToTransformedFiles()));
         }
     }

@@ -11,11 +11,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Intermediate step to construct an {@link Iteration}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface IterationBuilderOver extends IterationBuilderVar
-{
+public interface IterationBuilderOver extends IterationBuilderVar {
     /**
      * Sets the name and type of the variable for this iteration's "current element". The type server for automatic type
      * check.

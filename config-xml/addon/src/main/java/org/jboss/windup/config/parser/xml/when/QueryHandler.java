@@ -24,8 +24,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = QueryHandler.ELEMENT_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class QueryHandler implements ElementHandler<Query>
-{
+public class QueryHandler implements ElementHandler<Query> {
     public static final String ELEMENT_NAME = "graph-query";
     public static final String DISCRIMINATOR = "discriminator";
     public static final String FROM = "from";
@@ -39,19 +38,16 @@ public class QueryHandler implements ElementHandler<Query>
     private GraphTypeManager graphTypeManager;
 
     @Override
-    public Query processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public Query processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String from = $(element).attr(FROM);
         String as = $(element).attr(AS);
         String discriminator = $(element).attr(DISCRIMINATOR);
-        if (StringUtils.isBlank(discriminator))
-        {
+        if (StringUtils.isBlank(discriminator)) {
             throw new WindupException("Error loading rule, '" + DISCRIMINATOR + "' attribute must be specified!");
         }
 
         Query query = null;
-        if (StringUtils.isNotBlank(from))
-        {
+        if (StringUtils.isNotBlank(from)) {
             query = (Query) Query.from(from);
         }
 
@@ -60,20 +56,15 @@ public class QueryHandler implements ElementHandler<Query>
             throw new WindupException("Error, type: " + discriminator + " not registered!");
 
         Class<? extends WindupVertexFrame> type = cast(typeAsWindupFrame);
-        if (query == null)
-        {
-            query = (Query)Query.fromType(type);
-        }
-        else
-        {
-            query = (Query)query.includingType(type);
+        if (query == null) {
+            query = (Query) Query.fromType(type);
+        } else {
+            query = (Query) query.includingType(type);
         }
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            if (child.getNodeName().equals(PROPERTY))
-            {
+        for (Element child : children) {
+            if (child.getNodeName().equals(PROPERTY)) {
                 String propertyName = $(child).attr(PROPERTY_NAME);
                 if (StringUtils.isBlank(propertyName))
                     continue;
@@ -82,11 +73,9 @@ public class QueryHandler implements ElementHandler<Query>
                 String propertyType = $(child).attr(PROPERTY_TYPE);
                 String searchMode = $(child).attr(PROPERTY_SEARCH_TYPE);
 
-                if (StringUtils.equals("BOOLEAN", propertyType))
-                {
+                if (StringUtils.equals("BOOLEAN", propertyType)) {
                     query.withProperty(propertyName, Boolean.valueOf(value));
-                } else
-                {
+                } else {
                     if (StringUtils.equals("regex", searchMode))
                         query.withProperty(propertyName, QueryPropertyComparisonType.REGEX, value);
                     else
@@ -102,8 +91,7 @@ public class QueryHandler implements ElementHandler<Query>
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends WindupVertexFrame> cast(Class<? extends WindupFrame> typeAsWindupFrame)
-    {
+    private Class<? extends WindupVertexFrame> cast(Class<? extends WindupFrame> typeAsWindupFrame) {
         if (!WindupVertexFrame.class.isAssignableFrom(typeAsWindupFrame))
             throw new WindupException("Only types that are a subclass of " + WindupVertexFrame.class.getCanonicalName() + " are supported by the "
                     + ELEMENT_NAME + " element!");

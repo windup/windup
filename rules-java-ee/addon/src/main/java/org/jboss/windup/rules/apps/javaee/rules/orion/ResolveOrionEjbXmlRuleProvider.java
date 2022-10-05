@@ -39,19 +39,16 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover Orion EJB XML Files")
-public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
-{
+public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(ResolveOrionEjbXmlRuleProvider.class.getName());
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "orion-ejb-jar");
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload) {
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
@@ -69,36 +66,29 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
-        for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
-        {
+        for (Element resourceRef : $(doc).find("resource-ref-mapping").get()) {
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
 
-            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
-            {
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName)) {
                 JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
-                {
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
                     envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }
 
-        for (Element ejbRef : $(doc).find("session-deployment").get())
-        {
+        for (Element ejbRef : $(doc).find("session-deployment").get()) {
             String ejbName = $(ejbRef).attr("name");
 
-            if (StringUtils.isNotBlank(ejbName))
-            {
+            if (StringUtils.isNotBlank(ejbName)) {
                 LOG.info("Looking up name: " + ejbName);
-                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
-                {
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
                     String destination = $(ejbRef).attr("location");
 
-                    if (StringUtils.isNotBlank(destination))
-                    {
+                    if (StringUtils.isNotBlank(destination)) {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, destination);
                         ejb.setGlobalJndiReference(jndiRef);
                     }
@@ -107,31 +97,25 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         }
 
         // bind the EJB beans to JNDI.
-        for (Element messageDrivenRef : $(doc).find("message-driven-deployment").get())
-        {
+        for (Element messageDrivenRef : $(doc).find("message-driven-deployment").get()) {
             // register the EJB to the JNDI location, if it exists.
             String ejbName = $(messageDrivenRef).attr("name");
 
-            if (StringUtils.isNotBlank(ejbName))
-            {
+            if (StringUtils.isNotBlank(ejbName)) {
                 LOG.info("Looking up name: " + ejbName);
-                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
-                {
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
                     String destination = $(messageDrivenRef).attr("destination-location");
 
-                    for (Element configProperty : $(messageDrivenRef).find("config-property").get())
-                    {
+                    for (Element configProperty : $(messageDrivenRef).find("config-property").get()) {
                         String name = $(configProperty).child("config-property-name").text();
                         String value = $(configProperty).child("config-property-value").text();
 
-                        if (StringUtils.isBlank(destination) && StringUtils.equals("DestinationName", name))
-                        {
+                        if (StringUtils.isBlank(destination) && StringUtils.equals("DestinationName", name)) {
                             destination = value;
                         }
                     }
 
-                    if (StringUtils.isNotBlank(destination))
-                    {
+                    if (StringUtils.isNotBlank(destination)) {
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }

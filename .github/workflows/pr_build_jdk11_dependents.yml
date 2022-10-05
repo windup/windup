@@ -29,6 +29,10 @@ jobs:
   windup-rulesets-build:
     runs-on: ubuntu-latest
     needs: [windup-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk-distribution: [ adopt, temurin ]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
@@ -38,7 +42,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'adopt'
+          distribution: ${{ matrix.jdk-distribution }}
           java-package: jdk
       - name: Cache local Maven repository
         uses: actions/cache@v2

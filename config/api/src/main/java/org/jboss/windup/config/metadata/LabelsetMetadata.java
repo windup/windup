@@ -7,8 +7,7 @@ import org.jboss.windup.config.LabelProvider;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelsetMetadata
-{
+public interface LabelsetMetadata {
     /**
      * Returns a unique identifier for the corresponding {@link LabelProvider}.
      */

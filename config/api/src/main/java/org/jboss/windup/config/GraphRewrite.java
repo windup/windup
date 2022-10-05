@@ -22,30 +22,26 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class GraphRewrite extends AbstractRewrite implements Rewrite
-{
+public class GraphRewrite extends AbstractRewrite implements Rewrite {
     private final GraphContext graphContext;
     private final Iterable<RuleLifecycleListener> listeners;
     private WindupStopException windupStopException;
 
-    public GraphRewrite(GraphContext context)
-    {
+    public GraphRewrite(GraphContext context) {
         this.listeners = Collections.emptyList();
         this.graphContext = context;
     }
 
-    public GraphRewrite(Iterable<RuleLifecycleListener> listeners, GraphContext context)
-    {
+    public GraphRewrite(Iterable<RuleLifecycleListener> listeners, GraphContext context) {
         this.listeners = listeners;
         this.graphContext = context;
     }
 
     /**
      * @return The exception which holds information where Windup has stopped before finishing (typically on an external request),
-     *      or null if Windup finished normally.
+     * or null if Windup finished normally.
      */
-    public WindupStopException getWindupStopException()
-    {
+    public WindupStopException getWindupStopException() {
         return windupStopException;
     }
 
@@ -53,8 +49,7 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
      * Stores the exception which holds information if, and where, the Windup stopped (typically on an external request).
      * If windup was stopped, this must be called.
      */
-    public void setWindupStopException(WindupStopException windupStopException)
-    {
+    public void setWindupStopException(WindupStopException windupStopException) {
         if (this.windupStopException != null)
             throw new WindupException("Trying to set the stop exception while it was already set."
                     + " The cause contains the original one.", this.windupStopException);
@@ -62,37 +57,30 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
     }
 
 
-
     // TODO: This deserves a javadoc.
     @Override
-    public Flow getFlow()
-    {
-        return new Flow()
-        {
+    public Flow getFlow() {
+        return new Flow() {
             @Override
-            public boolean isHandled()
-            {
+            public boolean isHandled() {
                 return false;
             }
 
             @Override
-            public boolean is(Flow type)
-            {
+            public boolean is(Flow type) {
                 return false;
             }
         };
     }
 
-    public GraphContext getGraphContext()
-    {
+    public GraphContext getGraphContext() {
         return graphContext;
     }
 
     /**
      * This is optionally called by long-running rules to indicate their current progress and estimated time-remaining.
      */
-    public boolean ruleEvaluationProgress(String name, int currentPosition, int total, int timeRemainingInSeconds)
-    {
+    public boolean ruleEvaluationProgress(String name, int currentPosition, int total, int timeRemainingInSeconds) {
         boolean windupStopRequested = false;
         for (RuleLifecycleListener listener : listeners)
             windupStopRequested = listener.ruleEvaluationProgress(this, name, currentPosition, total, timeRemainingInSeconds);
@@ -100,8 +88,7 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
         return windupStopRequested;
     }
 
-    public boolean shouldWindupStop()
-    {
+    public boolean shouldWindupStop() {
         for (RuleLifecycleListener listener : listeners)
             if (listener.shouldWindupStop())
                 return true;

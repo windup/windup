@@ -20,12 +20,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class)
-public class DiscoverJsfSourceFileRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverJsfSourceFileRuleProvider extends AbstractRuleProvider {
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext context)
-    {
+    public Configuration getConfiguration(RuleLoaderContext context) {
         return ConfigurationBuilder.begin()
                 .addRule()
                 .when(FileContent.matches("{taglib1}").inFileNamed("{*}.{extension}"))
@@ -36,9 +34,9 @@ public class DiscoverJsfSourceFileRuleProvider extends AbstractRuleProvider
                     }
                 })
                 .where("taglib1")
-                    .matches("(java\\.sun\\.com/jsf/)|(xmlns\\.jcp\\.org/jsf)")
+                .matches("(java\\.sun\\.com/jsf/)|(xmlns\\.jcp\\.org/jsf)")
                 .where("extension")
-                    .matches("(jsp)|(xhtml)|(jspx)")
+                .matches("(jsp)|(xhtml)|(jspx)")
                 ;
     }
 }

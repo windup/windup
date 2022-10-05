@@ -14,26 +14,22 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "dependencies", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataAddonDependenciesHandler implements ElementHandler<List<AddonId>>
-{
+public class MetadataAddonDependenciesHandler implements ElementHandler<List<AddonId>> {
 
     @Override
-    public List<AddonId> processElement(ParserContext context, Element element) throws ConfigurationException
-    {
+    public List<AddonId> processElement(ParserContext context, Element element) throws ConfigurationException {
         List<Element> children = $(element).children().get();
         List<AddonId> addonIds = new ArrayList<>();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Object result = context.processElement(child);
-            switch ($(child).tag())
-            {
-            case "addon":
-                addonIds.add((AddonId)result);
-                break;
+            switch ($(child).tag()) {
+                case "addon":
+                    addonIds.add((AddonId) result);
+                    break;
             }
-           
+
         }
         return addonIds;
     }
-    
+
 }

@@ -23,38 +23,34 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchitectureTest
-{
+public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupDiscard() throws Exception
-    {
+    public void testRunWindupDiscard() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";
         final Path outputPath = getDefaultPath();
 
-        try (GraphContext context = createGraphContext(outputPath))
-        {
+        try (GraphContext context = createGraphContext(outputPath)) {
             super.runTest(context, path, false, Collections.singletonList("filter.out.everything"));
         }
         // check if archives are still there
@@ -64,17 +60,15 @@ public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchit
     }
 
     @Test
-    public void testRunWindupKeep() throws Exception
-    {
+    public void testRunWindupKeep() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";
         final Path outputPath = getDefaultPath();
 
-        try (GraphContext context = createGraphContext(outputPath))
-        {
+        try (GraphContext context = createGraphContext(outputPath)) {
             Map<String, Object> keepOption = new HashMap<>();
             keepOption.put(KeepWorkDirsOption.NAME, true);
             super.runTest(context, Collections.singletonList(path), null, false, Collections.singletonList("filter.out.everything"),
-                        Collections.singletonList("filter.out.everything"), keepOption);
+                    Collections.singletonList("filter.out.everything"), keepOption);
         }
         // check if archives are still there
         Path archivesPath = outputPath.resolve("archives");

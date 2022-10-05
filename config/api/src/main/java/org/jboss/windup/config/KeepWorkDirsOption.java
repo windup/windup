@@ -8,50 +8,42 @@ import org.jboss.windup.util.ThemeProvider;
  *
  * @author Ondrej Zizka
  */
-public class KeepWorkDirsOption extends AbstractConfigurationOption
-{
+public class KeepWorkDirsOption extends AbstractConfigurationOption {
     public static final String NAME = WindupConfigurationModel.KEEP_WORKING_DIRECTORIES;
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "If set, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " will not delete the temporary working files, like graph database and unzipped archives."
                 + " Debugging purposes.";
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Should " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " keep temporary working directories?";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Boolean.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         return ValidationResult.SUCCESS;
     }
 

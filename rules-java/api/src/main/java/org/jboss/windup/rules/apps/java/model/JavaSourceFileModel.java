@@ -9,8 +9,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaSourceFileModel.TYPE)
-public interface JavaSourceFileModel extends AbstractJavaSourceModel
-{
+public interface JavaSourceFileModel extends AbstractJavaSourceModel {
     ///String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
     ///String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
 
@@ -20,8 +19,7 @@ public interface JavaSourceFileModel extends AbstractJavaSourceModel
      * Returns the path of this file within the parent project (format suitable for reporting)
      * Uses fully qualified class name notation for classes
      */
-    default String getPrettyPathWithinProject(boolean useFQNForClasses)
-    {
+    default String getPrettyPathWithinProject(boolean useFQNForClasses) {
         if (!useFQNForClasses) {
             return this.getPrettyPathWithinProject();
         }

@@ -17,14 +17,12 @@ import java.util.regex.Pattern;
 /**
  * @author <a href="mailto:marcorizzi82@gmail.com>Marco Rizzi</a>
  */
-public class WindupClasspathTypeLoader implements ITypeLoader
-{
+public class WindupClasspathTypeLoader implements ITypeLoader {
     private final static Logger LOG = Logger.getLogger(WindupClasspathTypeLoader.class.getSimpleName());
 
     private final URLClassLoader urlClassLoader;
 
-    public WindupClasspathTypeLoader(final String classPath)
-    {
+    public WindupClasspathTypeLoader(final String classPath) {
         final String[] parts = VerifyArgument.notNull(classPath, "classPath")
                 .split(Pattern.quote(System.getProperty("path.separator")));
 
@@ -69,8 +67,7 @@ public class WindupClasspathTypeLoader implements ITypeLoader
             }
 
             return true;
-        }
-        catch (final IOException ignored) {
+        } catch (final IOException ignored) {
             return false;
         }
     }

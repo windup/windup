@@ -20,21 +20,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends AbstractRuleProvider
-{
+public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFrame> extends AbstractRuleProvider {
 
-    public IteratingRuleProvider()
-    {
+    public IteratingRuleProvider() {
         super();
     }
 
-    public IteratingRuleProvider(RuleProviderMetadata metadata)
-    {
+    public IteratingRuleProvider(RuleProviderMetadata metadata) {
         super(metadata);
     }
 
-    public IteratingRuleProvider(Class<? extends RuleProvider> implementationType, String id)
-    {
+    public IteratingRuleProvider(Class<? extends RuleProvider> implementationType, String id) {
         super(implementationType, id);
     }
 
@@ -48,17 +44,14 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
      */
     public abstract void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload);
 
-    private class IterationOperation extends AbstractIterationOperation<PAYLOADTYPE>
-    {
+    private class IterationOperation extends AbstractIterationOperation<PAYLOADTYPE> {
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload)
-        {
+        public void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload) {
             IteratingRuleProvider.this.perform(event, context, payload);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return IteratingRuleProvider.this.toStringPerform();
         }
     }
@@ -66,23 +59,21 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
     /**
      * This should return a string describing the operation to be performed by the subclass.
      */
-    public String toStringPerform(){
-        if (Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
-        {
+    public String toStringPerform() {
+        if (Annotations.isAnnotationPresent(getClass(), RuleMetadata.class)) {
             RuleMetadata metadata = Annotations.getAnnotation(getClass(), RuleMetadata.class);
-            if(!"".equals(metadata.perform()))
+            if (!"".equals(metadata.perform()))
                 return metadata.perform();
         }
         throw new IllegalStateException(getClass().getName() +
-            " must either override 'toStringPerform()', or specify @" + RuleMetadata.class.getName() + "(perform = \"...\").");
+                " must either override 'toStringPerform()', or specify @" + RuleMetadata.class.getName() + "(perform = \"...\").");
     }
 
     @Override
-    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(when())
-                    .perform(new IterationOperation());
+                .addRule()
+                .when(when())
+                .perform(new IterationOperation());
     }
 }

@@ -177,6 +177,7 @@
                                 <@render_rule_link renderType='glyph' ruleID=hintLine.ruleID class='rule-link floatRight'/><#t>
                                 <#t>
                             </div><#t>
+                            <#if hintLine.hint != "---">
                             <div class='inline-comment-body'><#t>
                                 ${markdownToHtml(hintLine.hint)?js_string}<#t>
                                 <#if hintLine.links?? && hintLine.links?has_content>
@@ -189,6 +190,7 @@
                                         </ul><#t>
                                 </#if>
                             </div><#t>
+                            </#if>
                         </div><#t>
                     </#if>
                 </div><#t>
@@ -196,6 +198,10 @@
 
         </#list>
 
+            if (location.hash) {
+                var atag = $("a[name='" + location.hash.substr(1)  +  "']");
+                $('html,body').animate({scrollTop: atag.offset().top - 150},'slow');
+            }
 
             $('code[class]').each(function(){
                  var codeSyntax = ($(this).attr('class'));

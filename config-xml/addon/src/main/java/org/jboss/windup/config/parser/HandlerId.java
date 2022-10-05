@@ -8,19 +8,17 @@ package org.jboss.windup.config.parser;
 
 /**
  * Identifies an {@link ElementHandler} by its tag name and namespace.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class HandlerId
-{
+public class HandlerId {
     final private String namespace;
     final private String tagName;
 
     /**
      * Represents a namespace and tag name.
      */
-    public HandlerId(String namespace, String tagName)
-    {
+    public HandlerId(String namespace, String tagName) {
         this.tagName = tagName;
         this.namespace = namespace;
     }
@@ -28,22 +26,19 @@ public class HandlerId
     /**
      * Gets the tag name associated with this {@link ElementHandler}
      */
-    public String getTagName()
-    {
+    public String getTagName() {
         return tagName;
     }
 
     /**
      * Gets the namespace uri associated with this {@link ElementHandler}
      */
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return namespace;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
@@ -52,8 +47,7 @@ public class HandlerId
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -61,26 +55,21 @@ public class HandlerId
         if (getClass() != obj.getClass())
             return false;
         HandlerId other = (HandlerId) obj;
-        if (namespace == null)
-        {
+        if (namespace == null) {
             if (other.namespace != null)
                 return false;
-        }
-        else if (!namespace.equals(other.namespace))
+        } else if (!namespace.equals(other.namespace))
             return false;
-        if (tagName == null)
-        {
+        if (tagName == null) {
             if (other.tagName != null)
                 return false;
-        }
-        else if (!tagName.equals(other.tagName))
+        } else if (!tagName.equals(other.tagName))
             return false;
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "HandlerId [namespace=" + namespace + ", tagName=" + tagName + "]";
     }
 

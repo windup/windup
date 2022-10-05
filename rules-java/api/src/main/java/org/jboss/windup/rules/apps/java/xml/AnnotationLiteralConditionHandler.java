@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
 
 /**
  * Creates an {@link AnnotationLiteralCondition} for matching on literal values inside of annotations.
- *
+ * <p>
  * Syntax is as follows:
  * <pre>
  *     &lt;annotation-literal pattern="parameterized-pattern"&gt;
@@ -23,14 +23,12 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = AnnotationLiteralConditionHandler.ANNOTATION_LITERAL, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class AnnotationLiteralConditionHandler extends AnnotationConditionHandler implements ElementHandler<AnnotationLiteralCondition>
-{
+public class AnnotationLiteralConditionHandler extends AnnotationConditionHandler implements ElementHandler<AnnotationLiteralCondition> {
     public static final String ANNOTATION_LITERAL = "annotation-literal";
     private static final String PATTERN = "pattern";
 
     @Override
-    public AnnotationLiteralCondition processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public AnnotationLiteralCondition processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String pattern = element.getAttribute(PATTERN);
         if (StringUtils.isBlank(pattern))
             throw new WindupException(ANNOTATION_LITERAL + " element requires a " + PATTERN + " attribute!");

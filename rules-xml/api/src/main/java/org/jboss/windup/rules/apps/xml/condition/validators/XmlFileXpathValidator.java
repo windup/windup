@@ -44,8 +44,7 @@ import java.util.logging.Logger;
 /**
  * This is a part of XmlFile execution. Validator is checking that xpath/xpathResult attributes matches the queried one.
  */
-public class XmlFileXpathValidator implements XmlFileValidator
-{
+public class XmlFileXpathValidator implements XmlFileValidator {
     protected static final String WINDUP_NS_PREFIX = "windup";
     protected static final String WINDUP_NS_URI = "http://windup.jboss.org/windupv2functions";
     private static XPathFactory factory = XPathFactory.newInstance();
@@ -61,8 +60,7 @@ public class XmlFileXpathValidator implements XmlFileValidator
     private RegexParameterizedPatternParser xpathPattern;
     private XmlFileNameValidator fileNameValidator;
 
-    public XmlFileXpathValidator()
-    {
+    public XmlFileXpathValidator() {
 
         this.namespaces.put(WINDUP_NS_PREFIX, WINDUP_NS_URI);
 
@@ -72,26 +70,22 @@ public class XmlFileXpathValidator implements XmlFileValidator
         this.xpathEngine.setXPathFunctionResolver(xmlFileFunctionResolver);
     }
 
-    public void setXpathString(String xpath)
-    {
+    public void setXpathString(String xpath) {
         this.xpathString = xpath;
         this.compiledXPath = null;
 
-        if (xpath != null)
-        {
+        if (xpath != null) {
             this.xpathPattern = new RegexParameterizedPatternParser(this.xpathString);
         }
     }
 
-    public void setXmlFileNameValidator(XmlFileNameValidator fileNameValidator)
-    {
+    public void setXmlFileNameValidator(XmlFileNameValidator fileNameValidator) {
         this.fileNameValidator = fileNameValidator;
     }
 
     @Override
-    public boolean isValid(GraphRewrite event, EvaluationContext context, XmlFileModel model)
-    {
-        if(xpathString == null) {
+    public boolean isValid(GraphRewrite event, EvaluationContext context, XmlFileModel model) {
+        if (xpathString == null) {
             return true;
         }
         String xpathStringWithParameterFunctions = XmlFileXPathTransformer.transformXPath(this.xpathString);
@@ -99,40 +93,34 @@ public class XmlFileXpathValidator implements XmlFileValidator
 
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         Document document = xmlFileService.loadDocumentQuiet(event, context, model);
-        if (document != null)
-        {
+        if (document != null) {
             final ParameterStore store = DefaultParameterStore.getInstance(context);
 
             final XmlFileParameterMatchCache paramMatchCache = new XmlFileParameterMatchCache();
             this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "startFrame",
-                        new XmlFileStartFrameXPathFunction(paramMatchCache));
+                    new XmlFileStartFrameXPathFunction(paramMatchCache));
             this.xmlFileFunctionResolver
-                        .registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
+                    .registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
             this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "matches", new XmlFileMatchesXPathFunction(context, store,
-                        paramMatchCache, event));
+                    paramMatchCache, event));
             this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(event, context, model,
-                        evaluationStrategy, store, paramMatchCache, results));
+                    evaluationStrategy, store, paramMatchCache, results));
 
-            if (compiledXPath == null)
-            {
+            if (compiledXPath == null) {
                 NamespaceMapContext nsContext = new NamespaceMapContext(namespaces);
                 this.xpathEngine.setNamespaceContext(nsContext);
-                try
-                {
+                try {
                     this.compiledXPath = xpathEngine.compile(xpathStringWithParameterFunctions);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     String message = e.getMessage();
 
                     // brutal hack to try to get a reasonable error message (ugly, but it seems to work)
-                    if (message == null && e.getCause() != null && e.getCause().getMessage() != null)
-                    {
+                    if (message == null && e.getCause() != null && e.getCause().getMessage() != null) {
                         message = e.getCause().getMessage();
                     }
                     LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
-                                + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
-                                + message);
+                            + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
+                            + message);
                     return false;
                 }
             }
@@ -146,61 +134,48 @@ public class XmlFileXpathValidator implements XmlFileValidator
         return !results.isEmpty();
     }
 
-    public List<WindupVertexFrame> getAndClearResultLocations()
-    {
+    public List<WindupVertexFrame> getAndClearResultLocations() {
         List<WindupVertexFrame> output = results;
         results = new ArrayList<WindupVertexFrame>();
         return output;
     }
 
-    public void setXpathResult(String xpathResult)
-    {
+    public void setXpathResult(String xpathResult) {
         this.xpathResultMatch = xpathResult;
     }
 
-    public String getXpathString()
-    {
+    public String getXpathString() {
         return xpathString;
     }
 
-    public XPathExpression getXpathExpression()
-    {
+    public XPathExpression getXpathExpression() {
         return compiledXPath;
     }
 
-    public void setParameterStore(ParameterStore store)
-    {
-        if (this.xpathPattern != null)
-        {
+    public void setParameterStore(ParameterStore store) {
+        if (this.xpathPattern != null) {
             this.xpathPattern.setParameterStore(store);
         }
     }
 
-    public Collection<? extends String> getRequiredParamaterNames()
-    {
-        if (xpathPattern != null)
-        {
+    public Collection<? extends String> getRequiredParamaterNames() {
+        if (xpathPattern != null) {
             return xpathPattern.getRequiredParameterNames();
-        }
-        else
-        {
+        } else {
             return Collections.emptyList();
         }
 
     }
 
-    public void addNamespace(String prefix, String url)
-    {
+    public void addNamespace(String prefix, String url) {
         this.namespaces.put(prefix, url);
     }
 
-    public void setEvaluationStrategy(XmlFile.XmlFileEvaluationStrategy evaluationStrategy)
-    {
+    public void setEvaluationStrategy(XmlFile.XmlFileEvaluationStrategy evaluationStrategy) {
         this.evaluationStrategy = evaluationStrategy;
     }
 
-    final class XmlFilePersistXPathFunction implements XPathFunction
-    {
+    final class XmlFilePersistXPathFunction implements XPathFunction {
         private final GraphRewrite event;
         private final EvaluationContext context;
         private final XmlFileModel xml;
@@ -210,10 +185,9 @@ public class XmlFileXpathValidator implements XmlFileValidator
         private final List<WindupVertexFrame> resultLocations;
 
         XmlFilePersistXPathFunction(GraphRewrite event, EvaluationContext context, XmlFileModel xml,
-                    XmlFile.XmlFileEvaluationStrategy evaluationStrategy,
-                    ParameterStore store,
-                    XmlFileParameterMatchCache paramMatchCache, List<WindupVertexFrame> resultLocations)
-        {
+                                    XmlFile.XmlFileEvaluationStrategy evaluationStrategy,
+                                    ParameterStore store,
+                                    XmlFileParameterMatchCache paramMatchCache, List<WindupVertexFrame> resultLocations) {
             this.event = event;
             this.context = context;
             this.xml = xml;
@@ -224,32 +198,28 @@ public class XmlFileXpathValidator implements XmlFileValidator
         }
 
         @Override
-        public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException
-        {
+        public Object evaluate(@SuppressWarnings("rawtypes") List args) throws XPathFunctionException {
             int frameIdx = ((Double) args.get(0)).intValue();
             NodeList arg1 = (NodeList) args.get(1);
             String nodeText = XmlUtil.nodeListToString(arg1);
             LOG.fine("persist(" + frameIdx + ", " + nodeText + ")");
 
-            for (int i = 0; i < arg1.getLength(); i++)
-            {
+            for (int i = 0; i < arg1.getLength(); i++) {
                 Node node = arg1.item(i);
-                if (xpathResultMatch != null)
-                {
-                    if (!node.toString().matches(xpathResultMatch))
-                    {
+                if (xpathResultMatch != null) {
+                    if (!node.toString().matches(xpathResultMatch)) {
                         continue;
                     }
                 }
                 // Everything passed for this Node. Start creating XmlTypeReferenceModel for it.
                 int lineNumber = (int) node.getUserData(
-                            LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+                        LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
                 int columnNumber = (int) node.getUserData(
-                            LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+                        LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
 
                 GraphService<XmlTypeReferenceModel> fileLocationService = new GraphService<>(
-                            event.getGraphContext(),
-                            XmlTypeReferenceModel.class);
+                        event.getGraphContext(),
+                        XmlTypeReferenceModel.class);
                 XmlTypeReferenceModel fileLocation = fileLocationService.create();
                 String sourceSnippit = XmlUtil.nodeToString(node);
                 fileLocation.setSourceSnippit(sourceSnippit);
@@ -259,10 +229,9 @@ public class XmlFileXpathValidator implements XmlFileValidator
                 fileLocation.setFile(xml);
                 fileLocation.setXpath(xpathString);
                 GraphService<NamespaceMetaModel> metaModelService = new GraphService<>(
-                            event.getGraphContext(),
-                            NamespaceMetaModel.class);
-                for (Map.Entry<String, String> namespace : namespaces.entrySet())
-                {
+                        event.getGraphContext(),
+                        NamespaceMetaModel.class);
+                for (Map.Entry<String, String> namespace : namespaces.entrySet()) {
                     NamespaceMetaModel metaModel = metaModelService.create();
                     metaModel.setSchemaLocation(namespace.getKey());
                     metaModel.setSchemaLocation(namespace.getValue());
@@ -274,18 +243,15 @@ public class XmlFileXpathValidator implements XmlFileValidator
                 evaluationStrategy.modelSubmissionRejected();
                 evaluationStrategy.modelMatched();
 
-                if (fileNameValidator.getFileNamePattern() != null && !fileNameValidator.getFileNamePattern().parse(xml.getFileName()).submit(event, context))
-                {
+                if (fileNameValidator.getFileNamePattern() != null && !fileNameValidator.getFileNamePattern().parse(xml.getFileName()).submit(event, context)) {
                     evaluationStrategy.modelSubmissionRejected();
                     continue;
                 }
 
-                for (Map.Entry<String, String> entry : paramMatchCache.getVariables().entrySet())
-                {
+                for (Map.Entry<String, String> entry : paramMatchCache.getVariables().entrySet()) {
                     Parameter<?> param = store.get(entry.getKey());
                     String value = entry.getValue();
-                    if (!evaluationStrategy.submitValue(param, value))
-                    {
+                    if (!evaluationStrategy.submitValue(param, value)) {
                         evaluationStrategy.modelSubmissionRejected();
                         return false;
                     }

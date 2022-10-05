@@ -38,48 +38,40 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class, perform = "Resolve Spring JNDI to DataSource")
-public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel>
-{
+public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel> {
     private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class.getName());
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(SpringBeanModel.class);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, SpringBeanModel payload)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, SpringBeanModel payload) {
         // handles only xml based spring beans with certain java classes, such as LocalSessionFactoryBean
         if (payload.getSpringConfiguration() == null || payload.getJavaClass() == null
-                    || !isLocalSessionFactoryBean(payload.getJavaClass().getQualifiedName()))
-        {
+                || !isLocalSessionFactoryBean(payload.getJavaClass().getQualifiedName())) {
             return;
         }
 
         SpringConfigurationFileModel springConfig = payload.getSpringConfiguration();
         Document doc = springConfig.asDocument();
 
-        if (doc == null)
-        {
+        if (doc == null) {
             LOG.warning("Document corrupt. Skipping.");
             return;
         }
 
-        for (Element bean : $(doc).find("bean").filter(springid(payload.getSpringBeanName())))
-        {
+        for (Element bean : $(doc).find("bean").filter(springid(payload.getSpringBeanName()))) {
             String dsBeanNameRef = extractJndiRefBeanName(bean);
-            if (StringUtils.isBlank(dsBeanNameRef))
-            {
+            if (StringUtils.isBlank(dsBeanNameRef)) {
                 continue;
             }
 
             String hibernateDialect = null;
             Map<String, String> hibernateProperties = extractProperties(doc, bean);
             hibernateProperties.putAll(extractHibernateJpaVendorJpaProperties(doc, bean));
-            if (hibernateProperties.containsKey("hibernate.dialect"))
-            {
+            if (hibernateProperties.containsKey("hibernate.dialect")) {
                 hibernateDialect = hibernateProperties.get("hibernate.dialect");
             }
 
@@ -90,49 +82,40 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
         LOG.warning("Did not find bean: " + payload.getSpringBeanName() + " to process within: " + springConfig.getFileName());
     }
 
-    private boolean isLocalSessionFactoryBean(String qualifiedName)
-    {
-        if (qualifiedName == null)
-        {
+    private boolean isLocalSessionFactoryBean(String qualifiedName) {
+        if (qualifiedName == null) {
             return false;
         }
         return (qualifiedName.equals("org.springframework.orm.hibernate3.LocalSessionFactoryBean")
-        			|| qualifiedName.equals("org.springframework.orm.hibernate3.AbstractSessionFactoryBean")
-        			|| qualifiedName.equals("org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean")
-                    || qualifiedName.equals("org.springframework.orm.hibernate4.LocalSessionFactoryBean")
-                    || qualifiedName.equals("org.springframework.orm.hibernate5.LocalSessionFactoryBean")
-                    || qualifiedName.equals("org.springframework.orm.jpa.LocalEntityManagerFactoryBean")
-                    || qualifiedName.equals("org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean")
-                    || qualifiedName.equals("org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"));
+                || qualifiedName.equals("org.springframework.orm.hibernate3.AbstractSessionFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.hibernate4.LocalSessionFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.hibernate5.LocalSessionFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.jpa.LocalEntityManagerFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean")
+                || qualifiedName.equals("org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"));
     }
 
     /*
      * <bean id="jpaVendorAdapter2" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> <property name="dataSource" value="HSQL"/>
      * </bean>
      */
-    private String extractHibernateJpaVendorDatabase(Document doc, Element bean)
-    {
-        for (Element jpaVendorAdapterProperty : $(bean).children("property").filter(attr("name", "jpaVendorAdapter")).get())
-        {
+    private String extractHibernateJpaVendorDatabase(Document doc, Element bean) {
+        for (Element jpaVendorAdapterProperty : $(bean).children("property").filter(attr("name", "jpaVendorAdapter")).get()) {
             String propertyRef = $(jpaVendorAdapterProperty).attr("ref");
-            if (StringUtils.isNotBlank(propertyRef))
-            {
+            if (StringUtils.isNotBlank(propertyRef)) {
                 // look for the properties referenced by a local bean..
-                for (Element jpaVendorAdapter : findLocalBeanById(doc, propertyRef))
-                {
+                for (Element jpaVendorAdapter : findLocalBeanById(doc, propertyRef)) {
                     // check attribute on element
                     String propAttrValue = $(jpaVendorAdapter).attr("database");
-                    if (StringUtils.isNotBlank(propAttrValue))
-                    {
+                    if (StringUtils.isNotBlank(propAttrValue)) {
                         return propAttrValue;
                     }
 
                     // now look for the property "dataSource" off of that bean.
-                    for (Element p : $(jpaVendorAdapter).children("property").filter(attr("name", "database")).get())
-                    {
+                    for (Element p : $(jpaVendorAdapter).children("property").filter(attr("name", "database")).get()) {
                         String value = $(p).attr("value");
-                        if (StringUtils.isNotBlank(value))
-                        {
+                        if (StringUtils.isNotBlank(value)) {
                             return value;
                         }
                     }
@@ -143,27 +126,20 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
         return null;
     }
 
-    private Map<String, String> extractHibernateJpaVendorJpaProperties(Document doc, Element bean)
-    {
+    private Map<String, String> extractHibernateJpaVendorJpaProperties(Document doc, Element bean) {
         Map<String, String> properties = new HashMap<>();
-        for (Element jpaVendorAdapterProperty : $(bean).children("property").filter(attr("name", "jpaVendorAdapter")).get())
-        {
+        for (Element jpaVendorAdapterProperty : $(bean).children("property").filter(attr("name", "jpaVendorAdapter")).get()) {
             String propertyRef = $(jpaVendorAdapterProperty).attr("ref");
-            if (StringUtils.isNotBlank(propertyRef))
-            {
+            if (StringUtils.isNotBlank(propertyRef)) {
                 // look for the properties referenced by a local bean..
-                for (Element jpaVendorAdapter : findLocalBeanById(doc, propertyRef))
-                {
+                for (Element jpaVendorAdapter : findLocalBeanById(doc, propertyRef)) {
                     properties = extractProperties(doc, jpaVendorAdapter);
 
                     // read the hibernate dialect
-                    for (Element p : $(jpaVendorAdapter).children("property").filter(attr("name", "databasePlatform")).get())
-                    {
+                    for (Element p : $(jpaVendorAdapter).children("property").filter(attr("name", "databasePlatform")).get()) {
                         String dialect = $(p).attr("value");
-                        if (StringUtils.isNotBlank(dialect))
-                        {
-                            if (!properties.containsKey("hibernate.dialect"))
-                            {
+                        if (StringUtils.isNotBlank(dialect)) {
+                            if (!properties.containsKey("hibernate.dialect")) {
                                 properties.put("hibernate.dialect", dialect);
                             }
                         }
@@ -174,54 +150,43 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
         return properties;
     }
 
-    private Map<String, String> extractProperties(Document doc, Element bean)
-    {
+    private Map<String, String> extractProperties(Document doc, Element bean) {
         Map<String, String> properties = new HashMap<>();
-        for (Element p : $(bean).children("property").filter(attr("name", "hibernateProperties", "jpaProperties", "jpaPropertyMap")).get())
-        {
+        for (Element p : $(bean).children("property").filter(attr("name", "hibernateProperties", "jpaProperties", "jpaPropertyMap")).get()) {
             // first, check to see if it uses a ref attribute...
             String propertyRef = $(p).attr("ref");
-            if (StringUtils.isNotBlank(propertyRef))
-            {
+            if (StringUtils.isNotBlank(propertyRef)) {
                 // look for the properties referenced by a local bean..
-                for (Element ref : findLocalBeanById(doc, propertyRef))
-                {
+                for (Element ref : findLocalBeanById(doc, propertyRef)) {
                     properties.putAll(readProperties(ref));
                 }
-            }
-            else
-            {
+            } else {
                 properties.putAll(readProperties(p));
             }
         }
         return properties;
     }
 
-    private Iterable<Element> findLocalBeanById(Document doc, String id)
-    {
+    private Iterable<Element> findLocalBeanById(Document doc, String id) {
         List<Element> elements = new LinkedList<>();
         elements.addAll($(doc).children().filter(attr("id", id)).get());
 
-        if (elements.isEmpty())
-        {
+        if (elements.isEmpty()) {
             elements.addAll($(doc).children().filter(attr("name", id)).get());
         }
         return elements;
     }
 
-    private String extractJndiRefBeanName(Element bean)
-    {
-        for (Element dataSource : $(bean).children("property").filter(attr("name", "dataSource")).get())
-        {
+    private String extractJndiRefBeanName(Element bean) {
+        for (Element dataSource : $(bean).children("property").filter(attr("name", "dataSource")).get()) {
             // read ref...
             String jndiRef = $(dataSource).attr("ref");
-            if (StringUtils.isBlank(jndiRef))
-            {
+            if (StringUtils.isBlank(jndiRef)) {
                 LOG.info("Looking at ref child of property tag...");
                 //look to see if the ref is a child of the property tag...
                 jndiRef = $(dataSource).child("ref").attr("bean");
             }
-            if(StringUtils.isNotBlank(jndiRef)) {
+            if (StringUtils.isNotBlank(jndiRef)) {
                 return jndiRef;
             }
         }
@@ -232,23 +197,19 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
     /*
      * Reads Spring maps, properties, and value pair xml
      */
-    private Map<String, String> readProperties(Element properties)
-    {
+    private Map<String, String> readProperties(Element properties) {
         Map<String, String> values = new HashMap<>();
-        for (Element p : $(properties).find("prop"))
-        {
+        for (Element p : $(properties).find("prop")) {
             String key = $(p).attr("key");
             String val = $(p).text();
             values.put(key, val);
         }
-        for (Element p : $(properties).find("entry"))
-        {
+        for (Element p : $(properties).find("entry")) {
             String key = $(p).attr("key");
             String val = $(p).attr("value");
             values.put(key, val);
         }
-        for (Element p : $(properties).find("value"))
-        {
+        for (Element p : $(properties).find("value")) {
             String propVal = StringUtils.trim($(p).text());
             String key = StringUtils.substringBefore(propVal, "=");
             String val = StringUtils.substringAfter(propVal, "=");
@@ -261,42 +222,32 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
      * Takes a JNDI reference and turns the JNDI reference into a database, typing the database based on either the hibernate dialect or the spring
      * database name
      */
-    private void processHibernateSessionFactoryBean(GraphRewrite event, String dsBeanName, String hibernateDialect, String springDatabaseName)
-    {
+    private void processHibernateSessionFactoryBean(GraphRewrite event, String dsBeanName, String hibernateDialect, String springDatabaseName) {
         LOG.info("DS Name: " + dsBeanName + ", " + hibernateDialect + ", " + springDatabaseName);
         SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
         DataSourceService dataSourceService = new DataSourceService(event.getGraphContext());
 
-        for (SpringBeanModel model : springBeanService.findAllBySpringBeanName(dsBeanName))
-        {
-            if (model instanceof JNDIReferenceModel && ((JNDIReferenceModel) model).getJndiReference() != null)
-            {
+        for (SpringBeanModel model : springBeanService.findAllBySpringBeanName(dsBeanName)) {
+            if (model instanceof JNDIReferenceModel && ((JNDIReferenceModel) model).getJndiReference() != null) {
                 // then this is likely a datasource; set JNDI to Datasource
                 JNDIReferenceModel ref = (JNDIReferenceModel) model;
                 DataSourceModel dataSource = dataSourceService.addTypeToModel(ref.getJndiReference());
 
-                if (StringUtils.isNotBlank(hibernateDialect))
-                {
+                if (StringUtils.isNotBlank(hibernateDialect)) {
                     LOG.info(" - Resolved Hibernate dialect: " + hibernateDialect);
                     String resolvedType = HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(hibernateDialect);
-                    if (StringUtils.isNotBlank(resolvedType))
-                    {
+                    if (StringUtils.isNotBlank(resolvedType)) {
                         dataSource.setDatabaseTypeName(resolvedType);
                     }
-                }
-                else if (StringUtils.isNotBlank(springDatabaseName))
-                {
+                } else if (StringUtils.isNotBlank(springDatabaseName)) {
                     LOG.info(" - Resolved Spring database type: " + springDatabaseName);
                     String resolvedType = SpringDataSourceTypeResolver.resolveDataSourceTypeFromDialect(springDatabaseName);
-                    if (StringUtils.isNotBlank(resolvedType))
-                    {
+                    if (StringUtils.isNotBlank(resolvedType)) {
                         dataSource.setDatabaseTypeName(resolvedType);
                     }
                 }
 
-            }
-            else
-            {
+            } else {
                 LOG.warning("Not JNDI Reference.");
             }
         }
@@ -305,13 +256,10 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
     /*
      * Filters Joox by the spring bean's name (name or id) leveraging name to support legacy spring
      */
-    public static FastFilter springid(final String id)
-    {
-        return new FastFilter()
-        {
+    public static FastFilter springid(final String id) {
+        return new FastFilter() {
             @Override
-            public boolean filter(Context context)
-            {
+            public boolean filter(Context context) {
                 String name = $(context).attr("name");
                 String idVal = $(context).attr("id");
 

@@ -17,12 +17,11 @@ import org.jboss.windup.graph.Property;
 /**
  * These reports are directly associated with an application, and that application's project model. These can include things like an Application
  * Overview report (with various hints, etc) as well as more specific reports (hibernate reports, ejb reports, classloading reports, etc).
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ApplicationReportModel.TYPE)
-public interface ApplicationReportModel extends ReportModel
-{
+public interface ApplicationReportModel extends ReportModel {
     String DISPLAY_IN_APPLICATION_REPORT_INDEX = "displayInApplicationReportIndex";
     String DISPLAY_IN_GLOBAL_APPLICATION_INDEX = "displayInGlobalApplicationIndex";
     String TYPE = "ApplicationReportModel";
@@ -36,12 +35,10 @@ public interface ApplicationReportModel extends ReportModel
      * Provides a link to the Navigation Index that is used for this particular report. If there is more than one (for example, in the case of a
      * single report used both globally and associated with an application), then return the one associated with an app.
      */
-    default ApplicationReportIndexModel getApplicationReportIndexModel()
-    {
+    default ApplicationReportIndexModel getApplicationReportIndexModel() {
         ApplicationReportIndexModel result = null;
         Iterator<Vertex> vertexIterator = getElement().vertices(Direction.IN, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_REPORT_MODEL);
-        while (vertexIterator.hasNext())
-        {
+        while (vertexIterator.hasNext()) {
             Vertex v = vertexIterator.next();
             ApplicationReportIndexModel model = getGraph().frameElement(v, ApplicationReportIndexModel.class);
             if (result == null)
@@ -126,14 +123,10 @@ public interface ApplicationReportModel extends ReportModel
     @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
     ProjectModel getProjectModelNotNullSafe();
 
-    default ProjectModel getProjectModel()
-    {
-        try
-        {
+    default ProjectModel getProjectModel() {
+        try {
             return getProjectModelNotNullSafe();
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             return null;
         }
     }

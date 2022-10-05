@@ -33,8 +33,7 @@ import org.ocpsoft.rewrite.config.Rule;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProviderMetadata
-{
+public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProviderMetadata {
     private static final Logger LOG = Logging.get(MetadataBuilder.class);
     public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRulesPhase.class;
 
@@ -57,8 +56,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
     private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
 
-    private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId)
-    {
+    private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId) {
         super(providerId);
         this.implementationType = implementationType;
     }
@@ -67,8 +65,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, using the provided parameters and
      * {@link RulesetMetadata} to seed sensible defaults.
      */
-    public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType)
-    {
+    public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType) {
         String id = implementationType.getSimpleName();
 
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
@@ -82,13 +79,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * Create a new {@link RuleProviderMetadata} builder instance for the given {@link RuleProvider} type, and {@link String} ID, using the provided
      * parameters and {@link RulesetMetadata} to seed sensible defaults.
      */
-    public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType, String providerId)
-    {
+    public static MetadataBuilder forProvider(Class<? extends RuleProvider> implementationType, String providerId) {
         Assert.notNull(implementationType, "Rule provider Implementation type must not be null.");
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
         MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
-                    .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
+                .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
 
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata == null)
@@ -122,28 +118,24 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
             builder.setTags(Arrays.asList(tags));
 
         Technology[] sourceTechnologies = metadata.sourceTechnologies();
-        if (sourceTechnologies.length > 0)
-        {
-            for (Technology technology : sourceTechnologies)
-            {
+        if (sourceTechnologies.length > 0) {
+            for (Technology technology : sourceTechnologies) {
                 builder.addSourceTechnology(new TechnologyReference(
-                            technology.id(),
-                            "".equals(technology.versionRange().trim())
-                                    ? new EmptyVersionRange()
-                                    : Versions.parseVersionRange(technology.versionRange())));
+                        technology.id(),
+                        "".equals(technology.versionRange().trim())
+                                ? new EmptyVersionRange()
+                                : Versions.parseVersionRange(technology.versionRange())));
             }
         }
 
         Technology[] targetTechnologies = metadata.targetTechnologies();
-        if (targetTechnologies.length > 0)
-        {
-            for (Technology technology : targetTechnologies)
-            {
+        if (targetTechnologies.length > 0) {
+            for (Technology technology : targetTechnologies) {
                 builder.addTargetTechnology(new TechnologyReference(
-                            technology.id(),
-                            "".equals(technology.versionRange().trim())
-                                    ? new EmptyVersionRange()
-                                    : Versions.parseVersionRange(technology.versionRange())));
+                        technology.id(),
+                        "".equals(technology.versionRange().trim())
+                                ? new EmptyVersionRange()
+                                : Versions.parseVersionRange(technology.versionRange())));
             }
         }
 
@@ -156,8 +148,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MetadataBuilder)) return false;
         if (!super.equals(o)) return false;
@@ -169,27 +160,23 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (overrideProvider ? 1 : 0);
         return result;
     }
 
     @Override
-    public Class<? extends RuleProvider> getType()
-    {
+    public Class<? extends RuleProvider> getType() {
         return implementationType;
     }
 
     @Override
-    public RulesetMetadata getRulesetMetadata()
-    {
+    public RulesetMetadata getRulesetMetadata() {
         return parent;
     }
 
-    public MetadataBuilder setRulesetMetadata(RulesetMetadata parent)
-    {
+    public MetadataBuilder setRulesetMetadata(RulesetMetadata parent) {
         if (parent != null)
             this.parent = parent;
 
@@ -197,8 +184,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public boolean isOverrideProvider()
-    {
+    public boolean isOverrideProvider() {
         return overrideProvider;
     }
 
@@ -206,15 +192,13 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * Sets whether or not this provider's rules should override rules from other providers
      * with the same ID.
      */
-    public MetadataBuilder setOverrideProvider(boolean overrideProvider)
-    {
+    public MetadataBuilder setOverrideProvider(boolean overrideProvider) {
         this.overrideProvider = overrideProvider;
         return this;
     }
 
     @Override
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin == null ? super.getOrigin() : origin;
     }
 
@@ -222,15 +206,13 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * Set the descriptive information indicating where the corresponding {@link RuleProvider} instance is located (eg, a path to an XML file on disk,
      * or an {@link Addon} coordinate and class name).
      */
-    public MetadataBuilder setOrigin(String origin)
-    {
+    public MetadataBuilder setOrigin(String origin) {
         this.origin = origin;
         return this;
     }
 
     @Override
-    public Class<? extends RulePhase> getPhase()
-    {
+    public Class<? extends RulePhase> getPhase() {
         return phase == null ? DEFAULT_PHASE : phase;
     }
 
@@ -239,15 +221,13 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * The default phase is {@link org.jboss.windup.config.phase.MigrationRulesPhase}.
      */
-    public MetadataBuilder setPhase(Class<? extends RulePhase> phase)
-    {
+    public MetadataBuilder setPhase(Class<? extends RulePhase> phase) {
         this.phase = phase;
         return this;
     }
 
     @Override
-    public List<Class<? extends RuleProvider>> getExecuteAfter()
-    {
+    public List<Class<? extends RuleProvider>> getExecuteAfter() {
         return Collections.unmodifiableList(executeAfter);
     }
 
@@ -258,8 +238,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * {@link RuleProvider} references can also be specified based on id ({@link #getExecuteAfterIDs}).
      */
-    public MetadataBuilder setExecuteAfter(List<Class<? extends RuleProvider>> executeAfter)
-    {
+    public MetadataBuilder setExecuteAfter(List<Class<? extends RuleProvider>> executeAfter) {
         this.executeAfter = new ArrayList<>(executeAfter);
         return this;
     }
@@ -267,13 +246,11 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     /**
      * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding
      * {@link RuleProvider} instance.
-     *
+     * <p>
      * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
-    public MetadataBuilder addExecuteAfter(Class<? extends RuleProvider> type)
-    {
-        if (type != null)
-        {
+    public MetadataBuilder addExecuteAfter(Class<? extends RuleProvider> type) {
+        if (type != null) {
             executeAfter.add(type);
         }
         return this;
@@ -282,21 +259,18 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     /**
      * Sets the human readable description.
      */
-    public MetadataBuilder setDescription(String description)
-    {
+    public MetadataBuilder setDescription(String description) {
         this.description = description;
         return this;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
     @Override
-    public List<String> getExecuteAfterIDs()
-    {
+    public List<String> getExecuteAfterIDs() {
         return Collections.unmodifiableList(executeAfterIDs);
     }
 
@@ -307,11 +281,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
      * case of the Groovy rules extension, a single class covers many rules with their own IDs.
-     *
+     * <p>
      * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
      */
-    public MetadataBuilder setExecuteAfterIDs(List<String> executeAfterIDs)
-    {
+    public MetadataBuilder setExecuteAfterIDs(List<String> executeAfterIDs) {
         this.executeAfterIDs = new ArrayList<>(executeAfterIDs);
         return this;
     }
@@ -323,32 +296,28 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
      * case of the Groovy rules extension, a single class covers many rules with their own IDs.
-     *
+     * <p>
      * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
      */
-    public MetadataBuilder addExecuteAfterId(String id)
-    {
-        if (id != null)
-        {
+    public MetadataBuilder addExecuteAfterId(String id) {
+        if (id != null) {
             executeAfterIDs.add(id);
         }
         return this;
     }
 
     @Override
-    public List<Class<? extends RuleProvider>> getExecuteBefore()
-    {
+    public List<Class<? extends RuleProvider>> getExecuteBefore() {
         return Collections.unmodifiableList(executeBefore);
     }
 
     /**
      * Set the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding {@link RuleProvider}
      * instance.
-     *
+     * <p>
      * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
-    public MetadataBuilder setExecuteBefore(List<Class<? extends RuleProvider>> executeBefore)
-    {
+    public MetadataBuilder setExecuteBefore(List<Class<? extends RuleProvider>> executeBefore) {
         this.executeBefore = new ArrayList<>(executeBefore);
         return this;
     }
@@ -356,21 +325,18 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     /**
      * Ad an entry to the list of {@link RuleProvider} classes that should execute after the {@link Rule} instances in the corresponding
      * {@link RuleProvider} instance.
-     *
+     * <p>
      * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
-    public MetadataBuilder addExecuteBefore(Class<? extends RuleProvider> type)
-    {
-        if (type != null)
-        {
+    public MetadataBuilder addExecuteBefore(Class<? extends RuleProvider> type) {
+        if (type != null) {
             executeBefore.add(type);
         }
         return this;
     }
 
     @Override
-    public List<String> getExecuteBeforeIDs()
-    {
+    public List<String> getExecuteBeforeIDs() {
         return Collections.unmodifiableList(executeBeforeIDs);
     }
 
@@ -381,11 +347,10 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
      * case of the Groovy rules extension, a single class covers many rules with their own IDs.
-     *
+     * <p>
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
-    public MetadataBuilder setExecuteBeforeIDs(List<String> executeBeforeIDs)
-    {
+    public MetadataBuilder setExecuteBeforeIDs(List<String> executeBeforeIDs) {
         this.executeBeforeIDs = new ArrayList<>(executeBeforeIDs);
         return this;
     }
@@ -397,13 +362,11 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * This is returned as a list of Rule IDs in order to support extensions that cannot depend on each other via class names. For example, in the
      * case of the Groovy rules extension, a single class covers many rules with their own IDs.
-     *
+     * <p>
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
-    public MetadataBuilder addExecuteBeforeId(String id)
-    {
-        if (id != null)
-        {
+    public MetadataBuilder addExecuteBeforeId(String id) {
+        if (id != null) {
             executeBeforeIDs.add(id);
         }
         return this;
@@ -414,15 +377,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * Inherits from {@link RulesetMetadata#getTags()} if available.
      */
-    public MetadataBuilder addTags(String tag, String... tags)
-    {
+    public MetadataBuilder addTags(String tag, String... tags) {
         if (!StringUtils.isBlank(tag))
             this.tags.add(tag.trim());
 
-        if (tags != null)
-        {
-            for (String t : tags)
-            {
+        if (tags != null) {
+            for (String t : tags) {
                 if (!StringUtils.isBlank(t))
                     this.tags.add(t.trim());
             }
@@ -431,18 +391,15 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         return this;
     }
 
-    public MetadataBuilder addTag(String tag)
-    {
-        if (!StringUtils.isBlank(tag))
-        {
+    public MetadataBuilder addTag(String tag) {
+        if (!StringUtils.isBlank(tag)) {
             this.tags.add(tag.trim());
         }
         return this;
     }
 
     @Override
-    public Set<String> getTags()
-    {
+    public Set<String> getTags() {
         return join(this.tags, parent.getTags(), super.getTags());
     }
 
@@ -451,8 +408,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * Inherits from {@link RulesetMetadata#getTags()} if available.
      */
-    public MetadataBuilder setTags(List<String> tags)
-    {
+    public MetadataBuilder setTags(List<String> tags) {
         if (tags == null)
             this.tags = new HashSet<>();
         else
@@ -462,8 +418,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public Set<TechnologyReference> getSourceTechnologies()
-    {
+    public Set<TechnologyReference> getSourceTechnologies() {
         return join(sourceTechnologies, super.getSourceTechnologies(), parent.getSourceTechnologies());
     }
 
@@ -472,8 +427,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * Inherits from {@link RulesetMetadata#getSourceTechnologies()} if available.
      */
-    public MetadataBuilder addSourceTechnology(TechnologyReference reference)
-    {
+    public MetadataBuilder addSourceTechnology(TechnologyReference reference) {
         if (reference != null)
             sourceTechnologies.add(reference);
 
@@ -481,8 +435,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public Set<TechnologyReference> getTargetTechnologies()
-    {
+    public Set<TechnologyReference> getTargetTechnologies() {
         return join(targetTechnologies, super.getTargetTechnologies(), parent.getTargetTechnologies());
     }
 
@@ -491,8 +444,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * Inherits from {@link RulesetMetadata#getTargetTechnologies()} if available.
      */
-    public MetadataBuilder addTargetTechnology(TechnologyReference reference)
-    {
+    public MetadataBuilder addTargetTechnology(TechnologyReference reference) {
         if (reference != null)
             targetTechnologies.add(reference);
 
@@ -500,8 +452,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
-    public Set<AddonId> getRequiredAddons()
-    {
+    public Set<AddonId> getRequiredAddons() {
         return join(requiredAddons, super.getRequiredAddons(), parent.getRequiredAddons());
     }
 
@@ -511,8 +462,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * <p>
      * Inherits from {@link RulesetMetadata#getRequiredAddons()} if available.
      */
-    public MetadataBuilder addRequiredAddon(AddonId reference)
-    {
+    public MetadataBuilder addRequiredAddon(AddonId reference) {
         if (reference != null)
             requiredAddons.add(reference);
 
@@ -521,25 +471,22 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
     /**
      * Whether Windup should stop execution if this provider's rule execution ends with an exception.
-     *
+     * <p>
      * By default, the exceptions are only logged and the failing rule appears in report. The rule itself is responsible for handling exceptions and
      * storing them into the graph.
      */
-    public MetadataBuilder setHaltOnException(boolean haltOnException)
-    {
+    public MetadataBuilder setHaltOnException(boolean haltOnException) {
         this.haltOnException = haltOnException;
         return this;
     }
 
     @Override
-    public boolean isHaltOnException()
-    {
+    public boolean isHaltOnException() {
         return haltOnException;
     }
 
     @Override
-    public boolean isDisabled()
-    {
+    public boolean isDisabled() {
         return disabled;
     }
 
@@ -547,14 +494,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
      * Join N sets.
      */
     @SafeVarargs
-    private final <T> Set<T> join(Set<T>... sets)
-    {
+    private final <T> Set<T> join(Set<T>... sets) {
         Set<T> result = new HashSet<>();
         if (sets == null)
             return result;
 
-        for (Set<T> set : sets)
-        {
+        for (Set<T> set : sets) {
             if (set != null)
                 result.addAll(set);
         }

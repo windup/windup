@@ -1,6 +1,7 @@
 package org.jboss.windup.config.tags;
 
 import java.io.File;
+
 import org.jboss.windup.config.selectables.*;
 
 import javax.inject.Inject;
@@ -23,33 +24,31 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.True;
 
 @RunWith(Arquillian.class)
-public class TagServiceHolderTest
-{
+public class TagServiceHolderTest {
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
-            .addBeansXML()
-            .addAsResource(new File("src/test/java/org/jboss/windup/config/tags/test2.tags.xml"))
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-            );
+                .create(AddonArchive.class)
+                .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
+                .addBeansXML()
+                .addAsResource(new File("src/test/java/org/jboss/windup/config/tags/test2.tags.xml"))
+                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                );
         return archive;
     }
 
 
-    @Inject private TagServiceHolder tagServiceHolder;
+    @Inject
+    private TagServiceHolder tagServiceHolder;
 
     @Test
-    public void testTagsLoading() throws Exception
-    {
+    public void testTagsLoading() throws Exception {
         tagServiceHolder.loadTagDefinitions();
         final TagService tagService = tagServiceHolder.getTagService();
         Assert.assertNotNull(tagService.getTag("a-prime"));
@@ -59,19 +58,16 @@ public class TagServiceHolderTest
         try {
             tagService.getTag("non-existent");
             Assert.fail("Should fail: tagService.getTag(\"non-existent\")");
+        } catch (Exception ex) {
         }
-        catch (Exception ex) { }
         Assert.assertNotNull(tagService.getOrCreateTag("to-be-created", false));
         Assert.assertNotNull(tagService.getTag("to-be-created"));
     }
 
 
-
-
-    private Configuration getNoOpRule(GraphContext context)
-    {
+    private Configuration getNoOpRule(GraphContext context) {
         return ConfigurationBuilder.begin().addRule()
-            .when(new True())
-            .perform(Log.message(Logger.Level.INFO, "Operation runs"));
+                .when(new True())
+                .perform(Log.message(Logger.Level.INFO, "Operation runs"));
     }
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>5.3.0-SNAPSHOT</version>
+        <version>6.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.tests</groupId>
@@ -110,7 +110,7 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
+            <artifactId>windup-bootstrap-windup</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -176,6 +176,7 @@
                                 <!-- this will be used in the tests, see InstallRemoveAddonCommandTest -->
                                 <!--<addonId>org.jboss.windup.rules.apps:windup-rules-tattletale,${project.version}</addonId>-->
                             </addonIds>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>

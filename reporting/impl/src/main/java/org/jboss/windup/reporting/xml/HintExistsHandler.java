@@ -26,24 +26,20 @@ import org.w3c.dom.Element;
  *         &lt;/perform&gt;
  *     &lt;/rule&gt;
  * </pre>
- * 
- * @author jsightler
  *
+ * @author jsightler
  */
 @NamespaceElementHandler(elementName = HintExistsHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
-public class HintExistsHandler implements ElementHandler<HintExists>
-{
+public class HintExistsHandler implements ElementHandler<HintExists> {
     static final String ELEMENT_NAME = "hint-exists";
     private static final String MESSAGE = "message";
 
     @Override
-    public HintExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException
-    {
+    public HintExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
         String messagePattern = $(element).attr(MESSAGE);
         String in = $(element).attr("in");
 
-        if (StringUtils.isBlank(messagePattern))
-        {
+        if (StringUtils.isBlank(messagePattern)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + MESSAGE + "' attribute");
         }
 

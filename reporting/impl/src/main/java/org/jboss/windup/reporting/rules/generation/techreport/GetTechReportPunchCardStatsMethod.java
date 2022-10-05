@@ -37,54 +37,49 @@ import java.util.stream.Collectors;
  * </pre>
  *
  * <p> Returns a MatrixAndAggregated object, which holds:
- *      * A Map
- *         * key:   ApplicationProject vertex ID
- *         * value: Map
- *           * key:     tag name
- *           * value:   count of occurences of technologies bearing that tag and it's subtags.
- *      * A Map
- *         * key: ApplicationProject vertex ID
- *         * value: Map
- *           * key:   tag name
- *           * value: maximum count found in any input application. The largest number of values in the other map.
- *
- *      * A Map
- *         * key: ApplicationProject vertex ID
- *         * value: Map
- *           * key:   tag name
- *           * value: total count found in any input application. A sum of values in the other map.
+ * * A Map
+ * * key:   ApplicationProject vertex ID
+ * * value: Map
+ * * key:     tag name
+ * * value:   count of occurences of technologies bearing that tag and it's subtags.
+ * * A Map
+ * * key: ApplicationProject vertex ID
+ * * value: Map
+ * * key:   tag name
+ * * value: maximum count found in any input application. The largest number of values in the other map.
+ * <p>
+ * * A Map
+ * * key: ApplicationProject vertex ID
+ * * value: Map
+ * * key:   tag name
+ * * value: total count found in any input application. A sum of values in the other map.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
-{
+public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod {
     public static final Logger LOG = Logger.getLogger(GetTechReportPunchCardStatsMethod.class.getName());
     private static final String NAME = "getTechReportPunchCardStats";
 
     private GraphContext graphContext;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.graphContext = event.getGraphContext();
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns Map<Long, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
+                + " as a parameter and returns Map<Long, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
 
         // Function arguments
@@ -102,13 +97,11 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         return result;
     }
 
-    private MatrixAndAggregated computeProjectAndTagsMatrix(GraphContext graphContext, ProjectModel projectToCount)
-    {
+    private MatrixAndAggregated computeProjectAndTagsMatrix(GraphContext graphContext, ProjectModel projectToCount) {
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(graphContext, TagModel.class);
         TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportModel.EDGE_TAG_SECTORS);
-        if (null == sectorsHolderTag)
-        {
+        if (null == sectorsHolderTag) {
             LOG.warning("Tech Report hierarchy definition TagModel not found, looked for tag name " + TechReportModel.EDGE_TAG_SECTORS);
             return null;
         }
@@ -116,12 +109,10 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         // App -> tag name -> occurences.
         Map<Long, Map<String, Integer>> matrix = new HashMap<>();
         final Map<String, Integer> maximums = new HashMap<>();
-        final Map<String, Integer> totals   = new HashMap<>();
+        final Map<String, Integer> totals = new HashMap<>();
 
-        for (TagModel sectorTag : sectorsHolderTag.getDesignatedTags())
-        {
-            for (TagModel techTag : sectorTag.getDesignatedTags())
-            {
+        for (TagModel sectorTag : sectorsHolderTag.getDesignatedTags()) {
+            for (TagModel techTag : sectorTag.getDesignatedTags()) {
                 String tagName = techTag.getName();
 
                 Map<Long, Integer> tagCountForAllApps = GetTechReportPunchCardStatsMethod.getTagCountForAllApps(graphContext, tagName);
@@ -143,10 +134,9 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 
     /**
      * @return Map of counts of given tag and subtags occurrences in all input applications. I.e. how many items tagged with any tag under
-     *         subSectorTag are there in each input application. The key is the vertex ID.
+     * subSectorTag are there in each input application. The key is the vertex ID.
      */
-    static Map<Long, Integer> getTagCountForAllApps(GraphContext graphContext, String subSectorTagName)
-    {
+    static Map<Long, Integer> getTagCountForAllApps(GraphContext graphContext, String subSectorTagName) {
         // Get all "subtags" of this tag.
         Set<String> subTagsNames = getSubTagNamesGraph(graphContext, subSectorTagName);
 
@@ -155,13 +145,11 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 
         Map<Long, Integer> appToTechSectorCoveredTagsOccurrenceCount = new HashMap<>();
 
-        for (ProjectModel app : apps)
-        {
+        for (ProjectModel app : apps) {
             int countSoFar = 0;
             // Get the TechnologyUsageStatisticsModel's for this ProjectModel
             Iterator<Vertex> statsIt = app.getElement().vertices(Direction.IN, TechnologyUsageStatisticsModel.PROJECT_MODEL);
-            while (statsIt.hasNext())
-            {
+            while (statsIt.hasNext()) {
                 Vertex vStat = statsIt.next();
                 TechnologyUsageStatisticsModel stat = graphContext.getFramed().frameElement(vStat, TechnologyUsageStatisticsModel.class);
 
@@ -178,8 +166,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         return appToTechSectorCoveredTagsOccurrenceCount;
     }
 
-    private static Set<String> getSubTagNamesGraph(GraphContext graphContext, String subSectorTagName)
-    {
+    private static Set<String> getSubTagNamesGraph(GraphContext graphContext, String subSectorTagName) {
         TagGraphService tagService = new TagGraphService(graphContext);
         Set<TagModel> subTags = tagService.getDescendantTags(tagService.getTagByName(subSectorTagName));
         return subTags.stream().map(TagModel::getName).collect(Collectors.toSet());
@@ -188,8 +175,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     /**
      * Returns all ApplicationProjectModels.
      */
-    private static Set<ProjectModel> getAllApplications(GraphContext graphContext)
-    {
+    private static Set<ProjectModel> getAllApplications(GraphContext graphContext) {
         Set<ProjectModel> apps = new HashSet<>();
         Iterable<ProjectModel> appProjects = graphContext.findAll(ProjectModel.class);
         for (ProjectModel appProject : appProjects)
@@ -200,21 +186,27 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     /**
      * Just a structure to hold the method result.
      */
-    public static class MatrixAndAggregated
-    {
+    public static class MatrixAndAggregated {
         private Map<Long, Map<String, Integer>> countsOfTagsInApps;
         private Map<String, Integer> maximumsPerTag;
         private Map<String, Integer> totalsPerTag;
 
-        public MatrixAndAggregated(Map<Long, Map<String, Integer>> countsOfTagsInApps, Map<String, Integer> maximumsPerTag, Map<String, Integer> totalsPerTag)
-        {
+        public MatrixAndAggregated(Map<Long, Map<String, Integer>> countsOfTagsInApps, Map<String, Integer> maximumsPerTag, Map<String, Integer> totalsPerTag) {
             this.countsOfTagsInApps = countsOfTagsInApps;
             this.maximumsPerTag = maximumsPerTag;
             this.totalsPerTag = totalsPerTag;
         }
 
-        public Map<Long, Map<String, Integer>> getCountsOfTagsInApps() { return countsOfTagsInApps; }
-        public Map<String, Integer> getMaximumsPerTag() { return maximumsPerTag; }
-        public Map<String, Integer> getTotalsPerTag() { return totalsPerTag; }
+        public Map<Long, Map<String, Integer>> getCountsOfTagsInApps() {
+            return countsOfTagsInApps;
+        }
+
+        public Map<String, Integer> getMaximumsPerTag() {
+            return maximumsPerTag;
+        }
+
+        public Map<String, Integer> getTotalsPerTag() {
+            return totalsPerTag;
+        }
     }
 }

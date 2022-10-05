@@ -22,8 +22,7 @@ import org.jboss.windup.graph.Property;
  * Represents a report on a application source code file (eg, .java file, or .xml file).
  */
 @TypeValue(SourceReportModel.TYPE)
-public interface SourceReportModel extends ReportModel
-{
+public interface SourceReportModel extends ReportModel {
     String TYPE = "SourceReportModel";
     String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFileModel";
     String SOURCE_TYPE = "sourceType";
@@ -56,14 +55,10 @@ public interface SourceReportModel extends ReportModel
     /**
      * Gets the source file contents.
      */
-    default String getSourceBody()
-    {
-        try
-        {
+    default String getSourceBody() {
+        try {
             return IOUtils.toString(getSourceFileModel().asInputStream());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new WindupException("Failed to read source file: \"" + getSourceFileModel().getFilePath()
                     + "\" due to: " + e.getMessage(), e);
         }
@@ -81,8 +76,7 @@ public interface SourceReportModel extends ReportModel
     @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
     SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel, ClassInitializer<SourceReportToProjectEdgeModel> initializer);
 
-    default SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel)
-    {
+    default SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel) {
         return addProjectModel(projectModel, new DefaultClassInitializer<>(SourceReportToProjectEdgeModel.class));
     }
 }

@@ -11,10 +11,9 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
  * A model mix-in for models that reference a Java type, for instance, resource-ref in web.xml.
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
-*/
+ */
 @TypeValue(HasTypeModel.TYPE)
-public interface HasTypeModel extends WindupVertexFrame
-{
+public interface HasTypeModel extends WindupVertexFrame {
     String TYPE = "HasTypeModel";
 
     String JAVA_TYPE_NAME = TYPE + "-javaType";

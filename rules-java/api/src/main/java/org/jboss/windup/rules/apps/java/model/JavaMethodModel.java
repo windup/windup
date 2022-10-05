@@ -13,12 +13,11 @@ import java.util.List;
 
 /**
  * Represents a Java Method within a {@link JavaClassModel}
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(JavaMethodModel.TYPE)
-public interface JavaMethodModel extends WindupVertexFrame
-{
+public interface JavaMethodModel extends WindupVertexFrame {
     public static final String METHOD_PARAMETER = "methodParameter";
     public static final String METHOD_NAME = "methodName";
     public static final String JAVA_METHOD = "javaMethod";
@@ -52,10 +51,9 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the number of method parameters to this method
      */
-    default long countParameters()
-    {
+    default long countParameters() {
         return new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
-                .in(METHOD_PARAMETER).toList().size();
+                .out(METHOD_PARAMETER).toList().size();
     }
 
 
@@ -74,8 +72,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the {@link JavaParameterModel} at the provided position in the parameter list.
      */
-    default JavaParameterModel getParameter(int parameterPosition)
-    {
+    default JavaParameterModel getParameter(int parameterPosition) {
 /*
         List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
                 .in(METHOD_PARAMETER)
@@ -83,7 +80,7 @@ public interface JavaMethodModel extends WindupVertexFrame
                 .toList();
         return vertices.stream().map(v -> getGraph().frameElement(v, JavaParameterModel.class)).findFirst().get();
 */
-        return this.traverse(v -> v.in(METHOD_PARAMETER).has(PARAMETER_POSITION, parameterPosition)).next(JavaParameterModel.class);
+        return this.traverse(v -> v.out(METHOD_PARAMETER).has(PARAMETER_POSITION, parameterPosition)).next(JavaParameterModel.class);
     }
 
 

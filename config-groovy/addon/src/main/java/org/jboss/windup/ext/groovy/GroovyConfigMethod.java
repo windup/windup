@@ -4,11 +4,10 @@ import groovy.lang.Closure;
 
 /**
  * Used to extend the groovy "simple" rule syntax with additional methods.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface GroovyConfigMethod
-{
+public interface GroovyConfigMethod {
     /**
      * Return the name of the configuration method.
      */

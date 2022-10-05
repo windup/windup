@@ -34,27 +34,25 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
-{
+public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Inject
@@ -62,19 +60,17 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
 
     @Ignore
     @Test
-    public void testRunWindupScanPackages() throws Exception
-    {
+    public void testRunWindupScanPackages() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";
         final String includedPackage = "org.apache.wicket.application";
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.emptyList());
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, "");
         }
     }
-    
+
     @Ignore
     @Test
     public void testRunWindupExcludePackages() throws Exception {
@@ -82,8 +78,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         final String excludedPackage = "org.slf4j";
         final String includedPackage = "org.apache.wicket.application";
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.singletonList(excludedPackage));
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, excludedPackage);
@@ -105,15 +100,13 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         testIdService.addMapping("ff3e0312fb474eb84a88aa3039d1c414be51f85e", "org.apache.wicket:wicket-request");
         identifier.addIdentifier(testIdService);
 
-        try (GraphContext context = createGraphContext())
-        {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, Collections.singletonList(path), null, false,
                     Collections.emptyList(), Collections.emptyList(), Map.of("analyzeKnownLibraries", false));
 
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
             ProjectModel project = null;
-            for (FileModel inputFile : configurationModel.getInputPaths())
-            {
+            for (FileModel inputFile : configurationModel.getInputPaths()) {
                 if (inputFile.getFileName().equals("Windup1x-javaee-example.war"))
                     project = inputFile.getProjectModel();
             }
@@ -126,8 +119,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
         }
     }
 
-    private void validateInlineHintsInAppropriatePackages(GraphContext context, String includedPackage, String excludedPackage)
-    {
+    private void validateInlineHintsInAppropriatePackages(GraphContext context, String includedPackage, String excludedPackage) {
         GraphService<FileModel> fileModelService = new GraphService<>(context, FileModel.class);
         boolean foundHintedFile = false;
         boolean foundAppHintedFile = false;
@@ -135,36 +127,27 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest
 
         InlineHintService inlineHintService = new InlineHintService(context);
 
-        for (FileModel fileModel : fileModelService.findAll())
-        {
+        for (FileModel fileModel : fileModelService.findAll()) {
             String pkg = null;
-            if (fileModel instanceof JavaClassFileModel)
-            {
+            if (fileModel instanceof JavaClassFileModel) {
                 pkg = ((JavaClassFileModel) fileModel).getPackageName();
-            }
-            else if (fileModel instanceof JavaSourceFileModel)
-            {
+            } else if (fileModel instanceof JavaSourceFileModel) {
                 pkg = ((JavaSourceFileModel) fileModel).getPackageName();
             }
 
-            if (pkg == null)
-            {
+            if (pkg == null) {
                 continue;
             }
             Iterable<InlineHintModel> hintIterable = inlineHintService.getHintsForFile(fileModel);
-            for (InlineHintModel hint : hintIterable)
-            {
+            for (InlineHintModel hint : hintIterable) {
                 foundHintedFile = true;
-                if (pkg.startsWith(includedPackage))
-                {
+                if (pkg.startsWith(includedPackage)) {
                     foundAppHintedFile = true;
-                }
-                else if (pkg.startsWith(excludedPackage)) {
+                } else if (pkg.startsWith(excludedPackage)) {
                     foundNonAppHintedFile = true;
-                }
-                else {
+                } else {
                     System.out.println("Unexpected hinted file found: " + fileModel.getFilePath() + " hint: " + hint.getTitle() + " desc: "
-                                + hint.getDescription());
+                            + hint.getDescription());
                     foundNonAppHintedFile = true;
                 }
             }

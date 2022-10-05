@@ -5,8 +5,7 @@ package org.jboss.windup.tooling.data;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class LinkImpl implements Link
-{
+public class LinkImpl implements Link {
     private static final long serialVersionUID = 1L;
 
     private String description;
@@ -16,16 +15,14 @@ public class LinkImpl implements Link
      * Contains a description of the link.
      */
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     /**
      * Contains a description of the link.
      */
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -33,16 +30,14 @@ public class LinkImpl implements Link
      * Contains the URL.
      */
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
     /**
      * Contains the URL.
      */
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         this.url = url;
     }
 }

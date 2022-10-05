@@ -13,13 +13,11 @@ import java.util.List;
 
 /**
  * Extends ProjectModel to support maven specific properties.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 @TypeValue(MavenProjectModel.TYPE)
-public interface MavenProjectModel extends ProjectModel
-{
+public interface MavenProjectModel extends ProjectModel {
     String MAVEN_POM = "mavenPom";
     String PARENT_MAVEN_POM = "parentMavenPOM";
     String TYPE = "MavenProjectModel";

@@ -2,11 +2,10 @@ package org.jboss.windup.ast.java.data;
 
 /**
  * Designates a location where a given {@link org.jboss.windup.ast.java.data.ClassReference} was found in a Java source file.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public enum TypeReferenceLocation
-{
+public enum TypeReferenceLocation {
     /**
      * A Java class imports the type.
      */
@@ -39,7 +38,7 @@ public enum TypeReferenceLocation
 
     /**
      * A Java class calls the specified method; works transitively for interfaces.
-     * That means, if there's a rule with an interface FQCN and it has 
+     * That means, if there's a rule with an interface FQCN and it has
      * <code>&lt;location&gt;METHOD_CALL&lt;/location&gt;</code>,
      * a call of a method on types implementing or exntending that interface will fire the rule.
      */
@@ -111,16 +110,14 @@ public enum TypeReferenceLocation
 
     private final String readablePrefix;
 
-    private TypeReferenceLocation(String readablePrefix)
-    {
+    private TypeReferenceLocation(String readablePrefix) {
         this.readablePrefix = readablePrefix;
     }
 
     /**
      * Returns the enumeration as a human readable value.
      */
-    public String toReadablePrefix()
-    {
+    public String toReadablePrefix() {
         return this.readablePrefix;
     }
 }

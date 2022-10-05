@@ -7,17 +7,17 @@ import org.jboss.windup.graph.Property;
 import java.util.List;
 
 /**
- * Project dependency information. This has all of the information that would be required for a Maven dependency, but
+ * Project dependency information. Contains all the information that would be required for a Maven dependency, but
  * can also be used for non-maven dependencies. Additional interfaces may extend this to provide further functionality.
  */
 @TypeValue(ProjectDependencyModel.TYPE)
-public interface ProjectDependencyModel extends WindupVertexFrame
-{
+public interface ProjectDependencyModel extends WindupVertexFrame {
     String TYPE = "ProjectDependencyModel";
     String PROPERTY_SCOPE = "dependencyScope";
     String PROPERTY_CLASSIFIER = "dependencyClassifier";
     String PROPERTY_TYPE = "dependencyType";
     String FILE_LOCATION_REFERENCE = "fileLocationReference";
+    String PROJECT_DEPENDENCY_LOCATION = "dependencyLocation";
 
     @Property(PROPERTY_SCOPE)
     void setScope(String scope);
@@ -55,7 +55,7 @@ public interface ProjectDependencyModel extends WindupVertexFrame
 
     @Adjacency(label = TYPE + ".representedProject", direction = Direction.OUT)
     ProjectModel getProjectModel();
-    
+
     /**
      * Sets the original {@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */
@@ -67,4 +67,10 @@ public interface ProjectDependencyModel extends WindupVertexFrame
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
     List<FileLocationModel> getFileLocationReference();
+
+    @Property(PROJECT_DEPENDENCY_LOCATION)
+    DependencyLocation getDependencyLocation();
+
+    @Property(PROJECT_DEPENDENCY_LOCATION)
+    void setDependencyLocation(DependencyLocation dependencyLocation);
 }

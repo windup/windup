@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("MapModelMain")
-public interface TestMapMainModel extends WindupVertexFrame
-{
+public interface TestMapMainModel extends WindupVertexFrame {
 
     @MapInAdjacentVertices(label = "map")
     void setMap(Map<String, TestMapValueModel> map);

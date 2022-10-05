@@ -11,15 +11,15 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
-    <version>5.3.0-SNAPSHOT</version>
+    <version>6.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Parent</name>
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.9.2.Final</version.forge>
-        <version.furnace>2.28.4.Final</version.furnace>
+        <version.forge>3.10.0.Final</version.forge>
+        <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
@@ -115,8 +115,10 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
+        <module>rules-yaml</module>
 
         <module>exec</module>
         <module>tooling</module>
@@ -130,6 +132,7 @@
         <module>test-util</module>
         <module>server-provider-spi</module>
         <module>bootstrap</module>
+        <module>bootstraps-themed</module>
     </modules>
 
     <dependencyManagement>
@@ -191,7 +194,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.2</version>
+                <version>2.13.2.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -222,6 +225,12 @@
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -563,45 +572,7 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>mta</id>
-            <activation>
-                <property>
-                    <name>!community</name>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
-                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
-            </properties>
-        </profile>
-        <profile>
-            <id>windup</id>
-            <activation>
-                <property>
-                    <name>community</name>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Tackle Analysis</distribution.brand.name>
-                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources-windup</directory>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
     </profiles>
+
 
 </project>

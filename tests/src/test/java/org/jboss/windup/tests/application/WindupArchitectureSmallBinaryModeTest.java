@@ -20,33 +20,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTest
-{
+public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupTiny() throws Exception
-    {
-        try (GraphContext context = createGraphContext())
-        {
+    public void testRunWindupTiny() throws Exception {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false, Arrays.asList("com.acme"));
 
             Path graphDirectory = context.getGraphDirectory();
@@ -54,9 +50,9 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path indexPath = graphDirectory.resolve(Paths.get("index.html"));
 
             Path appReportPath = resolveChildPath(reportsDirectory,
-                        "ApplicationDetails_JEE_Example_App\\.html");
+                    "ApplicationDetails_JEE_Example_App\\.html");
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                        "compatiblefiles_JEE_Example_App\\.html");
+                    "compatiblefiles_JEE_Example_App\\.html");
             Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBean_java\\.html");
 
             Assert.assertTrue(indexPath.toFile().exists());
@@ -67,18 +63,15 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             String appReportContent = new String(Files.readAllBytes(appReportPath));
 
             Assert.assertTrue(appReportContent
-                        .contains("Used only to support migration activities."));
+                    .contains("Used only to support migration activities."));
             allDecompiledFilesAreLinked(context);
         }
     }
 
-    private Path resolveChildPath(Path parent, final String childPattern)
-    {
-        String[] list = parent.toFile().list(new FilenameFilter()
-        {
+    private Path resolveChildPath(Path parent, final String childPattern) {
+        String[] list = parent.toFile().list(new FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name)
-            {
+            public boolean accept(File dir, String name) {
                 return name.matches(childPattern);
             }
         });
@@ -92,7 +85,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
         if (results.size() > 1)
             throw new IllegalStateException("Expected a single result for pattern [" + childPattern + "], but got ["
-                        + results.size() + "]: " + results);
+                    + results.size() + "]: " + results);
 
         return parent.resolve(results.get(0));
     }

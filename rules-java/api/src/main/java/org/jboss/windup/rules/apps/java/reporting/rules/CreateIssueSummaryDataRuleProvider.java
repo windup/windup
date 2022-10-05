@@ -47,42 +47,34 @@ import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ReportRenderingPhase.class)
-public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
-{
+public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-        .addRule()
-        .perform(new GraphOperation()
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context)
-            {
-                generateDataSummary(event);
-            }
-        });
+                .addRule()
+                .perform(new GraphOperation() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context) {
+                        generateDataSummary(event);
+                    }
+                });
     }
 
-    private void generateDataSummary(GraphRewrite event)
-    {
+    private void generateDataSummary(GraphRewrite event) {
         ReportService reportService = new ReportService(event.getGraphContext());
 
-        try
-        {
+        try {
             Path dataDirectory = reportService.getReportDataDirectory();
 
             Path issueSummaryJSPath = dataDirectory.resolve(ISSUE_SUMMARIES_JS);
-            try (FileWriter issueSummaryWriter = new FileWriter(issueSummaryJSPath.toFile()))
-            {
+            try (FileWriter issueSummaryWriter = new FileWriter(issueSummaryJSPath.toFile())) {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
 
-                for (FileModel inputApplicationFile : windupConfiguration.getInputPaths())
-                {
+                for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication, new OnlyOnceTraversalStrategy());
 
@@ -97,9 +89,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     FilterProvider filters = new SimpleFilterProvider().addFilter("graphFilter", simpleBeanPropertyFilter);
 
                     Map<String, List<ProblemSummary>> summariesBySeverity =
-                        ProblemSummaryService.getProblemSummaries(
-                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
-                            .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getCategoryID(), Map.Entry::getValue));
+                            ProblemSummaryService.getProblemSummaries(
+                                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
+                                    .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getCategoryID(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.getId() + "'] = ");
                     objectMapper.writer(filters).writeValue(issueSummaryWriter, summariesBySeverity);
@@ -108,16 +100,14 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 
                 issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
 
-                for (EffortReportService.EffortLevel level : EffortReportService.EffortLevel.values())
-                {
-                    issueSummaryWriter.write("effortToDescription[" + level.getPoints() + "] = \"" + level.getShortDescription()+ "\";");
+                for (EffortReportService.EffortLevel level : EffortReportService.EffortLevel.values()) {
+                    issueSummaryWriter.write("effortToDescription[" + level.getPoints() + "] = \"" + level.getShortDescription() + "\";");
                     issueSummaryWriter.write(NEWLINE);
                 }
 
                 issueSummaryWriter.write("var effortOrder = [");
                 String comma = "";
-                for (EffortLevel level : EffortLevel.values())
-                {
+                for (EffortLevel level : EffortLevel.values()) {
                     issueSummaryWriter.write(comma);
                     comma = ", ";
                     issueSummaryWriter.write("\"");
@@ -128,18 +118,16 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 
                 issueSummaryWriter.write("var severityOrder = [");
                 IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
-                for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
-                {
+                for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories()) {
                     issueSummaryWriter.write("'" + issueCategory.getCategoryID() + "', ");
                 }
                 issueSummaryWriter.write("];" + NEWLINE);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new WindupException("Error serializing problem details due to: " + e.getMessage(), e);
         }
     }
+
     private static final String NEWLINE = OperatingSystemUtils.getLineSeparator();
 
     @JsonFilter("graphFilter")

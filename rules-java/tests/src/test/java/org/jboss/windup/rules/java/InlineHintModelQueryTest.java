@@ -34,22 +34,20 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 @RunWith(Arquillian.class)
-public class InlineHintModelQueryTest
-{
+public class InlineHintModelQueryTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
+                .addBeansXML()
+                .addAsResource(new File("src/test/resources/reports"));
         return archive;
     }
 
@@ -59,21 +57,18 @@ public class InlineHintModelQueryTest
     private GraphContext context;
 
     @Before
-    public void beforeTest() throws Exception
-    {
+    public void beforeTest() throws Exception {
         context = factory.create(true);
     }
 
     @After
-    public void afterTest() throws Exception
-    {
+    public void afterTest() throws Exception {
         context.close();
         context.clear();
     }
 
     @Test
-    public void testFindingClassifiedFiles() throws Exception
-    {
+    public void testFindingClassifiedFiles() throws Exception {
         FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
         FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
@@ -116,8 +111,7 @@ public class InlineHintModelQueryTest
         new FindSourceReportFilesGremlinCriterion().query(event, pipeline);
 
         List<FileModel> fileModels = new ArrayList<>();
-        for (Vertex v : pipeline.toList())
-        {
+        for (Vertex v : pipeline.toList()) {
             // Explicit cast here insures that the frame returned was actually a FileModel. If it is not, a
             // ClassCastException will
             // occur and the test will fail.
@@ -133,22 +127,14 @@ public class InlineHintModelQueryTest
         boolean foundF3 = false;
         boolean foundF4 = false;
         Assert.assertEquals(4, fileModels.size());
-        for (FileModel fm : fileModels)
-        {
-            if (fm.getFilePath().equals(f1.getFilePath()))
-            {
+        for (FileModel fm : fileModels) {
+            if (fm.getFilePath().equals(f1.getFilePath())) {
                 foundF1 = true;
-            }
-            else if (fm.getFilePath().equals(f2.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f2.getFilePath())) {
                 foundF2 = true;
-            }
-            else if (fm.getFilePath().equals(f3.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f3.getFilePath())) {
                 foundF3 = true;
-            }
-            else if (fm.getFilePath().equals(f4.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f4.getFilePath())) {
                 foundF4 = true;
             }
         }
@@ -159,8 +145,7 @@ public class InlineHintModelQueryTest
     }
 
     @Test
-    public void testFindingNonClassifiedFiles() throws Exception
-    {
+    public void testFindingNonClassifiedFiles() throws Exception {
         FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
         FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
@@ -193,13 +178,12 @@ public class InlineHintModelQueryTest
         c2.addFileModel(f3);
 
         // manually execute this criterion (this just adds things to the pipeline)
-        Iterable<Vertex> allFMVertices = (List<Vertex>)context.getQuery(FileModel.class).getRawTraversal().toList();
+        Iterable<Vertex> allFMVertices = (List<Vertex>) context.getQuery(FileModel.class).getRawTraversal().toList();
         Iterable<Vertex> fileModelIterable = new FindFilesNotClassifiedOrHintedGremlinCriterion()
-                    .query(context, allFMVertices);
+                .query(context, allFMVertices);
 
         List<FileModel> fileModels = new ArrayList<>();
-        for (Vertex v : fileModelIterable)
-        {
+        for (Vertex v : fileModelIterable) {
             // Explicit cast here insures that the frame returned was actually a FileModel. If it is not, a
             // ClassCastException will
             // occur and the test will fail.
@@ -215,22 +199,14 @@ public class InlineHintModelQueryTest
         boolean foundF6 = false;
         boolean foundF7 = false;
         Assert.assertEquals(4, fileModels.size());
-        for (FileModel fm : fileModels)
-        {
-            if (fm.getFilePath().equals(f4.getFilePath()))
-            {
+        for (FileModel fm : fileModels) {
+            if (fm.getFilePath().equals(f4.getFilePath())) {
                 foundF4 = true;
-            }
-            else if (fm.getFilePath().equals(f5.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f5.getFilePath())) {
                 foundF5 = true;
-            }
-            else if (fm.getFilePath().equals(f6.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f6.getFilePath())) {
                 foundF6 = true;
-            }
-            else if (fm.getFilePath().equals(f7.getFilePath()))
-            {
+            } else if (fm.getFilePath().equals(f7.getFilePath())) {
                 foundF7 = true;
             }
         }
