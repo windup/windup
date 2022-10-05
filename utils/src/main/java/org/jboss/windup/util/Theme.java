@@ -2,6 +2,7 @@ package org.jboss.windup.util;
 
 public class Theme {
 
+    private final String topBarTitle;
     private final String brandName;
     private final String brandNameAcronym;
     private final String brandWebsiteUrl;
@@ -10,7 +11,8 @@ public class Theme {
     private final String cliVersion;
     private final String componentsVersion;
 
-    public Theme(String brandName, String brandNameAcronym, String brandWebsiteUrl, String brandDocumentationUrl, String cliName, String cliVersion, String componentsVersion) {
+    public Theme(String topBarTitle, String brandName, String brandNameAcronym, String brandWebsiteUrl, String brandDocumentationUrl, String cliName, String cliVersion, String componentsVersion) {
+        this.topBarTitle = topBarTitle;
         this.brandName = brandName;
         this.brandNameAcronym = brandNameAcronym;
         this.brandWebsiteUrl = brandWebsiteUrl;
@@ -18,6 +20,10 @@ public class Theme {
         this.cliName = cliName;
         this.cliVersion = cliVersion;
         this.componentsVersion = componentsVersion;
+    }
+
+    public String getTopBarTitle() {
+        return topBarTitle;
     }
 
     public String getBrandName() {
