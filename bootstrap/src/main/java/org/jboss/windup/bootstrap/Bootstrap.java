@@ -9,6 +9,7 @@ package org.jboss.windup.bootstrap;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,8 +57,8 @@ import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.ToolingModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
-import org.jboss.windup.bootstrap.listener.GreetingListener;
 import org.jboss.windup.server.WindupServerProvider;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.Theme;
 import org.jboss.windup.util.ThemeProvider;
 
@@ -92,7 +93,7 @@ public class Bootstrap {
             runtimeLabelsDir.mkdirs();
         }
 
-        final String defaultLog = new File(getUserWindupDir(), "log/mta.log").getAbsolutePath();
+        final String defaultLog = new File(getUserWindupDir(), "log/windup.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
         System.setProperty("org.jboss.forge.log.file", logDir);
@@ -207,15 +208,16 @@ public class Bootstrap {
     }
 
     public static String getVersionString() {
-        return "> " + ThemeProvider.getInstance().getTheme().getBrandNameLong() + " CLI, version " + getRuntimeAPIVersion() + ".";
+        Theme theme = ThemeProvider.getInstance().getTheme();
+        return String.format("> %s CLI %s (Windup Components %s) %s",
+                theme.getBrandName(),
+                theme.getCliVersion(),
+                theme.getComponentsVersion(),
+                theme.getBrandDocumentationUrl());
     }
 
     public static Version getRuntimeAPIVersion() {
-        String version = Bootstrap.class.getPackage().getImplementationVersion();
-        if (version != null) {
-            return SingleVersion.valueOf(version);
-        }
-        return EmptyVersion.getInstance();
+        return SingleVersion.valueOf(ThemeProvider.getInstance().getTheme().getComponentsVersion());
     }
 
     private static File getUserRulesDir() {
@@ -232,7 +234,7 @@ public class Bootstrap {
             Path path = new File("").toPath();
             return path.toFile();
         }
-        return Paths.get(userHome).resolve(".mta").toFile();
+        return Paths.get(userHome).resolve(".windup").toFile();
     }
 
     private static File getUserAddonsDir() {
@@ -288,8 +290,6 @@ public class Bootstrap {
 
             if (!executePhase(CommandPhase.PRE_EXECUTION, commands) || commands.isEmpty())
                 return;
-
-            furnace.addContainerLifecycleListener(new GreetingListener());
 
             // Now see if there are any server SPIs that need to run
             Imported<WindupServerProvider> serverProviders = furnace.getAddonRegistry().getServices(WindupServerProvider.class);

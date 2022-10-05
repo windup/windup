@@ -83,7 +83,7 @@ public class WindupCommand implements UICommand {
     @Override
     public UICommandMetadata getMetadata(UIContext ctx) {
         Theme theme = ThemeProvider.getInstance().getTheme();
-        return Metadata.forCommand(getClass()).name(theme.getBrandNameLong()).description("Run " + theme.getBrandNameLong())
+        return Metadata.forCommand(getClass()).name(theme.getBrandName()).description("Run " + theme.getBrandName())
                 .category(Categories.create("Platform", "Migration"));
     }
 
@@ -124,7 +124,6 @@ public class WindupCommand implements UICommand {
                  * do that because the Windup configuration API doesn't understand Forge data types, so instead we
                  * use string comparison and write a test case.
                  */
-                //File inputFile = (File) inputPath.getUnderlyingResourceObject();
                 for (File inputFile : inputPathsIterable) {
                     if (inputFile.equals(outputFile))
                         context.addValidationError(outputPath, "Output file cannot be the same as the input file.");

@@ -36,12 +36,12 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider {
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder.begin()
-                .addRule()
-                .when(SourceMode.isDisabled())
-                .perform(new DecompileCondition())
-                .addRule()
-                .when(SourceMode.isDisabled())
-                .perform(new CleanFromMultipleSourceFiles());
+        .addRule()
+        .when(SourceMode.isDisabled())
+        .perform(new DecompileCondition())
+        .addRule()
+        .when(SourceMode.isDisabled())
+        .perform(new CleanFromMultipleSourceFiles());
 
     }
     // @formatter:on
