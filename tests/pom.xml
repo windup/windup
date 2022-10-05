@@ -110,7 +110,7 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
+            <artifactId>windup-bootstrap-windup</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
