@@ -6,7 +6,7 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
         <version>22</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>org.jboss.windup</groupId>
@@ -35,7 +35,7 @@
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
         <forkCount>.5C</forkCount>
-        <jacoco.argLine /> <!-- Will be set by the JaCoCo Maven plugin when active. -->
+        <jacoco.argLine/> <!-- Will be set by the JaCoCo Maven plugin when active. -->
         <furnace.dot.skip>true</furnace.dot.skip> <!-- Default to not spending time generating the (expensive to generate) dot files -->
 
         <surefire-argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</surefire-argLine>
@@ -179,7 +179,7 @@
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.3.0.1</version>
+                <version>2.3.6</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
