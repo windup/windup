@@ -53,6 +53,12 @@
             <artifactId>maven</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven.shared</groupId>
+                    <artifactId>maven-shared-utils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
