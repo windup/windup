@@ -13,7 +13,7 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Takes a list of ProjectModels and orders them according to their path.
- *
+ * <p>
  * For example, ProjectModels with this structure:
  *
  * <ul>
@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/AProject</li>
  * </ul>
- *
+ * <p>
  * Will be returned as:
  *
  * <ul>
@@ -29,38 +29,31 @@ import freemarker.template.TemplateModelException;
  * <li>/BProject</li>
  * <li>/CProject</li>
  * </ul>
- *
  */
-public class SortProjectTraversalsByPathMethod implements WindupFreeMarkerMethod
-{
+public class SortProjectTraversalsByPathMethod implements WindupFreeMarkerMethod {
     private static final String NAME = "sortProjectTraversalsByPathAscending";
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes an Iterable<" + ProjectModelTraversal.class.getSimpleName() + "> and returns them, ordered alphabetically.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModelTraversal>)");
         }
 
         @SuppressWarnings("unchecked")
-        Iterable<ProjectModelTraversal> projectTraversalIterable = FreeMarkerUtil.freemarkerWrapperToIterable (arguments.get(0));
+        Iterable<ProjectModelTraversal> projectTraversalIterable = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
         List<ProjectModelTraversal> projectTraversalList = new ArrayList<>();
-        for (ProjectModelTraversal traversal : projectTraversalIterable)
-        {
+        for (ProjectModelTraversal traversal : projectTraversalIterable) {
             projectTraversalList.add(traversal);
         }
         Collections.sort(projectTraversalList, new ProjectTraversalRootFileComparator());
@@ -69,7 +62,6 @@ public class SortProjectTraversalsByPathMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
     }
 }

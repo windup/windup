@@ -184,14 +184,13 @@
             <xs:sequence>
                 <xs:element name="artifact">
                     <xs:complexType>
-                        <xs:simpleContent>
-                            <xs:extension base="xs:string">
-                                <xs:attribute type="xs:string" name="groupId" />
-                                <xs:attribute type="xs:string" name="artifactId" />
-                                <xs:attribute type="xs:string" name="fromVersion" />
-                                <xs:attribute type="xs:string" name="toVersion" />
-                            </xs:extension>
-                        </xs:simpleContent>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="5" />
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="groupId" />
+                        <xs:attribute type="xs:string" name="artifactId" />
+                        <xs:attribute type="xs:string" name="fromVersion" />
+                        <xs:attribute type="xs:string" name="toVersion" />
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>

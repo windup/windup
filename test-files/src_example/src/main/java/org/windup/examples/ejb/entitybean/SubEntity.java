@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.NamedQuery;
 
 @Entity
-@DiscriminatorValue("DV") 
+@DiscriminatorValue("DV")
 public class SubEntity extends SimpleEntity {
     private Long id;
 }

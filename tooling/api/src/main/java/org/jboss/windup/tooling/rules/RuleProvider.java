@@ -5,8 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
-public interface RuleProvider extends Serializable
-{
+public interface RuleProvider extends Serializable {
     /**
      * Contains a version field used for conflict resolution.
      */
@@ -127,8 +126,7 @@ public interface RuleProvider extends Serializable
      */
     void setRuleProviderType(RuleProviderType ruleProviderType);
 
-    enum RuleProviderType
-    {
+    enum RuleProviderType {
         JAVA, XML, GROOVY
     }
 }

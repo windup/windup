@@ -1,0 +1,1 @@
+<link href="${basePath}/img/${getWindupBrandNameAcronym()}/favicon.png" rel="shortcut icon" type="image/x-icon"/>

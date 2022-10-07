@@ -11,41 +11,34 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class AddArchiveReferenceInformation extends AbstractIterationOperation<FileModel>
-{
-    private AddArchiveReferenceInformation(String variableName)
-    {
+public class AddArchiveReferenceInformation extends AbstractIterationOperation<FileModel> {
+    private AddArchiveReferenceInformation(String variableName) {
         super(variableName);
     }
 
-    public AddArchiveReferenceInformation()
-    {
+    public AddArchiveReferenceInformation() {
         super();
     }
 
-    public static AddArchiveReferenceInformation to(String variableName)
-    {
+    public static AddArchiveReferenceInformation to(String variableName) {
         return new AddArchiveReferenceInformation(variableName);
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel)
-    {
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel) {
         File file = new File(fileModel.getFilePath());
         ArchiveModel archiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ArchiveModel.class);
 
         archiveModel.setArchiveName(file.getName());
 
-        ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
+        GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
 
         // This line will cause the file to be marked if it is to be ignored
-        new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, fileModel);
-        ///appArchiveModel.setApplicationName(file.getName()); // Removed because not used.
+        new WindupJavaConfigurationService(event.getGraphContext()).checkRegexAndIgnore(event, fileModel);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AddArchiveReferenceInformation";
     }
 }

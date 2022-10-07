@@ -19,8 +19,7 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(DependencyReportDependencyGroupModel.TYPE)
-public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
-{
+public interface DependencyReportDependencyGroupModel extends WindupVertexFrame {
     String TYPE = "DependencyReportDependencyGroupModel";
     String DEPENDENCY_SHA1 = "depSHA1";
     String DEPENDENCY_GROUP_TO_ARCHIVE = "dependencyGroupToArchive";
@@ -64,12 +63,11 @@ public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
 
     /**
      * Contains links to the archives that match this SHA1 hash.
-     *
+     * <p>
      * NOTE: This method exists to work around a Ferma limitation. It does not infer the type from the return type, so
      * we explicitly specify it and we do so via a default method to make the client code easier.
      */
-    default DependencyReportToArchiveEdgeModel addArchiveModel(ArchiveModel archiveModel)
-    {
+    default DependencyReportToArchiveEdgeModel addArchiveModel(ArchiveModel archiveModel) {
         return addArchiveModel(archiveModel, new DefaultClassInitializer<>(DependencyReportToArchiveEdgeModel.class));
     }
 }

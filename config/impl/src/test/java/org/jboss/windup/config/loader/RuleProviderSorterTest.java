@@ -14,256 +14,207 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ocpsoft.rewrite.config.Configuration;
 
-public class RuleProviderSorterTest
-{
-    private class Phase1 extends RulePhase
-    {
-        public Phase1()
-        {
+public class RuleProviderSorterTest {
+    private class Phase1 extends RulePhase {
+        public Phase1() {
             super(Phase1.class);
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteBefore()
-        {
+        public Class<? extends RulePhase> getExecuteBefore() {
             return Phase2.class;
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteAfter()
-        {
+        public Class<? extends RulePhase> getExecuteAfter() {
             return null;
         }
     }
 
-    private class Phase2 extends RulePhase
-    {
-        public Phase2()
-        {
+    private class Phase2 extends RulePhase {
+        public Phase2() {
             super(Phase2.class);
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteBefore()
-        {
+        public Class<? extends RulePhase> getExecuteBefore() {
             return Phase3.class;
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteAfter()
-        {
+        public Class<? extends RulePhase> getExecuteAfter() {
             return null;
         }
     }
 
-    private class Phase3 extends RulePhase
-    {
-        public Phase3()
-        {
+    private class Phase3 extends RulePhase {
+        public Phase3() {
             super(Phase3.class);
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteBefore()
-        {
+        public Class<? extends RulePhase> getExecuteBefore() {
             return null;
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteAfter()
-        {
+        public Class<? extends RulePhase> getExecuteAfter() {
             return null;
         }
     }
 
-    private class Phase4 extends RulePhase
-    {
-        public Phase4()
-        {
+    private class Phase4 extends RulePhase {
+        public Phase4() {
             super(Phase4.class);
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteBefore()
-        {
+        public Class<? extends RulePhase> getExecuteBefore() {
             return null;
         }
 
         @Override
-        public Class<? extends RulePhase> getExecuteAfter()
-        {
+        public Class<? extends RulePhase> getExecuteAfter() {
             return Phase3.class;
         }
     }
 
-    private static class WCPPhase1Class1 extends AbstractRuleProvider
-    {
-        public WCPPhase1Class1()
-        {
+    private static class WCPPhase1Class1 extends AbstractRuleProvider {
+        public WCPPhase1Class1() {
             super(MetadataBuilder.forProvider(WCPPhase1Class1.class)
-                        .setPhase(Phase1.class));
+                    .setPhase(Phase1.class));
         }
 
-        public WCPPhase1Class1(Class<? extends RuleProvider> dependency)
-        {
+        public WCPPhase1Class1(Class<? extends RuleProvider> dependency) {
             super(MetadataBuilder.forProvider(WCPPhase1Class1.class)
-                        .addExecuteAfter(dependency)
-                        .setPhase(Phase1.class));
+                    .addExecuteAfter(dependency)
+                    .setPhase(Phase1.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhase1Class2 extends AbstractRuleProvider
-    {
-        public WCPPhase1Class2()
-        {
+    private class WCPPhase1Class2 extends AbstractRuleProvider {
+        public WCPPhase1Class2() {
             super(MetadataBuilder.forProvider(WCPPhase1Class2.class)
-                        .setPhase(Phase1.class)
-                        .addExecuteAfter(WCPPhase1Class1.class));
+                    .setPhase(Phase1.class)
+                    .addExecuteAfter(WCPPhase1Class1.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhaseDependentClass2 extends AbstractRuleProvider
-    {
-        public WCPPhaseDependentClass2()
-        {
+    private class WCPPhaseDependentClass2 extends AbstractRuleProvider {
+        public WCPPhaseDependentClass2() {
             super(MetadataBuilder.forProvider(WCPPhaseDependentClass2.class)
-                        .addExecuteAfter(WCPPhase1Class2.class));
+                    .addExecuteAfter(WCPPhase1Class2.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhase1Class3 extends AbstractRuleProvider
-    {
-        public WCPPhase1Class3()
-        {
+    private class WCPPhase1Class3 extends AbstractRuleProvider {
+        public WCPPhase1Class3() {
             super(MetadataBuilder.forProvider(WCPPhase1Class3.class)
-                        .addExecuteAfter(WCPPhase1Class2.class)
-                        .setPhase(Phase1.class));
+                    .addExecuteAfter(WCPPhase1Class2.class)
+                    .setPhase(Phase1.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhase2Class1 extends AbstractRuleProvider
-    {
-        public WCPPhase2Class1()
-        {
+    private class WCPPhase2Class1 extends AbstractRuleProvider {
+        public WCPPhase2Class1() {
             super(MetadataBuilder.forProvider(WCPPhase2Class1.class)
-                        .setPhase(Phase2.class));
+                    .setPhase(Phase2.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
 
     }
 
-    private class WCPPhase2Class3 extends AbstractRuleProvider
-    {
-        public WCPPhase2Class3()
-        {
+    private class WCPPhase2Class3 extends AbstractRuleProvider {
+        public WCPPhase2Class3() {
             super(MetadataBuilder.forProvider(WCPPhase2Class3.class)
-                        .addExecuteAfterId("WCPDependentPhase2Step2")
-                        .setPhase(Phase2.class));
+                    .addExecuteAfterId("WCPDependentPhase2Step2")
+                    .setPhase(Phase2.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhase2Class4 extends AbstractRuleProvider
-    {
-        public WCPPhase2Class4()
-        {
+    private class WCPPhase2Class4 extends AbstractRuleProvider {
+        public WCPPhase2Class4() {
             super(MetadataBuilder.forProvider(WCPPhase2Class4.class)
-                        .addExecuteAfterId("WCPPhase2Class3")
-                        .setPhase(Phase2.class));
+                    .addExecuteAfterId("WCPPhase2Class3")
+                    .setPhase(Phase2.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPPhase1WrongPhaseDep extends AbstractRuleProvider
-    {
-        public WCPPhase1WrongPhaseDep()
-        {
+    private class WCPPhase1WrongPhaseDep extends AbstractRuleProvider {
+        public WCPPhase1WrongPhaseDep() {
             super(MetadataBuilder.forProvider(WCPPhase1WrongPhaseDep.class)
-                        .addExecuteAfter(WCPPhase2Class1.class)
-                        .setPhase(Phase1.class));
+                    .addExecuteAfter(WCPPhase2Class1.class)
+                    .setPhase(Phase1.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPAcceptableCrossPhaseDep extends AbstractRuleProvider
-    {
-        public WCPAcceptableCrossPhaseDep()
-        {
+    private class WCPAcceptableCrossPhaseDep extends AbstractRuleProvider {
+        public WCPAcceptableCrossPhaseDep() {
             super(MetadataBuilder.forProvider(WCPAcceptableCrossPhaseDep.class)
-                        .addExecuteAfter(WCPPhase2Class1.class)
-                        .setPhase(Phase3.class));
+                    .addExecuteAfter(WCPPhase2Class1.class)
+                    .setPhase(Phase3.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private class WCPDependentPhase2Step2 extends AbstractRuleProvider
-    {
-        public WCPDependentPhase2Step2()
-        {
+    private class WCPDependentPhase2Step2 extends AbstractRuleProvider {
+        public WCPDependentPhase2Step2() {
             super(MetadataBuilder.forProvider(WCPDependentPhase2Step2.class)
-                        .addExecuteAfter(WCPPhase2Class1.class)
-                        .addExecuteBefore(WCPPhase2Class3.class)
-                        .setPhase(DependentPhase.class));
+                    .addExecuteAfter(WCPPhase2Class1.class)
+                    .addExecuteBefore(WCPPhase2Class3.class)
+                    .setPhase(DependentPhase.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return null;
         }
     }
 
-    private List<RulePhase> getPhases()
-    {
+    private List<RulePhase> getPhases() {
         List<RulePhase> phases = new ArrayList<>();
         // mix them up as we want to test sorting of these as well
         phases.add(new Phase3());
@@ -274,8 +225,7 @@ public class RuleProviderSorterTest
     }
 
     @Test
-    public void testSort()
-    {
+    public void testSort() {
         AbstractRuleProvider v1 = new WCPPhase1Class1();
         AbstractRuleProvider v2 = new WCPPhase1Class2();
         AbstractRuleProvider vI = new WCPPhaseDependentClass2();
@@ -303,11 +253,9 @@ public class RuleProviderSorterTest
          * Remove phases (this makes asserting on the results easier)
          */
         ListIterator<RuleProvider> iterator = sortedRuleProviders.listIterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             RuleProvider p = iterator.next();
-            if (p instanceof RulePhase)
-            {
+            if (p instanceof RulePhase) {
                 iterator.remove();
             }
         }
@@ -324,8 +272,7 @@ public class RuleProviderSorterTest
     }
 
     @Test
-    public void testSortCycle()
-    {
+    public void testSortCycle() {
         WCPPhase1Class1 v1 = new WCPPhase1Class1(WCPPhase1Class3.class);
         AbstractRuleProvider v2 = new WCPPhase1Class2();
         AbstractRuleProvider v3 = new WCPPhase1Class3();
@@ -336,20 +283,16 @@ public class RuleProviderSorterTest
         ruleProviders.add(v2);
         ruleProviders.add(v1);
 
-        try
-        {
+        try {
             RuleProviderSorter.sort(ruleProviders);
             Assert.fail("No cycles detected");
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Dependency cycles detected"));
         }
     }
 
     @Test
-    public void testImproperCrossPhaseDependency()
-    {
+    public void testImproperCrossPhaseDependency() {
         AbstractRuleProvider v1 = new WCPPhase1Class1();
         AbstractRuleProvider v2 = new WCPPhase1Class2();
         AbstractRuleProvider v3 = new WCPPhase1Class3();
@@ -367,20 +310,16 @@ public class RuleProviderSorterTest
         ruleProviders.add(v1);
         ruleProviders.add(wrongPhaseDep);
 
-        try
-        {
+        try {
             RuleProviderSorter.sort(ruleProviders);
             Assert.fail("No improper phase dependencies detected!");
-        }
-        catch (IncorrectPhaseDependencyException | WindupMultiStringException e)
-        {
+        } catch (IncorrectPhaseDependencyException | WindupMultiStringException e) {
             // ignore... this exception is expected in this test
         }
     }
 
     @Test
-    public void testAcceptableCrossPhaseDependency()
-    {
+    public void testAcceptableCrossPhaseDependency() {
         AbstractRuleProvider v1 = new WCPPhase1Class1();
         AbstractRuleProvider v2 = new WCPPhase1Class2();
         AbstractRuleProvider v3 = new WCPPhase1Class3();
@@ -400,20 +339,16 @@ public class RuleProviderSorterTest
         ruleProviders.add(v1);
         ruleProviders.add(acceptablePhaseDep);
 
-        try
-        {
+        try {
             RuleProviderSorter.sort(ruleProviders);
-        }
-        catch (IncorrectPhaseDependencyException e)
-        {
+        } catch (IncorrectPhaseDependencyException e) {
             e.printStackTrace();
             Assert.fail("This cross-dependency should be acceptable!");
         }
     }
 
     @Test
-    public void testPhaseSorting()
-    {
+    public void testPhaseSorting() {
         List<RuleProvider> ruleProviders = new ArrayList<>();
         ruleProviders.addAll(getPhases());
 

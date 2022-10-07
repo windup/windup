@@ -10,56 +10,47 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public abstract class AbstractRuleLifecycleListener implements RuleLifecycleListener
-{
+public abstract class AbstractRuleLifecycleListener implements RuleLifecycleListener {
     @Override
-    public void beforeExecution(GraphRewrite event)
-    {
+    public void beforeExecution(GraphRewrite event) {
     }
 
     @Override
-    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
-    {
+    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context) {
         // Execution was not cancelled.
         return false;
     }
 
     @Override
-    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
-    {
+    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds) {
         // Execution was not cancelled.
         return false;
     }
 
     @Override
-    public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result)
-    {
+    public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result) {
     }
 
     @Override
-    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-    {
+    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule) {
         // Execution was not cancelled.
         return false;
     }
 
     @Override
-    public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
-    {
+    public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule) {
     }
 
     @Override
-    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause)
-    {
+    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause) {
     }
 
     @Override
-    public void afterExecution(GraphRewrite event)
-    {
+    public void afterExecution(GraphRewrite event) {
     }
 
     @Override
-    public boolean shouldWindupStop(){
+    public boolean shouldWindupStop() {
         return false;
     }
 }

@@ -5,22 +5,22 @@ import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.bootstrap.help.OptionDescription;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 
-public class DisplayHelpCommand implements Command
-{
+public class DisplayHelpCommand implements Command {
     @Override
-    public CommandResult execute()
-    {
+    public CommandResult execute() {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: "+Util.WINDUP_CLI_NAME+" [OPTION]... PARAMETER ... ").append(System.lineSeparator());
+        sb.append("Usage: windup-cli [OPTION]... PARAMETER ... ").append(System.lineSeparator());
         sb.append("Extendable migration analysis, at your fingertips.  ").append(System.lineSeparator());
         sb.append(System.lineSeparator());
 
-        sb.append(System.lineSeparator()).append(Util.WINDUP_BRAND_NAME_ACRONYM +" CLI Options:").append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append(theme.getBrandNameAcronym() + " CLI Options:").append(System.lineSeparator());
 
-        for (OptionDescription option : Help.load().getOptions())
-        {
+        for (OptionDescription option : Help.load().getOptions()) {
             sb.append("--").append(option.getName()).append(System.lineSeparator());
             sb.append("\t");
             sb.append(option.isRequired() ? "(Required) " : "");
@@ -49,10 +49,10 @@ public class DisplayHelpCommand implements Command
         sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(System.lineSeparator());
 
         sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
-        sb.append("\t install the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -i core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -i org.example.addon:example:1.0.0` ").append(System.lineSeparator());
+        sb.append("\t install the required addons and exit. ex: `" + theme.getCliName() + " -i core-addon-x` or `" + theme.getCliName() + " -i org.example.addon:example:1.0.0` ").append(System.lineSeparator());
 
         sb.append("-r, --remove GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
-        sb.append("\t remove the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -r core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -r org.example.addon:example:1.0.0` ").append(System.lineSeparator());
+        sb.append("\t remove the required addons and exit. ex: `" + theme.getCliName() + " -r core-addon-x` or `" + theme.getCliName() + " -r org.example.addon:example:1.0.0` ").append(System.lineSeparator());
 
         sb.append("-l, --list").append(System.lineSeparator());
         sb.append("\t list installed addons and exit ").append(System.lineSeparator());
@@ -77,8 +77,7 @@ public class DisplayHelpCommand implements Command
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return CommandPhase.PRE_CONFIGURATION;
     }
 }

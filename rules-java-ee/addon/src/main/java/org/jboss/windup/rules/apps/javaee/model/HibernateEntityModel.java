@@ -10,8 +10,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(HibernateEntityModel.TYPE)
-public interface HibernateEntityModel extends PersistenceEntityModel
-{
+public interface HibernateEntityModel extends PersistenceEntityModel {
     String TYPE = "HibernateEntityModel";
     String CATALOG_NAME = "catalogName";
     String SCHEMA_NAME = "schemaName";

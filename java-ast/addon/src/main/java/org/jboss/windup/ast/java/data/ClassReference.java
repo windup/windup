@@ -6,12 +6,10 @@ import java.util.Objects;
  * Contains a name that has been referenced by the Java source file. This can include the qualified name (for example, com.example.data.Foo) as well
  * as information about the reference. Information includes indicating where the reference was found within the file (line, column, and length) as
  * well as how it was used (import, method call, etc).
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ClassReference
-{
+public class ClassReference {
     private final String qualifiedName;
     private final String packageName;
     private final String className;
@@ -27,9 +25,8 @@ public class ClassReference
      * Creates the {@link ClassReference} with the given qualfiedName, location, lineNumber, column, and length.
      */
     public ClassReference(String qualifiedName, String packageName, String className, String methodName, ResolutionStatus resolutionStatus,
-                TypeReferenceLocation location, int lineNumber,
-                int column, int length, String line)
-    {
+                          TypeReferenceLocation location, int lineNumber,
+                          int column, int length, String line) {
         this.qualifiedName = qualifiedName;
         this.packageName = packageName;
         this.className = className;
@@ -45,72 +42,63 @@ public class ClassReference
     /**
      * Contains the raw text represented by this reference (class names are not resolved).
      */
-    public String getLine()
-    {
+    public String getLine() {
         return line;
     }
 
     /**
      * Contains the raw text represented by this reference (class names are not resolved).
      */
-    public void setLine(String line)
-    {
+    public void setLine(String line) {
         this.line = line;
     }
 
     /**
      * Gets the fully qualified name of the Java element that was referenced.
      */
-    public String getQualifiedName()
-    {
+    public String getQualifiedName() {
         return qualifiedName;
     }
 
     /**
      * Gets the package name (eg, com.example.foo).
      */
-    public String getPackageName()
-    {
+    public String getPackageName() {
         return packageName;
     }
 
     /**
      * Gets the simple class name (eg, Foo).
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
     /**
      * Gets the method name (eg, println).
      */
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return methodName;
     }
 
     /**
      * Gets the line number where this reference was located.
      */
-    public int getLineNumber()
-    {
+    public int getLineNumber() {
         return lineNumber;
     }
 
     /**
      * Gets the column where this reference was located.
      */
-    public int getColumn()
-    {
+    public int getColumn() {
         return column;
     }
 
     /**
      * Gets the length of the reference.
      */
-    public int getLength()
-    {
+    public int getLength() {
         return length;
     }
 
@@ -118,19 +106,16 @@ public class ClassReference
      * The {@link TypeReferenceLocation} indicates how this reference was used within the file. For example, this can indicate whether it was used as
      * an annotation or a method call.
      */
-    public TypeReferenceLocation getLocation()
-    {
+    public TypeReferenceLocation getLocation() {
         return location;
     }
 
-    public ResolutionStatus getResolutionStatus()
-    {
+    public ResolutionStatus getResolutionStatus() {
         return resolutionStatus;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -159,8 +144,7 @@ public class ClassReference
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = qualifiedName != null ? qualifiedName.hashCode() : 0;
         result = 31 * result + (resolutionStatus != null ? resolutionStatus.hashCode() : 0);
         result = 31 * result + lineNumber;
@@ -172,18 +156,17 @@ public class ClassReference
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ClassReference{" +
-                    "qualifiedName='" + qualifiedName + '\'' +
-                    ", packageName='" + packageName + '\'' +
-                    ", className='" + className + '\'' +
-                    ", resolutionStatus=" + resolutionStatus +
-                    ", lineNumber=" + lineNumber +
-                    ", column=" + column +
-                    ", length=" + length +
-                    ", location=" + location +
-                    ", line='" + line + '\'' +
-                    '}';
+                "qualifiedName='" + qualifiedName + '\'' +
+                ", packageName='" + packageName + '\'' +
+                ", className='" + className + '\'' +
+                ", resolutionStatus=" + resolutionStatus +
+                ", lineNumber=" + lineNumber +
+                ", column=" + column +
+                ", length=" + length +
+                ", location=" + location +
+                ", line='" + line + '\'' +
+                '}';
     }
 }

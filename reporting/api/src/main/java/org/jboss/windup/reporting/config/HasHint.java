@@ -21,36 +21,27 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * An implementation of {@link AbstractIterationFilter} to filter models based on the existence of a
  * {@link ClassificationModel} attached to the given payload.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implements Parameterized
-{
+public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implements Parameterized {
     private RegexParameterizedPatternParser messagePattern;
 
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload) {
         ExecutionStatistics.get().begin(HasHint.class.getCanonicalName());
-        try
-        {
+        try {
             boolean result = false;
             InlineHintService service = new InlineHintService(event.getGraphContext());
 
-            if (payload instanceof FileReferenceModel)
-            {
+            if (payload instanceof FileReferenceModel) {
                 Iterable<InlineHintModel> hints = service.getHintsForFileReference((FileReferenceModel) payload);
-                if (messagePattern == null)
-                {
+                if (messagePattern == null) {
                     result = hints.iterator().hasNext();
-                }
-                else
-                {
-                    for (InlineHintModel c : hints)
-                    {
+                } else {
+                    for (InlineHintModel c : hints) {
                         ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                        if (parseResult.matches() && parseResult.isValid(event, context))
-                        {
+                        if (parseResult.matches() && parseResult.isValid(event, context)) {
                             result = true;
                             break;
                         }
@@ -58,20 +49,14 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
                 }
             }
 
-            if (payload instanceof FileModel)
-            {
+            if (payload instanceof FileModel) {
                 Iterable<InlineHintModel> hints = service.getHintsForFile((FileModel) payload);
-                if (messagePattern == null)
-                {
+                if (messagePattern == null) {
                     result = hints.iterator().hasNext();
-                }
-                else
-                {
-                    for (InlineHintModel c : hints)
-                    {
+                } else {
+                    for (InlineHintModel c : hints) {
                         ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                        if (parseResult.matches() && parseResult.isValid(event, context))
-                        {
+                        if (parseResult.matches() && parseResult.isValid(event, context)) {
                             result = true;
                             break;
                         }
@@ -79,9 +64,7 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
                 }
             }
             return result;
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end(HasHint.class.getCanonicalName());
         }
     }
@@ -89,8 +72,7 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
     /**
      * Get the pattern for which this filter should match. (May be <code>null</code>.)
      */
-    public String getMessagePattern()
-    {
+    public String getMessagePattern() {
         if (messagePattern != null)
             return messagePattern.getPattern();
         else
@@ -100,15 +82,13 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
     /**
      * Set the pattern for which this filter should match. (May be <code>null</code>.)
      */
-    public void setMessagePattern(String titlePattern)
-    {
+    public void setMessagePattern(String titlePattern) {
         if (titlePattern != null)
             this.messagePattern = new RegexParameterizedPatternParser(titlePattern);
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (messagePattern != null)
             result.addAll(messagePattern.getRequiredParameterNames());
@@ -116,8 +96,7 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         if (messagePattern != null)
             messagePattern.setParameterStore(store);
     }

@@ -13,15 +13,14 @@ import org.xml.sax.ext.EntityResolver2;
 
 /**
  * This is an {@link EntityResolver2} that has been enhanced to support URL redirection.
- *
+ * <p>
  * It also use local stored DTDs/XSDs as possible not to slow down validation.
  * see https://www.w3.org/blog/systeam/2008/02/08/w3c_s_excessive_dtd_traffic/
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
-public class EnhancedEntityResolver2 implements EntityResolver2
-{
+public class EnhancedEntityResolver2 implements EntityResolver2 {
     private static final Logger LOG = Logger.getLogger(EnhancedEntityResolver2.class.getName());
 
     /*
@@ -35,31 +34,26 @@ public class EnhancedEntityResolver2 implements EntityResolver2
 
     private boolean onlineMode;
 
-    public EnhancedEntityResolver2(boolean onlineMode)
-    {
+    public EnhancedEntityResolver2(boolean onlineMode) {
         this.onlineMode = onlineMode;
     }
 
     @Override
-    public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException
-    {
+    public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException {
         return null;
     }
 
     @Override
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
-    {
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         return resolveEntity(null, publicId, null, systemId);
     }
 
     @Override
-    public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException
-    {
+    public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException {
         LOG.fine("Entity for resolving " + publicId + " " + systemId);
         // try to resolve first from catalog if it doesn't find entity continue with other ways
         InputSource inputSource = catalogResolver.resolveEntity(publicId, systemId);
-        if (inputSource != null)
-        {
+        if (inputSource != null) {
             LOG.fine("Resolved entity through catalog.");
             return inputSource;
         }
@@ -75,11 +69,10 @@ public class EnhancedEntityResolver2 implements EntityResolver2
         if (!(connection instanceof HttpURLConnection))
             return new InputSource(connection.getInputStream());
 
-        HttpURLConnection httpConnection = (HttpURLConnection)connection;
+        HttpURLConnection httpConnection = (HttpURLConnection) connection;
 
         int status = httpConnection.getResponseCode();
-        for (int i = 0; i < 4 && isRedirect(status); i++)
-        {
+        for (int i = 0; i < 4 && isRedirect(status); i++) {
             String newUrl = httpConnection.getHeaderField("Location");
             httpConnection = (HttpURLConnection) new URL(newUrl).openConnection();
             httpConnection.setConnectTimeout(10000);
@@ -94,8 +87,7 @@ public class EnhancedEntityResolver2 implements EntityResolver2
 
     }
 
-    private boolean isRedirect(int status)
-    {
+    private boolean isRedirect(int status) {
         return (status != HttpURLConnection.HTTP_OK) &&
                 (status == HttpURLConnection.HTTP_MOVED_TEMP
                         || status == HttpURLConnection.HTTP_MOVED_PERM

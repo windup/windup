@@ -23,22 +23,19 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = ClassifyFileTypesPhase.class, perform = "Discover Properties Files")
-public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
-{
+public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel> {
     private static final String TECH_TAG = "Properties";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public ConditionBuilder when()
-    {
+    public ConditionBuilder when() {
         return Query.fromType(FileModel.class).withProperty(FileModel.IS_DIRECTORY, false)
-                    .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
-                                ".*\\.properties$");
+                .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX,
+                        ".*\\.properties$");
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
-    {
-        if (new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, payload))
+    public void perform(GraphRewrite event, EvaluationContext context, FileModel payload) {
+        if (new WindupJavaConfigurationService(event.getGraphContext()).checkRegexAndIgnore(event, payload))
             return;
 
         ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");

@@ -24,16 +24,14 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author Ondrej Zizka
  */
-public class XmlFileService extends GraphService<XmlFileModel>
-{
+public class XmlFileService extends GraphService<XmlFileModel> {
     private static final Logger LOG = Logger.getLogger(XmlFileService.class.getName());
 
     public final static String UNPARSEABLE_XML_CLASSIFICATION = "Unparsable XML File";
     public final static String UNPARSEABLE_XML_DESCRIPTION = "This XML file could not be parsed.";
 
 
-    public XmlFileService(GraphContext ctx)
-    {
+    public XmlFileService(GraphContext ctx) {
         super(ctx, XmlFileModel.class);
     }
 
@@ -44,14 +42,10 @@ public class XmlFileService extends GraphService<XmlFileModel>
      *
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
-    public Document loadDocumentQuiet(GraphRewrite event, EvaluationContext context, XmlFileModel model)
-    {
-        try
-        {
+    public Document loadDocumentQuiet(GraphRewrite event, EvaluationContext context, XmlFileModel model) {
+        try {
             return loadDocument(event, context, model);
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             return null;
         }
     }
@@ -63,10 +57,8 @@ public class XmlFileService extends GraphService<XmlFileModel>
      *
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
-    public Document loadDocument(GraphRewrite event, EvaluationContext context, XmlFileModel model) throws WindupException
-    {
-        if (model.asFile().length() == 0)
-        {
+    public Document loadDocument(GraphRewrite event, EvaluationContext context, XmlFileModel model) throws WindupException {
+        if (model.asFile().length() == 0) {
             final String msg = "Failed to parse, XML file is empty: " + model.getFilePath();
             LOG.log(Level.WARNING, msg);
             model.setParseError(msg);
@@ -76,8 +68,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
         ClassificationService classificationService = new ClassificationService(getGraphContext());
 
         XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(model);
-        if (cacheResult.isParseFailure())
-        {
+        if (cacheResult.isParseFailure()) {
             final String msg = "Not loading XML file '" + model.getFilePath() + "' due to previous parse failure: " + model.getParseError();
             LOG.log(Level.FINE, msg);
             //model.setParseError(msg);
@@ -89,13 +80,10 @@ public class XmlFileService extends GraphService<XmlFileModel>
             return document;
 
         // Not yet cached - load, store in cache and return.
-        try (InputStream is = model.asInputStream())
-        {
+        try (InputStream is = model.asInputStream()) {
             document = LocationAwareXmlReader.readXML(is);
             XMLDocumentCache.cache(model, document);
-        }
-        catch (SAXException | IOException e)
-        {
+        } catch (SAXException | IOException e) {
             XMLDocumentCache.cacheParseFailure(model);
             document = null;
             final String message = "Failed to parse XML file: " + model.getFilePath() + ", due to: " + e.getMessage();

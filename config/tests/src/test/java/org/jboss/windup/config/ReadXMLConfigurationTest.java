@@ -23,16 +23,14 @@ import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
-public class ReadXMLConfigurationTest
-{
+public class ReadXMLConfigurationTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -40,11 +38,9 @@ public class ReadXMLConfigurationTest
     private GraphContextFactory factory;
 
     @Test
-    public void testRunWindup() throws Exception
-    {
+    public void testRunWindup() throws Exception {
         final Path folder = File.createTempFile("windupGraph", "").toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
             RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
             final ConfigurationLoader loader = ConfigurationLoader.create(ruleLoaderContext);
             final Configuration configuration = loader.loadConfiguration(ruleLoaderContext);

@@ -12,8 +12,7 @@ import java.util.List;
  * Contains the global configuration for the current Windup execution.
  */
 @TypeValue(WindupConfigurationModel.TYPE)
-public interface WindupConfigurationModel extends WindupVertexFrame
-{
+public interface WindupConfigurationModel extends WindupVertexFrame {
     String TYPE = "WindupConfigurationModel";
 
     String INPUT_PATH = "inputPath";
@@ -27,6 +26,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String CSV_MODE = "csv";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
     String SKIP_REPORTS_RENDERING = "skipReports";
+    String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
 
     /**
      * The input path to scan
@@ -164,8 +164,13 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     /**
      * Indicate whether skip all reports rendering
-     *
      */
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
+
+    @Property(ANALYZE_KNOWN_LIBRARIES)
+    Boolean isAnalyzeKnownLibraries();
+
+    @Property(ANALYZE_KNOWN_LIBRARIES)
+    void setAnalyzeKnownLibraries(Boolean analyzeKnownLibraries);
 }

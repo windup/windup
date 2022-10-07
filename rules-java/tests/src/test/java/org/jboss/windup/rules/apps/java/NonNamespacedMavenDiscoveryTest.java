@@ -39,8 +39,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class NonNamespacedMavenDiscoveryTest
-{
+public class NonNamespacedMavenDiscoveryTest {
     @Inject
     private WindupProcessor processor;
     @Inject
@@ -55,20 +54,17 @@ public class NonNamespacedMavenDiscoveryTest
             @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Test
-    public void testMetadataFound() throws Exception
-    {
+    public void testMetadataFound() throws Exception {
         String inputPath = "src/test/resources/NonNamespacedMavenDiscoveryTest";
         final Path outputPath = getDefaultPath();
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-        try (GraphContext context = factory.create(outputPath, true))
-        {
+        try (GraphContext context = factory.create(outputPath, true)) {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
@@ -85,7 +81,7 @@ public class NonNamespacedMavenDiscoveryTest
             ProjectModel project = WindupConfigurationService.getConfigurationModel(context).getInputPaths().iterator().next().getProjectModel();
             Assert.assertTrue("Maven Project Expected", project instanceof MavenProjectModel);
 
-            MavenProjectModel mavenProject = (MavenProjectModel)project;
+            MavenProjectModel mavenProject = (MavenProjectModel) project;
             Assert.assertEquals("testgroupid", mavenProject.getGroupId());
             Assert.assertEquals("testartifactid", mavenProject.getArtifactId());
             Assert.assertEquals("testname", mavenProject.getName());
@@ -95,14 +91,13 @@ public class NonNamespacedMavenDiscoveryTest
             Assert.assertEquals(1, Iterables.size(mavenProject.getDependencies()));
             ProjectDependencyModel dependency = mavenProject.getDependencies().iterator().next();
 
-            Assert.assertEquals("testdependency-groupid", ((MavenProjectModel)dependency.getProjectModel()).getGroupId());
-            Assert.assertEquals("testdependency-artifactid", ((MavenProjectModel)dependency.getProjectModel()).getArtifactId());
+            Assert.assertEquals("testdependency-groupid", ((MavenProjectModel) dependency.getProjectModel()).getGroupId());
+            Assert.assertEquals("testdependency-artifactid", ((MavenProjectModel) dependency.getProjectModel()).getArtifactId());
             Assert.assertEquals("1.4", dependency.getProjectModel().getVersion());
         }
     }
 
-    private Path getDefaultPath()
-    {
+    private Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
                 .resolve("windupgraph_nonnamespacedmavendisc_" + RandomStringUtils.randomAlphanumeric(6));
     }

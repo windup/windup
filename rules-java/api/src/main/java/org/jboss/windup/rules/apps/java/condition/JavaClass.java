@@ -63,8 +63,7 @@ import java.util.regex.Pattern;
  * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
  */
 public class JavaClass extends ParameterizedGraphCondition implements JavaClassBuilder, JavaClassBuilderAt,
-            JavaClassBuilderInFile, JavaClassBuilderLineMatch
-{
+        JavaClassBuilderInFile, JavaClassBuilderLineMatch {
     private static final AtomicInteger numberCreated = new AtomicInteger(0);
 
     private final String uniqueID;
@@ -76,8 +75,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     private RegexParameterizedPatternParser lineMatchPattern;
     private RegexParameterizedPatternParser typeFilterPattern;
 
-    private JavaClass(String referencePattern)
-    {
+    private JavaClass(String referencePattern) {
         this.referencePattern = new RegexParameterizedPatternParser(referencePattern);
         this.uniqueID = numberCreated.incrementAndGet() + "_JavaClass";
     }
@@ -85,37 +83,32 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     /**
      * Create a new {@link JavaClass} {@link Condition} based upon the provided Java regular expression.
      */
-    public static JavaClassBuilder references(String regex)
-    {
+    public static JavaClassBuilder references(String regex) {
         return new JavaClass(regex);
     }
 
     /**
      * Create a new {@link JavaClass} {@link Condition} based upon the provided Java regular expression.
      */
-    public static JavaClassBuilderReferences from(String inputVarName)
-    {
+    public static JavaClassBuilderReferences from(String inputVarName) {
         return new JavaClassBuilderReferences(inputVarName);
     }
 
     /**
      * Specify a Java type pattern pattern for which this condition should match.
      */
-    public JavaClassBuilderInFile inType(String typeFilterPattern)
-    {
+    public JavaClassBuilderInFile inType(String typeFilterPattern) {
         this.typeFilterPattern = new RegexParameterizedPatternParser(typeFilterPattern);
         return this;
     }
 
-    public JavaClassBuilderLineMatch matchesSource(String lineMatchRegex)
-    {
+    public JavaClassBuilderLineMatch matchesSource(String lineMatchRegex) {
         this.lineMatchPattern = new RegexParameterizedPatternParser(lineMatchRegex);
         return this;
     }
 
     @Override
-    public JavaClassBuilderAt annotationMatches(String element, AnnotationCondition condition)
-    {
+    public JavaClassBuilderAt annotationMatches(String element, AnnotationCondition condition) {
         if (this.annotationCondition == null)
             this.annotationCondition = new AnnotationTypeCondition("{*}");
         this.annotationCondition.addCondition(element, condition);
@@ -123,8 +116,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     }
 
     @Override
-    public JavaClassBuilderAt annotationMatches(AnnotationTypeCondition condition)
-    {
+    public JavaClassBuilderAt annotationMatches(AnnotationTypeCondition condition) {
         this.additionalAnnotationConditions.add(condition);
         return this;
     }
@@ -133,8 +125,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
      * Only match if the TypeReference is at the specified location within the file.
      */
     @Override
-    public JavaClassBuilderAt at(TypeReferenceLocation... locations)
-    {
+    public JavaClassBuilderAt at(TypeReferenceLocation... locations) {
         if (locations != null)
             this.locations = Arrays.asList(locations);
         return this;
@@ -144,8 +135,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
      * Optionally specify the variable name to use for the output of this condition
      */
     @Override
-    public ConditionBuilder as(String variable)
-    {
+    public ConditionBuilder as(String variable) {
         Assert.notNull(variable, "Variable name must not be null.");
         this.setOutputVariablesName(variable);
         return this;
@@ -154,30 +144,25 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     @Override
     @SuppressWarnings("unchecked")
     protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context,
-                final FrameCreationContext frameCreationContext)
-    {
-        return evaluate(event, context, new EvaluationStrategy()
-        {
+                                                     final FrameCreationContext frameCreationContext) {
+        return evaluate(event, context, new EvaluationStrategy() {
 
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
             @SuppressWarnings("rawtypes")
-            public void modelMatched()
-            {
+            public void modelMatched() {
                 this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 
             @Override
-            public void modelSubmitted(WindupVertexFrame model)
-            {
+            public void modelSubmitted(WindupVertexFrame model) {
                 Maps.addListValue(this.variables, getVarname(), model);
             }
 
             @Override
-            public void modelSubmissionRejected()
-            {
+            public void modelSubmissionRejected() {
                 frameCreationContext.rollback();
             }
         });
@@ -185,8 +170,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
     @Override
     protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context,
-                final FrameContext frameContext)
-    {
+                                             final FrameContext frameContext) {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
         if (result == false)
@@ -195,10 +179,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         return result;
     }
 
-    private boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy)
-    {
-        try
-        {
+    private boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy) {
+        try {
             ExecutionStatistics.get().begin("JavaClass.evaluate");
 
             final ParameterStore store = DefaultParameterStore.getInstance(context);
@@ -213,21 +195,17 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             initialQueryID = "iqi." + UUID.randomUUID().toString();
 
             //prepare initialQueryID
-            if (!StringUtils.isBlank(getInputVariablesName()))
-            {
+            if (!StringUtils.isBlank(getInputVariablesName())) {
                 QueryBuilderFrom fromQuery = Query.from(getInputVariablesName());
-                QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion()
-                {
-                    @Override public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
-                    {
+                QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion() {
+                    @Override
+                    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                         pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
-                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textRegex(compiledPattern.toString()));
+                                .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textRegex(compiledPattern.toString()));
                     }
                 });
-                piped.as(initialQueryID).evaluate(event,context);
-            }
-            else
-            {
+                piped.as(initialQueryID).evaluate(event, context);
+            } else {
                 GraphTraversal<Vertex, Vertex> resolvedTextSearch = new GraphTraversalSource(event.getGraphContext().getGraph()).V();
                 resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textRegex(TitanUtil.titanifyRegex(compiledPattern.pattern())));
 
@@ -235,22 +213,20 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                     return false;
 
                 Variables.instance(event).setVariable(
-                            initialQueryID,
-                            new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch.toList(),
-                                        JavaTypeReferenceModel.class));
+                        initialQueryID,
+                        new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch.toList(),
+                                JavaTypeReferenceModel.class));
             }
             query = Query.from(initialQueryID);
 
-            if (lineMatchPattern != null)
-            {
+            if (lineMatchPattern != null) {
                 final Pattern compiledLineMatchPattern = lineMatchPattern.getCompiledPattern(store);
                 query.withProperty(JavaTypeReferenceModel.SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, compiledLineMatchPattern.pattern());
             }
             String uuid = UUID.randomUUID().toString();
             query.as(uuid);
 
-            if (typeFilterPattern != null)
-            {
+            if (typeFilterPattern != null) {
                 Pattern compiledTypeFilterPattern = typeFilterPattern.getCompiledPattern(store);
                 query.piped(new TypeFilterCriterion(compiledTypeFilterPattern));
             }
@@ -258,11 +234,9 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
 
             List<WindupVertexFrame> results = new ArrayList<>();
-            if (query.evaluate(event, context))
-            {
+            if (query.evaluate(event, context)) {
                 Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
-                for (WindupVertexFrame frame : frames)
-                {
+                for (WindupVertexFrame frame : frames) {
                     FileModel fileModel = ((FileReferenceModel) frame).getFile();
                     Iterable<JavaClassModel> javaClasses = null;
                     if (fileModel instanceof AbstractJavaSourceModel)
@@ -270,34 +244,26 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                     else if (fileModel instanceof JavaClassFileModel)
                         javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
 
-                    for (JavaClassModel javaClassModel : javaClasses)
-                    {
+                    for (JavaClassModel javaClassModel : javaClasses) {
                         if (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                    .getQualifiedName()).matches())
-                        {
+                                .getQualifiedName()).matches()) {
                             JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
                             ParameterizedPatternResult referenceResult = referencePattern.parse(model
-                                        .getResolvedSourceSnippit());
-                            if (referenceResult.matches())
-                            {
+                                    .getResolvedSourceSnippit());
+                            if (referenceResult.matches()) {
                                 evaluationStrategy.modelMatched();
 
                                 if (referenceResult.submit(event, context)
-                                            && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                                        .getQualifiedName()).submit(event, context)))
-                                {
+                                        && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
+                                        .getQualifiedName()).submit(event, context))) {
                                     boolean annotationMatched = matchAnnotationConditions(event, context, evaluationStrategy, model);
-                                    if (!annotationMatched)
-                                    {
+                                    if (!annotationMatched) {
                                         evaluationStrategy.modelSubmissionRejected();
-                                    } else
-                                    {
+                                    } else {
                                         results.add(model);
                                         evaluationStrategy.modelSubmitted(model);
                                     }
-                                }
-                                else
-                                {
+                                } else {
                                     evaluationStrategy.modelSubmissionRejected();
                                 }
                             }
@@ -312,40 +278,32 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 return !results.isEmpty();
             }
             return false;
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end("JavaClass.evaluate");
         }
     }
 
-    private boolean matchAnnotationConditions(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy, JavaTypeReferenceModel model)
-    {
+    private boolean matchAnnotationConditions(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy, JavaTypeReferenceModel model) {
         boolean annotationMatched = true;
-        if (this.annotationCondition != null)
-        {
+        if (this.annotationCondition != null) {
             annotationMatched = model instanceof JavaAnnotationTypeValueModel;
 
-            annotationMatched &= annotationCondition.evaluate(event, context, evaluationStrategy, (JavaAnnotationTypeValueModel)model);
+            annotationMatched &= annotationCondition.evaluate(event, context, evaluationStrategy, (JavaAnnotationTypeValueModel) model);
         }
 
-        if (!additionalAnnotationConditions.isEmpty())
-        {
+        if (!additionalAnnotationConditions.isEmpty()) {
             JavaTypeReferenceModel referencedTypeModel;
             if (model.getReferenceLocation() == TypeReferenceLocation.ANNOTATION)
-                referencedTypeModel = ((JavaAnnotationTypeReferenceModel)model).getAnnotatedType();
+                referencedTypeModel = ((JavaAnnotationTypeReferenceModel) model).getAnnotatedType();
             else
                 referencedTypeModel = model;
 
             // iterate the conditions and make sure there is at least one matching annotation for each
-            for (AnnotationCondition condition : this.additionalAnnotationConditions)
-            {
+            for (AnnotationCondition condition : this.additionalAnnotationConditions) {
                 boolean oneMatches = false;
                 // now get the annotations
-                for (JavaAnnotationTypeReferenceModel annotationModel : referencedTypeModel.getAnnotations())
-                {
-                    if (condition.evaluate(event, context, evaluationStrategy, annotationModel))
-                    {
+                for (JavaAnnotationTypeReferenceModel annotationModel : referencedTypeModel.getAnnotations()) {
+                    if (condition.evaluate(event, context, evaluationStrategy, annotationModel)) {
                         oneMatches = true;
                     }
                 }
@@ -358,55 +316,54 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         return annotationMatched;
     }
 
-    private final class TypeFilterCriterion implements QueryGremlinCriterion
-    {
+    private final class TypeFilterCriterion implements QueryGremlinCriterion {
         private final Pattern compiledTypeFilterPattern;
 
-        private TypeFilterCriterion(Pattern compiledTypeFilterPattern)
-        {
+        private TypeFilterCriterion(Pattern compiledTypeFilterPattern) {
             this.compiledTypeFilterPattern = compiledTypeFilterPattern;
         }
 
         @Override
-        public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
-        {
+        public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
             pipeline.as("result")
-                        .out(FileReferenceModel.FILE_MODEL)
-                        .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
-                        .has(JavaClassModel.QUALIFIED_NAME,
+                    .out(FileReferenceModel.FILE_MODEL)
+                    .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
+                    .has(JavaClassModel.QUALIFIED_NAME,
                             Text.textRegex(compiledTypeFilterPattern.pattern()))
-                        .select("result");
+                    .select("result");
         }
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>(referencePattern.getRequiredParameterNames());
         if (typeFilterPattern != null)
             result.addAll(typeFilterPattern.getRequiredParameterNames());
         if (lineMatchPattern != null)
             result.addAll(lineMatchPattern.getRequiredParameterNames());
+        if (annotationCondition != null)
+            result.addAll(annotationCondition.getRequiredParameterNames());
+        if (additionalAnnotationConditions != null && !additionalAnnotationConditions.isEmpty()) {
+            for (AnnotationCondition condition : additionalAnnotationConditions) {
+                result.addAll(condition.getRequiredParameterNames());
+            }
+        }
         return result;
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
-        if (locations != null && !locations.isEmpty())
-        {
+    public void setParameterStore(ParameterStore store) {
+        if (locations != null && !locations.isEmpty()) {
             TypeInterestFactory.registerInterest(
-                        this.uniqueID,
-                        referencePattern.getCompiledPattern(store).pattern(),
-                        referencePattern.getPattern(),
-                        locations);
-        }
-        else
-        {
+                    this.uniqueID,
+                    referencePattern.getCompiledPattern(store).pattern(),
+                    referencePattern.getPattern(),
+                    locations);
+        } else {
             TypeInterestFactory.registerInterest(
-                        this.uniqueID,
-                        referencePattern.getCompiledPattern(store).pattern(),
-                        referencePattern.getPattern());
+                    this.uniqueID,
+                    referencePattern.getCompiledPattern(store).pattern(),
+                    referencePattern.getPattern());
         }
 
         referencePattern.setParameterStore(store);
@@ -415,37 +372,30 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     }
 
     @Override
-    public String getVarname()
-    {
+    public String getVarname() {
         return getOutputVariablesName();
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("JavaClass");
-        if (typeFilterPattern != null)
-        {
+        if (typeFilterPattern != null) {
             builder.append(".inType(" + typeFilterPattern + ")");
         }
-        if (referencePattern != null)
-        {
+        if (referencePattern != null) {
             builder.append(".references(" + referencePattern + ")");
         }
-        if (!locations.isEmpty())
-        {
+        if (!locations.isEmpty()) {
             builder.append(".at(" + locations + ")");
         }
 
-        if (annotationCondition != null)
-        {
+        if (annotationCondition != null) {
             builder.append(".annotationConditions(");
             builder.append(annotationCondition.toString());
             builder.append(")");
         }
 
-        for (AnnotationTypeCondition condition : this.additionalAnnotationConditions)
-        {
+        for (AnnotationTypeCondition condition : this.additionalAnnotationConditions) {
             builder.append(".annotationConditions(");
             builder.append(condition.toString());
             builder.append(")");
@@ -455,23 +405,19 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         return builder.toString();
     }
 
-    public RegexParameterizedPatternParser getReferences()
-    {
+    public RegexParameterizedPatternParser getReferences() {
         return referencePattern;
     }
 
-    public RegexParameterizedPatternParser getMatchesSource()
-    {
+    public RegexParameterizedPatternParser getMatchesSource() {
         return lineMatchPattern;
     }
 
-    public List<TypeReferenceLocation> getLocations()
-    {
+    public List<TypeReferenceLocation> getLocations() {
         return locations;
     }
 
-    public RegexParameterizedPatternParser getTypeFilterRegex()
-    {
+    public RegexParameterizedPatternParser getTypeFilterRegex() {
         return typeFilterPattern;
     }
 

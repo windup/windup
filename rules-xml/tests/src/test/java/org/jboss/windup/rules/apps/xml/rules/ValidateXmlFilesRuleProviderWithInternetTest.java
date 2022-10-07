@@ -36,25 +36,23 @@ import java.util.List;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RunWith(Arquillian.class)
-public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdValidationTest
-{
+public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdValidationTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addClass(AbstractXsdValidationTest.class)
-                    .addBeansXML();
+                .addClass(AbstractXsdValidationTest.class)
+                .addBeansXML();
     }
 
     @Inject
@@ -67,10 +65,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     private ValidateXmlFilesRuleProvider validateXmlRuleProvider;
 
     @Test
-    public void testNotValidXml() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testNotValidXml() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
 
@@ -78,7 +74,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(1, Iterables.size(classifications));
 
@@ -92,10 +88,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     }
 
     @Test
-    public void testNotValidXsdUrlAttribute() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testNotValidXsdUrlAttribute() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XSD_SCHEMA_URL);
 
@@ -103,17 +97,15 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(1, Iterables.size(classifications));
 
             InlineHintService hintService = new InlineHintService(context);
             Iterable<InlineHintModel> hints = hintService.findAll();
             Assert.assertEquals(2, Iterables.size(hints));
-            for (InlineHintModel hint : hints)
-            {
-                switch (hint.getTitle())
-                {
+            for (InlineHintModel hint : hints) {
+                switch (hint.getTitle()) {
                     case XmlFileModel.XSD_URL_NOT_VALID:
                         Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID, hint.getTitle());
                         Assert.assertEquals(1, hint.getEffort());
@@ -129,10 +121,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     }
 
     @Test
-    public void testWithoutXsdUrlAttribute() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testWithoutXsdUrlAttribute() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             addFileModel(context, NO_XSD_SCHEMA_URL);
             initOnlineWindupConfiguration(context);
 
@@ -140,7 +130,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(0, Iterables.size(classifications));
         }
@@ -148,10 +138,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
 
     @Test
     @Ignore // Ignoring for now as we are not currently running validation in offline mode
-    public void testNotValidXmlInOfflineMode() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testNotValidXmlInOfflineMode() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             initOfflineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
 
@@ -159,17 +147,15 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
+                    ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(1, Iterables.size(classifications));
         }
     }
 
     @Test
-    public void testUnparsableUrl() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testUnparsableUrl() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             initOnlineWindupConfiguration(context);
             addFileModel(context, URL_NOT_PARSABLE);
 
@@ -177,14 +163,12 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context,
-                        InlineHintModel.class);
+                    InlineHintModel.class);
             Iterable<InlineHintModel> hints = hintService.findAll();
             Assert.assertEquals(2, Iterables.size(hints));
 
-            for (InlineHintModel hint : hints)
-            {
-                switch (hint.getTitle())
-                {
+            for (InlineHintModel hint : hints) {
+                switch (hint.getTitle()) {
                     case XmlFileModel.XSD_URL_NOT_VALID:
                         break;
                     case XmlFileModel.NOT_VALID_XML:
@@ -199,10 +183,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
 
 
     @Test
-    public void testMultipleSchemas() throws Exception
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testMultipleSchemas() throws Exception {
+        try (GraphContext context = factory.create(true)) {
             initOnlineWindupConfiguration(context);
             addFileModel(context, URL_MULTIPLE_SCHEMAS);
 

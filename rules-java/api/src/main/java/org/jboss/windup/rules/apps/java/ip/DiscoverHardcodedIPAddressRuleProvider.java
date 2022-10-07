@@ -24,6 +24,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.condition.FileContent;
@@ -41,127 +42,109 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 @RuleMetadata(phase = MigrationRulesPhase.class, tags = {"cloud-readiness"}, targetTechnologies = {@Technology(id = "cloud-readiness")})
-public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
-{
+public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider {
     private static final String IP_PATTERN = "(?<![\\w./-])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.-])";
     private static final Logger LOG = Logger.getLogger(DiscoverHardcodedIPAddressRuleProvider.class.getName());
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
         return ConfigurationBuilder
-        .begin()
-        .addRule()
-        // for all files ending in java, properties, and xml,
-        // query for the regular expression {ip}
-        .when(FileContent.matches("{ip}").inFileNamed("{*}{type}"))
-        .perform(new AbstractIterationOperation<FileLocationModel>()
-        {
-            // when a result is found, create an inline hint.
-            // reference the inline hint with the hardcoded ip marker so that we can query for it
-            // in the hardcoded ip report.
-            public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-            {
-                // for all file location models that match the regular expression in the where clause, add
-                // the IP Location Model to the graph
-                if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
-                {
-                    // if the file is a property file, make sure the line isn't commented out.
-                    if (ignoreLine(event.getGraphContext(), payload))
-                    {
-                        return;
+                .begin()
+                .addRule()
+                // for all files ending in java, properties, and xml,
+                // query for the regular expression {ip}
+                .when(FileContent.matches("{ip}").inFileNamed("{*}{type}"))
+                .perform(new AbstractIterationOperation<FileLocationModel>() {
+                    // when a result is found, create an inline hint.
+                    // reference the inline hint with the hardcoded ip marker so that we can query for it
+                    // in the hardcoded ip report.
+                    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
+                        // for all file location models that match the regular expression in the where clause, add
+                        // the IP Location Model to the graph
+                        if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit())) {
+                            // if the file is a property file, make sure the line isn't commented out.
+                            if (ignoreLine(event.getGraphContext(), payload)) {
+                                return;
+                            }
+
+                            if (payload.getFile() instanceof SourceFileModel)
+                                ((SourceFileModel) payload.getFile()).setGenerateSourceReport(true);
+
+                            HardcodedIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                                    HardcodedIPLocationModel.class);
+                            location.setRuleID(((Rule) context.get(Rule.class)).getId());
+                            location.setTitle("Hard-coded IP address");
+
+                            StringBuilder hintBody = new StringBuilder("**Hard-coded IP: ");
+                            hintBody.append(payload.getSourceSnippit());
+                            hintBody.append("**");
+
+                            hintBody.append(System.lineSeparator() + System.lineSeparator());
+                            hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
+                            location.setHint(hintBody.toString());
+                            //location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
+                            location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.CLOUD_MANDATORY));
+                            location.setEffort(1);
+                        }
                     }
-
-                    if (payload.getFile() instanceof SourceFileModel)
-                        ((SourceFileModel) payload.getFile()).setGenerateSourceReport(true);
-
-                    HardcodedIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
-                        HardcodedIPLocationModel.class);
-                    location.setRuleID(((Rule) context.get(Rule.class)).getId());
-                    location.setTitle("Hard-coded IP address");
-
-                    StringBuilder hintBody = new StringBuilder("**Hard-coded IP: ");
-                    hintBody.append(payload.getSourceSnippit());
-                    hintBody.append("**");
-
-                    hintBody.append(System.lineSeparator()+System.lineSeparator());
-                    hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
-                    location.setHint(hintBody.toString());
-                    //location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
-                    location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.CLOUD_MANDATORY));
-                    location.setEffort(1);
-                }
-            }
-        })
-        .where("ip").matches(IP_PATTERN)
-        .where("type").matches("\\.java|\\.properties|[^pom]\\.xml")
-        .withId(getClass().getSimpleName());
+                })
+                .where("ip").matches(IP_PATTERN)
+                .where("type").matches("\\.java|\\.properties|[^pom]\\.xml")
+                .withId(getClass().getSimpleName());
     }
 
-    private boolean ignoreLine(GraphContext context, FileLocationModel model)
-    {
+    private boolean ignoreLine(GraphContext context, FileLocationModel model) {
         boolean isPropertiesFile = model.getFile() instanceof PropertiesModel;
+        boolean isJavaFile = model.getFile() instanceof JavaSourceFileModel;
 
         int lineNumber = model.getLineNumber();
         LineIterator li = null;
-        try
-        {
+        try {
             li = FileUtils.lineIterator(model.getFile().asFile());
 
             int i = 0;
-            while (li.hasNext())
-            {
+            while (li.hasNext()) {
                 i++;
 
                 // read the line to memory only if it is the line of interest
-                if (i == lineNumber)
-                {
+                if (i == lineNumber) {
                     String line = StringUtils.trim(li.next());
                     // check that it isn't commented.
                     if (isPropertiesFile && StringUtils.startsWith(line, "#"))
                         return true;
-                    // WINDUP-808 - Remove matches with "version" or "revision" on the same line
+                        // WINDUP-808 - Remove matches with "version" or "revision" on the same line
                     else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
                         return true;
                     else if (isMavenVersionTag(context, model))
                         return true;
+                    else if (isJavaFile && StringUtils.startsWith(line, "//"))
+                        return true;
                     else
                         return false;
-                }
-                else if (i < lineNumber)
-                {
+                } else if (i < lineNumber) {
                     // seek
                     li.next();
-                }
-                else if (i > lineNumber)
-                {
+                } else if (i > lineNumber) {
                     LOG.warning("Did not find line: " + lineNumber + " in file: " + model.getFile().getFileName());
                     break;
                 }
             }
-        }
-        catch (IOException | RuntimeException e)
-        {
+        } catch (IOException | RuntimeException e) {
             LOG.log(Level.WARNING, "Exception reading properties from file: " + model.getFile().getFilePath(), e);
-        }
-        finally
-        {
+        } finally {
             LineIterator.closeQuietly(li);
         }
 
         return false;
     }
 
-    private boolean isMavenFile(GraphContext context, FileLocationModel model)
-    {
-        if (!(model.getFile() instanceof XmlFileModel))
-        {
+    private boolean isMavenFile(GraphContext context, FileLocationModel model) {
+        if (!(model.getFile() instanceof XmlFileModel)) {
             return false;
         }
 
         ClassificationService cs = new ClassificationService(context);
-        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM (pom.xml)"))
-        {
+        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM (pom.xml)")) {
             return true;
         }
         return false;
@@ -175,16 +158,12 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
      * @param model
      * @return
      */
-    private boolean isMavenVersionTag(GraphContext context, FileLocationModel model)
-    {
-        if (isMavenFile(context, model))
-        {
+    private boolean isMavenVersionTag(GraphContext context, FileLocationModel model) {
+        if (isMavenFile(context, model)) {
             Document doc = ((XmlFileModel) model.getFile()).asDocument();
-            for (Element elm : $(doc).find("version"))
-            {
+            for (Element elm : $(doc).find("version")) {
                 String text = StringUtils.trim($(elm).text());
-                if (StringUtils.equals(text, model.getSourceSnippit()))
-                {
+                if (StringUtils.equals(text, model.getSourceSnippit())) {
                     return true;
                 }
             }

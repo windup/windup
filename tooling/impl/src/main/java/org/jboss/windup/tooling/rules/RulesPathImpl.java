@@ -1,7 +1,6 @@
 package org.jboss.windup.tooling.rules;
 
-public class RulesPathImpl implements RulesPath
-{
+public class RulesPathImpl implements RulesPath {
     private static final long serialVersionUID = 1L;
 
     private int version;
@@ -12,73 +11,63 @@ public class RulesPathImpl implements RulesPath
 
     private RulesPathType rulesPathType;
 
-    public RulesPathImpl(String path, RulesPathType rulesPathType)
-    {
+    public RulesPathImpl(String path, RulesPathType rulesPathType) {
         this.path = path;
         this.rulesPathType = rulesPathType;
     }
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 
     /**
      * Contains the path to the rules directory.
      */
-    public String getPath()
-    {
+    public String getPath() {
         return path;
     }
 
     /**
      * Contains the path to the rules directory.
      */
-    public void setPath(String path)
-    {
+    public void setPath(String path) {
         this.path = path;
     }
 
     /**
      * Contains the type of rules path (for example, system provided vs user provided).
      */
-    public RulesPathType getRulesPathType()
-    {
+    public RulesPathType getRulesPathType() {
         return rulesPathType;
     }
 
     /**
      * Contains the type of rules path (for example, system provided vs user provided).
      */
-    public void setRulesPathType(RulesPathType rulesPathType)
-    {
+    public void setRulesPathType(RulesPathType rulesPathType) {
         this.rulesPathType = rulesPathType;
     }
 
     /**
      * Contains a load error if there were any issues loading rules from this path.
      */
-    public String getLoadError()
-    {
+    public String getLoadError() {
         return loadError;
     }
 
     /**
      * Contains a load error if there were any issues loading rules from this path.
      */
-    public void setLoadError(String loadError)
-    {
+    public void setLoadError(String loadError) {
         this.loadError = loadError;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof RulesPathImpl))
@@ -92,20 +81,18 @@ public class RulesPathImpl implements RulesPath
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = path != null ? path.hashCode() : 0;
         result = 31 * result + (rulesPathType != null ? rulesPathType.hashCode() : 0);
         return result;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RulesPath{" +
-                    ", version=" + version +
-                    ", path='" + path + '\'' +
-                    ", rulesPathType=" + rulesPathType +
-                    '}';
+                ", version=" + version +
+                ", path='" + path + '\'' +
+                ", rulesPathType=" + rulesPathType +
+                '}';
     }
 }

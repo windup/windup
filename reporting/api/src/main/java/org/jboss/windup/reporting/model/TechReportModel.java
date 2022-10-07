@@ -4,6 +4,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 
 import java.util.Map;
+
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.TypeValue;
 
@@ -11,8 +12,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(TechReportModel.TYPE)
-public interface TechReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
-{
+public interface TechReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel {
     String TYPE = "TechReportModel";
     String EDGE_TAG_SECTORS = "techreport-sectors:"; // Also a tag name.
     String EDGE_TAG_ROWS = "techreport-rows:";       // Also a tag name.

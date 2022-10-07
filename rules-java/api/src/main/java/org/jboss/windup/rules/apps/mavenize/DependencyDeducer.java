@@ -8,8 +8,7 @@ import org.jboss.windup.graph.model.ProjectModel;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public interface DependencyDeducer
-{
+public interface DependencyDeducer {
     void addAppropriateDependencies(ProjectModel projectModel, Pom modulePom);
 
 }

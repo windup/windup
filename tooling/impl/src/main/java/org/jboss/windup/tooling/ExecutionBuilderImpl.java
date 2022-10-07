@@ -39,14 +39,13 @@ import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.jboss.windup.tooling.rules.RuleProviderRegistryImpl;
 import org.jboss.windup.util.PathUtil;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ExecutionBuilderImpl implements ExecutionBuilder
-{
+public class ExecutionBuilderImpl implements ExecutionBuilder {
     @Inject
     private GraphContextFactory graphContextFactory;
 
@@ -81,8 +80,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private QuickfixService quickfixService;
 
     @Override
-    public void clear() throws RemoteException
-    {
+    public void clear() throws RemoteException {
         this.windupHome = null;
         this.progressMonitor = null;
         this.output = null;
@@ -96,22 +94,17 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     // TODO: Should we also do UnicastRemoteObject.unexportObject(this, true)?
     @Override
-    public void terminate() throws RemoteException
-    {
+    public void terminate() throws RemoteException {
         furnace.stop();
-        try
-        {
+        try {
             Thread.sleep(5000);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
         }
         Runtime.getRuntime().halt(1);
     }
 
     @Override
-    public void setWindupHome(String windupHome) throws RemoteException
-    {
+    public void setWindupHome(String windupHome) throws RemoteException {
         this.windupHome = windupHome;
     }
 
@@ -121,64 +114,54 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     }
 
     @Override
-    public void setOutput(String output) throws RemoteException
-    {
+    public void setOutput(String output) throws RemoteException {
         this.output = output;
     }
 
     @Override
-    public void ignore(String ignorePattern) throws RemoteException
-    {
+    public void ignore(String ignorePattern) throws RemoteException {
         this.ignorePathPatterns.add(ignorePattern);
     }
 
     @Override
-    public void includePackage(String packagePrefix) throws RemoteException
-    {
+    public void includePackage(String packagePrefix) throws RemoteException {
         this.includePackagePrefixSet.add(packagePrefix);
     }
 
     @Override
-    public void includePackages(Collection<String> includePackagePrefixes) throws RemoteException
-    {
+    public void includePackages(Collection<String> includePackagePrefixes) throws RemoteException {
         if (includePackagePrefixes != null)
             this.includePackagePrefixSet.addAll(includePackagePrefixes);
     }
 
     @Override
-    public void excludePackage(String packagePrefix) throws RemoteException
-    {
+    public void excludePackage(String packagePrefix) throws RemoteException {
         this.excludePackagePrefixSet.add(packagePrefix);
     }
 
     @Override
-    public void excludePackages(Collection<String> excludePackagePrefixes) throws RemoteException
-    {
+    public void excludePackages(Collection<String> excludePackagePrefixes) throws RemoteException {
         if (excludePackagePrefixes != null)
             this.excludePackagePrefixSet.addAll(excludePackagePrefixes);
     }
 
     @Override
-    public void setProgressMonitor(WindupToolingProgressMonitor monitor) throws RemoteException
-    {
+    public void setProgressMonitor(WindupToolingProgressMonitor monitor) throws RemoteException {
         this.progressMonitor = monitor;
     }
 
     @Override
-    public void sourceOnlyMode() throws RemoteException
-    {
+    public void sourceOnlyMode() throws RemoteException {
         options.put(SourceModeOption.NAME, true);
     }
 
     @Override
-    public void skipReportGeneration() throws RemoteException
-    {
+    public void skipReportGeneration() throws RemoteException {
         options.put(SkipReportsRenderingOption.NAME, true);
     }
 
     @Override
-    public void addUserRulesPath(String rulesPath) throws RemoteException
-    {
+    public void addUserRulesPath(String rulesPath) throws RemoteException {
         if (rulesPath == null)
             return;
 
@@ -187,52 +170,42 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     }
 
     @Override
-    public void addUserRulesPaths(Iterable<String> rulesPaths) throws RemoteException
-    {
+    public void addUserRulesPaths(Iterable<String> rulesPaths) throws RemoteException {
         if (rulesPaths == null)
             return;
 
-        for (String rulesPath : rulesPaths)
-        {
+        for (String rulesPath : rulesPaths) {
             this.addUserRulesPath(rulesPath);
         }
     }
 
     @Override
-    public void setOption(String name, Object value) throws RemoteException
-    {
+    public void setOption(String name, Object value) throws RemoteException {
         this.options.put(name, value);
     }
 
     @Override
-    public String getVersion() throws RemoteException
-    {
+    public String getVersion() throws RemoteException {
         return version;
     }
 
     @Override
-    public void setVersion(String version) throws RemoteException
-    {
+    public void setVersion(String version) throws RemoteException {
         this.version = version;
     }
 
-    public String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException
-    {
+    public String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException {
         return quickfixService.transform(transformationID, locationDTO);
     }
 
     @Override
-    public ExecutionResults execute() throws RemoteException
-    {
+    public ExecutionResults execute() throws RemoteException {
         PathUtil.setWindupHome(Paths.get(this.windupHome));
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        try
-        {
+        try {
             windupConfiguration.useDefaultDirectories();
-        }
-        catch (IOException e)
-        {
-            throw new WindupException("Failed to configure " + Util.WINDUP_BRAND_NAME_ACRONYM + " due to: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new WindupException("Failed to configure " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " due to: " + e.getMessage(), e);
         }
         ToolingProgressMonitorAdapter progressMonitorAdapter = new ToolingProgressMonitorAdapter(this.progressMonitor);
 
@@ -244,18 +217,15 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
         Logger globalLogger = Logger.getLogger("");
         WindupProgressLoggingHandler loggingHandler = null;
-        if (progressMonitor instanceof WindupToolingProgressMonitor)
-        {
+        if (progressMonitor instanceof WindupToolingProgressMonitor) {
             loggingHandler = new WindupProgressLoggingHandler((WindupToolingProgressMonitor) progressMonitor);
             globalLogger.addHandler(loggingHandler);
         }
 
-        try (final GraphContext graphContext = graphContextFactory.create(graphPath, true))
-        {
+        try (final GraphContext graphContext = graphContextFactory.create(graphPath, true)) {
 
             GraphService<IgnoredFileRegexModel> graphService = new GraphService<>(graphContext, IgnoredFileRegexModel.class);
-            for (String ignorePattern : this.ignorePathPatterns)
-            {
+            for (String ignorePattern : this.ignorePathPatterns) {
                 IgnoredFileRegexModel ignored = graphService.create();
                 ignored.setRegex(ignorePattern);
 
@@ -266,29 +236,23 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
             windupConfiguration.setOptionValue(ScanPackagesOption.NAME, Lists.toList(this.includePackagePrefixSet));
             windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, Lists.toList(this.excludePackagePrefixSet));
 
-            for (Map.Entry<String, Object> option : options.entrySet())
-            {
+            for (Map.Entry<String, Object> option : options.entrySet()) {
                 windupConfiguration.setOptionValue(option.getKey(), option.getValue());
             }
             windupConfiguration.setGraphContext(graphContext);
             processor.execute(windupConfiguration);
 
             return new ExecutionResultsImpl(graphContext, toolingXMLService);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new WindupException("Failed to instantiate graph due to: " + e.getMessage(), e);
-        }
-        finally
-        {
+        } finally {
             if (loggingHandler != null)
                 globalLogger.removeHandler(loggingHandler);
         }
     }
 
     @Override
-    public RuleProviderRegistry getRuleProviderRegistry(List<String> pathStrings) throws RemoteException
-    {
+    public RuleProviderRegistry getRuleProviderRegistry(List<String> pathStrings) throws RemoteException {
         RuleProviderRegistryImpl ruleProviderRegistry = new RuleProviderRegistryImpl();
         List<Path> paths = pathStrings.stream().map(pathString -> Paths.get(pathString)).collect(Collectors.toList());
 
@@ -300,51 +264,42 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     }
 
     @Override
-    public RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException
-    {
+    public RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException {
         RuleProviderRegistryImpl ruleProviderRegistry = new RuleProviderRegistryImpl();
         ruleProviderRegistry.buildRuleProviders(ruleProviderCache.getRuleProviderRegistry());
         return ruleProviderRegistry;
     }
-    
+
     @Override
     public String getEnv(String name) throws RemoteException {
-    		return System.getenv(name);
+        return System.getenv(name);
     }
 
-    private class WindupProgressLoggingHandler extends Handler
-    {
+    private class WindupProgressLoggingHandler extends Handler {
         private final WindupToolingProgressMonitor monitor;
 
-        public WindupProgressLoggingHandler(WindupToolingProgressMonitor monitor)
-        {
+        public WindupProgressLoggingHandler(WindupToolingProgressMonitor monitor) {
             this.monitor = monitor;
         }
 
         @Override
-        public void publish(LogRecord record)
-        {
+        public void publish(LogRecord record) {
             if (this.monitor == null)
                 return;
 
-            try
-            {
+            try {
                 this.monitor.logMessage(record);
-            }
-            catch (RemoteException e)
-            {
+            } catch (RemoteException e) {
             }
         }
 
         @Override
-        public void flush()
-        {
+        public void flush() {
 
         }
 
         @Override
-        public void close() throws SecurityException
-        {
+        public void close() throws SecurityException {
 
         }
     }

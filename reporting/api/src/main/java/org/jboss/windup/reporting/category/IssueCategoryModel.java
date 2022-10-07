@@ -12,8 +12,7 @@ import java.util.Comparator;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(IssueCategoryModel.TYPE)
-public interface IssueCategoryModel extends WindupVertexFrame
-{
+public interface IssueCategoryModel extends WindupVertexFrame {
     String TYPE = "IssueCategoryModel";
     String CATEGORY_ID = "categoryID";
     String ORIGIN = "origin";
@@ -51,11 +50,9 @@ public interface IssueCategoryModel extends WindupVertexFrame
     @Property(PRIORITY)
     void setPriority(Integer priority);
 
-    class IssueSummaryPriorityComparator implements Comparator<IssueCategoryModel>
-    {
+    class IssueSummaryPriorityComparator implements Comparator<IssueCategoryModel> {
         @Override
-        public int compare(IssueCategoryModel issueCategory1, IssueCategoryModel issueCategory2)
-        {
+        public int compare(IssueCategoryModel issueCategory1, IssueCategoryModel issueCategory2) {
             int ordinal1 = issueCategory1 == null ? 0 : issueCategory1.getPriority();
             String id1 = issueCategory1 == null ? "" : issueCategory1.getCategoryID();
             int ordinal2 = issueCategory2 == null ? 0 : issueCategory2.getPriority();

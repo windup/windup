@@ -8,8 +8,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.Adjacency;
 
 @TypeValue(VendorSpecificationExtensionModel.TYPE)
-public interface VendorSpecificationExtensionModel extends FileModel, SourceFileModel
-{
+public interface VendorSpecificationExtensionModel extends FileModel, SourceFileModel {
     String TYPE = "VendorSpecificationExtensionModel";
     String REF = "vendorSpecification";
 

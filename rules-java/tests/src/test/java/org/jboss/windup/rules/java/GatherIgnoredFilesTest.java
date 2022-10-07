@@ -34,19 +34,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class GatherIgnoredFilesTest
-{
+public class GatherIgnoredFilesTest {
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -57,17 +55,15 @@ public class GatherIgnoredFilesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(true))
-        {
+    public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(true)) {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
@@ -80,8 +76,8 @@ public class GatherIgnoredFilesTest
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
-                        .setRuleProviderFilter(predicate)
-                        .setGraphContext(context);
+                    .setRuleProviderFilter(predicate)
+                    .setGraphContext(context);
             windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);

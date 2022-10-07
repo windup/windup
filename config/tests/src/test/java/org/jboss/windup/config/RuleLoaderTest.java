@@ -30,19 +30,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 @RunWith(Arquillian.class)
-public class RuleLoaderTest
-{
+public class RuleLoaderTest {
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
+                .addBeansXML();
         return archive;
     }
 
@@ -52,26 +50,18 @@ public class RuleLoaderTest
     private RuleLoader loader;
 
     @Test
-    public void testRuleProviderWithFilter() throws IOException
-    {
-        try (GraphContext context = factory.create(true))
-        {
-            Predicate<RuleProvider> predicate = (provider) -> {
-                    return provider.getMetadata().getPhase() == MigrationRulesPhase.class;
-            };
+    public void testRuleProviderWithFilter() throws IOException {
+        try (GraphContext context = factory.create(true)) {
+            Predicate<RuleProvider> filter = (provider) -> provider.getMetadata().getPhase() == MigrationRulesPhase.class;
 
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), predicate);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), filter);
             Configuration configuration1 = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
-            for (Rule rule : configuration1.getRules())
-            {
-                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName()))
-                {
+            for (Rule rule : configuration1.getRules()) {
+                if (rule.getId().equals(TestRuleProvider1Phase.class.getSimpleName())) {
                     found1 = true;
-                }
-                else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName()))
-                {
+                } else if (rule.getId().equals(TestRuleProvider2Phase.class.getSimpleName())) {
                     found2 = true;
                 }
             }
@@ -81,71 +71,57 @@ public class RuleLoaderTest
     }
 
     @Singleton
-    public static class TestRuleProvider1Phase extends AbstractRuleProvider
-    {
-        public TestRuleProvider1Phase()
-        {
+    public static class TestRuleProvider1Phase extends AbstractRuleProvider {
+        public TestRuleProvider1Phase() {
             super(MetadataBuilder.forProvider(TestRuleProvider1Phase.class, "TestRuleProvider1Phase"));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                        .addRule(new Rule()
-                        {
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context)
-                            {
-                            }
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
 
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context)
-                            {
-                                return true;
-                            }
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
 
-                            @Override
-                            public String getId()
-                            {
-                                return TestRuleProvider1Phase.class.getSimpleName();
-                            }
-                        });
+                        @Override
+                        public String getId() {
+                            return TestRuleProvider1Phase.class.getSimpleName();
+                        }
+                    });
         }
     }
 
     @Singleton
-    public static class TestRuleProvider2Phase extends AbstractRuleProvider
-    {
-        public TestRuleProvider2Phase()
-        {
+    public static class TestRuleProvider2Phase extends AbstractRuleProvider {
+        public TestRuleProvider2Phase() {
             super(MetadataBuilder.forProvider(TestRuleProvider2Phase.class, "TestRuleProvider2Phase")
-                        .setPhase(ArchiveExtractionPhase.class));
+                    .setPhase(ArchiveExtractionPhase.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                        .addRule(new Rule()
-                        {
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context)
-                            {
-                            }
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
 
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context)
-                            {
-                                return true;
-                            }
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
 
-                            @Override
-                            public String getId()
-                            {
-                                return TestRuleProvider2Phase.class.getSimpleName();
-                            }
-                        });
+                        @Override
+                        public String getId() {
+                            return TestRuleProvider2Phase.class.getSimpleName();
+                        }
+                    });
         }
     }
 }

@@ -6,8 +6,7 @@ import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue("MapInPropsBlankSubModel")
-public interface TestMapBlankSubModel extends TestMapPrefixModel
-{
+public interface TestMapBlankSubModel extends TestMapPrefixModel {
     @MapInProperties(propertyPrefix = "")
     void setMap(Map<String, String> map);
 

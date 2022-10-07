@@ -33,12 +33,10 @@ import java.util.stream.StreamSupport;
 
 /**
  * Condition used to search the dependencies based on GAV
- * 
- * @author <a href="mailto:mrizzi@redhat.com">Marco Rizzi</a>
  *
+ * @author <a href="mailto:mrizzi@redhat.com">Marco Rizzi</a>
  */
-public class Dependency extends ParameterizedGraphCondition
-{
+public class Dependency extends ParameterizedGraphCondition {
 
     private RegexParameterizedPatternParser groupId;
     private RegexParameterizedPatternParser artifactId;
@@ -47,8 +45,7 @@ public class Dependency extends ParameterizedGraphCondition
     /**
      * Start with specifying the artifact version
      */
-    public static Dependency withVersion(Version v)
-    {
+    public static Dependency withVersion(Version v) {
         Dependency dependency = new Dependency();
         dependency.version = v;
         return dependency;
@@ -57,8 +54,7 @@ public class Dependency extends ParameterizedGraphCondition
     /**
      * Start with specifying the groupId
      */
-    public static Dependency withGroupId(String groupId)
-    {
+    public static Dependency withGroupId(String groupId) {
         Dependency dependency = new Dependency();
         dependency.groupId = new RegexParameterizedPatternParser(groupId);
         return dependency;
@@ -67,8 +63,7 @@ public class Dependency extends ParameterizedGraphCondition
     /**
      * Start with specifying the artifactId
      */
-    public static Dependency withArtifactId(String artifactId)
-    {
+    public static Dependency withArtifactId(String artifactId) {
         Dependency dependency = new Dependency();
         dependency.artifactId = new RegexParameterizedPatternParser(artifactId);
         return dependency;
@@ -80,8 +75,7 @@ public class Dependency extends ParameterizedGraphCondition
      * @param version specify the version
      * @return
      */
-    public Dependency andVersion(Version version)
-    {
+    public Dependency andVersion(Version version) {
         this.version = version;
         return this;
     }
@@ -92,31 +86,26 @@ public class Dependency extends ParameterizedGraphCondition
      * @param artifactId artifact ID to be set
      * @return
      */
-    public Dependency andArtifactId(String artifactId)
-    {
+    public Dependency andArtifactId(String artifactId) {
         this.artifactId = new RegexParameterizedPatternParser(artifactId);
         return this;
 
     }
 
-    public ParameterizedPatternParser getGroupId()
-    {
+    public ParameterizedPatternParser getGroupId() {
         return groupId;
     }
 
-    public ParameterizedPatternParser getArtifactId()
-    {
+    public ParameterizedPatternParser getArtifactId() {
         return artifactId;
     }
 
-    public Version getVersion()
-    {
+    public Version getVersion() {
         return version;
     }
 
     public boolean evaluate(GraphRewrite event, EvaluationContext context,
-                final EvaluationStrategy evaluationStrategy)
-    {
+                            final EvaluationStrategy evaluationStrategy) {
         final FileLocationService fileLocationService = new FileLocationService(event.getGraphContext());
         final List<FileLocationModel> result = new ArrayList<>();
         final Set<String> archiveFoundFilePaths = new HashSet<>();
@@ -127,14 +116,11 @@ public class Dependency extends ParameterizedGraphCondition
             ParameterizedPatternResult groupIdParameterizedPatternResult = dependencyFound.getGroupIdParameterizedPattern();
             ParameterizedPatternResult artifactIdParameterizedPatternResult = dependencyFound.getArtifactIdParameterizedPattern();
             if ((groupIdParameterizedPatternResult == null || groupIdParameterizedPatternResult.submit(event, context)) &&
-                (artifactIdParameterizedPatternResult == null || artifactIdParameterizedPatternResult.submit(event, context)))
-            {
+                    (artifactIdParameterizedPatternResult == null || artifactIdParameterizedPatternResult.submit(event, context))) {
                 result.add(fileLocationModel);
                 archiveFoundFilePaths.add(dependencyFound.getFileModel().getFilePath());
                 evaluationStrategy.modelSubmitted(fileLocationModel);
-            }
-            else
-            {
+            } else {
                 evaluationStrategy.modelSubmissionRejected();
             }
         };
@@ -148,8 +134,7 @@ public class Dependency extends ParameterizedGraphCondition
                 .map(DependencyFound::new)
                 .filter(dependencyFound -> {
                     if (groupId == null) return true;
-                    else
-                    {
+                    else {
                         ParameterizedPatternResult groupIdParameterizedPatternResult = groupId.parse(dependencyFound.getFileModel().getCoordinate().getGroupId());
                         dependencyFound.setGroupIdParameterizedPattern(groupIdParameterizedPatternResult);
                         return groupIdParameterizedPatternResult.matches();
@@ -157,8 +142,7 @@ public class Dependency extends ParameterizedGraphCondition
                 })
                 .filter(dependencyFound -> {
                     if (artifactId == null) return true;
-                    else
-                    {
+                    else {
                         ParameterizedPatternResult artifactIdParameterizedPatternResult = artifactId.parse(dependencyFound.getFileModel().getCoordinate().getArtifactId());
                         dependencyFound.setArtifactIdParameterizedPattern(artifactIdParameterizedPatternResult);
                         return artifactIdParameterizedPatternResult.matches();
@@ -177,18 +161,16 @@ public class Dependency extends ParameterizedGraphCondition
                 .map(DependencyFound::new)
                 .filter(dependencyFound -> {
                     if (groupId == null) return true;
-                    else
-                    {
-                        ParameterizedPatternResult groupIdParameterizedPatternResult = groupId.parse(((MavenProjectModel)dependencyFound.getFileModel().getProjectModel()).getGroupId());
+                    else {
+                        ParameterizedPatternResult groupIdParameterizedPatternResult = groupId.parse(((MavenProjectModel) dependencyFound.getFileModel().getProjectModel()).getGroupId());
                         dependencyFound.setGroupIdParameterizedPattern(groupIdParameterizedPatternResult);
                         return groupIdParameterizedPatternResult.matches();
                     }
                 })
                 .filter(dependencyFound -> {
                     if (artifactId == null) return true;
-                    else
-                    {
-                        ParameterizedPatternResult artifactIdParameterizedPatternResult = artifactId.parse(((MavenProjectModel)dependencyFound.getFileModel().getProjectModel()).getArtifactId());
+                    else {
+                        ParameterizedPatternResult artifactIdParameterizedPatternResult = artifactId.parse(((MavenProjectModel) dependencyFound.getFileModel().getProjectModel()).getArtifactId());
                         dependencyFound.setArtifactIdParameterizedPattern(artifactIdParameterizedPatternResult);
                         return artifactIdParameterizedPatternResult.matches();
                     }
@@ -196,62 +178,51 @@ public class Dependency extends ParameterizedGraphCondition
                 .filter(dependencyFound -> version == null || version.validate(dependencyFound.getFileModel().getProjectModel().getVersion()))
                 .forEach(archiveModelConsumer);
 
-        if (result.isEmpty())
-        {
+        if (result.isEmpty()) {
             return false;
-        }
-        else
-        {
+        } else {
             setResults(event, getOutputVariablesName(), result);
             return true;
         }
 
     }
 
-    public ConditionBuilder as(String as)
-    {
+    public ConditionBuilder as(String as) {
         super.setOutputVariablesName(as);
         return this;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "Dependency (" + groupId + ", " + artifactId + ", " + version + ")";
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext)
-    {
-        return evaluate(event, context, new EvaluationStrategy()
-        {
+    protected boolean evaluateAndPopulateValueStores(GraphRewrite event, EvaluationContext context, final FrameCreationContext frameCreationContext) {
+        return evaluate(event, context, new EvaluationStrategy() {
             private LinkedHashMap<String, List<WindupVertexFrame>> variables;
 
             @Override
             @SuppressWarnings("rawtypes")
-            public void modelMatched()
-            {
+            public void modelMatched() {
                 this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 
             @Override
-            public void modelSubmitted(WindupVertexFrame model)
-            {
+            public void modelSubmitted(WindupVertexFrame model) {
                 Maps.addListValue(this.variables, getVarname(), model);
             }
 
             @Override
-            public void modelSubmissionRejected()
-            {
+            public void modelSubmissionRejected() {
                 frameCreationContext.rollback();
             }
         });
     }
 
     @Override
-    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext)
-    {
+    protected boolean evaluateWithValueStore(GraphRewrite event, EvaluationContext context, final FrameContext frameContext) {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
         if (!result)
@@ -261,14 +232,12 @@ public class Dependency extends ParameterizedGraphCondition
     }
 
     @Override
-    protected String getVarname()
-    {
+    protected String getVarname() {
         return getOutputVariablesName();
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         Set<String> result = new HashSet<>();
         if (groupId != null) result.addAll(groupId.getRequiredParameterNames());
         if (artifactId != null) result.addAll(artifactId.getRequiredParameterNames());
@@ -276,8 +245,7 @@ public class Dependency extends ParameterizedGraphCondition
     }
 
     @Override
-    public void setParameterStore(ParameterStore store)
-    {
+    public void setParameterStore(ParameterStore store) {
         if (groupId != null)
             groupId.setParameterStore(store);
 
@@ -292,39 +260,32 @@ public class Dependency extends ParameterizedGraphCondition
      *
      * @param <T> the {@link FileModel} found
      */
-    private static class DependencyFound<T extends FileModel>
-    {
+    private static class DependencyFound<T extends FileModel> {
         private final T fileModel;
         private ParameterizedPatternResult groupIdParameterizedPattern;
         private ParameterizedPatternResult artifactIdParameterizedPattern;
 
-        DependencyFound(T fileModel)
-        {
+        DependencyFound(T fileModel) {
             this.fileModel = fileModel;
         }
 
-        public T getFileModel()
-        {
+        public T getFileModel() {
             return fileModel;
         }
 
-        public ParameterizedPatternResult getGroupIdParameterizedPattern()
-        {
+        public ParameterizedPatternResult getGroupIdParameterizedPattern() {
             return groupIdParameterizedPattern;
         }
 
-        public void setGroupIdParameterizedPattern(ParameterizedPatternResult groupIdParameterizedPattern)
-        {
+        public void setGroupIdParameterizedPattern(ParameterizedPatternResult groupIdParameterizedPattern) {
             this.groupIdParameterizedPattern = groupIdParameterizedPattern;
         }
 
-        public ParameterizedPatternResult getArtifactIdParameterizedPattern()
-        {
+        public ParameterizedPatternResult getArtifactIdParameterizedPattern() {
             return artifactIdParameterizedPattern;
         }
 
-        public void setArtifactIdParameterizedPattern(ParameterizedPatternResult artifactIdParameterizedPattern)
-        {
+        public void setArtifactIdParameterizedPattern(ParameterizedPatternResult artifactIdParameterizedPattern) {
             this.artifactIdParameterizedPattern = artifactIdParameterizedPattern;
         }
     }

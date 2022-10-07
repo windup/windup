@@ -1,6 +1,8 @@
 package org.jboss.windup.reporting.freemarker;
 
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.util.ThemeProvider;
+
 import java.util.List;
 
 /**
@@ -8,14 +10,12 @@ import java.util.List;
  */
 public class GetWindupBrandNameMethod implements WindupFreeMarkerMethod {
     @Override
-    public String getDescription()
-    {
-        return "Returns the name to use in place of the project name.";
+    public String getDescription() {
+        return "Returns the tool name for the current theme.";
     }
 
     @Override
-    public Object exec(List arguments) throws TemplateModelException
-    {
-        return org.jboss.windup.util.Util.WINDUP_BRAND_NAME_LONG;
+    public Object exec(List arguments) throws TemplateModelException {
+        return ThemeProvider.getInstance().getTheme().getBrandName();
     }
 }

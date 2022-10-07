@@ -14,7 +14,9 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-    <link href="resources/img/mta-icon.png" rel="shortcut icon" type="image/x-icon"/>
+
+    <#assign basePath="resources">
+    <#include "include/favicon.ftl">
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
@@ -69,6 +71,16 @@
                                             <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
                                         <#else>
                                             ${gav}
+                                        </#if>
+                                    </dd>
+                                <#else>
+                                    <dt class="trait">Maven URL:</dt>
+                                    <dd id="${archiveName}-maven">
+                                        <#if sha1?has_content>
+                                            <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
+                                            <a id="${archiveName}-link" href="${sha1URL?html}" target="_blank">Maven Central Link</a>
+                                        <#else>
+                                            Link Unavailable
                                         </#if>
                                     </dd>
                                 </#if>

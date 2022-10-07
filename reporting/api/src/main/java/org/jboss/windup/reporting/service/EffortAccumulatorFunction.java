@@ -5,7 +5,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface EffortAccumulatorFunction
-{
+public interface EffortAccumulatorFunction {
     void accumulate(Vertex effortReportVertex);
 }

@@ -12,12 +12,11 @@ import java.util.List;
 
 /**
  * Marker / base interface for Remote Services.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(RemoteServiceModel.TYPE)
-public interface RemoteServiceModel extends WindupVertexFrame, HasApplications
-{
+public interface RemoteServiceModel extends WindupVertexFrame, HasApplications {
     String TYPE = "RemoteServiceModel";
 
     String APPLICATIONS = "application";
@@ -43,10 +42,8 @@ public interface RemoteServiceModel extends WindupVertexFrame, HasApplications
     /**
      * Indicates whether this {@link JNDIResourceModel} is associated with the given application.
      */
-    default boolean isAssociatedWithApplication(ProjectModel application)
-    {
-        for (ProjectModel existing : getApplications())
-        {
+    default boolean isAssociatedWithApplication(ProjectModel application) {
+        for (ProjectModel existing : getApplications()) {
             if (existing.equals(application))
                 return true;
         }

@@ -21,89 +21,72 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Links the Maven artifact archives according to their hierarchy.
  */
 @RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = {
-                    DiscoverMavenProjectsRuleProvider.class,
-                    DiscoverNonMavenArchiveProjectsRuleProvider.class,
-                    DiscoverNonMavenSourceProjectsRuleProvider.class})
-public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
-{
+        DiscoverMavenProjectsRuleProvider.class,
+        DiscoverNonMavenArchiveProjectsRuleProvider.class,
+        DiscoverNonMavenSourceProjectsRuleProvider.class})
+public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     @Override
-    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-    {
-        AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>()
-        {
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+        AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>() {
             @Override
-            public void perform(GraphRewrite event, EvaluationContext context, MavenProjectModel payload)
-            {
+            public void perform(GraphRewrite event, EvaluationContext context, MavenProjectModel payload) {
                 setMavenParentProject(payload);
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "ConfigureProjectHierarchy";
             }
         };
 
         // @formatter:off
         return ConfigurationBuilder.begin()
-            .addRule()
-            .when(Query.fromType(MavenProjectModel.class))
-            .perform(setupParentModule);
+                .addRule()
+                .when(Query.fromType(MavenProjectModel.class))
+                .perform(setupParentModule);
         // @formatter:on
     }
 
-    private void setParentProject(ArchiveModel archiveModel, MavenProjectModel projectModel)
-    {
+    private void setParentProject(ArchiveModel archiveModel, MavenProjectModel projectModel) {
         if (archiveModel == null)
             return;
 
-        if (archiveModel.getProjectModel() != null)
-        {
+        if (archiveModel.getProjectModel() != null) {
             String mavenGAV = projectModel.getGroupId() + ":" + projectModel.getArtifactId() + ":"
-                        + projectModel.getVersion();
+                    + projectModel.getVersion();
             String archivePath = archiveModel.getFilePath();
             LOG.info("Setting parent project for: " + mavenGAV + " to: " + archivePath);
             projectModel.setParentProject(archiveModel.getProjectModel());
-        }
-        else
-        {
+        } else {
             setParentProject(archiveModel.getParentArchive(), projectModel);
         }
     }
 
-    private void setParentProject(FileModel fileModel, MavenProjectModel projectModel)
-    {
+    private void setParentProject(FileModel fileModel, MavenProjectModel projectModel) {
         if (fileModel == null)
             return;
 
-        else if (fileModel.getProjectModel() != null)
-        {
+        else if (fileModel.getProjectModel() != null) {
             projectModel.setParentProject(fileModel.getProjectModel());
-        }
-        else
-        {
+        } else {
             setParentProject(fileModel.getParentFile(), projectModel);
         }
     }
 
-    private void setMavenParentProject(MavenProjectModel projectModel)
-    {
+    private void setMavenParentProject(MavenProjectModel projectModel) {
         FileModel fileModel = projectModel.getRootFileModel();
 
         // skip if no file was discovered for it
         if (fileModel == null)
             return;
 
-        if (fileModel instanceof ArchiveModel)
-        {
+        if (fileModel instanceof ArchiveModel) {
             ArchiveModel archiveModel = (ArchiveModel) fileModel;
             // look at the parent archive first
             setParentProject(archiveModel.getParentArchive(), projectModel);
-        }
-        else
-        {
+        } else {
             FileModel parentFile = fileModel.getParentFile();
             setParentProject(parentFile, projectModel);
         }

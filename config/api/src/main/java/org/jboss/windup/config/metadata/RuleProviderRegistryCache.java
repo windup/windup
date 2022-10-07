@@ -14,8 +14,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface RuleProviderRegistryCache
-{
+public interface RuleProviderRegistryCache {
     /**
      * Specify that the user has added an additional path for user defined rules.
      */

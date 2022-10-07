@@ -13,13 +13,11 @@ import java.util.List;
 /**
  * Represents the structure of a Maven POM file within the graph.
  *
- * @see MavenProjectModel
- *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ * @see MavenProjectModel
  */
 @TypeValue(PomXmlModel.TYPE)
-public interface PomXmlModel extends WindupVertexFrame
-{
+public interface PomXmlModel extends WindupVertexFrame {
     String TYPE = "PomXmlModel";
     String DEPENDS = TYPE + "-dependensOn";
     String PARENT = TYPE + "-parent";

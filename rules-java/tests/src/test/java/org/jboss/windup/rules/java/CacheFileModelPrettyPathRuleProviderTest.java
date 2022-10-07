@@ -35,8 +35,7 @@ import java.util.Collections;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class CacheFileModelPrettyPathRuleProviderTest
-{
+public class CacheFileModelPrettyPathRuleProviderTest {
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -48,8 +47,7 @@ public class CacheFileModelPrettyPathRuleProviderTest
             @AddonDependency(name = "org.jboss.windup.tests:test-util"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
@@ -63,10 +61,8 @@ public class CacheFileModelPrettyPathRuleProviderTest
     private GraphContextFactory factory;
 
     @Test
-    public void testCachedPrettyPath() throws IOException, InstantiationException, IllegalAccessException
-    {
-        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
-        {
+    public void testCachedPrettyPath() throws IOException, InstantiationException, IllegalAccessException {
+        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true)) {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -110,29 +106,23 @@ public class CacheFileModelPrettyPathRuleProviderTest
             boolean file3Found = false;
             boolean file4Found = false;
             boolean file5Found = false;
-            for (FileModel file : service.findAll())
-            {
+            for (FileModel file : service.findAll()) {
                 if (file.isDirectory())
                     continue;
 
                 System.out.println("pretty path: " + file.getCachedPrettyPath());
-                if (file.getFileName().equals("JavaClassTestFile1.java"))
-                {
+                if (file.getFileName().equals("JavaClassTestFile1.java")) {
                     file1Found = true;
                     Assert.assertEquals("org.jboss.windup.rules.java.JavaClassTestFile1", file.getCachedPrettyPath());
-                } else if (file.getFileName().equals("JavaClassTestFile2.java"))
-                {
+                } else if (file.getFileName().equals("JavaClassTestFile2.java")) {
                     file2Found = true;
                     Assert.assertEquals("org.jboss.windup.rules.java.JavaClassTestFile2", file.getCachedPrettyPath());
-                } else if (file.getFileName().equals("javaclass-withoutclassification.windup.xml"))
-                {
+                } else if (file.getFileName().equals("javaclass-withoutclassification.windup.xml")) {
                     file3Found = true;
-                } else if (file.getFileName().equals("javaclass-withouthint.windup.xml"))
-                {
+                } else if (file.getFileName().equals("javaclass-withouthint.windup.xml")) {
                     file4Found = true;
                     Assert.assertEquals("javaclass-withouthint.windup.xml", file.getCachedPrettyPath());
-                } else if (file.getFileName().equals("JavaClassXmlRulesTest.windup.xml"))
-                {
+                } else if (file.getFileName().equals("JavaClassXmlRulesTest.windup.xml")) {
                     file5Found = true;
                     Assert.assertEquals("JavaClassXmlRulesTest.windup.xml", file.getCachedPrettyPath());
                 }
@@ -145,8 +135,7 @@ public class CacheFileModelPrettyPathRuleProviderTest
         }
     }
 
-    private static Path getDefaultPath()
-    {
+    private static Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
                 .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
     }

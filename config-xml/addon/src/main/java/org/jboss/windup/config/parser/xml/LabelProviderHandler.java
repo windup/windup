@@ -24,8 +24,7 @@ import static org.joox.JOOX.$;
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
 @NamespaceElementHandler(elementName = "labelset", namespace = LabelProviderHandler.WINDUP_LABEL_NAMESPACE)
-public class LabelProviderHandler implements ElementHandler<LabelProvider>
-{
+public class LabelProviderHandler implements ElementHandler<LabelProvider> {
 
     public static final String WINDUP_LABEL_NAMESPACE = "http://windup.jboss.org/schema/jboss-labelset";
 
@@ -33,8 +32,7 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
     public static final String TRANSFORM = "labels";
 
     @Override
-    public LabelProvider processElement(ParserContext context, Element element) throws ConfigurationException
-    {
+    public LabelProvider processElement(ParserContext context, Element element) throws ConfigurationException {
         String ID = $(element).attr("id");
 
         String priorityString = $(element).attr("priority");
@@ -44,40 +42,29 @@ public class LabelProviderHandler implements ElementHandler<LabelProvider>
         List<Label> labels = new ArrayList<>();
 
         List<Element> children = $(element).children().get();
-        for (Element child : children)
-        {
-            if (StringUtils.equals(DESCRIPTION, child.getTagName()))
-            {
+        for (Element child : children) {
+            if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
                 description = $(child).text();
-            }
-            else if (StringUtils.equals(DESCRIPTION, child.getTagName()))
-            {
+            } else if (StringUtils.equals(DESCRIPTION, child.getTagName())) {
                 description = $(child).text();
-            }
-            else if (StringUtils.equals(TRANSFORM, child.getTagName()))
-            {
+            } else if (StringUtils.equals(TRANSFORM, child.getTagName())) {
                 List<Label> l = context.processElement(child);
                 labels.addAll(l);
             }
         }
 
         List<Label> allLabels = labels;
-        LabelProviderData data = new LabelProviderData()
-        {
+        LabelProviderData data = new LabelProviderData() {
             @Override
-            public List<Label> getLabels()
-            {
+            public List<Label> getLabels() {
                 return allLabels;
             }
         };
 
         LabelProviderMetadata metadata;
-        if (priority == null)
-        {
+        if (priority == null) {
             metadata = new LabelMetadataBuilder(ID, description);
-        }
-        else
-        {
+        } else {
             metadata = new LabelMetadataBuilder(ID, description, priority);
         }
         return new LabelProviderBuilder(metadata, data);

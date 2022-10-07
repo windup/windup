@@ -7,11 +7,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FilePathComparatorTest
-{
+public class FilePathComparatorTest {
     @Test
-    public void testPathComparator()
-    {
+    public void testPathComparator() {
         List<String> expectedFilePaths = new ArrayList<>();
         expectedFilePaths.add("/a/foo");
         expectedFilePaths.add("/c/a/");

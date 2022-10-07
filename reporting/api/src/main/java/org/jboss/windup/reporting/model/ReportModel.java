@@ -17,12 +17,11 @@ import org.jboss.windup.graph.Property;
 
 /**
  * Provides the base object for all reports.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ReportModel.TYPE)
-public interface ReportModel extends WindupVertexFrame
-{
+public interface ReportModel extends WindupVertexFrame {
     String TYPE = "ReportModel";
     String CHILD_REPORT = "childReport";
     String RELATED_RESOURCES = "relatedResources";
@@ -85,7 +84,7 @@ public interface ReportModel extends WindupVertexFrame
 
     /**
      * The templating technology used to produce this report (for example, freemarker)
-     * 
+     *
      * @param templateType
      */
     @Property(TEMPLATE_TYPE)
@@ -97,6 +96,7 @@ public interface ReportModel extends WindupVertexFrame
 
     /**
      * CSS Class for the Report Icon
+     *
      * @return
      */
     @Property(REPORT_ICON_CLASS)
@@ -104,12 +104,13 @@ public interface ReportModel extends WindupVertexFrame
 
     /**
      * CSS Class for the Report Icon
+     *
      * @param reportName
      */
     @Property(REPORT_ICON_CLASS)
     void setReportIconClass(String reportName);
 
-    
+
     /**
      * The parent report... this could be the root (index) or another level of summary report.
      */
@@ -140,13 +141,11 @@ public interface ReportModel extends WindupVertexFrame
     /**
      * Get all ReportModels that should be displayed in the path to this report.
      */
-    default List<ReportModel> getAllParentsInReversedOrder()
-    {
+    default List<ReportModel> getAllParentsInReversedOrder() {
         List<ReportModel> reports = new ArrayList<>();
         ReportModel currentReport = this;
         reports.add(this);
-        while (currentReport.getParentReport() != null)
-        {
+        while (currentReport.getParentReport() != null) {
             reports.add(currentReport.getParentReport());
             currentReport = currentReport.getParentReport();
         }

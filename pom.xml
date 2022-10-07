@@ -11,19 +11,19 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>6.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Parent</name>
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.9.2.Final</version.forge>
-        <version.furnace>2.28.4.Final</version.furnace>
+        <version.forge>3.10.0.Final</version.forge>
+        <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
-        <version.freemarker>2.3.26-incubating</version.freemarker>
+        <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
@@ -101,6 +101,7 @@
         <module>windup-test-harness</module>
         <module>module-spec</module>
         <module>forks/jdt</module>
+        <module>forks/gremlin-shaded</module>
         <module>graph</module>
 
         <module>config</module>
@@ -114,8 +115,10 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-java-diva</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
+        <module>rules-yaml</module>
 
         <module>exec</module>
         <module>tooling</module>
@@ -129,6 +132,7 @@
         <module>test-util</module>
         <module>server-provider-spi</module>
         <module>bootstrap</module>
+        <module>bootstraps-themed</module>
     </modules>
 
     <dependencyManagement>
@@ -182,6 +186,31 @@
                 <artifactId>jaxb-core</artifactId>
                 <version>2.3.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.13.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.11.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -189,13 +218,19 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -218,9 +253,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.2</version>
                     <configuration>
-                        <compilerVersion>1.8</compilerVersion>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <compilerVersion>11</compilerVersion>
+                        <source>11</source>
+                        <target>11</target>
                         <encoding>UTF-8</encoding>
                         <meminitial>128m</meminitial>
                         <maxmem>512m</maxmem>
@@ -538,5 +573,6 @@
             </build>
         </profile>
     </profiles>
+
 
 </project>

@@ -20,8 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureDependencyTest extends WindupArchitectureTest
-{
+public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
 
     private static final String[] FOUND_PATH_LIB = {
             "application-with-dependencies.ear/lib/example-0-1.0.0.jar"
@@ -29,36 +28,32 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest
 
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util")
+            @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+            @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.windup.tests:test-util")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addBeansXML()
+                .addClass(WindupArchitectureTest.class)
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
-    public void testRunWindupDependencies() throws Exception
-    {
-        try (GraphContext context = createGraphContext())
-        {
+    public void testRunWindupDependencies() throws Exception {
+        try (GraphContext context = createGraphContext()) {
             super.runTest(context, "../test-files/application-with-dependencies.ear", false, Collections.emptyList());
             validateDependenciesReport(context);
         }
     }
 
-    private void validateDependenciesReport(GraphContext context)
-    {
+    private void validateDependenciesReport(GraphContext context) {
         ReportService reportService = new ReportService(context);
         ReportModel dependencyReportModel = getJarDependencyReport(context);
         Path dependencyReport = reportService.getReportDirectory().resolve(dependencyReportModel.getReportFilename());

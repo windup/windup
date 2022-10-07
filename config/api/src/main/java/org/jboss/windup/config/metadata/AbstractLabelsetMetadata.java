@@ -7,46 +7,39 @@ import org.jboss.forge.furnace.util.Assert;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public class AbstractLabelsetMetadata implements LabelProviderMetadata
-{
+public class AbstractLabelsetMetadata implements LabelProviderMetadata {
     private final String id;
 
     /**
      * Construct a new {@link AbstractLabelsetMetadata} instance using the given {@link String} ID.
      */
-    public AbstractLabelsetMetadata(String id)
-    {
+    public AbstractLabelsetMetadata(String id) {
         Assert.notNull(id, "Labelset ID must not be null.");
         this.id = id;
     }
 
     @Override
-    public String getID()
-    {
+    public String getID() {
         return id;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "";
     }
 
     @Override
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return getClass().getClassLoader().toString();
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return 0;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -54,8 +47,7 @@ public class AbstractLabelsetMetadata implements LabelProviderMetadata
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -63,24 +55,21 @@ public class AbstractLabelsetMetadata implements LabelProviderMetadata
         if (getClass() != obj.getClass())
             return false;
         AbstractLabelsetMetadata other = (AbstractLabelsetMetadata) obj;
-        if (id == null)
-        {
+        if (id == null) {
             if (other.id != null)
                 return false;
-        }
-        else if (!id.equals(other.id))
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "LabelsetMetadata ["
-                    + "\tid=" + id + ", "
-                    + "\tdescription=" + getDescription() + ", "
-                    + "\torigin=" + getOrigin() + ""
-                    + "]";
+                + "\tid=" + id + ", "
+                + "\tdescription=" + getDescription() + ", "
+                + "\torigin=" + getOrigin() + ""
+                + "]";
     }
 
 }

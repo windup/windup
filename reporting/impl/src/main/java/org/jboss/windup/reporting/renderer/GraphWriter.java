@@ -6,8 +6,7 @@ import java.nio.file.Path;
 /**
  * Used to serialize the graph to a particular output location.
  */
-public interface GraphWriter
-{
+public interface GraphWriter {
     /**
      * Serialize the graph to the given output directory.
      */

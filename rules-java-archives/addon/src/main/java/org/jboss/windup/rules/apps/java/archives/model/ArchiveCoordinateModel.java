@@ -13,8 +13,7 @@ import org.jboss.windup.graph.Property;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @TypeValue(ArchiveCoordinateModel.TYPE)
-public interface ArchiveCoordinateModel extends WindupVertexFrame
-{
+public interface ArchiveCoordinateModel extends WindupVertexFrame {
     String TYPE = "ArchiveCoordinateModel";
     String GROUP_ID = TYPE + "-groupId";
     String ARTIFACT_ID = TYPE + "-artifactId";

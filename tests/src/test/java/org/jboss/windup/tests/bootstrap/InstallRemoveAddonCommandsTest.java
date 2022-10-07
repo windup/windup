@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.bootstrap;
 
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.testutil.rules.RetryRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -28,31 +29,34 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                {I,       ADDON,              R,      ADDON,              true},
-                {I,       ADDON,              R,      ADDON_WITH_VERSION, true},
-                {I,       ADDON,              REMOVE, ADDON,              true},
-                {I,       ADDON,              REMOVE, ADDON_WITH_VERSION, true},
-                {I,       ADDON_WITH_VERSION, R,      ADDON,              true},
-                {I,       ADDON_WITH_VERSION, R,      ADDON_WITH_VERSION, true},
-                {I,       ADDON_WITH_VERSION, REMOVE, ADDON,              true},
-                {I,       ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON,              R,      ADDON,              true},
-                {INSTALL, ADDON,              R,      ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON,              REMOVE, ADDON,              true},
-                {INSTALL, ADDON,              REMOVE, ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON_WITH_VERSION, R,      ADDON,              true},
-                {INSTALL, ADDON_WITH_VERSION, R,      ADDON_WITH_VERSION, true},
-                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON,              true},
+        return Arrays.asList(new Object[][]{
+                {I, ADDON, R, ADDON, true},
+                {I, ADDON, R, ADDON_WITH_VERSION, true},
+                {I, ADDON, REMOVE, ADDON, true},
+                {I, ADDON, REMOVE, ADDON_WITH_VERSION, true},
+                {I, ADDON_WITH_VERSION, R, ADDON, true},
+                {I, ADDON_WITH_VERSION, R, ADDON_WITH_VERSION, true},
+                {I, ADDON_WITH_VERSION, REMOVE, ADDON, true},
+                {I, ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON, R, ADDON, true},
+                {INSTALL, ADDON, R, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON, REMOVE, ADDON, true},
+                {INSTALL, ADDON, REMOVE, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON_WITH_VERSION, R, ADDON, true},
+                {INSTALL, ADDON_WITH_VERSION, R, ADDON_WITH_VERSION, true},
+                {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON, true},
                 {INSTALL, ADDON_WITH_VERSION, REMOVE, ADDON_WITH_VERSION, true},
 
-                {INSTALL, BAD_FORMAT,         REMOVE, BAD_FORMAT,         false},
-                {INSTALL, DOESNT_EXIST,       REMOVE, DOESNT_EXIST,       false},
+                {INSTALL, BAD_FORMAT, REMOVE, BAD_FORMAT, false},
+                {INSTALL, DOESNT_EXIST, REMOVE, DOESNT_EXIST, false},
         });
     }
 
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
+
+    @Rule
+    public final RetryRule retryRule = new RetryRule(3);
 
     private final String installOption;
     private final String installAddonId;

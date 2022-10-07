@@ -9,17 +9,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * A short-hand for querying WindupConfigurationModel.
  */
-public class WindupConfigurationQuery extends GraphCondition
-{
+public class WindupConfigurationQuery extends GraphCondition {
 
-    public static QueryBuilderWith hasOption(String propertyName)
-    {
+    public static QueryBuilderWith hasOption(String propertyName) {
         return Query.fromType(WindupConfigurationModel.class).withProperty(propertyName);
     }
 
 
-    public static QueryBuilderWith hasOption(String propertyName, Object value)
-    {
+    public static QueryBuilderWith hasOption(String propertyName, Object value) {
         return Query.fromType(WindupConfigurationModel.class).withProperty(propertyName, value);
     }
 
@@ -27,8 +24,7 @@ public class WindupConfigurationQuery extends GraphCondition
      * Only here to allow the class extend GraphCondition to show up in code completion.
      */
     @Override
-    public boolean evaluate(GraphRewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(GraphRewrite event, EvaluationContext context) {
         throw new IllegalStateException("This should not be called.");
     }
 

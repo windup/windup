@@ -30,7 +30,9 @@
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
         <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
+            <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
             <tag ref="techBox:web"/>
+            -->
         </tag>
         <tag name="techRow:embedded" title="Embedded"  pseudo="true">
             <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
@@ -60,50 +62,50 @@
         <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
             <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
                  If not, define a techBox:... tag, and include whichever tags it should contain. -->
-            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee" icon="Misc_Network-Technical">
+            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Network-A-White-RGB">
                 <tag ref="web"/>
             </tag>
-            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee, techRow:embedded"  icon="Hardware_Monitor-Webinar">
+            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee, techRow:embedded"  icon="Laptop_Webinar-A-White-RGB">
                 <tag ref="applet"/>
                 <tag ref="jnlp"/>
             </tag>
-            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded" icon="Software_Application-Window">
+            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded" icon="Orchestration-A-White-RGB">
                 <tag ref="spring-mvc"/>
                 <tag ref="struts"/>
                 <tag ref="wicket"/>
                 <tag ref="gwt"/>
             </tag>
-            <tag name="techBox:markup" title="Markup" pseudo="true" parents="techRow:embedded" icon="Software_Code">
+            <tag name="techBox:markup" title="Markup" pseudo="true" parents="techRow:embedded" icon="Code-A-White-RGB">
                 <tag ref="html"/>
                 <tag ref="css"/>
                 <tag ref="javascript"/>
             </tag>
         </tag>
         <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
-            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee" icon="Object_Envelope-Back">
+            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee" icon="Envelope-A-White-RGB">
                 <tag ref="jms"/>
             </tag>
-            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Science_Molecule">
+            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Data-A-White-RGB">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown">
+            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="Website-A-White-RGB">
                 <tag ref="jax-ws"/>
             </tag>
-            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Podcast">
+            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Telecommunications-A-White-RGB">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
                 <tag ref="rmi"/>
             </tag>
-            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Global_Ecosystem">
+            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Website_system-A-White-RGB">
                 <tag ref="webservices"/>
             </tag>
-            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded, techRow:java-ee" icon="Science_Circuit">
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded, techRow:java-ee" icon="API-A-White-RGB">
                 <tag ref="rest"/>
                 <tag ref="jax-rs"/>
             </tag>
-            <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown"></tag>
-
+            <tag name="techBox:binding" title="Binding" pseudo="true" parents="techRow:java-ee" icon="Link_broken-A-White-RGB"></tag>
+            <tag name="techBox:streaming" title="Streaming" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Multiply-A-White-RGB"></tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!--
@@ -112,30 +114,36 @@
             <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
             </tag>
             -->
-            <tag name="techBox:jdbc" title="Database" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
+            <tag name="techBox:jdbc" title="Database" pseudo="true" parents="techRow:java-ee"  icon="Storage_stack-A-White-RGB">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="science_brain"><!-- Alternative: Recycle_Symbol. I couldn't find the "brain profile". -->
+            <tag name="techBox:caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Electrical_bolt-A-White-RGB">
                 <tag ref="cache"/>
             </tag>
-            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
-            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
-            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
-            <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel"></tag>
+            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Gateway-A-White-RGB"></tag>
+            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Save-A-White-RGB"></tag>
+            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car-A-White-RGB"></tag>
+            <tag name="techBox:validation" title="Validation" pseudo="true" parents="techRow:java-ee" icon="Clipboard_Checklist-A-White-RGB"></tag>
+            <tag name="techBox:no-sql-database" title="No SQL Database" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Storage-A-White-RGB"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
-            <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
-            <tag name="techBox:clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack"></tag>
-            <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
-            <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
-            <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
+            <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Game_Plan-A-White-RGB"></tag>
+            <tag name="techBox:clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Cluster-A-White-RGB"></tag>
+            <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Shield-A-White-RGB"></tag>
+            <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Notepad-A-White-RGB"></tag>
+            <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Progression_linear-A-White-RGB"></tag>
+            <tag name="techBox:resource-management" title="Resource Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Apps_multiple-A-White-RGB"></tag>
+            <tag name="techBox:configuration-management" title="Configuration Management" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Gear_group-A-White-RGB"></tag>
+            <tag name="techBox:observability" title="Observability" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Heart_monitor-A-White-RGB"></tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
-            <tag name="techBox:ioc" title="Inversion of Control" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
-            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
-            <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
-            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Shopping_Cart"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="GPU-A-White-RGB"/>
+            <tag name="techBox:ioc" title="Inversion of Control" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hierarchy-A-White-RGB"/>
+            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Flowchart-A-White-RGB"/>
+            <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Interoperability-A-White-RGB"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Pricetag-A-White-RGB"/>
+            <tag name="techBox:serverless-faas" title="Serverless / FAAS" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Cloud_Automation-A-White-RGB"/>
+            <tag name="techBox:utilities" title="Utilities" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Wrench-A-White-RGB"/>
         </tag>
     </tag>
 
@@ -193,6 +201,13 @@
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
             <tag pseudo="true" name="place:Binding" title="Binding" parents="techBox:binding"/>
             <tag pseudo="true" name="place:Validation" title="Validation" parents="techBox:validation"/>
+            <tag pseudo="true" name="place:Streaming" title="Streaming" parents="techBox:streaming"/>
+            <tag pseudo="true" name="place:No SQL Database" title="No SQL Database" parents="techBox:no-sql-database"/>
+            <tag pseudo="true" name="place:Resource Management" title="Resource Management" parents="techBox:resource-management"/>
+            <tag pseudo="true" name="place:Configuration Management" title="Configuration Management" parents="techBox:configuration-management"/>
+            <tag pseudo="true" name="place:Observability" title="Observability" parents="techBox:observability"/>
+            <tag pseudo="true" name="place:Serverless / FAAS" title="Serverless / FAAS" parents="techBox:serverless-faas"/>
+            <tag pseudo="true" name="place:Utilities" title="Utilities" parents="techBox:utilities"/>
         </tag>
     </tag>
 </tags>

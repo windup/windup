@@ -17,8 +17,7 @@ import org.jboss.windup.graph.model.TypeValue;
  * @author <a href="mailto:jsightle@redhat.com">Jess Sightler</a>
  */
 @TypeValue(TechnologyUsageStatisticsModel.TYPE)
-public interface TechnologyUsageStatisticsModel extends TaggableModel
-{
+public interface TechnologyUsageStatisticsModel extends TaggableModel {
     String TYPE = "TechnologyUsageStatisticsModel";
 
     String COMPUTED = "stats.computed";

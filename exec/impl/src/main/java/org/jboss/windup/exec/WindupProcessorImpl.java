@@ -1,17 +1,10 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,7 +23,7 @@ import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
-import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
+import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
@@ -39,7 +32,6 @@ import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
-import org.jboss.windup.exec.configuration.options.InputApplicationName;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.rulefilters.AndPredicate;
@@ -56,10 +48,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.util.Checks;
-import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.*;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.RuleVisit;
@@ -67,14 +56,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
+import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
+import static org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator.*;
+
 /**
  * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public class WindupProcessorImpl implements WindupProcessor
-{
+public class WindupProcessorImpl implements WindupProcessor {
     private static final Logger LOG = Logging.get(WindupProcessorImpl.class);
 
     @Inject
@@ -87,21 +79,20 @@ public class WindupProcessorImpl implements WindupProcessor
     private Imported<RuleLifecycleListener> listeners;
 
     @Override
-    public void execute()
-    {
+    public void execute() {
         execute(new WindupConfiguration());
     }
 
     @Override
-    public void execute(WindupConfiguration configuration)
-    {
+    public void execute(WindupConfiguration configuration) {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         long startTime = System.currentTimeMillis();
 
         validateConfig(configuration);
 
         boolean autoCloseGraph = false;
-        if (configuration.getGraphContext() == null)
-        {
+        if (configuration.getGraphContext() == null) {
             // Since we created it, we should clean it up
             autoCloseGraph = true;
             Path graphPath = configuration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
@@ -109,150 +100,139 @@ public class WindupProcessorImpl implements WindupProcessor
             configuration.setGraphContext(graphContext);
         }
 
-        try
-        {
+        try {
             printConfigInfo(configuration);
 
-            GraphContext context = configuration.getGraphContext();
-            context.setOptions(configuration.getOptionMap());
+            GraphContext graphContext = configuration.getGraphContext();
+            graphContext.setOptions(configuration.getOptionMap());
 
-            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
-
-            Set<FileModel> inputPathModels = new LinkedHashSet<>();
-            for (Path inputPath : configuration.getInputPaths())
-            {
-                inputPathModels.add(getFileModel(context, inputPath));
-            }
-            configurationModel.setInputPaths(inputPathModels);
-            List<String> applicationNames = configuration.getInputApplicationNames();
-            GraphService<ApplicationModel> applicationModelService = new GraphService<>(context, ApplicationModel.class);
-            if (applicationNames == null)
-            {
-                inputPathModels.forEach(applicationModel -> {
-                    applicationModelService.addTypeToModel(applicationModel).setApplicationName(applicationModel.getFileName());
-                });
-            }
-            else
-            {
-                // Convert to a list to allow indexing
-                List<FileModel> inputModelsList = new ArrayList<>(inputPathModels);
-                for (int i = 0; i < inputModelsList.size(); i++)
-                {
-                    FileModel fileModel = inputModelsList.get(i);
-                    ApplicationModel applicationModel = applicationModelService.addTypeToModel(fileModel);
-                    if (i < applicationNames.size())
-                        applicationModel.setApplicationName(applicationNames.get(i));
-                    else
-                        applicationModel.setApplicationName(fileModel.getFileName());
-                }
-            }
-
-            configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
-            configurationModel.setOnlineMode(configuration.isOnline());
-            configurationModel.setExportingCSV(configuration.isExportingCSV());
-            configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
-            for (Path path : configuration.getAllUserRulesDirectories())
-            {
-                System.out.println("Using user rules dir: " + path);
-                if (path == null)
-                {
-                    throw new WindupException("Null path found (all paths are: "
-                                + configuration.getAllUserRulesDirectories() + ")");
-                }
-                configurationModel.addUserRulesPath(getFileModel(context, path));
-            }
-
-            for (Path path : configuration.getAllUserLabelsDirectories())
-            {
-                System.out.println("Using user labels dir: " + path);
-                if (path == null)
-                {
-                    throw new WindupException("Null path found (all paths are: "
-                            + configuration.getAllUserLabelsDirectories() + ")");
-                }
-                configurationModel.addUserLabelsPath(getFileModel(context, path));
-            }
-
-            for (Path path : configuration.getAllIgnoreDirectories())
-            {
-                configurationModel.addUserIgnorePath(getFileModel(context, path));
-            }
+            WindupConfigurationModel configurationModel = setupWindupConfigurationModel(configuration, graphContext);
 
             List<RuleLifecycleListener> listeners = new ArrayList<>();
-            for (RuleLifecycleListener listener : this.listeners)
-            {
-                listeners.add(listener);
-            }
+            this.listeners.forEach(listeners::add);
 
-            final GraphRewrite event = new GraphRewrite(listeners, context);
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(event.getRewriteContext(), configuration.getAllUserRulesDirectories(),
-                        configuration.getRuleProviderFilter());
+            final GraphRewrite windupContext = new GraphRewrite(listeners, graphContext);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(windupContext.getRewriteContext(), configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
             ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
-            addSourceAndTargetInformation(event, configuration, configurationModel);
+            saveSourceAndTargetInformation(windupContext, configuration, configurationModel);
 
-            RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
-            Configuration rules = providerRegistry.getConfiguration();
+            RuleProviderRegistry ruleProviderRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
+            Configuration rulesConfiguration = ruleProviderRegistry.getConfiguration();
 
             if (configuration.getProgressMonitor() != null)
-                listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rules));
+                listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rulesConfiguration));
 
-            event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
+            windupContext.getRewriteContext().put(RuleProviderRegistry.class, ruleProviderRegistry);
 
-            RuleSubset ruleSubset = RuleSubset.create(rules);
+            // Create rule subset for this execution
+            RuleSubset ruleSubset = RuleSubset.create(rulesConfiguration);
             ruleSubset.setAlwaysHaltOnFailure(configuration.isAlwaysHaltOnException());
+            listeners.forEach(ruleSubset::addLifecycleListener);
 
-            for (RuleLifecycleListener listener : listeners)
-            {
-                ruleSubset.addLifecycleListener(listener);
-            }
-
+            // Do preruleset evaluation on the subset if applicable
             new RuleVisit(ruleSubset).accept((rule) -> {
                 if (rule instanceof PreRulesetEvaluation)
-                    ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
+                    ((PreRulesetEvaluation) rule).preRulesetEvaluation(windupContext);
             });
 
-            ruleSubset.perform(event, createEvaluationContext());
+            ruleSubset.perform(windupContext, createEvaluationContext());
 
-            if (event.getWindupStopException() != null)
-            {
-                String message = Util.WINDUP_BRAND_NAME_ACRONYM + " was cancelled on request before finishing";
-                if (event.getWindupStopException().getMessage() != null)
-                    message += ", cause: " + event.getWindupStopException().getMessage();
+            if (windupContext.getWindupStopException() != null) {
+                String message = theme.getBrandNameAcronym() + " was cancelled on request before finishing";
+                if (windupContext.getWindupStopException().getMessage() != null)
+                    message += ", cause: " + windupContext.getWindupStopException().getMessage();
                 LOG.log(Level.INFO, message);
             }
-        }
-        finally
-        {
-            if (autoCloseGraph)
-            {
-                try
-                {
+        } finally {
+            if (autoCloseGraph) {
+                try {
                     configuration.getGraphContext().close();
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     LOG.log(Level.WARNING, "Failed to close graph due to: " + t.getMessage(), t);
                 }
             }
 
             long endTime = System.currentTimeMillis();
             long seconds = (endTime - startTime) / 1000L;
-            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM + " execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths()
-                        + "!");
+            LOG.info(theme.getBrandNameAcronym() + " execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths()
+                    + "!");
 
             ExecutionStatistics.get().reset();
         }
     }
 
-    private void addSourceAndTargetInformation(GraphRewrite event, WindupConfiguration configuration, WindupConfigurationModel configurationModel)
-    {
+    private WindupConfigurationModel setupWindupConfigurationModel(WindupConfiguration configuration, GraphContext graphContext) {
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+
+        Set<FileModel> inputPathModels = new LinkedHashSet<>();
+        for (Path inputPath : configuration.getInputPaths()) {
+            inputPathModels.add(getFileModel(graphContext, inputPath));
+        }
+        configurationModel.setInputPaths(inputPathModels);
+        List<String> applicationNames = configuration.getInputApplicationNames();
+        GraphService<ApplicationModel> applicationModelService = new GraphService<>(graphContext, ApplicationModel.class);
+        if (applicationNames == null) {
+            inputPathModels.forEach(applicationModel -> {
+                applicationModelService.addTypeToModel(applicationModel).setApplicationName(applicationModel.getFileName());
+            });
+        } else {
+            // Convert to a list to allow indexing
+            List<FileModel> inputModelsList = new ArrayList<>(inputPathModels);
+            for (int i = 0; i < inputModelsList.size(); i++) {
+                FileModel fileModel = inputModelsList.get(i);
+                ApplicationModel applicationModel = applicationModelService.addTypeToModel(fileModel);
+                if (i < applicationNames.size())
+                    applicationModel.setApplicationName(applicationNames.get(i));
+                else
+                    applicationModel.setApplicationName(fileModel.getFileName());
+            }
+        }
+
+        configurationModel.setOutputPath(getFileModel(graphContext, configuration.getOutputDirectory()));
+        configurationModel.setOnlineMode(configuration.isOnline());
+        configurationModel.setExportingCSV(configuration.isExportingCSV());
+        configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
+
+        addUserRulesDirsToConfig(configuration, graphContext, configurationModel);
+        addUserLabelsDirsToConfig(configuration, graphContext, configurationModel);
+
+        configuration.getAllIgnoreDirectories().forEach(dir -> configurationModel.addUserIgnorePath(getFileModel(graphContext, dir)));
+
+        configurationModel.setAnalyzeKnownLibraries(configuration.isAnalyseKnownLibrariesSet());
+
+        return configurationModel;
+    }
+
+    private void addUserLabelsDirsToConfig(WindupConfiguration configuration, GraphContext graphContext, WindupConfigurationModel configurationModel) {
+        for (Path path : configuration.getAllUserLabelsDirectories()) {
+            System.out.println("Using user labels dir: " + path);
+            if (path == null) {
+                throw new WindupException(format("Null path found (all paths are: %s)", configuration.getAllUserLabelsDirectories()));
+            }
+            configurationModel.addUserLabelsPath(getFileModel(graphContext, path));
+        }
+    }
+
+    private void addUserRulesDirsToConfig(WindupConfiguration configuration, GraphContext graphContext, WindupConfigurationModel configurationModel) {
+        for (Path path : configuration.getAllUserRulesDirectories()) {
+            System.out.println("Using user rules dir: " + path);
+            if (path == null) {
+                throw new WindupException(format("Null path found (all paths are: %s)", configuration.getAllUserRulesDirectories()));
+            }
+            configurationModel.addUserRulesPath(getFileModel(graphContext, path));
+        }
+    }
+
+    /**
+     * Saves sources and targets information into the graph
+     */
+    private void saveSourceAndTargetInformation(GraphRewrite event, WindupConfiguration configuration, WindupConfigurationModel configurationModel) {
         @SuppressWarnings("unchecked")
         Collection<String> sources = (Collection<String>) configuration.getOptionMap().get(SourceOption.NAME);
         @SuppressWarnings("unchecked")
         Collection<String> targets = (Collection<String>) configuration.getOptionMap().get(TargetOption.NAME);
 
-        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(event.getGraphContext(),
-                    TechnologyReferenceModel.class);
+        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(event.getGraphContext(), TechnologyReferenceModel.class);
         Function<String, TechnologyReferenceModel> createReferenceModel = (techID) -> {
             TechnologyReference reference = TechnologyReference.parseFromIDAndVersion(techID);
             TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
@@ -261,24 +241,12 @@ public class WindupProcessorImpl implements WindupProcessor
             return technologyReferenceModel;
         };
 
-        if (sources != null)
-        {
-            sources.forEach((sourceID) -> {
-                configurationModel.addSourceTechnology(createReferenceModel.apply(sourceID));
-            });
-        }
-
-        if (targets != null)
-        {
-            targets.forEach((targetID) -> {
-                configurationModel.addTargetTechnology(createReferenceModel.apply(targetID));
-            });
-        }
+        Optional.ofNullable(sources).ifPresent(ss -> ss.forEach(sId -> configurationModel.addSourceTechnology(createReferenceModel.apply(sId))));
+        Optional.ofNullable(targets).ifPresent(ts -> ts.forEach(tId -> configurationModel.addTargetTechnology(createReferenceModel.apply(tId))));
     }
 
     @SuppressWarnings("unchecked")
-    private RuleLoaderContext configureRuleProviderAndTagFilters(RuleLoaderContext ruleLoaderContext, WindupConfiguration config)
-    {
+    private RuleLoaderContext configureRuleProviderAndTagFilters(RuleLoaderContext ruleLoaderContext, WindupConfiguration config) {
         Collection<String> includeTags = (Collection<String>) config.getOptionMap().get(IncludeTagsOption.NAME);
         Collection<String> excludeTags = (Collection<String>) config.getOptionMap().get(ExcludeTagsOption.NAME);
         Collection<String> sources = (Collection<String>) config.getOptionMap().get(SourceOption.NAME);
@@ -293,49 +261,17 @@ public class WindupProcessorImpl implements WindupProcessor
         if (targets != null && targets.isEmpty())
             targets = null;
 
-        if (includeTags != null || excludeTags != null || sources != null || targets != null)
-        {
+        if (includeTags != null || excludeTags != null || sources != null || targets != null) {
             Predicate<RuleProvider> configuredPredicate = config.getRuleProviderFilter();
 
             final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
 
-            List<TechnologyReferenceTransformer> transformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
+            // Translate technology aliases if available (ie. "eap7" to "eap:7")
+            Function<String, String> translateTechAliasFn = translateTechnologyAliasFn(ruleLoaderContext);
+            sources = Optional.ofNullable(sources).map(ss -> ss.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
+            targets = Optional.ofNullable(targets).map(ts -> ts.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
 
-            /*
-             * Create a Map based upon the ID of the original to be transformed.
-             */
-            Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers.stream()
-                        .collect(Collectors.toMap(
-                                    // This is the Map key
-                                    transformer -> transformer.getOriginal().getId(),
-
-                                    // Create a List for each entry
-                                    (transformer) -> {
-                                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
-                                        list.add(transformer);
-                                        return list;
-                                    },
-
-                                    // Merge the list if there are multiple entries for the same id
-                                    (old, latest) -> {
-                                        old.addAll(latest);
-                                        return old;
-                                    }));
-
-            // Use the tech transformers to transform the IDs
-            Function<String, String> transformTechFunction = (technologyID) -> {
-                if (transformerMap.containsKey(technologyID))
-                {
-                    for (TechnologyReferenceTransformer transformer : transformerMap
-                                .get(TechnologyReference.parseFromIDAndVersion(technologyID).getId()))
-                        technologyID = transformer.transform(technologyID).toString();
-                }
-                return technologyID;
-            };
-
-            sources = (sources == null) ? null : sources.stream().map(transformTechFunction).collect(Collectors.toSet());
             config.setOptionValue(SourceOption.NAME, sources);
-            targets = (targets == null) ? null : targets.stream().map(transformTechFunction).collect(Collectors.toSet());
             config.setOptionValue(TargetOption.NAME, targets);
 
             final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
@@ -350,19 +286,16 @@ public class WindupProcessorImpl implements WindupProcessor
 
         Boolean skipReports = false;
         // if skipReportsRendering option is set filter rules in related phases
-        if (config.getOptionMap().containsKey(SkipReportsRenderingOption.NAME))
-        {
+        if (config.getOptionMap().containsKey(SkipReportsRenderingOption.NAME)) {
             skipReports = (Boolean) config.getOptionMap().get(SkipReportsRenderingOption.NAME);
         }
-        if (skipReports)
-        {
+        if (skipReports) {
             NotPredicate skipReportsProviderFilter = new NotPredicate(
-                        new RuleProviderPhasePredicate(PreReportGenerationPhase.class, ReportGenerationPhase.class,
-                                    ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class));
+                    new RuleProviderPhasePredicate(PreReportGenerationPhase.class, ReportGenerationPhase.class,
+                            ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class));
             Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
             Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
-            if (configuredProvider != null)
-            {
+            if (configuredProvider != null) {
                 providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
             }
 
@@ -373,28 +306,62 @@ public class WindupProcessorImpl implements WindupProcessor
         return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
-    private FileModel getFileModel(GraphContext context, Path file)
-    {
+    private static Function<String, String> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
+        List<TechnologyReferenceAliasTranslator> translators = getAliasTranslators(ruleLoaderContext);
+
+        /*
+         * Create a Map of (key:sourceTechId, value:translatorsForThatTech)
+         */
+        final Map<String, List<TechnologyReferenceAliasTranslator>> translatorMap = translators.stream()
+                .collect(toMap(
+                        // This is the Map key
+                        transformer -> transformer.getOriginalTechnology().getId(),
+
+                        // Create a List for each entry
+                        (transformer) -> {
+                            List<TechnologyReferenceAliasTranslator> list = new ArrayList<>();
+                            list.add(transformer);
+                            return list;
+                        },
+
+                        // Merge the list if there are multiple entries for the same id
+                        (old, latest) -> {
+                            old.addAll(latest);
+                            return old;
+                        })
+                );
+
+        // Use the tech translators to translate the IDs
+        Function<String, String> translateTechFunc = (sourceTechIdAndVersion) -> {
+            if (translatorMap.containsKey(sourceTechIdAndVersion)) {
+                String id = TechnologyReference.parseFromIDAndVersion(sourceTechIdAndVersion).getId();
+                for (TechnologyReferenceAliasTranslator translator : translatorMap.get(id))
+                    sourceTechIdAndVersion = translator.translate(sourceTechIdAndVersion).toString();
+            }
+            return sourceTechIdAndVersion;
+        };
+
+        return translateTechFunc;
+    }
+
+    private FileModel getFileModel(GraphContext context, Path file) {
         return new FileService(context).createByFilePath(file.toString());
     }
 
-    private EvaluationContext createEvaluationContext()
-    {
+    private EvaluationContext createEvaluationContext() {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
     }
 
-    private void validateConfig(WindupConfiguration windupConfiguration)
-    {
+    private void validateConfig(WindupConfiguration windupConfiguration) {
         Assert.notNull(windupConfiguration,
-                    Util.WINDUP_BRAND_NAME_ACRONYM + " configuration must not be null. (Call default execution if no configuration is required.)");
+                ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " configuration must not be null. (Call default execution if no configuration is required.)");
 
         Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
-        for (Path inputPath : inputPaths)
-        {
+        for (Path inputPath : inputPaths) {
             Assert.notNull(inputPath, "Path to the application must not be null!");
             Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
         }
@@ -404,18 +371,13 @@ public class WindupProcessorImpl implements WindupProcessor
         Checks.checkDirectoryToBeFilled(outputDirectory.toFile(), "Output directory");
     }
 
-    private void printConfigInfo(WindupConfiguration windupConfiguration)
-    {
+    private void printConfigInfo(WindupConfiguration windupConfiguration) {
         LOG.info("");
-        if (windupConfiguration.getInputPaths().size() == 1)
-        {
+        if (windupConfiguration.getInputPaths().size() == 1) {
             LOG.info("Input Application:" + windupConfiguration.getInputPaths().iterator().next());
-        }
-        else
-        {
+        } else {
             LOG.info("Input Applications:");
-            for (Path inputPath : windupConfiguration.getInputPaths())
-            {
+            for (Path inputPath : windupConfiguration.getInputPaths()) {
                 LOG.info("\t" + inputPath);
             }
             LOG.info("");
@@ -423,8 +385,7 @@ public class WindupProcessorImpl implements WindupProcessor
         LOG.info("Output Path:" + windupConfiguration.getOutputDirectory());
         LOG.info("");
 
-        for (Map.Entry<String, Object> entrySet : windupConfiguration.getOptionMap().entrySet())
-        {
+        for (Map.Entry<String, Object> entrySet : windupConfiguration.getOptionMap().entrySet()) {
             LOG.info("\t" + entrySet.getKey() + ": " + entrySet.getValue());
         }
     }

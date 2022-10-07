@@ -7,8 +7,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 @TypeValue("MapInAdjPropsModelMain")
-public interface MapMainModel extends WindupVertexFrame
-{
+public interface MapMainModel extends WindupVertexFrame {
 
     @MapInAdjacentProperties(label = "map")
     void setMap(Map<String, String> map);

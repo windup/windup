@@ -8,16 +8,15 @@ import org.jboss.windup.graph.Adjacency;
 
 /**
  * RMI Service marker interface.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(RMIServiceModel.TYPE)
-public interface RMIServiceModel extends RemoteServiceModel
-{
+public interface RMIServiceModel extends RemoteServiceModel {
     String TYPE = "RMIServiceModel";
     String RMI_IMPLEMENTATION_CLASS = "rmiImplementationClass";
     String RMI_INTERFACE = "rmiInterface";
-    
+
     /**
      * Contains the RMI implementation class
      */

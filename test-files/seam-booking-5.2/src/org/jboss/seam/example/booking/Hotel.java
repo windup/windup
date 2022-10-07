@@ -15,102 +15,99 @@ import org.hibernate.validator.NotNull;
 import org.jboss.seam.annotations.Name;
 
 @Entity
-@NamedQuery(name="hotelByName", query="SELECT h FROM Hotel h WHERE h.name LIKE :name")
+@NamedQuery(name = "hotelByName", query = "SELECT h FROM Hotel h WHERE h.name LIKE :name")
 @Name("hotel")
-public class Hotel implements Serializable
-{
-   private Long id;
-   private String name;
-   private String address;
-   private String city;
-   private String state;
-   private String zip;
-   private String country;
-   private BigDecimal price;
+public class Hotel implements Serializable {
+    private Long id;
+    private String name;
+    private String address;
+    private String city;
+    private String state;
+    private String zip;
+    private String country;
+    private BigDecimal price;
 
-   @Id @GeneratedValue
-   public Long getId()
-   {
-      return id;
-   }
-   public void setId(Long id)
-   {
-      this.id = id;
-   }
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return id;
+    }
 
-   @Length(max=50) @NotNull
-   public String getName()
-   {
-      return name;
-   }
-   public void setName(String name)
-   {
-      this.name = name;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   @Length(max=100) @NotNull
-   public String getAddress()
-   {
-      return address;
-   }
-   public void setAddress(String address)
-   {
-      this.address = address;
-   }
+    @Length(max = 50)
+    @NotNull
+    public String getName() {
+        return name;
+    }
 
-   @Length(max=40) @NotNull
-   public String getCity()
-   {
-      return city;
-   }
-   public void setCity(String city)
-   {
-      this.city = city;
-   }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-   @Length(min=4, max=6) @NotNull
-   public String getZip()
-   {
-      return zip;
-   }
-   public void setZip(String zip)
-   {
-      this.zip = zip;
-   }
+    @Length(max = 100)
+    @NotNull
+    public String getAddress() {
+        return address;
+    }
 
-   @Length(min=2, max=10) @NotNull
-   public String getState()
-   {
-      return state;
-   }
-   public void setState(String state)
-   {
-      this.state = state;
-   }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-   @Length(min=2, max=40) @NotNull
-   public String getCountry()
-   {
-      return country;
-   }
-   public void setCountry(String country)
-   {
-      this.country = country;
-   }
+    @Length(max = 40)
+    @NotNull
+    public String getCity() {
+        return city;
+    }
 
-   @Column(precision=6, scale=2)
-   public BigDecimal getPrice()
-   {
-      return price;
-   }
-   public void setPrice(BigDecimal price)
-   {
-      this.price = price;
-   }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-   @Override
-   public String toString()
-   {
-      return "Hotel(" + name + "," + address + "," + city + "," + zip + ")";
-   }
+    @Length(min = 4, max = 6)
+    @NotNull
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    @Length(min = 2, max = 10)
+    @NotNull
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    @Length(min = 2, max = 40)
+    @NotNull
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    @Column(precision = 6, scale = 2)
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Hotel(" + name + "," + address + "," + city + "," + zip + ")";
+    }
 }

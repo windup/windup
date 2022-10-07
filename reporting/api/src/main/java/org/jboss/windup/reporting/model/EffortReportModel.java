@@ -21,8 +21,7 @@ import java.util.Iterator;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @TypeValue(EffortReportModel.TYPE)
-public interface EffortReportModel extends WindupVertexFrame
-{
+public interface EffortReportModel extends WindupVertexFrame {
     String TYPE = "EffortReportModel";
     String TYPE_PREFIX = TYPE + "-";
     String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with special characters
@@ -50,17 +49,13 @@ public interface EffortReportModel extends WindupVertexFrame
     /**
      * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
      */
-    default IssueCategoryModel getIssueCategory()
-    {
+    default IssueCategoryModel getIssueCategory() {
         Iterator<Vertex> categoryVertices = getElement().vertices(Direction.OUT, ISSUE_CATEGORY);
 
         IssueCategoryModel result;
-        if (categoryVertices.hasNext())
-        {
+        if (categoryVertices.hasNext()) {
             result = getGraph().frameElement(categoryVertices.next(), IssueCategoryModel.class);
-        }
-        else
-        {
+        } else {
             result = IssueCategoryRegistry.loadFromGraph(getGraph(), IssueCategoryRegistry.DEFAULT);
         }
         return result;

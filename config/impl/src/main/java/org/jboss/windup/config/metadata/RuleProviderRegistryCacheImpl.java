@@ -21,15 +21,14 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @Singleton
-public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
-{
+public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache {
     private static final Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getName());
     private static final long MAX_CACHE_AGE = 1000L * 60L * 1L;
 
     /**
      * This value is a hack to allow us to only print a load error to the console once, even
      * if we are called multiple times.
-     *
+     * <p>
      * Each incident will still be logged to the detailed log file.
      */
     private static boolean loadErrorPrinted = false;
@@ -39,107 +38,86 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private Set<Path> userRulesPaths = new LinkedHashSet<>();
 
-    private List<TechnologyReferenceTransformer> cachedTransformers;
+    private List<TechnologyReferenceAliasTranslator> cachedTranslators;
     private RuleProviderRegistry cachedRegistry;
     private long cacheRefreshTime;
 
     @Override
-    public void addUserRulesPath(Path path)
-    {
+    public void addUserRulesPath(Path path) {
         this.cachedRegistry = null;
-        this.cachedTransformers = null;
+        this.cachedTranslators = null;
         userRulesPaths.add(path);
     }
 
     @Override
-    public Set<String> getAvailableTags()
-    {
+    public Set<String> getAvailableTags() {
         Set<String> tags = new HashSet<>();
         RuleProviderRegistry registry = getRuleProviderRegistry();
         if (registry == null)
             return Collections.emptySet();
 
-        for (RuleProvider provider : registry.getProviders())
-        {
+        for (RuleProvider provider : registry.getProviders()) {
             tags.addAll(provider.getMetadata().getTags());
         }
         return tags;
     }
 
     @Override
-    public Set<String> getAvailableSourceTechnologies()
-    {
+    public Set<String> getAvailableSourceTechnologies() {
         Set<TechnologyReference> sourceOptions = new HashSet<>();
         RuleProviderRegistry registry = getRuleProviderRegistry();
         if (registry == null)
             return Collections.emptySet();
 
-        for (RuleProvider provider : registry.getProviders())
-        {
-            for (TechnologyReference technologyReference : provider.getMetadata().getSourceTechnologies())
-            {
-                sourceOptions.add(technologyReference);
-            }
+        for (RuleProvider provider : registry.getProviders()) {
+            sourceOptions.addAll(provider.getMetadata().getSourceTechnologies());
         }
         addTransformers(sourceOptions);
 
-        return sourceOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        return sourceOptions.stream().map(TechnologyReference::getId).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public Set<String> getAvailableTargetTechnologies()
-    {
+    public Set<String> getAvailableTargetTechnologies() {
         Set<TechnologyReference> targetOptions = new HashSet<>();
         RuleProviderRegistry registry = getRuleProviderRegistry();
         if (registry == null)
             return Collections.emptySet();
 
-        for (RuleProvider provider : registry.getProviders())
-        {
-            for (TechnologyReference technologyReference : provider.getMetadata().getTargetTechnologies())
-            {
-                targetOptions.add(technologyReference);
-            }
+        for (RuleProvider provider : registry.getProviders()) {
+            targetOptions.addAll(provider.getMetadata().getTargetTechnologies());
         }
         addTransformers(targetOptions);
 
-        return targetOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        return targetOptions.stream().map(TechnologyReference::getId).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private void addTransformers(Set<TechnologyReference> techs)
-    {
-        techs.addAll(getTechnologyTransformers()
+    private void addTransformers(Set<TechnologyReference> techs) {
+        techs.addAll(getTechnologyAliasTranslators()
                 .stream()
 
                 // Only include it if the target of the transformation will match one of the items
                 //   already in the list.
                 .filter(transformer -> {
-                    for (TechnologyReference originalTech : techs)
-                    {
-                        if (originalTech.matches(transformer.getTarget()))
-                        {
+                    for (TechnologyReference originalTech : techs) {
+                        if (originalTech.matches(transformer.getTargetTechnology())) {
                             return true;
                         }
                     }
                     return false;
                 })
 
-                .map(TechnologyReferenceTransformer::getOriginal)
+                .map(TechnologyReferenceAliasTranslator::getOriginalTechnology)
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public RuleProviderRegistry getRuleProviderRegistry()
-    {
-        if (cacheValid())
-        {
+    public RuleProviderRegistry getRuleProviderRegistry() {
+        if (cacheValid()) {
             return cachedRegistry;
-        }
-        else
-        {
+        } else {
             this.cachedRegistry = null;
-            try
-            {
+            try {
                 Set<Path> defaultRulePaths = new HashSet<>();
                 defaultRulePaths.add(PathUtil.getWindupRulesDir());
                 defaultRulePaths.add(PathUtil.getUserRulesDir());
@@ -149,11 +127,8 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
                 RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
                 getRuleProviderRegistry(ruleLoaderContext);
-            }
-            catch (Exception e)
-            {
-                if (!loadErrorPrinted)
-                {
+            } catch (Exception e) {
+                if (!loadErrorPrinted) {
                     System.err.println("Failed to load rule information due to: " + e.getMessage());
                     loadErrorPrinted = true;
                 }
@@ -164,26 +139,22 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     }
 
     @Override
-    public RuleProviderRegistry getRuleProviderRegistry(RuleLoaderContext ruleLoaderContext)
-    {
+    public RuleProviderRegistry getRuleProviderRegistry(RuleLoaderContext ruleLoaderContext) {
         initCaches(ruleLoaderContext);
         return this.cachedRegistry;
     }
 
-    private List<TechnologyReferenceTransformer> getTechnologyTransformers()
-    {
-        return this.cachedTransformers;
+    private List<TechnologyReferenceAliasTranslator> getTechnologyAliasTranslators() {
+        return this.cachedTranslators;
     }
 
-    private void initCaches(RuleLoaderContext ruleLoaderContext)
-    {
+    private void initCaches(RuleLoaderContext ruleLoaderContext) {
         this.cachedRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
-        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
+        this.cachedTranslators = TechnologyReferenceAliasTranslator.getAliasTranslators(ruleLoaderContext);
         this.cacheRefreshTime = System.currentTimeMillis();
     }
 
-    private boolean cacheValid()
-    {
+    private boolean cacheValid() {
         if (cachedRegistry == null)
             return false;
 

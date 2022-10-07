@@ -11,7 +11,9 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
-    <link rel="shortcut icon" href="resources/img/mta-icon.png" type="image/x-icon"/>
+
+    <#assign basePath="resources">
+    <#include "include/favicon.ftl">
 
     <script src="resources/js/jquery-3.3.1.min.js"></script>
 </head>
@@ -40,7 +42,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Source Report
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Migration Toolkit for Applications by Red Hat found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Tackle Analysis found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
 
                     <#list reportModel.projectEdges as toProjectEdge>
                         <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">
@@ -175,6 +177,7 @@
                                 <@render_rule_link renderType='glyph' ruleID=hintLine.ruleID class='rule-link floatRight'/><#t>
                                 <#t>
                             </div><#t>
+                            <#if hintLine.hint != "---">
                             <div class='inline-comment-body'><#t>
                                 ${markdownToHtml(hintLine.hint)?js_string}<#t>
                                 <#if hintLine.links?? && hintLine.links?has_content>
@@ -187,6 +190,7 @@
                                         </ul><#t>
                                 </#if>
                             </div><#t>
+                            </#if>
                         </div><#t>
                     </#if>
                 </div><#t>
@@ -194,6 +198,10 @@
 
         </#list>
 
+            if (location.hash) {
+                var atag = $("a[name='" + location.hash.substr(1)  +  "']");
+                $('html,body').animate({scrollTop: atag.offset().top - 150},'slow');
+            }
 
             $('code[class]').each(function(){
                  var codeSyntax = ($(this).attr('class'));

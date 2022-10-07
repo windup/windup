@@ -9,15 +9,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class LuceneFileArchiveIdentificationServiceTest
-{
+public class LuceneFileArchiveIdentificationServiceTest {
 
     @Test
-    public void testGetCoordinateFromSHA1() throws Exception
-    {
+    public void testGetCoordinateFromSHA1() throws Exception {
         final File file = new File("target/test-nexus-data/lucene/");
         Assert.assertTrue("Test file does not exist", file.exists());
         LuceneArchiveIdentificationService ident = new LuceneArchiveIdentificationService(file);
@@ -26,7 +23,7 @@ public class LuceneFileArchiveIdentificationServiceTest
         Assert.assertNull("No coordinate for 55555555564e84315e83c6ba4a855b07ba51166b", coordinate);
 
         // Position 0
-        check(ident, "000005ce9bd9867e24cdc33c06e88a65edce71db", "com.google.apis:google-api-services-genomics:jar::v1beta-rev26-1.18.0-rc");
+        check(ident, "8aab519d6654d378f94c612e19495bbcb9d355e5", "com.google.apis:google-api-services-genomics:jar::v1-rev623-1.25.0");
 
         // Last entry
         check(ident, "ffffdf1558b62750b24bdaa33cb9a72b0cb766ce", "org.glassfish.metro:wsmc-impl:jar::2.1.1-b06");
@@ -41,19 +38,24 @@ public class LuceneFileArchiveIdentificationServiceTest
 
         // Some which caused issues.
         check(ident, "7ff0d167a6816aa113b1b4a8a37515701a74b288", "org.kill-bill.billing:killbill-platform-osgi-bundles-lib-slf4j-osgi:jar::0.1.0");
+
+        // https://issues.redhat.com/browse/WINDUP-2765
+        check(ident, "85f79121fdaabcbcac085d0d4aad34af9f8dbba2", "org.springframework.boot:spring-boot-starter-web:jar::2.3.2.RELEASE");
+        // https://issues.redhat.com/browse/WINDUP-2765
+        check(ident, "dff5c6bcfd0606124cbb1e6050563dc96a967bce", "org.apache.ant:ant-commons-logging:jar::1.8.0");
+        // https://issues.redhat.com/browse/WINDUP-3300
+        check(ident, "d6153f8fc60c479ab0f9efb35c034526436a4953", "com.fasterxml.jackson.core:jackson-databind:jar::2.12.3");
     }
 
-    private static void check(ArchiveIdentificationService ident, String hash, String coordString)
-    {
+    private static void check(ArchiveIdentificationService ident, String hash, String coordString) {
         Coordinate coord = ident.getCoordinate(hash);
-        Assert.assertNotNull("Coordinate found for " + hash, coord);
+        Assert.assertNotNull("Coordinate not found for " + hash, coord);
         Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coord));
     }
 
 
     // GROUP_ID:ARTIFACT_ID[:PACKAGING[:CLASSIFIER]]:VERSION
-    private static String coordToString(Coordinate coord)
-    {
+    private static String coordToString(Coordinate coord) {
         StringBuilder sb = new StringBuilder();
         sb.append(coord.getGroupId()).append(':').append(coord.getArtifactId());
         if (coord.getPackaging() != null)

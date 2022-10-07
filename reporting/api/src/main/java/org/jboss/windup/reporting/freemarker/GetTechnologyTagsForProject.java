@@ -15,10 +15,10 @@ import freemarker.template.TemplateModelException;
 
 /**
  * <p>
- *  Gets all technology tags for the provided {@link ProjectModelTraversal} and all of its subprojects (eg, "EJB", "Web XML").
+ * Gets all technology tags for the provided {@link ProjectModelTraversal} and all of its subprojects (eg, "EJB", "Web XML").
  * </p>
  * <p>
- *  Example call:
+ * Example call:
  * </p>
  *
  * <pre>
@@ -26,28 +26,24 @@ import freemarker.template.TemplateModelException;
  * </pre>
  *
  * <p>
- *  The method will return an Iterable containing {@link TechnologyTagModel} instances.
+ * The method will return an Iterable containing {@link TechnologyTagModel} instances.
  * </p>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetTechnologyTagsForProject implements WindupFreeMarkerMethod
-{
+public class GetTechnologyTagsForProject implements WindupFreeMarkerMethod {
     private static final String NAME = "getTechnologyTagsForProjectTraversal";
     private GraphContext context;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.context = event.getGraphContext();
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-        {
+        if (arguments.size() != 1) {
             throw new TemplateModelException("Error, method expects one argument (" + ProjectModelTraversal.class.getSimpleName() + ")");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
@@ -58,16 +54,14 @@ public class GetTechnologyTagsForProject implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
-                    + "> containing the technology tags for this project (and all subprojects).";
+                + " as a parameter and returns an Iterable<" + TechnologyTagModel.class.getSimpleName()
+                + "> containing the technology tags for this project (and all subprojects).";
     }
 }

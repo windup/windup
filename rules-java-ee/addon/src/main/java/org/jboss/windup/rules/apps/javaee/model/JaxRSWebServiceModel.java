@@ -10,18 +10,17 @@ import org.jboss.windup.graph.Property;
 
 /**
  * JaxRS REST Web Service.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(JaxRSWebServiceModel.TYPE)
-public interface JaxRSWebServiceModel extends WebServiceModel
-{
+public interface JaxRSWebServiceModel extends WebServiceModel {
     String TYPE = "JaxRSWebServiceModel";
     String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
     String JAXRS_INTERFACE = "jaxrsInterface";
-    
+
     String PATH = "jaxrsPath";
-    
+
 
     /**
      * Contains the URL path to the JaxRS service.
@@ -35,7 +34,7 @@ public interface JaxRSWebServiceModel extends WebServiceModel
      */
     @Property(PATH)
     void setPath(String packageName);
-    
+
     /**
      * Contains the JAX-RS implementation class
      */

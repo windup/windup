@@ -7,7 +7,6 @@ import org.jboss.windup.graph.model.TypeValue;
  * but we have not yet found an actual ".class" or ".java" file with the code.
  */
 @TypeValue(PhantomJavaClassModel.TYPE)
-public interface PhantomJavaClassModel extends JavaClassModel
-{
+public interface PhantomJavaClassModel extends JavaClassModel {
     String TYPE = "PhantomJavaClassModel";
 }

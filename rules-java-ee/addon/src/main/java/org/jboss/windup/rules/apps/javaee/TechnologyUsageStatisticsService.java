@@ -15,32 +15,26 @@ import org.jboss.windup.util.Logging;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsageStatisticsModel>
-{
+public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsageStatisticsModel> {
     /**
      * Creates an instance of this service.
      */
-    public TechnologyUsageStatisticsService(GraphContext context)
-    {
+    public TechnologyUsageStatisticsService(GraphContext context) {
         super(context, TechnologyUsageStatisticsModel.class);
     }
 
-    public TechnologyUsageStatisticsModel getOrCreate(ProjectModel projectModel, String technologyName)
-    {
+    public TechnologyUsageStatisticsModel getOrCreate(ProjectModel projectModel, String technologyName) {
         Iterable<TechnologyUsageStatisticsModel> byName = findAllByProperty(TechnologyUsageStatisticsModel.NAME, technologyName);
         TechnologyUsageStatisticsModel result = null;
 
-        for (TechnologyUsageStatisticsModel candidate : byName)
-        {
-            if (candidate.getProjectModel().equals(projectModel))
-            {
+        for (TechnologyUsageStatisticsModel candidate : byName) {
+            if (candidate.getProjectModel().equals(projectModel)) {
                 result = candidate;
                 break;
             }
         }
 
-        if (result == null)
-        {
+        if (result == null) {
             result = create();
             result.setComputed(new Date());
             result.setProjectModel(projectModel);

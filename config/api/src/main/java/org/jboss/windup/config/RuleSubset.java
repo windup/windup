@@ -15,15 +15,8 @@
  */
 package org.jboss.windup.config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +30,8 @@ import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsMode
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.common.util.Assert;
@@ -80,8 +74,7 @@ import org.ocpsoft.rewrite.util.Visitor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, I - zizka at seznam.cz</a>
  */
-public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized, CompositeRule
-{
+public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized, CompositeRule {
     private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
@@ -93,8 +86,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      * @return the exceptions
      */
-    public Map<String, Exception> getExceptions()
-    {
+    public Map<String, Exception> getExceptions() {
         return exceptions;
     }
 
@@ -116,43 +108,36 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
     private boolean alwaysHaltOnFailure = false;
 
-    private RuleSubset(Configuration config)
-    {
+    private RuleSubset(Configuration config) {
         Assert.notNull(config, "Configuration must not be null.");
         this.config = config;
     }
 
-    public static RuleSubset create(Configuration config)
-    {
+    public static RuleSubset create(Configuration config) {
         return new RuleSubset(config);
     }
 
-    public void setAlwaysHaltOnFailure(boolean alwaysHaltOnFailure)
-    {
+    public void setAlwaysHaltOnFailure(boolean alwaysHaltOnFailure) {
         this.alwaysHaltOnFailure = alwaysHaltOnFailure;
     }
 
     /**
      * Logs the time taken by this rule, and attaches this to the total for the RuleProvider
      */
-    private void logTimeTakenByRuleProvider(GraphContext graphContext, Context context, int ruleIndex, int timeTaken)
-    {
+    private void logTimeTakenByRuleProvider(GraphContext graphContext, Context context, int ruleIndex, int timeTaken) {
         AbstractRuleProvider ruleProvider = (AbstractRuleProvider) context.get(RuleMetadataType.RULE_PROVIDER);
         if (ruleProvider == null)
             return;
 
-        if (!timeTakenByProvider.containsKey(ruleProvider))
-        {
+        if (!timeTakenByProvider.containsKey(ruleProvider)) {
             RuleProviderExecutionStatisticsModel model = new RuleProviderExecutionStatisticsService(graphContext)
-                        .create();
+                    .create();
             model.setRuleIndex(ruleIndex);
             model.setRuleProviderID(ruleProvider.getMetadata().getID());
             model.setTimeTaken(timeTaken);
 
             timeTakenByProvider.put(ruleProvider, model.getElement().id());
-        }
-        else
-        {
+        } else {
             RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(graphContext);
             RuleProviderExecutionStatisticsModel model = service.getById(timeTakenByProvider.get(ruleProvider));
             int prevTimeTaken = model.getTimeTaken();
@@ -164,21 +149,17 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      * Logs the time taken by this rule and adds this to the total time taken for this phase
      */
-    private void logTimeTakenByPhase(GraphContext graphContext, Class<? extends RulePhase> phase, int timeTaken)
-    {
-        if (!timeTakenByPhase.containsKey(phase))
-        {
+    private void logTimeTakenByPhase(GraphContext graphContext, Class<? extends RulePhase> phase, int timeTaken) {
+        if (!timeTakenByPhase.containsKey(phase)) {
             RulePhaseExecutionStatisticsModel model = new GraphService<>(graphContext,
-                        RulePhaseExecutionStatisticsModel.class).create();
+                    RulePhaseExecutionStatisticsModel.class).create();
             model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
             model.setOrderExecuted(timeTakenByPhase.size());
             timeTakenByPhase.put(phase, model.getElement().id());
-        }
-        else
-        {
+        } else {
             GraphService<RulePhaseExecutionStatisticsModel> service = new GraphService<>(graphContext,
-                        RulePhaseExecutionStatisticsModel.class);
+                    RulePhaseExecutionStatisticsModel.class);
             RulePhaseExecutionStatisticsModel model = service.getById(timeTakenByPhase.get(phase));
             int prevTimeTaken = model.getTimeTaken();
             model.setTimeTaken(prevTimeTaken + timeTaken);
@@ -186,179 +167,147 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     @Override
-    public void perform(Rewrite rewrite, EvaluationContext context)
-    {
+    public void perform(Rewrite rewrite, EvaluationContext context) {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
         if (!(rewrite instanceof GraphRewrite))
             throw new IllegalArgumentException("Rewrite must be an instanceof GraphRewrite");
 
         /*
          * Highly optimized loop - for performance reasons. Think before you change this! (lincolnthree)
          */
-        GraphRewrite event = (GraphRewrite) rewrite;
+        GraphRewrite windupExecutionContext = (GraphRewrite) rewrite;
 
         List<Rule> rules = config.getRules();
 
-        for (RuleLifecycleListener listener : listeners)
-        {
-            listener.beforeExecution(event);
-        }
+        listeners.forEach(listener -> listener.beforeExecution(windupExecutionContext));
 
         EvaluationContextImpl subContext = new EvaluationContextImpl();
         rulesLoop:
-        for (int i = 0; i < rules.size(); i++)
-        {
+        for (int i = 0; i < rules.size(); i++) {
             Rule rule = rules.get(i);
 
             Context ruleContext = rule instanceof Context ? (Context) rule : null;
 
             long ruleTimeStarted = System.currentTimeMillis();
-            try
-            {
+            try {
                 AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
-                if (ruleProvider != null && ruleProvider.getMetadata() != null && ruleProvider.getMetadata().isDisabled())
-                {
+                if (ruleProvider != null && ruleProvider.getMetadata() != null && ruleProvider.getMetadata().isDisabled()) {
                     log.info("RuleProvider is disabled, skipping: " + ruleProvider.getMetadata().getID());
                     continue;
                 }
 
                 subContext = new EvaluationContextImpl();
 
-                ParameterStore parameterStore = (ParameterStore) context.get(ParameterStore.class);
-                if (parameterStore == null)
-                    parameterStore = new DefaultParameterStore();
+                // Set up rule parameters
+                ParameterStore parameterStore = Optional.ofNullable((ParameterStore) context.get(ParameterStore.class)).orElse(new DefaultParameterStore());
                 subContext.put(ParameterStore.class, parameterStore);
                 setParameterStore(parameterStore);
 
-                ParameterValueStore values = (ParameterValueStore) context.get(ParameterValueStore.class);
-                if (values == null)
-                    values = new DefaultParameterValueStore();
+                ParameterValueStore values = Optional.ofNullable((ParameterValueStore) context.get(ParameterValueStore.class)).orElse(new DefaultParameterValueStore());
                 subContext.put(ParameterValueStore.class, values);
 
                 subContext.setState(RewriteState.EVALUATING);
                 subContext.put(Rule.class, rule);
 
-                Variables.instance(event).push();
-                try
-                {
-                    for (RuleLifecycleListener listener : listeners)
-                    {
-                        boolean windupStopRequested = listener.beforeRuleEvaluation(event, rule, subContext);
-                        if (windupStopRequested)
-                        {
-                            String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
+                Variables.instance(windupExecutionContext).push();
+                try {
+                    // Run "before rule evaluation" listeners
+                    for (RuleLifecycleListener listener : listeners) {
+                        boolean windupStopRequested = listener.beforeRuleEvaluation(windupExecutionContext, rule, subContext);
+                        if (windupStopRequested) {
+                            String msg = theme.getBrandNameAcronym() + " was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
                             log.fine(msg);
-                            event.setWindupStopException(new WindupStopException(msg));
+                            windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                             break rulesLoop;
                         }
                     }
 
-                    if (rule.evaluate(event, subContext))
-                    {
-                        for (RuleLifecycleListener listener : listeners)
-                        {
-                            listener.afterRuleConditionEvaluation(event, subContext, rule, true);
+                    // Check if this rule applies to the context
+                    if (rule.evaluate(windupExecutionContext, subContext)) {
+                        // Run "after rule condition evaluation" listeners
+                        for (RuleLifecycleListener listener : listeners) {
+                            listener.afterRuleConditionEvaluation(windupExecutionContext, subContext, rule, true);
                         }
 
-                        if (!handleBindings(event, subContext, values))
+                        // Binds values to the subContext?
+                        if (!handleBindings(windupExecutionContext, subContext, values))
                             continue;
 
+                        // Start executing rule
                         subContext.setState(RewriteState.PERFORMING);
                         final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadataType.RULE_PROVIDER);
                         log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
 
-                        for (RuleLifecycleListener listener : listeners)
-                        {
-                            boolean windupStopRequested = listener.beforeRuleOperationsPerformed(event, subContext, rule);
-                            if (windupStopRequested)
-                            {
-                                String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
+                        // Run "before rule operations performed" listeners
+                        for (RuleLifecycleListener listener : listeners) {
+                            boolean windupStopRequested = listener.beforeRuleOperationsPerformed(windupExecutionContext, subContext, rule);
+                            if (windupStopRequested) {
+                                String msg = theme.getBrandNameAcronym() + " was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
                                 log.warning(msg);
-                                event.setWindupStopException(new WindupStopException(msg));
+                                windupExecutionContext.setWindupStopException(new WindupStopException(msg));
                                 break rulesLoop;
                             }
                         }
 
+                        // Run preoperations if any
                         List<Operation> preOperations = subContext.getPreOperations();
-                        for (Operation preOperation : preOperations)
-                        {
-                            preOperation.perform(event, subContext);
+                        for (Operation preOperation : preOperations) {
+                            preOperation.perform(windupExecutionContext, subContext);
                         }
 
-                        if (event.getFlow().isHandled())
-                            break;
+                        rule.perform(windupExecutionContext, subContext);
 
-                        rule.perform(event, subContext);
-
-                        for (RuleLifecycleListener listener : listeners)
-                        {
-                            listener.afterRuleOperationsPerformed(event, subContext, rule);
+                        for (RuleLifecycleListener listener : listeners) {
+                            listener.afterRuleOperationsPerformed(windupExecutionContext, subContext, rule);
                         }
-
-                        if (event.getFlow().isHandled())
-                            break;
 
                         List<Operation> postOperations = subContext.getPostOperations();
-                        for (Operation postOperation : postOperations)
-                        {
-                            postOperation.perform(event, subContext);
+                        for (Operation postOperation : postOperations) {
+                            postOperation.perform(windupExecutionContext, subContext);
                         }
-
-                        if (event.getFlow().isHandled())
-                            break;
-                    }
-                    else
-                    {
-                        for (RuleLifecycleListener listener : listeners)
-                        {
-                            listener.afterRuleConditionEvaluation(event, subContext, rule, false);
+                    } else {
+                        for (RuleLifecycleListener listener : listeners) {
+                            listener.afterRuleConditionEvaluation(windupExecutionContext, subContext, rule, false);
                         }
                     }
-                }
-                catch (WindupStopException ex)
-                {
-                    final String msg = Util.WINDUP_BRAND_NAME_ACRONYM+" was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
+                } catch (WindupStopException ex) {
+                    final String msg = theme.getBrandNameAcronym() + " was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
                     log.fine(msg);
-                    event.setWindupStopException(new WindupStopException(msg, ex));
-                    event.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
-                    break rulesLoop;
-                }
-                finally
-                {
+                    windupExecutionContext.setWindupStopException(new WindupStopException(msg, ex));
+                    windupExecutionContext.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
+                    break;
+                } finally {
                     boolean autocommit = true;
                     if (ruleContext != null && ruleContext.containsKey(RuleMetadataType.AUTO_COMMIT))
                         autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
 
                     if (autocommit)
-                        event.getGraphContext().commit();
+                        windupExecutionContext.getGraphContext().commit();
 
-                    Variables.instance(event).pop();
+                    Variables.instance(windupExecutionContext).pop();
 
                     long ruleTimeCompleted = System.currentTimeMillis();
-                    if (ruleContext != null)
-                    {
+                    if (ruleContext != null) {
                         int timeTaken = (int) (ruleTimeCompleted - ruleTimeStarted);
-                        logTimeTakenByRuleProvider(event.getGraphContext(), ruleContext, i, timeTaken);
+                        logTimeTakenByRuleProvider(windupExecutionContext.getGraphContext(), ruleContext, i, timeTaken);
                     }
                 }
-            }
-            catch (RuntimeException ex)
-            {
-                for (RuleLifecycleListener listener : listeners)
-                {
-                    listener.afterRuleExecutionFailed(event, subContext, rule, ex);
+            } catch (RuntimeException ex) {
+                for (RuleLifecycleListener listener : listeners) {
+                    listener.afterRuleExecutionFailed(windupExecutionContext, subContext, rule, ex);
                 }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
                 String logMsg = exMsg + System.lineSeparator() + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
                 log.log(Level.SEVERE, logMsg, ex);
-                if (ruleContext != null)
-                {
+                if (ruleContext != null) {
                     Object origin = ruleContext.get(RuleMetadataType.ORIGIN);
                     if (origin != null)
-                        exMsg += System.lineSeparator()+"  From: " + origin;
+                        exMsg += System.lineSeparator() + "  From: " + origin;
 
                     Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
                     if (location != null)
-                        exMsg += System.lineSeparator()+"  Defined in: " + location;
+                        exMsg += System.lineSeparator() + "  Defined in: " + location;
                 }
 
                 // Depending on RuleProvider's haltOnException, halt Windup on exception.
@@ -373,22 +322,18 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
         }
 
-        if (event.getWindupStopException() == null)
+        if (windupExecutionContext.getWindupStopException() == null)
             for (RuleLifecycleListener listener : listeners)
-                listener.afterExecution(event);
+                listener.afterExecution(windupExecutionContext);
     }
 
-    private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context,
-                ParameterValueStore valueStore)
-    {
+    private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context, ParameterValueStore valueStore) {
         boolean result = true;
         ParameterStore store = (ParameterStore) context.get(ParameterStore.class);
-        for (Entry<String, Parameter<?>> entry : store)
-        {
+        for (Entry<String, Parameter<?>> entry : store) {
             Parameter<?> parameter = entry.getValue();
             String values = valueStore.retrieve(parameter);
-            if (!ParameterUtils.enqueueSubmission(event, context, parameter, values))
-            {
+            if (!ParameterUtils.enqueueSubmission(event, context, parameter, values)) {
                 result = false;
                 break;
             }
@@ -401,79 +346,66 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
      */
 
     @Override
-    public List<Operation> getOperations()
-    {
+    public List<Operation> getOperations() {
         return Collections.emptyList();
     }
 
-    private static class EvaluationContextImpl extends ContextBase implements EvaluationContext
-    {
+    private static class EvaluationContextImpl extends ContextBase implements EvaluationContext {
         private final List<Operation> preOperations = new ArrayList<>();
         private final List<Operation> postOperations = new ArrayList<>();
         private RewriteState state;
 
-        public EvaluationContextImpl()
-        {
+        public EvaluationContextImpl() {
             put(ParameterStore.class, new DefaultParameterStore());
         }
 
         @Override
-        public void addPreOperation(final Operation operation)
-        {
+        public void addPreOperation(final Operation operation) {
             this.preOperations.add(operation);
         }
 
         @Override
-        public void addPostOperation(final Operation operation)
-        {
+        public void addPostOperation(final Operation operation) {
             this.preOperations.add(operation);
         }
 
         /**
          * Get an immutable view of the added pre-{@link Operation} instances.
          */
-        public List<Operation> getPreOperations()
-        {
+        public List<Operation> getPreOperations() {
             return Collections.unmodifiableList(preOperations);
         }
 
         /**
          * Get an immutable view of the added post-{@link Operation} instances.
          */
-        public List<Operation> getPostOperations()
-        {
+        public List<Operation> getPostOperations() {
             return Collections.unmodifiableList(postOperations);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "EvaluationContextImpl [preOperations=" + preOperations + ", postOperations=" + postOperations + "]";
         }
 
         @Override
-        public RewriteState getState()
-        {
+        public RewriteState getState() {
             return state;
         }
 
-        public void setState(RewriteState state)
-        {
+        public void setState(RewriteState state) {
             this.state = state;
         }
     }
 
     @Override
-    public Set<String> getRequiredParameterNames()
-    {
+    public Set<String> getRequiredParameterNames() {
         return Collections.emptySet();
     }
 
     @Override
-    public void setParameterStore(final ParameterStore parent)
-    {
-        for (int i = 0; i < config.getRules().size(); i++)
-        {
+    public void setParameterStore(final ParameterStore parent) {
+        for (int i = 0; i < config.getRules().size(); i++) {
             Rule rule = config.getRules().get(i);
 
             if (!(rule instanceof RuleBuilder))
@@ -492,68 +424,59 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      *
      */
-    private static class ParameterizedCallbackImpl implements ParameterizedCallback
-    {
+    private static class ParameterizedCallbackImpl implements ParameterizedCallback {
 
         private final Rule rule;
         private final ParameterStore parent;
 
-        public ParameterizedCallbackImpl(Rule rule, ParameterStore parent)
-        {
+        public ParameterizedCallbackImpl(Rule rule, ParameterStore parent) {
             this.rule = rule;
             this.parent = parent;
         }
 
         @Override
-        public void call(Parameterized parameterized)
-        {
+        public void call(Parameterized parameterized) {
             Set<String> names = parameterized.getRequiredParameterNames();
             if (!(rule instanceof RuleBuilder))
                 return;
 
             ParameterStore store = ((RuleBuilder) rule).getParameterStore();
 
-            for (Entry<String, Parameter<?>> entry : parent)
-            {
+            for (Entry<String, Parameter<?>> entry : parent) {
                 String name = entry.getKey();
                 Parameter<?> parentParam = entry.getValue();
 
-                if (!store.contains(name))
-                {
+                if (!store.contains(name)) {
                     store.get(name, parentParam);
                     continue;
                 }
 
                 Parameter<?> parameter = store.get(name);
-                for (Binding binding : parameter.getBindings())
-                {
+                for (Binding binding : parameter.getBindings()) {
                     if (!parentParam.getBindings().contains(binding))
                         throwRedefinitionError(rule, name);
                 }
 
-                for (Constraint<String> constraint : parameter.getConstraints())
-                {
+                for (Constraint<String> constraint : parameter.getConstraints()) {
                     if (!parentParam.getConstraints().contains(constraint))
                         throwRedefinitionError(rule, name);
                 }
 
-                for (Transposition<String> transposition : parameter.getTranspositions())
-                {
+                for (Transposition<String> transposition : parameter.getTranspositions()) {
                     if (!parentParam.getTranspositions().contains(transposition))
                         throwRedefinitionError(rule, name);
                 }
 
                 if (parentParam.getConverter() != null
-                            && !parentParam.getConverter().equals(parameter.getConverter()))
+                        && !parentParam.getConverter().equals(parameter.getConverter()))
                     throwRedefinitionError(rule, name);
 
                 if (parentParam.getValidator() != null
-                            && !parentParam.getValidator().equals(parameter.getValidator()))
+                        && !parentParam.getValidator().equals(parameter.getValidator()))
                     throwRedefinitionError(rule, name);
             }
 
-            for (String name : names)
-            {
+            for (String name : names) {
                 Parameter<?> parameter = store.get(name, new DefaultParameter(name));
                 if (parameter instanceof ConfigurableParameter<?>)
                     ((ConfigurableParameter<?>) parameter).bindsTo(Evaluation.property(name));
@@ -562,11 +485,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
         }
 
-        private void throwRedefinitionError(Rule rule, String name)
-        {
+        private void throwRedefinitionError(Rule rule, String name) {
             throw new IllegalStateException("Subset cannot re-configure parameter [" + name
-                        + "] that was configured in parent Configuration. Re-definition was attempted at ["
-                        + rule + "] ");
+                    + "] that was configured in parent Configuration. Re-definition was attempted at ["
+                    + rule + "] ");
         }
 
     }
@@ -574,14 +496,11 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
      */
-    public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
-    {
+    public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener) {
         this.listeners.add(listener);
-        return new ListenerRegistration<RuleLifecycleListener>()
-        {
+        return new ListenerRegistration<RuleLifecycleListener>() {
             @Override
-            public RuleLifecycleListener removeListener()
-            {
+            public RuleLifecycleListener removeListener() {
                 listeners.remove(listener);
                 return listener;
             }
@@ -590,26 +509,22 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return "RuleSubset_" + config.hashCode();
     }
 
     @Override
-    public boolean evaluate(Rewrite event, EvaluationContext context)
-    {
+    public boolean evaluate(Rewrite event, EvaluationContext context) {
         return config != null && config.getRules() != null && !config.getRules().isEmpty();
     }
 
     @Override
-    public List<Rule> getRules()
-    {
+    public List<Rule> getRules() {
         return config == null ? null : config.getRules();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RuleSubset.create(" + this.config + ")";
     }
 }

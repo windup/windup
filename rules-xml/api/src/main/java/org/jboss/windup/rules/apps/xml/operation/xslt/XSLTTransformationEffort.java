@@ -4,12 +4,10 @@ import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
  * Final optional step in building the {@link XSLTTransformation}, just after the XSLT extension was selected.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public interface XSLTTransformationEffort extends OperationBuilder
-{
+public interface XSLTTransformationEffort extends OperationBuilder {
     /**
      * Specify {@link XSLTTransformation} estimated effort.
      */

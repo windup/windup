@@ -4,59 +4,51 @@ package org.jboss.windup.rules.apps.mavenize;
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * Gives the user the option to skip class not found analysis.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
-public class MavenizeGroupIdOption extends AbstractConfigurationOption
-{
+public class MavenizeGroupIdOption extends AbstractConfigurationOption {
     public static final String NAME = "mavenizeGroupId";
     public static final String REGEX_GROUP_ID = "[a-zA-Z][-_a-zA-Z0-9]*(\\.[a-zA-Z][-_a-zA-Z0-9]*)*";
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "The <groupId> to use for Maven project stub pom.xml's.";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "All pom.xml files will use this value as their <groupId>. If the parameter"
-            + " is omitted, " + Util.WINDUP_BRAND_NAME_ACRONYM + " tries to guess some value based on the application,"
-            + " but this guess may be wrong. Last resort default value is '"+ModuleAnalysisHelper.LAST_RESORT_DEFAULT_GROUP_ID+"'.";
+                + " is omitted, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " tries to guess some value based on the application,"
+                + " but this guess may be wrong. Last resort default value is '" + ModuleAnalysisHelper.LAST_RESORT_DEFAULT_GROUP_ID + "'.";
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return String.class;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.SINGLE;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return false;
     }
 
     @Override
-    public ValidationResult validate(Object value)
-    {
+    public ValidationResult validate(Object value) {
         if (value == null)
             return ValidationResult.SUCCESS;
 

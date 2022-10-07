@@ -4,16 +4,14 @@ import org.jboss.windup.reporting.quickfix.Quickfix;
 
 /**
  * One of the builder interfaces of Hint operation.
- * 
+ *
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
- * 
  */
-public interface HintQuickfix
-{
+public interface HintQuickfix {
 
     /**
      * Adds quickfix {@link Quickfix} into hint for later support of tooling
-     * 
+     *
      * @param fix
      * @return
      */
@@ -21,7 +19,7 @@ public interface HintQuickfix
 
     /**
      * Adds effort to the Hint. The effort represents the level of effort required to fix a task.
-     * 
+     *
      * @param effort number of effort to be added to hint
      * @return
      */

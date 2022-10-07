@@ -7,12 +7,11 @@ import java.lang.annotation.Target;
 
 /**
  * Contains multiple {@link Indexed} annotations.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Indexes
-{
+public @interface Indexes {
     Indexed[] value();
 }

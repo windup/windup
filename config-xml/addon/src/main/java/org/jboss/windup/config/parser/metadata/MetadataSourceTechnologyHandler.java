@@ -11,7 +11,6 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
  * </pre>
  */
 @NamespaceElementHandler(elementName = MetadataSourceTechnologyHandler.METADATA_SOURCE_TECHNOLOGY_ELEMENT, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataSourceTechnologyHandler extends MetadataTechnologyHandler
-{
+public class MetadataSourceTechnologyHandler extends MetadataTechnologyHandler {
     public static final String METADATA_SOURCE_TECHNOLOGY_ELEMENT = "sourceTechnology";
 }

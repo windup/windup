@@ -5,7 +5,6 @@ import org.jboss.windup.reporting.model.source.SourceReportModel;
 
 /**
  * This extends SourceReportModel with some functions that are used by our source rendering template.
- *
  */
 @TypeValue(FreeMarkerSourceReportModel.TYPE)
 public interface FreeMarkerSourceReportModel extends SourceReportModel {
@@ -15,21 +14,17 @@ public interface FreeMarkerSourceReportModel extends SourceReportModel {
      * This is used by the Javascript in the source rendering template to provide code assist blocks in the rendered
      * output.
      */
-    default String getSourceBlock()
-    {
+    default String getSourceBlock() {
         StringBuilder builder = new StringBuilder();
 
         boolean first = true;
-        for (InlineHintModel line : getSourceFileModel().getInlineHints())
-        {
-            if (!first)
-            {
+        for (InlineHintModel line : getSourceFileModel().getInlineHints()) {
+            if (!first) {
                 builder.append(",");
             }
             builder.append(line.getLineNumber());
 
-            if (first)
-            {
+            if (first) {
                 first = false;
             }
         }

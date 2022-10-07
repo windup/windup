@@ -6,11 +6,10 @@ import org.w3c.dom.Element;
 /**
  * Parses the given {@link Element} and returns a result, that will depend upon the underlying implementation.
  */
-public interface ElementHandler<T>
-{
+public interface ElementHandler<T> {
     /**
      * Parses the provided {@link Element} with the given {@link ParserContext}.
-     * 
+     * <p>
      * See also {@link XMLRuleProviderLoader}.
      */
     T processElement(ParserContext handlerManager, Element element) throws ConfigurationException;

@@ -3,8 +3,7 @@ package org.jboss.windup.reporting.config;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface HintDisplayMode
-{
+public interface HintDisplayMode {
     /**
      * Provide a link describing the topic more precisely
      *

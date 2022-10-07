@@ -16,8 +16,7 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "metadata", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
-{
+public class MetadataRootHandler implements ElementHandler<RulesetMetadata> {
 
     public static final String DEPENDENCIES = "dependencies";
     public static final String SOURCE_TECHNOLOGY = "sourceTechnology";
@@ -28,50 +27,46 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
 
     @Override
     @SuppressWarnings("unchecked")
-    public RulesetMetadata processElement(ParserContext context, Element element) throws ConfigurationException
-    {
+    public RulesetMetadata processElement(ParserContext context, Element element) throws ConfigurationException {
         List<Element> children = $(element).children().get();
         MetadataBuilder metadataBuilder = context.getBuilder().getMetadataBuilder();
-        for (Element child : children)
-        {
+        for (Element child : children) {
             Object result = context.processElement(child);
 
-            switch ($(child).tag())
-            {
-            case MetadataProviderOverrideHandler.OVERRIDE_PROVIDER:
-                metadataBuilder.setOverrideProvider((Boolean)result);
-                break;
+            switch ($(child).tag()) {
+                case MetadataProviderOverrideHandler.OVERRIDE_PROVIDER:
+                    metadataBuilder.setOverrideProvider((Boolean) result);
+                    break;
 
-            case MetadataDescriptionHandler.DESCRIPTION:
-                metadataBuilder.setDescription((String) result);
-                break;
+                case MetadataDescriptionHandler.DESCRIPTION:
+                    metadataBuilder.setDescription((String) result);
+                    break;
 
-            case DEPENDENCIES:
-                for (AddonId id : (List<AddonId>) result)
-                {
-                    metadataBuilder.addRequiredAddon(id);
-                }
-                break;
+                case DEPENDENCIES:
+                    for (AddonId id : (List<AddonId>) result) {
+                        metadataBuilder.addRequiredAddon(id);
+                    }
+                    break;
 
-            case SOURCE_TECHNOLOGY:
-                metadataBuilder.addSourceTechnology((TechnologyReference) result);
-                break;
+                case SOURCE_TECHNOLOGY:
+                    metadataBuilder.addSourceTechnology((TechnologyReference) result);
+                    break;
 
-            case TARGET_TECHNOLOGY:
-                metadataBuilder.addTargetTechnology((TechnologyReference) result);
-                break;
+                case TARGET_TECHNOLOGY:
+                    metadataBuilder.addTargetTechnology((TechnologyReference) result);
+                    break;
 
-            case TAG:
-                metadataBuilder.addTag((String) result);
-                break;
+                case TAG:
+                    metadataBuilder.addTag((String) result);
+                    break;
 
-            case EXECUTE_AFTER:
-                metadataBuilder.addExecuteAfterId((String) result);
-                break;
+                case EXECUTE_AFTER:
+                    metadataBuilder.addExecuteAfterId((String) result);
+                    break;
 
-            case EXECUTE_BEFORE:
-                metadataBuilder.addExecuteBeforeId((String) result);
-                break;
+                case EXECUTE_BEFORE:
+                    metadataBuilder.addExecuteBeforeId((String) result);
+                    break;
             }
         }
         return metadataBuilder;

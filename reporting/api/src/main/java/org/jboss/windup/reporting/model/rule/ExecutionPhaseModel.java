@@ -14,8 +14,7 @@ import java.util.List;
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 @TypeValue(ExecutionPhaseModel.TYPE)
-public interface ExecutionPhaseModel extends WindupVertexFrame
-{
+public interface ExecutionPhaseModel extends WindupVertexFrame {
     String TYPE = "ExecutionPhaseModel";
 
     String NAME = "name";

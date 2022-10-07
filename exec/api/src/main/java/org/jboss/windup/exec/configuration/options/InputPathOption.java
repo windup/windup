@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.ThemeProvider;
 
 /**
  * Specifies the Input path for Windup.
@@ -26,45 +26,38 @@ public class InputPathOption extends AbstractPathConfigurationOption
     public static final String NAME = "input";
     private static final long SIZE_WARNING_TRESHOLD_MB = 10;
 
-    public InputPathOption()
-    {
+    public InputPathOption() {
         super(true);
     }
 
     @Override
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return Path.class;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return "Input paths";
     }
 
     @Override
-    public String getDescription()
-    {
-        return "Input file or directory (a directory is required for source mode). Multiple paths can be specified separated by a space (for example, --input PATH_1 PATH_2).";
+    public String getDescription() {
+        return "Input file or directory. Multiple paths can be specified separated by a space (for example, --input PATH_1 PATH_2).";
     }
 
     @Override
-    public ValidationResult validate(Object filesObject)
-    {
+    public ValidationResult validate(Object filesObject) {
         ValidationResult result = super.validate(filesObject);
         if (!result.isSuccess())
             return result;
 
         List<Path> largeApps = new LinkedList<>();
-        for (Path path : (Iterable<Path>) filesObject)
-        {
+        for (Path path : (Iterable<Path>) filesObject) {
             ValidationResult resultFile = super.validate(path);
             if (!resultFile.isSuccess())
                 return resultFile;
@@ -72,18 +65,13 @@ public class InputPathOption extends AbstractPathConfigurationOption
             if (!Files.exists(path))
                 return new ValidationResult(ValidationResult.Level.ERROR, "Input path not found: " + path);
 
-            if (!Files.isDirectory(path))
-            {
-                try
-                {
+            if (!Files.isDirectory(path)) {
+                try {
                     long fileSize = Files.size(path);
-                    if (fileSize > SIZE_WARNING_TRESHOLD_MB * 1024 * 1024)
-                    {
+                    if (fileSize > SIZE_WARNING_TRESHOLD_MB * 1024 * 1024) {
                         largeApps.add(path);
                     }
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     LOG.warning("Could not determine file size for: " + path);
                 }
             }
@@ -91,34 +79,31 @@ public class InputPathOption extends AbstractPathConfigurationOption
 
         if (!largeApps.isEmpty())
             return new ValidationResult(ValidationResult.Level.PROMPT_TO_CONTINUE,
-                        "These input applications or directories are large:"
-                                    + System.lineSeparator()
-                                    + " \t" 
-                                    + StringUtils.join(largeApps, System.lineSeparator()+ "\t") 
-                                    + System.lineSeparator()
-                                    + " Processing may take a very long time."
-                                    + " Please consult the "+Util.WINDUP_BRAND_NAME_ACRONYM+" User Guide for performance tips."
-                                    + " Would you like to continue?",
-                        true);
+                    "These input applications or directories are large:"
+                            + System.lineSeparator()
+                            + " \t"
+                            + StringUtils.join(largeApps, System.lineSeparator() + "\t")
+                            + System.lineSeparator()
+                            + " Processing may take a very long time."
+                            + " Please consult the " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " User Guide for performance tips."
+                            + " Would you like to continue?",
+                    true);
 
         return ValidationResult.SUCCESS;
     }
 
     @Override
-    public InputType getUIType()
-    {
+    public InputType getUIType() {
         return InputType.MANY;
     }
 
     @Override
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return true;
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return 10000;
     }
 }

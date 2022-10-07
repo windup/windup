@@ -6,10 +6,8 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
  * This is used by {@link ParameterizedGraphCondition} during parameter evaluation.
- *
  */
-public interface EvaluationStrategy
-{
+public interface EvaluationStrategy {
     /**
      * Indicates that we have potentially found a match.
      */

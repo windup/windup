@@ -3,8 +3,7 @@ package org.jboss.windup.graph.model;
 import org.jboss.windup.graph.Property;
 
 @TypeValue(ApplicationModel.TYPE)
-public interface ApplicationModel extends WindupVertexFrame
-{
+public interface ApplicationModel extends WindupVertexFrame {
     String TYPE = "ApplicationModel";
     String PROPERTY_APPLICATION_NAME = "applicationName";
 

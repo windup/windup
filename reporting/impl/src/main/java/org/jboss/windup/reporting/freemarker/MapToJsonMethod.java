@@ -25,46 +25,39 @@ import java.util.logging.Logger;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class MapToJsonMethod implements WindupFreeMarkerMethod
-{
+public class MapToJsonMethod implements WindupFreeMarkerMethod {
     public static final Logger LOG = Logger.getLogger(MapToJsonMethod.class.getName());
     private static final String NAME = "mapToJson";
 
     private GraphContext graphContext;
 
     @Override
-    public void setContext(GraphRewrite event)
-    {
+    public void setContext(GraphRewrite event) {
         this.graphContext = event.getGraphContext();
     }
 
     @Override
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return NAME;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Returns a JSON object representing the given map, having the keys as property names and values as property values.";
     }
 
     @Override
-    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
-    {
+    public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
         ExecutionStatistics.get().begin(NAME);
 
         if (arguments.size() == 0)
-            throw new TemplateModelException("Freemarker function "+NAME+"expects a Map<String, String> as a parameter.");
+            throw new TemplateModelException("Freemarker function " + NAME + "expects a Map<String, String> as a parameter.");
 
         final Object arg0 = arguments.get(0);
-        if (null == arg0)
-        {
+        if (null == arg0) {
             return null;
         }
-        if (!(arg0 instanceof DefaultMapAdapter))
-        {
+        if (!(arg0 instanceof DefaultMapAdapter)) {
             LOG.warning("Expected a Freemarker's DefaultMapAdapter, was: " + arg0.getClass());
             return null;
         }
@@ -73,17 +66,12 @@ public class MapToJsonMethod implements WindupFreeMarkerMethod
         Map<String, String> map = (Map<String, String>) mapModel.getWrappedObject();
 
         ObjectMapper mapper = new ObjectMapper();
-        try
-        {
+        try {
             String json = mapper.writeValueAsString(map);
             return json;
-        }
-        catch (JsonProcessingException e)
-        {
+        } catch (JsonProcessingException e) {
             throw new TemplateModelException("Couldn't convert given map to a JSON.");
-        }
-        finally
-        {
+        } finally {
             ExecutionStatistics.get().end(NAME);
         }
     }

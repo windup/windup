@@ -10,8 +10,7 @@ import java.util.List;
  *
  * @author <a href="mailto:carlosthe19916@gmail.com">Carlos Feria</a>
  */
-public interface LabelProviderLoader
-{
+public interface LabelProviderLoader {
     /**
      * Indicates if labels are loaded from the filesystem.
      */

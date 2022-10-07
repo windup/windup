@@ -8,13 +8,13 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
-{
+public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules {
 
     private static final String TEST_FILE_WAR = "../test-files/Windup1x-javaee-example-tiny.war";
     private static final File TEST_FILE_OUTPUT_DIR = new File(TEST_FILE_WAR + ".report");
@@ -23,14 +23,20 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
     public final TemporaryFolder tmp = new TemporaryFolder();
 
     @Before
-    public void cleanup()
-    {
-        try
-        {
+    public void setup() {
+        deleteTestDirs();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestDirs();
+    }
+
+    private void deleteTestDirs() {
+        try {
             FileUtils.deleteDirectory(TEST_FILE_OUTPUT_DIR);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ignored) {
+
         }
     }
 
@@ -38,19 +44,15 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
      * Test should show error about empty output argument
      */
     @Test()
-    public void InputAndNoOutputPath()
-    {
+    public void InputAndNoOutputPath() {
         bootstrap("--input", TEST_FILE_WAR,
-                    "--output",
-                    "--target", "eap7");
+                "--output",
+                "--target", "eap7");
 
-        try
-        {
+        try {
             System.out.println(TEST_FILE_OUTPUT_DIR.getCanonicalPath() + " -> comparison");
             assertTrue(capturedOutput().contains("Output Path:" + TEST_FILE_OUTPUT_DIR.getCanonicalPath()));
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             fail("Something happend while getting canonical path.");
         }
     }
@@ -59,19 +61,15 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
      * Test should show error about empty output argument
      */
     @Test()
-    public void InputAndNoOutputPathAsLastOption()
-    {
+    public void InputAndNoOutputPathAsLastOption() {
         bootstrap("--input", TEST_FILE_WAR,
-                    "--target", "eap7",
-                    "--output");
+                "--target", "eap7",
+                "--output");
 
-        try
-        {
+        try {
             System.out.println(TEST_FILE_OUTPUT_DIR.getCanonicalPath() + " -> comparison");
             assertTrue(capturedOutput().contains("Output Path:" + TEST_FILE_OUTPUT_DIR.getCanonicalPath()));
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             fail("Something happend while getting canonical path.");
         }
     }
@@ -80,18 +78,14 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
      * Test should show error about space and therefore empty output argument
      */
     @Test
-    public void InputAndSpaceAsOutputPath()
-    {
+    public void InputAndSpaceAsOutputPath() {
         bootstrap("--input", TEST_FILE_WAR,
-                    "--output", " ",
-                    "--target", "eap7");
-        try
-        {
+                "--output", " ",
+                "--target", "eap7");
+        try {
             System.out.println(TEST_FILE_OUTPUT_DIR.getCanonicalPath() + " -> comparison");
             assertTrue(capturedOutput().contains("Output Path:" + TEST_FILE_OUTPUT_DIR.getCanonicalPath()));
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             fail("Something happend while getting canonical path.");
         }
     }
@@ -100,8 +94,7 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules
      * Test should show error about empty input argument
      */
     @Test
-    public void NoInputPath()
-    {
+    public void NoInputPath() {
         bootstrap("--input", " ", "--target", "eap7");
 
         assertTrue(capturedOutput().contains("ERROR: input must be specified."));

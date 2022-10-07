@@ -13,13 +13,10 @@ import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public abstract class GraphOperation extends DefaultOperationBuilder
-{
+public abstract class GraphOperation extends DefaultOperationBuilder {
     @Override
-    public final void perform(Rewrite event, EvaluationContext context)
-    {
+    public final void perform(Rewrite event, EvaluationContext context) {
         if (event instanceof GraphRewrite)
             perform((GraphRewrite) event, context);
     }

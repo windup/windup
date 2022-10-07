@@ -8,21 +8,18 @@ import org.jboss.windup.config.RuleProvider;
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class NotPredicate implements Predicate<RuleProvider>
-{
+public class NotPredicate implements Predicate<RuleProvider> {
     protected final Predicate<RuleProvider> predicate;
 
     /**
      * Creates an instance of {@link NotPredicate} with the given condition.
      */
-    public NotPredicate(Predicate<RuleProvider> predicate)
-    {
+    public NotPredicate(Predicate<RuleProvider> predicate) {
         this.predicate = predicate;
     }
 
     @Override
-    public boolean accept(RuleProvider provider)
-    {
+    public boolean accept(RuleProvider provider) {
         return !this.predicate.accept(provider);
     }
 }

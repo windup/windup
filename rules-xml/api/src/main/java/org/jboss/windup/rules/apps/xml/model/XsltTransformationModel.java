@@ -13,8 +13,7 @@ import org.jboss.windup.graph.Property;
  * Contains metadata regarding the result of an XSLT Transformation
  */
 @TypeValue(XsltTransformationModel.TYPE)
-public interface XsltTransformationModel extends WindupVertexFrame
-{
+public interface XsltTransformationModel extends WindupVertexFrame {
     public static final String TYPE = "XsltTransformationModel";
     public static final String LOCATION = TYPE + "-location";
     public static final String EXTENSION = TYPE + "-extension";

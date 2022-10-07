@@ -18,11 +18,9 @@ import java.util.stream.Collectors;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
- *
  */
 @TypeValue(JavaClassModel.TYPE)
-public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, HasApplications, HasProject
-{
+public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, HasApplications, HasProject {
     String TYPE = "JavaClassModel";
 
     String JAVA_METHOD = "javaMethod";
@@ -176,10 +174,9 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     /**
      * Gets the {@link JavaMethodModel} by name
      */
-    default List<JavaMethodModel> getMethod(String methodName)
-    {
+    default List<JavaMethodModel> getMethod(String methodName) {
         List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
-                .in(JAVA_METHOD)
+                .out(JAVA_METHOD)
                 .has(JavaMethodModel.METHOD_NAME, methodName)
                 .toList();
         return vertices.stream().map(v -> getGraph().frameElement(v, JavaMethodModel.class))
@@ -199,12 +196,10 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     List<JavaMethodModel> getJavaMethods();
 
     @Override
-    default List<ProjectModel> getApplications()
-    {
+    default List<ProjectModel> getApplications() {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return Collections.emptyList();
         }
 
@@ -212,29 +207,24 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     }
 
     @Override
-    default ProjectModel getProjectModel()
-    {
+    default ProjectModel getProjectModel() {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return null;
         }
 
         return sourceModel.getProjectModel();
     }
 
-    default FileModel getSourceFile()
-    {
+    default FileModel getSourceFile() {
         FileModel classFile = this.getClassFile();
 
-        if (classFile == null)
-        {
+        if (classFile == null) {
             // .jsp class will have originalSource instead of classFile
             AbstractJavaSourceModel originalSource = this.getOriginalSource();
 
-            if (originalSource == null)
-            {
+            if (originalSource == null) {
                 String name = this.getClassName();
 
                 Logger.getLogger(JavaClassModel.class.getName()).log(
@@ -253,12 +243,10 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     }
 
     @Override
-    default boolean belongsToProject(ProjectModel projectModel)
-    {
+    default boolean belongsToProject(ProjectModel projectModel) {
         FileModel sourceModel = this.getSourceFile();
 
-        if (sourceModel == null)
-        {
+        if (sourceModel == null) {
             return false;
         }
 

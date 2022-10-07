@@ -18,10 +18,10 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.addons.AddImmutableAddonDirectoryCommand;
 import org.jboss.windup.tooling.IOptionKeys;
 import org.jboss.windup.tooling.ToolingModeRunner;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.Theme;
+import org.jboss.windup.util.ThemeProvider;
 
-public class ToolingModeCommand implements Command
-{
+public class ToolingModeCommand implements Command {
     public static final String COMMAND_ID = "--toolingMode";
 
     private Furnace furnace;
@@ -29,14 +29,12 @@ public class ToolingModeCommand implements Command
     private List<String> arguments;
     private String addonsDirectory;
 
-    public ToolingModeCommand(List<String> arguments)
-    {
+    public ToolingModeCommand(List<String> arguments) {
         this.arguments = arguments;
         this.addonsDirectory = getAddonDirectory(arguments);
     }
 
-    private static String getAddonDirectory(List<String> arguments)
-    {
+    private static String getAddonDirectory(List<String> arguments) {
         int index = arguments.indexOf("--immutableAddonDir");
         if (index == -1) {
             return "";
@@ -45,43 +43,36 @@ public class ToolingModeCommand implements Command
     }
 
     @Override
-    public CommandResult execute()
-    {
-        try
-        {
+    public CommandResult execute() {
+        Theme theme = ThemeProvider.getInstance().getTheme();
+
+        try {
             furnace = FurnaceFactory.getInstance();
             furnace.setServerMode(true);
             loadAddons();
-            try
-            {
+            try {
                 Future<Furnace> future = furnace.startAsync();
                 future.get();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Failed to start "+Util.WINDUP_BRAND_NAME_ACRONYM+"!");
+            } catch (Exception e) {
+                System.out.println("Failed to start " + theme.getBrandNameAcronym() + "!");
                 e.printStackTrace();
             }
             this.analyze();
             this.furnace.stop();
-        }
-        catch (Throwable t)
-        {
-            System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM + " execution failed due to: " + t.getMessage());
+        } catch (Throwable t) {
+            System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
         return null;
     }
 
-    private void loadAddons()
-    {
+    private void loadAddons() {
         AddImmutableAddonDirectoryCommand addonCommand = new AddImmutableAddonDirectoryCommand(addonsDirectory);
         addonCommand.setFurnace(furnace);
         addonCommand.execute();
     }
 
-    private void analyze()
-    {
+    private void analyze() {
         System.out.println("Calling ToolingModeRunner...");
         Set<String> input = this.getInput();
         String output = this.getOutput();
@@ -131,8 +122,7 @@ public class ToolingModeCommand implements Command
                 ignoreReport, ignorePatterns, windupHome, source, target, rulesDir, packages, excludePackage, options);
     }
 
-    public Map<String, Object> collectOptions()
-    {
+    public Map<String, Object> collectOptions() {
         Map<String, Object> options = new HashMap<String, Object>();
 
         // userIgnorePath
@@ -187,6 +177,9 @@ public class ToolingModeCommand implements Command
         // enableClassNotFoundAnalysis
         options.put(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS, this.enableClassNotFoundAnalysis());
 
+        // enableTransactionAnalysis
+        options.put(IOptionKeys.ENABLE_TRANSACTION_ANALYSIS, this.enableTransactionAnalysis());
+
         // enableTattletale
         options.put(IOptionKeys.ENABLE_TATTLETALE, this.enableTattletale());
 
@@ -209,66 +202,55 @@ public class ToolingModeCommand implements Command
     }
 
     @Override
-    public CommandPhase getPhase()
-    {
+    public CommandPhase getPhase() {
         return null;
     }
 
-    public static boolean isToolingMode(List<String> arguments)
-    {
+    public static boolean isToolingMode(List<String> arguments) {
         return arguments.contains(ToolingModeCommand.COMMAND_ID);
     }
 
-    public Set<String> getInput()
-    {
+    public Set<String> getInput() {
         int index = arguments.indexOf(toArg(IOptionKeys.INPUT)) + 1;
         return Sets.toSet(this.getValues(index));
     }
 
-    private String getOutput()
-    {
+    private String getOutput() {
         int index = arguments.indexOf(toArg(IOptionKeys.OUTPUT)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
     }
 
-    private boolean isSourceMode()
-    {
+    private boolean isSourceMode() {
         return this.arguments.contains(toArg(IOptionKeys.SOURCE_MODE));
     }
 
-    private boolean ignoreReport()
-    {
+    private boolean ignoreReport() {
         return this.arguments.contains(toArg(IOptionKeys.SKIP_REPORTS));
     }
 
-    private List<String> getIgnorePatterns()
-    {
+    private List<String> getIgnorePatterns() {
         int index = arguments.indexOf(toArg(IOptionKeys.IGNORE_PATTERN)) + 1;
         return this.getValues(index);
     }
 
-    private String getWindupHome()
-    {
+    private String getWindupHome() {
         int index = arguments.indexOf(toArg(IOptionKeys.HOME)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
     }
 
-    private List<String> getSource()
-    {
+    private List<String> getSource() {
         int index = arguments.indexOf(toArg(IOptionKeys.SOURCE)) + 1;
         return this.getValues(index);
     }
 
-    private List<String> getTarget()
-    {
+    private List<String> getTarget() {
         int index = arguments.indexOf(toArg(IOptionKeys.TARGET)) + 1;
         return this.getValues(index);
     }
 
-    private List<File> getUserRulesDir()
-    {
+    private List<File> getUserRulesDir() {
         int index = arguments.indexOf(toArg(IOptionKeys.CUSTOM_RULES_DIR)) + 1;
         List<File> rules = Lists.newArrayList();
         List<String> values = this.getValues(index);
@@ -277,57 +259,49 @@ public class ToolingModeCommand implements Command
     }
 
     // userIgnorePath
-    private String getUserIgnorePath()
-    {
+    private String getUserIgnorePath() {
         int index = arguments.indexOf(toArg(IOptionKeys.USER_IGNORE_PATH)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
     }
 
     // overwrite
-    private boolean overwrite()
-    {
+    private boolean overwrite() {
         return this.arguments.contains(toArg(IOptionKeys.OVERWRITE));
     }
 
     // excludePackages
-    public List<String> getExcludePackages()
-    {
+    public List<String> getExcludePackages() {
         int index = arguments.indexOf(toArg(IOptionKeys.EXCLUDE_PACKAGES)) + 1;
         return this.getValues(index);
     }
 
     // mavenizeGroupId
-    private String getMavenizeGroupId()
-    {
+    private String getMavenizeGroupId() {
         int index = arguments.indexOf(toArg(IOptionKeys.MAVENIZE_GROUP_ID)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
     }
 
     // exportCSV
-    private boolean exportCSV()
-    {
+    private boolean exportCSV() {
         return this.arguments.contains(toArg(IOptionKeys.EXPORT_CSV));
     }
 
     // excludeTags
-    private List<String> getExcludeTags()
-    {
+    private List<String> getExcludeTags() {
         int index = arguments.indexOf(toArg(IOptionKeys.EXCLUDE_TAGS)) + 1;
         return this.getValues(index);
     }
 
     // packages
-    public List<String> getPackages()
-    {
+    public List<String> getPackages() {
         int index = arguments.indexOf(toArg(IOptionKeys.PACKAGES)) + 1;
         return this.getValues(index);
     }
 
     // additionalClasspath
-    private List<File> getAdditionalClasspath()
-    {
+    private List<File> getAdditionalClasspath() {
         int index = arguments.indexOf(toArg(IOptionKeys.ADDITIONAL_CLASSPATH)) + 1;
         List<File> locations = Lists.newArrayList();
         List<String> values = this.getValues(index);
@@ -336,63 +310,58 @@ public class ToolingModeCommand implements Command
     }
 
     // disableTattletale
-    private boolean disableTattletale()
-    {
+    private boolean disableTattletale() {
         return this.arguments.contains(toArg(IOptionKeys.DISABLE_TATTLETALE));
     }
 
     // enableCompatibleFilesReport
-    private boolean enableCompatibleFilesReport()
-    {
+    private boolean enableCompatibleFilesReport() {
         return this.arguments.contains(toArg(IOptionKeys.ENABLE_COMPATIBLE_FILES_REPORT));
     }
 
     // includeTags
-    private List<String> getIncludeTags()
-    {
+    private List<String> getIncludeTags() {
         int index = arguments.indexOf(toArg(IOptionKeys.INCLUDE_TAGS)) + 1;
         return this.getValues(index);
     }
 
     // online
-    private boolean online()
-    {
+    private boolean online() {
         return this.arguments.contains(toArg(IOptionKeys.ONLINE));
     }
 
     // enableClassNotFoundAnalysis
-    private boolean enableClassNotFoundAnalysis()
-    {
+    private boolean enableClassNotFoundAnalysis() {
         return this.arguments.contains(toArg(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS));
     }
 
+    // enableTransactionAnalysis
+    private boolean enableTransactionAnalysis() {
+        return this.arguments.contains(toArg(IOptionKeys.ENABLE_TRANSACTION_ANALYSIS));
+    }
+
     // enableTattletale
-    private boolean enableTattletale()
-    {
+    private boolean enableTattletale() {
         return this.arguments.contains(toArg(IOptionKeys.ENABLE_TATTLETALE));
     }
 
     // explodedApp
-    private boolean explodedApp()
-    {
+    private boolean explodedApp() {
         return this.arguments.contains(toArg(IOptionKeys.EXPLODED_APP));
     }
 
     // keepWorkDirs
-    private boolean keepWorkDirs()
-    {
+    private boolean keepWorkDirs() {
         return this.arguments.contains(toArg(IOptionKeys.KEEP_WORK_DIRS));
     }
 
     // mavenize
-    private boolean mavenize()
-    {
+    private boolean mavenize() {
         return this.arguments.contains(toArg(IOptionKeys.MAVENIZE));
     }
 
     // inputApplicationName
-    private String getInputApplicationName()
-    {
+    private String getInputApplicationName() {
         int index = arguments.indexOf(toArg(IOptionKeys.INPUT_APPLICATION_NAME)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
@@ -407,11 +376,9 @@ public class ToolingModeCommand implements Command
         if (index == 0) {
             return values;
         }
-        while (index < this.arguments.size())
-        {
+        while (index < this.arguments.size()) {
             final String arg = this.arguments.get(index);
-            if (arg.contains("--"))
-            {
+            if (arg.contains("--")) {
                 break;
             }
             values.add(arg.replace("\"", ""));

@@ -39,19 +39,17 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 @RunWith(Arquillian.class)
-public class IterationPayloadTest
-{
+public class IterationPayloadTest {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
-    {
+    public static AddonArchive getDeployment() {
         final AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
-                    .addBeansXML();
+                .create(AddonArchive.class)
+                .addClasses(TestIterationPayloadTestRuleProvider.class, TestChildModel.class, TestParentModel.class)
+                .addBeansXML();
         return archive;
     }
 
@@ -65,11 +63,9 @@ public class IterationPayloadTest
     private NestedIterationRuleProvider nestedIterationRuleProvider;
 
     @Test
-    public void testIterationVariableResolving() throws Exception
-    {
+    public void testIterationVariableResolving() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -88,11 +84,9 @@ public class IterationPayloadTest
     }
 
     @Test
-    public void testNestedIteration() throws Exception
-    {
+    public void testNestedIteration() throws Exception {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder, true))
-        {
+        try (final GraphContext context = factory.create(folder, true)) {
 
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -109,8 +103,7 @@ public class IterationPayloadTest
         }
     }
 
-    private void fillData(GraphContext context)
-    {
+    private void fillData(GraphContext context) {
         GraphService<TestParentModel> parentService = new GraphService<>(context, TestParentModel.class);
         GraphService<TestChildModel> childService = new GraphService<>(context, TestChildModel.class);
 
@@ -131,40 +124,35 @@ public class IterationPayloadTest
         parent2child1.setName("parent2child1");
     }
 
-    public static class NestedIterationRuleProvider extends AbstractRuleProvider
-    {
+    public static class NestedIterationRuleProvider extends AbstractRuleProvider {
         private Set<Vertex> outerVertices = new HashSet<>();
         private Set<Vertex> innerVertices = new HashSet<>();
         private int iterationCount = 0;
 
-        public NestedIterationRuleProvider()
-        {
+        public NestedIterationRuleProvider() {
             super(MetadataBuilder.forProvider(NestedIterationRuleProvider.class));
         }
 
         @Override
-        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
-        {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(Query.fromType(TestParentModel.class).as("outer").and(Query.fromType(TestChildModel.class).as("inner")))
-                        .perform(Iteration.over("outer").as("outer_item")
-                                    .perform(
-                                                Iteration.over("inner").as("inner_item").perform(
-                                                            new AbstractIterationOperation<TestChildModel>()
-                                                            {
-                                                                @Override
-                                                                public void perform(GraphRewrite event, EvaluationContext context,
-                                                                            TestChildModel payload)
-                                                                {
-                                                                    WindupVertexFrame outerFrame = Variables.instance(event)
-                                                                                .findSingletonVariable("outer_item");
-                                                                    outerVertices.add(outerFrame.getElement());
-                                                                    innerVertices.add(payload.getElement());
-                                                                    iterationCount++;
-                                                                }
-                                                            }).endIteration())
-                                    .endIteration());
+                    .addRule()
+                    .when(Query.fromType(TestParentModel.class).as("outer").and(Query.fromType(TestChildModel.class).as("inner")))
+                    .perform(Iteration.over("outer").as("outer_item")
+                            .perform(
+                                    Iteration.over("inner").as("inner_item").perform(
+                                            new AbstractIterationOperation<TestChildModel>() {
+                                                @Override
+                                                public void perform(GraphRewrite event, EvaluationContext context,
+                                                                    TestChildModel payload) {
+                                                    WindupVertexFrame outerFrame = Variables.instance(event)
+                                                            .findSingletonVariable("outer_item");
+                                                    outerVertices.add(outerFrame.getElement());
+                                                    innerVertices.add(payload.getElement());
+                                                    iterationCount++;
+                                                }
+                                            }).endIteration())
+                            .endIteration());
         }
     }
 }
