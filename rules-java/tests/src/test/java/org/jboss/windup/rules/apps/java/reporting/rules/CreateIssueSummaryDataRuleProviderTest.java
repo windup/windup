@@ -94,9 +94,10 @@ public class CreateIssueSummaryDataRuleProviderTest {
                 configuration.setExportingSummary(true);
             }
             processor.execute(configuration);
-            Assert.assertEquals(exportFile, new File(outputPath + "/" + FILE1_NAME + ".json").exists());
-            Assert.assertEquals(exportFile, new File(outputPath + "/" + FILE2_NAME + ".json").exists());
             if (exportFile) {
+                Assert.assertTrue(new File(outputPath + "/" + FILE1_NAME + ".json").exists());
+                Assert.assertTrue(new File(outputPath + "/" + FILE2_NAME + ".json").exists());
+
                 Path resource = Paths.get("src/test/resources/test-exports/" + FILE1_NAME + ".json");
                 Path resource2 = Paths.get("src/test/resources/test-exports/" + FILE2_NAME + ".json");
                 try {
