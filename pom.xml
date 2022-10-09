@@ -6,7 +6,7 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
         <version>22</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>org.jboss.windup</groupId>
@@ -21,7 +21,7 @@
         <version.forge>3.10.0.Final</version.forge>
         <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
-        <version.janusgraph>0.3.1</version.janusgraph>
+        <version.janusgraph>0.5.0</version.janusgraph>
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
         <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
@@ -35,7 +35,7 @@
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
         <forkCount>.5C</forkCount>
-        <jacoco.argLine /> <!-- Will be set by the JaCoCo Maven plugin when active. -->
+        <jacoco.argLine/> <!-- Will be set by the JaCoCo Maven plugin when active. -->
         <furnace.dot.skip>true</furnace.dot.skip> <!-- Default to not spending time generating the (expensive to generate) dot files -->
 
         <surefire-argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</surefire-argLine>
