@@ -67,7 +67,7 @@
                                 <artifactItem>
                                     <groupId>org.apache.wicket</groupId>
                                     <artifactId>wicket-core</artifactId>
-                                    <version>6.25.0</version>
+                                    <version>6.11.0</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>target/TestJars</outputDirectory>
