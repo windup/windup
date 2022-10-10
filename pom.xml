@@ -22,7 +22,7 @@
         <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
         <version.janusgraph>0.3.1</version.janusgraph>
-        <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
+        <version.tinkerpop.blueprints>3.6.1</version.tinkerpop.blueprints>
         <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
 
@@ -215,6 +215,11 @@
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-shared-utils</artifactId>
                 <version>3.3.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.31</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
