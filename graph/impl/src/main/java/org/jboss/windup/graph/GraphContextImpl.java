@@ -528,7 +528,7 @@ public class GraphContextImpl implements GraphContext {
         }
 
         @Override
-        public void vertexPropertyChanged(Vertex vertex, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
+        public void vertexPropertyChanged(Vertex vertex, VertexProperty oldValue, Object setValue,
                                           Object... vertexPropertyKeyValues) {
             GraphContextImpl graphContext = getGraphContext();
             if (graphContext == null || graphContext.graphListeners == null)
