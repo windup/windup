@@ -12,7 +12,7 @@
     <name>Windup Tooling - API</name>
 
     <properties>
-        <vertx.version>4.2.5</vertx.version>
+        <vertx.version>4.2.6</vertx.version>
     </properties>
 
     <dependencies>
