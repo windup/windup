@@ -54,6 +54,9 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-utils</artifactId>
+        </dependency>
     </dependencies>
 </project>
