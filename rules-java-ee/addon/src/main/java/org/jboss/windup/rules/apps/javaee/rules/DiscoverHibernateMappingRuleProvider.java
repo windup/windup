@@ -59,9 +59,10 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                 pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.textRegex(REGEX_HIBERNATE));
 
-                Traversal<?, ?> systemIDQuery = __.V(event.getGraphContext().getQuery(DoctypeMetaModel.class))
+                Traversal<?, ?> systemIDQuery = event.getGraphContext().getQuery(DoctypeMetaModel.class)
+                        .getRawTraversal()
                         .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
-                GraphTraversal<Vertex, Vertex> systemIdPipeline = __.V(systemIDQuery);
+                GraphTraversal<Vertex, Vertex> systemIdPipeline = __.V(systemIDQuery.toList().toArray());
 
                 pipeline.union(systemIdPipeline);
 
