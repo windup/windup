@@ -231,6 +231,11 @@
                 <artifactId>lucene-queryparser</artifactId>
                 <version>7.1.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.31</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
