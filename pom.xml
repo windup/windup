@@ -25,6 +25,7 @@
         <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
         <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
+        <version.groovy>2.4.21</version.groovy>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
@@ -224,7 +225,57 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
-                <version>2.4.21</version>
+                <version>${version.groovy}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${version.groovy}</version>
+                <classifier>indy</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-groovysh</artifactId>
+                <version>${version.groovy}</version>
+                <classifier>indy</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-console</artifactId>
+                <version>${version.groovy}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-swing</artifactId>
+                <version>${version.groovy}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-templates</artifactId>
+                <version>${version.groovy}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-xml</artifactId>
+                <version>${version.groovy}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-json</artifactId>
+                <version>${version.groovy}</version>
+                <classifier>indy</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
+                <version>${version.groovy}</version>
+                <classifier>indy</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-sql</artifactId>
+                <version>${version.groovy}</version>
+                <classifier>indy</classifier>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
