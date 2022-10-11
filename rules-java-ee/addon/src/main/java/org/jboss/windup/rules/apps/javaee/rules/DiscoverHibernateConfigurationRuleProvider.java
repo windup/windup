@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
@@ -60,10 +60,9 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline) {
                 pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.textRegex(REGEX_HIBERNATE));
 
-                Traversal<?, ?> systemIDQuery = event.getGraphContext().getQuery(DoctypeMetaModel.class)
-                        .getRawTraversal()
+                Traversal<?, ?> systemIDQuery = __.V(event.getGraphContext().getQuery(DoctypeMetaModel.class))
                         .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
-                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(systemIDQuery.toList());
+                GraphTraversal<Vertex, Vertex> systemIdPipeline = __.V(systemIDQuery.toList());
 
                 pipeline.union(systemIdPipeline);
 
