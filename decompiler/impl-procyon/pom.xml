@@ -54,13 +54,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Test jar -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>6.11.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -83,7 +76,6 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>target/TestJars</outputDirectory>
-                            <destFileName>wicket-core-6.11.0</destFileName>
                         </configuration>
                     </execution>
                 </executions>

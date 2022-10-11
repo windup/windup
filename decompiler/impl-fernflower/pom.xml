@@ -42,13 +42,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Test jar -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>6.11.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
