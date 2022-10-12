@@ -1,0 +1,20 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JAVA-ORGAPACHETINKERPOP-1535125:
+    - '*':
+        reason: Waiting for JanusGraph update
+        expires: 2022-10-25T00:00:00.000Z
+        created: 2022-10-11T16:41:18.101Z
+  SNYK-JAVA-XALAN-2953385:
+    - '*':
+        reason: No fix available
+        expires: 2022-10-25T00:00:00.000Z
+        created: 2022-10-11T17:04:21.276Z
+  SNYK-JAVA-ORGJDOM-1311147:
+    - '*':
+        reason: No fix available
+        expires: 2022-10-25T00:00:00.000Z
+        created: 2022-10-11T17:23:15.875Z
+patch: {}
