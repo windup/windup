@@ -52,8 +52,10 @@ jobs:
           key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-maven-windup-build-${{ github.sha }}
-      - name: Build
-        run: mvn clean install -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
+      - name: Test
+        run: mvn clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
+      - name: Build for the windup-maven-plugin-build
+        run: mvn clean install -nsu -DskipTests
 
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
