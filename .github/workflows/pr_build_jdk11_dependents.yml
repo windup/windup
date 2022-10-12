@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-package: jdk
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -32,7 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk-distribution: [ adopt, temurin ]
+        jdk-distribution: [ temurin ]
+        ruleset-test: [ WindupRulesTest,  WindupRulesLinksTest]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
@@ -52,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Build
-        run: mvn clean install -nsu
+        run: mvn clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
 
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
