@@ -26,6 +26,7 @@
         <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
         <version.groovy>2.4.21</version.groovy>
+        <version.lucene>7.1.0</version.lucene>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
@@ -280,7 +281,27 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-queryparser</artifactId>
-                <version>7.1.0</version>
+                <version>${version.lucene}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${version.lucene}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-common</artifactId>
+                <version>${version.lucene}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-spatial</artifactId>
+                <version>${version.lucene}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-spatial-extras</artifactId>
+                <version>${version.lucene}</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>
