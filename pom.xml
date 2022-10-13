@@ -26,7 +26,6 @@
         <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
         <version.groovy>2.4.21</version.groovy>
-        <version.lucene>7.1.0</version.lucene>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
