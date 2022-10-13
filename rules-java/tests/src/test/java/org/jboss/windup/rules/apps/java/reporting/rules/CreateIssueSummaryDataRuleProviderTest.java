@@ -88,8 +88,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .setRuleProviderFilter(predicate)
                     .addInputPath(Paths.get(inputPath))
                     .setOutputDirectory(outputPath)
-                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                    .setOptionValue(SourceModeOption.NAME, true);
+                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             if (exportFile) {
                 configuration.setExportingSummary(true);
             }
