@@ -8,6 +8,7 @@
         <version.nexus.index>22.10.10.Final</version.nexus.index>
         <version.lucene>7.1.0</version.lucene>
         <version.groovy>2.4.21</version.groovy>
+        <version.freemarker>2.3.31</version.freemarker>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
@@ -510,6 +511,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>1.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${version.freemarker}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
