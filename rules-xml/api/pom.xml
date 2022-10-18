@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-xml-parent</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.1.0.Alpha1</version>
     </parent>
 
     <artifactId>windup-rules-xml-api</artifactId>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-fernflower</artifactId>
-            <version>6.0.1-SNAPSHOT</version>
+            <version>6.1.0.Alpha1</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
