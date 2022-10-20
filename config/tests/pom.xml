@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.config</groupId>
         <artifactId>windup-config-parent</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-config-tests</artifactId>
@@ -30,6 +30,12 @@
             <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.tests</groupId>
+            <artifactId>test-util</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
         </dependency>
 
         <!-- Rules Dependencies -->

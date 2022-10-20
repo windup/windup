@@ -38,9 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider {
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
-    public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the " +
-            ThemeProvider.getInstance().getTheme().getBrandNameLong() +
-            " configuration. See the '--userIgnorePath' option in the User Guide.";
+    public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the %s configuration. See the '--userIgnorePath' option in the User Guide.";
 
     // @formatter:off
     @Override
@@ -94,7 +92,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         IgnoredFilesReportModel ignoredFilesReportModel = ignoredFilesService.create();
         ignoredFilesReportModel.setReportPriority(9000);
         ignoredFilesReportModel.setReportName(TITLE);
-        ignoredFilesReportModel.setDescription(DESCRIPTION);
+        ignoredFilesReportModel.setDescription(String.format(DESCRIPTION, ThemeProvider.getInstance().getTheme().getBrandName()));
         ignoredFilesReportModel.setMainApplicationReport(false);
         ignoredFilesReportModel.setDisplayInApplicationReportIndex(true);
         ignoredFilesReportModel.setReportIconClass("glyphicon glyphicon-eye-close");

@@ -166,12 +166,14 @@ public class RunWindupCommand implements Command, FurnaceDependent {
 
         // Target - interactive
         Collection<String> targets = (Collection<String>) optionValues.get(TargetOption.NAME);
-        if (targets != null && targets.contains("eap")) {
-            System.err.println("ERROR: " + "Version must be specified for target 'eap' (for example, 'eap7' or 'eap6')");
+        if (targets != null && targets.contains("eap"))
+        {
+            System.err.println("ERROR: " + "Version must be specified for target 'eap' (for example, 'eap7' or 'eap8')");
             return;
         }
 
-        if ((targets == null || targets.isEmpty()) && !batchMode.get()) {
+        if ((targets == null || targets.isEmpty()) && !batchMode.get())
+        {
             String target = Bootstrap.promptForListItem("Please select a target:", ruleProviderRegistryCache.getAvailableTargetTechnologies(), "eap7");
             targets = Collections.singleton(target);
             optionValues.put(TargetOption.NAME, targets);

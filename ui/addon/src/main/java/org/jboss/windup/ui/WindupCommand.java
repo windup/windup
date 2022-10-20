@@ -83,7 +83,7 @@ public class WindupCommand implements UICommand {
     @Override
     public UICommandMetadata getMetadata(UIContext ctx) {
         Theme theme = ThemeProvider.getInstance().getTheme();
-        return Metadata.forCommand(getClass()).name(theme.getBrandNameLong()).description("Run " + theme.getBrandNameLong())
+        return Metadata.forCommand(getClass()).name(theme.getBrandName()).description("Run " + theme.getBrandName())
                 .category(Categories.create("Platform", "Migration"));
     }
 
