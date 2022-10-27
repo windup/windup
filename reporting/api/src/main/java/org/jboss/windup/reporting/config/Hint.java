@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
@@ -42,6 +41,9 @@ import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
@@ -209,8 +211,15 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 
     private List<TechnologyReferenceModel> intersectTechnologies(Collection<TechnologyReferenceModel> configuredTechnologies, Collection<TechnologyReference> ruleTechnologies) {
         return configuredTechnologies.stream()
-                .filter(trm -> ruleTechnologies.contains(new TechnologyReference(trm)))
-                .collect(Collectors.toList());
+                .filter(ctr -> {
+                    Set<TechnologyReference> ctrsWithSameId = ruleTechnologies.stream().filter(rtr -> ctr.getTechnologyID().equals(rtr.getId())).collect(toSet());
+                    return !ctrsWithSameId.isEmpty();
+                })
+                .filter(ctm -> ruleTechnologies.stream().filter(rtr -> {
+                    TechnologyReference ctr = new TechnologyReference(ctm);
+                    return !ctr.versionRangesOverlap(rtr.getVersionRange());
+                }).collect(toSet()).isEmpty())
+                .collect(toList());
     }
 
     @Override
