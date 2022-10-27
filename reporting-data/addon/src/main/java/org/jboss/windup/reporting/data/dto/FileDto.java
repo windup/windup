@@ -7,6 +7,5 @@ public class FileDto {
     public String fullPath;
     public String prettyPath;
     public String sourceType;
-    public String fileContent;
     public List<HintDto> hints;
 }

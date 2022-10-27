@@ -4,7 +4,6 @@ import java.util.List;
 
 public class RuleDto {
     public String id;
-    public String content;
     public Integer verticesAdded;
     public Integer verticesRemoved;
     public Integer edgesAdded;

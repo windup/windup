@@ -6,6 +6,7 @@ import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.reporting.data.dto.RuleContentDto;
 import org.jboss.windup.reporting.data.dto.RuleDto;
 import org.jboss.windup.reporting.data.dto.TechnologyDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
@@ -24,12 +25,12 @@ import java.util.stream.Collectors;
 public class RulesApiRuleProvider extends AbstractApiRuleProvider {
 
     @Override
-    public String getOutputFilename() {
-        return "rules.json";
+    public String getBasePath() {
+        return "rules";
     }
 
     @Override
-    public Object getData(GraphRewrite event) {
+    public Object getAll(GraphRewrite event) {
         Map<String, List<RuleDto>> result = new HashMap<>();
 
         RuleProviderRegistry.instance(event).getProviders().forEach(ruleProvider -> {
@@ -57,7 +58,6 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
                             RuleDto ruleDto = new RuleDto();
 
                             ruleDto.id = ruleExecutionInformation.getRule().getId();
-                            ruleDto.content = RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0);
                             ruleDto.verticesAdded = ruleExecutionInformation.getVertexIDsAdded();
                             ruleDto.edgesAdded = ruleExecutionInformation.getEdgeIDsAdded();
                             ruleDto.verticesRemoved = ruleExecutionInformation.getVertexIDsRemoved();
@@ -76,6 +76,29 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
                     result.put(phase, new ArrayList<>());
                 }
                 result.get(phase).addAll(rules);
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getById(GraphRewrite event) {
+        Map<String, Object> result = new HashMap<>();
+        RuleProviderRegistry.instance(event).getProviders().forEach(ruleProvider -> {
+            if (ruleProvider instanceof AbstractRuleProvider) {
+                RuleExecutionResultsListener.instance(event)
+                        .getRuleExecutionInformation((AbstractRuleProvider) ruleProvider)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(ruleExecutionInformation -> {
+                            RuleContentDto ruleDto = new RuleContentDto();
+
+                            ruleDto.id = ruleExecutionInformation.getRule().getId();
+                            ruleDto.content = RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0);
+
+                            result.put(ruleDto.id, ruleDto);
+                        });
             }
         });
 

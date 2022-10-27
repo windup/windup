@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.data.dto;
 
-public class TechnologyDto {
+public class RuleContentDto {
     public String id;
-    public String versionRange;
+    public String content;
 }

@@ -15,8 +15,10 @@ import org.jboss.windup.reporting.data.dto.LabelDto;
 import javax.inject.Inject;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
@@ -29,12 +31,12 @@ public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
     private LabelLoader labelLoader;
 
     @Override
-    public String getOutputFilename() {
-        return "labels.json";
+    public String getBasePath() {
+        return "labels";
     }
 
     @Override
-    public Object getData(GraphRewrite event) {
+    public Object getAll(GraphRewrite event) {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         List<Path> userLabelPaths = cfg.getUserLabelsPaths().stream()
                 .map(fileModel -> fileModel.asFile().toPath())
@@ -59,5 +61,10 @@ public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
 
             return labelDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> getById(GraphRewrite event) {
+        return Collections.emptyMap();
     }
 }

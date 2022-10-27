@@ -43,12 +43,12 @@ import java.util.stream.StreamSupport;
 public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
     @Override
-    public String getOutputFilename() {
-        return "issues.json";
+    public String getBasePath() {
+        return "issues";
     }
 
     @Override
-    public Object getData(GraphRewrite event) {
+    public Object getAll(GraphRewrite event) {
         GraphContext context = event.getGraphContext();
         Set<String> includeTags = Collections.emptySet();
         Set<String> excludeTags = Collections.emptySet();
@@ -115,6 +115,11 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
             return applicationIssueDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> getById(GraphRewrite event) {
+        return Collections.emptyMap();
     }
 
     private Set<ProjectModel> getProjects(ProjectModel projectModel) {

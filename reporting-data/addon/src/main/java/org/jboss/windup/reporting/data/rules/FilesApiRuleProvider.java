@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.data.dto.FileContentDto;
 import org.jboss.windup.reporting.data.dto.FileDto;
 import org.jboss.windup.reporting.data.dto.HintDto;
 import org.jboss.windup.reporting.data.dto.LinkDto;
@@ -18,9 +19,10 @@ import org.jboss.windup.reporting.model.source.SourceReportToProjectEdgeModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
+import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -34,12 +36,12 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
     private Imported<SourceTypeResolver> resolvers;
 
     @Override
-    public String getOutputFilename() {
-        return "files.json";
+    public String getBasePath() {
+        return "files";
     }
 
     @Override
-    public Object getData(GraphRewrite event) {
+    public Object getAll(GraphRewrite event) {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
 
@@ -47,43 +49,69 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                 .map(inputApplication -> {
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());
                     return getFileSources(event, projectModelTraversal);
-                }).flatMap(Collection::stream)
+                })
+                .map(Map::keySet)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private List<FileDto> getFileSources(GraphRewrite event, ProjectModelTraversal projectModelTraversal) {
-        List<FileDto> result = new ArrayList<>();
+    @Override
+    public Map<String, Object> getById(GraphRewrite event) {
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
+
+        Map<String, Object> result = new HashMap<>();
+        StreamSupport.stream(inputApplications.spliterator(), false)
+                .map(inputApplication -> {
+                    ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());
+                    return getFileSources(event, projectModelTraversal);
+                })
+                .map(Map::entrySet)
+                .flatMap(Collection::stream)
+                .forEach(fileDtoEntry -> {
+                    FileContentDto contentDto = new FileContentDto();
+
+                    contentDto.id = fileDtoEntry.getKey().id;
+                    contentDto.content = fileDtoEntry.getValue();
+
+                    result.put(contentDto.id, contentDto);
+                });
+
+        return result;
+    }
+
+    private Map<FileDto, String> getFileSources(GraphRewrite event, ProjectModelTraversal projectModelTraversal) {
+        Map<FileDto, String> result = new HashMap<>();
 
         for (FileModel fileModel : projectModelTraversal.getCanonicalProject().getFileModels()) {
             if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport()) {
-                FileDto filesDto = getSourceFileData(event, fileModel);
-                result.add(filesDto);
+                AbstractMap.SimpleEntry<FileDto, String> filesDto = getSourceFileData(event, fileModel);
+                result.put(filesDto.getKey(), filesDto.getValue());
             }
         }
 
         for (ProjectModelTraversal child : projectModelTraversal.getChildren()) {
-            List<FileDto> childrenSourceFiles = getFileSources(event, child);
-            result.addAll(childrenSourceFiles);
+            Map<FileDto, String> childrenSourceFiles = getFileSources(event, child);
+            result.putAll(childrenSourceFiles);
         }
 
         return result;
     }
 
-    private FileDto getSourceFileData(GraphRewrite event, FileModel sourceFile) {
+    private AbstractMap.SimpleEntry<FileDto, String> getSourceFileData(GraphRewrite event, FileModel sourceFile) {
         SourceReportService sourceReportService = new SourceReportService(event.getGraphContext());
         SourceReportModel reportModel = sourceReportService.getSourceReportForFileModel(sourceFile);
 
         // Fill Data
-        FileDto result = new FileDto();
+        FileDto fileDto = new FileDto();
 
-        result.id = sourceFile.getId().toString();
-        result.fullPath = reportModel.getProjectEdges().stream()
+        fileDto.id = sourceFile.getId().toString();
+        fileDto.fullPath = reportModel.getProjectEdges().stream()
                 .map(SourceReportToProjectEdgeModel::getFullPath)
                 .collect(Collectors.joining(" | "));
-        result.prettyPath = sourceFile.getPrettyPath();
-        result.sourceType = resolveSourceType(sourceFile);
-        result.fileContent = reportModel.getSourceBody();
-        result.hints = reportModel.getSourceFileModel().getInlineHints().stream()
+        fileDto.prettyPath = sourceFile.getPrettyPath();
+        fileDto.sourceType = resolveSourceType(sourceFile);
+        fileDto.hints = reportModel.getSourceFileModel().getInlineHints().stream()
                 .map(inlineHintModel -> {
                     HintDto hintDto = new HintDto();
 
@@ -104,7 +132,7 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                 })
                 .collect(Collectors.toList());
 
-        return result;
+        return new AbstractMap.SimpleEntry<>(fileDto, reportModel.getSourceBody());
     }
 
     private String resolveSourceType(FileModel f) {

@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
 
     @Override
-    public String getOutputFilename() {
-        return "applications.json";
+    public String getBasePath() {
+        return "applications";
     }
 
     @Override
-    public Object getData(GraphRewrite event) {
+    public Object getAll(GraphRewrite event) {
         GraphContext context = event.getGraphContext();
 
         ClassificationService classificationService = new ClassificationService(context);
@@ -90,6 +90,11 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
 
             return applicationDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> getById(GraphRewrite event) {
+        return Collections.emptyMap();
     }
 
     private String getTagFrom(TechnologyTagModel technologyTagModel) {
