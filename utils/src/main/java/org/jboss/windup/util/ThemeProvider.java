@@ -35,6 +35,7 @@ public class ThemeProvider {
         Properties prop = new Properties();
         prop.load(input);
 
+        final String topBarTitle = prop.getProperty("distributionTopBarTitle");
         final String brandName = prop.getProperty("distributionBrandName");
         final String nameAcronym = prop.getProperty("distributionBrandNameAcronym");
         final String websiteUrl = prop.getProperty("distributionBrandWebsiteUrl");
@@ -51,7 +52,7 @@ public class ThemeProvider {
                 // do nothing because the execution continues with the fallback method below
             }
         }
-        return new Theme(brandName, nameAcronym, websiteUrl, documentationUrl, cliName, cliVersion, getRuntimeAPIVersion());
+        return new Theme(topBarTitle, brandName, nameAcronym, websiteUrl, documentationUrl, cliName, cliVersion, getRuntimeAPIVersion());
     }
 
     public static ThemeProvider getInstance() {

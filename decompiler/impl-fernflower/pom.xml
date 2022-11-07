@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.decompiler</groupId>
         <artifactId>decompiler-parent</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>decompiler-fernflower</artifactId>
@@ -42,13 +42,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Test jar -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>6.11.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
