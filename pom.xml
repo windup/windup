@@ -355,7 +355,7 @@
                         <executions>
                             <execution>
                                 <id>render-asciidoc</id>
-                                <phase>package</phase>
+                                <phase>validate</phase>
                                 <inherited>false</inherited>
                                 <goals>
                                     <goal>process-asciidoc</goal>
