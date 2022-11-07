@@ -16,9 +16,8 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-package: jdk
-        cache: 'maven'
     - name: Javadocs
       run: mvn package -PjavadocDist -DskipTests -Djavadoc.branding="Windup 0.0.0.Final Javadoc"
     - name: Zip
