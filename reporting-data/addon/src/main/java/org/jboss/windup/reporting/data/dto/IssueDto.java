@@ -7,6 +7,7 @@ public class IssueDto {
     public String name;
     public String ruleId;
     public String levelOfEffort;
+    public int totalStoryPoints;
     public List<LinkDto> links;
     public List<IssueAffectedFilesDto> affectedFiles;
 }
