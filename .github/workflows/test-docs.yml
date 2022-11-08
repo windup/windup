@@ -18,8 +18,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         java-package: jdk
+        cache: maven
+    - name: Install
+      run: mvn install -DskipTests
     - name: Javadocs
-      run: mvn package -PjavadocDist -DskipTests -Djavadoc.branding="Windup 0.0.0.Final Javadoc"
+      run: mvn validate -PjavadocDist -DskipTests -Djavadoc.branding="Windup 0.0.0.Final Javadoc"
     - name: Zip
       run: zip -r target.zip target/
     - uses: actions/upload-artifact@v3
