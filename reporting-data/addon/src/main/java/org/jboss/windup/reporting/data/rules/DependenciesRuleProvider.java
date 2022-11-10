@@ -12,6 +12,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.reporting.data.dto.ApplicationDependenciesDto;
 import org.jboss.windup.reporting.data.dto.DependencyDto;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportToArchiveEdgeModel;
@@ -39,12 +40,16 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         GraphContext context = event.getGraphContext();
 
-        Map<String, List<DependencyDto>> result = new HashMap<>();
+        List<ApplicationDependenciesDto> result = new ArrayList<>();
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel projectModel = inputPath.getProjectModel();
 
             List<DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>());
-            result.put(projectModel.getId().toString(), dependencies);
+
+            ApplicationDependenciesDto applicationDependenciesDto = new ApplicationDependenciesDto();
+            applicationDependenciesDto.applicationId = projectModel.getId().toString();
+            applicationDependenciesDto.dependencies = dependencies;
+            result.add(applicationDependenciesDto);
         }
         return result;
     }
@@ -107,7 +112,7 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
             }
 
             // Generate DTO
-            if(shouldDtoBeGenerated) {
+            if (shouldDtoBeGenerated) {
                 DependencyDto dependencyDto = new DependencyDto();
                 dependencyDto.name = groupModel.getCanonicalProject().getRootFileModel().getFileName();
                 dependencyDto.mavenIdentifier = groupModel.getCanonicalProject().getProperty("mavenIdentifier");

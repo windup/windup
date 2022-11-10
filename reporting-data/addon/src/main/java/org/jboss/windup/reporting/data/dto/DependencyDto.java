@@ -1,8 +1,6 @@
 package org.jboss.windup.reporting.data.dto;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class DependencyDto {
     public String name;
