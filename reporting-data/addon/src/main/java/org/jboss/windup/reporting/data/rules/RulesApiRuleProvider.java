@@ -8,7 +8,6 @@ import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.reporting.data.dto.RuleContentDto;
 import org.jboss.windup.reporting.data.dto.RuleDto;
-import org.jboss.windup.reporting.data.dto.TechnologyDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
 
 import java.util.ArrayList;
@@ -37,14 +36,14 @@ public class RulesApiRuleProvider extends AbstractApiRuleProvider {
             if (ruleProvider instanceof AbstractRuleProvider) {
                 String phase = ruleProvider.getMetadata().getPhase().getSimpleName();
 
-                List<TechnologyDto> sourceTechnology = ruleProvider.getMetadata().getSourceTechnologies().stream().map(technologyReference -> {
-                    TechnologyDto technologyDto = new TechnologyDto();
+                List<RuleDto.TechnologyDto> sourceTechnology = ruleProvider.getMetadata().getSourceTechnologies().stream().map(technologyReference -> {
+                    RuleDto.TechnologyDto technologyDto = new RuleDto.TechnologyDto();
                     technologyDto.id = technologyReference.getId();
                     technologyDto.versionRange = technologyReference.getVersionRangeAsString();
                     return technologyDto;
                 }).collect(Collectors.toList());
-                List<TechnologyDto> targetTechnology = ruleProvider.getMetadata().getTargetTechnologies().stream().map(technologyReference -> {
-                    TechnologyDto technologyDto = new TechnologyDto();
+                List<RuleDto.TechnologyDto> targetTechnology = ruleProvider.getMetadata().getTargetTechnologies().stream().map(technologyReference -> {
+                    RuleDto.TechnologyDto technologyDto = new RuleDto.TechnologyDto();
                     technologyDto.id = technologyReference.getId();
                     technologyDto.versionRange = technologyReference.getVersionRangeAsString();
                     return technologyDto;

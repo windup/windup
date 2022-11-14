@@ -13,4 +13,9 @@ public class RuleDto {
     public String failureMessage;
     public List<TechnologyDto> sourceTechnology;
     public List<TechnologyDto> targetTechnology;
+
+    public static class TechnologyDto {
+        public String id;
+        public String versionRange;
+    }
 }

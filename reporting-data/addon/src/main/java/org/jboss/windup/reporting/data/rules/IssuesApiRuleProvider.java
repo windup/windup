@@ -14,10 +14,6 @@ import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.data.dto.ApplicationIssueDto;
-import org.jboss.windup.reporting.data.dto.IssueAffectedFilesDto;
-import org.jboss.windup.reporting.data.dto.IssueDto;
-import org.jboss.windup.reporting.data.dto.IssueFileDto;
-import org.jboss.windup.reporting.data.dto.LinkDto;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.service.EffortReportService;
@@ -79,8 +75,8 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
             for (Map.Entry<String, List<ProblemSummary>> entry : primarySummariesByString.entrySet()) {
                 String key = entry.getKey();
-                List<IssueDto> value = entry.getValue().stream().map(problemSummary -> {
-                    IssueDto issueData = new IssueDto();
+                List<ApplicationIssueDto.IssueDto> value = entry.getValue().stream().map(problemSummary -> {
+                    ApplicationIssueDto.IssueDto issueData = new ApplicationIssueDto.IssueDto();
 
                     issueData.id = problemSummary.getId().toString();
                     issueData.ruleId = problemSummary.getRuleID();
@@ -88,17 +84,17 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                     issueData.totalStoryPoints = problemSummary.getNumberFound() * problemSummary.getEffortPerIncident();
                     issueData.name = problemSummary.getIssueName();
                     issueData.links = problemSummary.getLinks().stream().map(link -> {
-                        LinkDto linkDto = new LinkDto();
+                        ApplicationIssueDto.LinkDto linkDto = new ApplicationIssueDto.LinkDto();
                         linkDto.title = link.getTitle();
                         linkDto.href = link.getLink();
                         return linkDto;
                     }).collect(Collectors.toList());
                     issueData.affectedFiles = StreamSupport.stream(problemSummary.getDescriptions().spliterator(), false)
                             .map(description -> {
-                                IssueAffectedFilesDto issueAffectedFilesDto = new IssueAffectedFilesDto();
+                                ApplicationIssueDto.IssueAffectedFilesDto issueAffectedFilesDto = new ApplicationIssueDto.IssueAffectedFilesDto();
                                 issueAffectedFilesDto.description = description;
                                 issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
-                                    IssueFileDto issueFileDto = new IssueFileDto();
+                                    ApplicationIssueDto.IssueFileDto issueFileDto = new ApplicationIssueDto.IssueFileDto();
                                     issueFileDto.fileId = fileSummary.getFile().getId().toString();
                                     issueFileDto.fileName = getPrettyPathForFile(fileSummary.getFile());
                                     issueFileDto.occurrences = fileSummary.getOccurrences();

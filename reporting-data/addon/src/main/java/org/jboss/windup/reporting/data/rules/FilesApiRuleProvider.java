@@ -10,10 +10,9 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.SourceTypeResolver;
+import org.jboss.windup.reporting.data.dto.ApplicationIssueDto;
 import org.jboss.windup.reporting.data.dto.FileContentDto;
 import org.jboss.windup.reporting.data.dto.FileDto;
-import org.jboss.windup.reporting.data.dto.HintDto;
-import org.jboss.windup.reporting.data.dto.LinkDto;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.model.source.SourceReportToProjectEdgeModel;
 import org.jboss.windup.reporting.service.SourceReportService;
@@ -113,7 +112,7 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
         fileDto.sourceType = resolveSourceType(sourceFile);
         fileDto.hints = reportModel.getSourceFileModel().getInlineHints().stream()
                 .map(inlineHintModel -> {
-                    HintDto hintDto = new HintDto();
+                    FileDto.HintDto hintDto = new FileDto.HintDto();
 
                     hintDto.ruleId = inlineHintModel.getRuleID();
                     hintDto.line = inlineHintModel.getLineNumber();
@@ -121,7 +120,7 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                     hintDto.content = inlineHintModel.getHint();
                     hintDto.links = inlineHintModel.getLinks().stream()
                             .map(linkModel -> {
-                                LinkDto linkDto = new LinkDto();
+                                ApplicationIssueDto.LinkDto linkDto = new ApplicationIssueDto.LinkDto();
                                 linkDto.title = linkModel.getDescription();
                                 linkDto.href = linkModel.getLink();
                                 return linkDto;

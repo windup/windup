@@ -11,7 +11,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.reporting.data.dto.IgnoredFilesDto;
+import org.jboss.windup.reporting.data.dto.ApplicationIgnoredFilesDto;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,18 +35,18 @@ public class IgnoredFilesRuleProvider extends AbstractApiRuleProvider {
         GraphContext context = event.getGraphContext();
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
-        List<IgnoredFilesDto> result = new ArrayList<>();
+        List<ApplicationIgnoredFilesDto> result = new ArrayList<>();
 
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel application = inputPath.getProjectModel();
             GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context, IgnoredFileModel.class);
 
-            List<IgnoredFilesDto.FileDto> filesDto = new ArrayList<>();
+            List<ApplicationIgnoredFilesDto.FileDto> filesDto = new ArrayList<>();
             for (IgnoredFileModel file : ignoredFilesModelService.findAll()) {
                 Set<ProjectModel> fileApplications = ProjectTraversalCache.getApplicationsForProject(context, file.getProjectModel());
                 if (fileApplications.contains(application)) {
 
-                    IgnoredFilesDto.FileDto fileDto = new IgnoredFilesDto.FileDto();
+                    ApplicationIgnoredFilesDto.FileDto fileDto = new ApplicationIgnoredFilesDto.FileDto();
                     fileDto.fileName = file.getFileName();
                     fileDto.filePath = file.getFilePath();
                     fileDto.reason = file.getIgnoredRegex();
@@ -55,11 +55,11 @@ public class IgnoredFilesRuleProvider extends AbstractApiRuleProvider {
                 }
             }
 
-            IgnoredFilesDto ignoredFilesDto = new IgnoredFilesDto();
-            ignoredFilesDto.applicationId = application.getId().toString();
-            ignoredFilesDto.ignoredFiles = filesDto;
+            ApplicationIgnoredFilesDto applicationIgnoredFilesDto = new ApplicationIgnoredFilesDto();
+            applicationIgnoredFilesDto.applicationId = application.getId().toString();
+            applicationIgnoredFilesDto.ignoredFiles = filesDto;
 
-            result.add(ignoredFilesDto);
+            result.add(applicationIgnoredFilesDto);
         }
 
         return result;

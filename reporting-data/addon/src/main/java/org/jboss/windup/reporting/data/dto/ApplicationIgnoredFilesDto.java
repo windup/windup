@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.data.dto;
 
 import java.util.List;
 
-public class IgnoredFilesDto {
+public class ApplicationIgnoredFilesDto {
     public String applicationId;
     public List<FileDto> ignoredFiles;
 

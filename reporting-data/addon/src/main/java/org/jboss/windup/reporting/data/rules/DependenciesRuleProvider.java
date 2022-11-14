@@ -13,7 +13,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.data.dto.ApplicationDependenciesDto;
-import org.jboss.windup.reporting.data.dto.DependencyDto;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportToArchiveEdgeModel;
 
@@ -44,7 +43,7 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel projectModel = inputPath.getProjectModel();
 
-            List<DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>());
+            List<ApplicationDependenciesDto.DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>());
 
             ApplicationDependenciesDto applicationDependenciesDto = new ApplicationDependenciesDto();
             applicationDependenciesDto.applicationId = projectModel.getId().toString();
@@ -59,12 +58,12 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         return Collections.emptyMap();
     }
 
-    private List<DependencyDto> addAll(
+    private List<ApplicationDependenciesDto.DependencyDto> addAll(
             GraphContext context,
             ProjectModelTraversal projectModelTraversal,
             Map<String, DependencyReportDependencyGroupModel> groupsBySHA1
     ) {
-        List<DependencyDto> result = new ArrayList<>();
+        List<ApplicationDependenciesDto.DependencyDto> result = new ArrayList<>();
 
         FileModel rootFileModel = projectModelTraversal.getCurrent().getRootFileModel();
 
@@ -113,7 +112,7 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
 
             // Generate DTO
             if (shouldDtoBeGenerated) {
-                DependencyDto dependencyDto = new DependencyDto();
+                ApplicationDependenciesDto.DependencyDto dependencyDto = new ApplicationDependenciesDto.DependencyDto();
                 dependencyDto.name = groupModel.getCanonicalProject().getRootFileModel().getFileName();
                 dependencyDto.mavenIdentifier = groupModel.getCanonicalProject().getProperty("mavenIdentifier");
                 dependencyDto.sha1 = archiveModel.getSHA1Hash();
@@ -127,7 +126,7 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         }
 
         for (ProjectModelTraversal child : projectModelTraversal.getChildren()) {
-            List<DependencyDto> childDependencies = addAll(context, child, groupsBySHA1);
+            List<ApplicationDependenciesDto.DependencyDto> childDependencies = addAll(context, child, groupsBySHA1);
             result.addAll(childDependencies);
         }
 
