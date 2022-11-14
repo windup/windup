@@ -10,12 +10,6 @@ jobs:
   windup-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Github Variables
-        run: |
-          echo "GITHUB_BASE_REF:$GITHUB_BASE_REF"
-          echo "GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
-          echo "GITHUB_REF:$GITHUB_REF"
-          echo "GITHUB_REF_NAME:$GITHUB_REF_NAME"
       - uses: actions/checkout@v2.3.4
       - name: Set up JDK 11
         uses: actions/setup-java@v2
