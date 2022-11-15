@@ -81,6 +81,7 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                     issueData.id = problemSummary.getId().toString();
                     issueData.ruleId = problemSummary.getRuleID();
                     issueData.levelOfEffort = EffortReportService.getEffortLevelDescription(EffortReportService.Verbosity.VERBOSE, problemSummary.getEffortPerIncident());
+                    issueData.totalIncidents = problemSummary.getNumberFound();
                     issueData.totalStoryPoints = problemSummary.getNumberFound() * problemSummary.getEffortPerIncident();
                     issueData.name = problemSummary.getIssueName();
                     issueData.links = problemSummary.getLinks().stream().map(link -> {

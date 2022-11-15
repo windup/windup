@@ -12,6 +12,7 @@ public class ApplicationIssueDto {
         public String name;
         public String ruleId;
         public String levelOfEffort;
+        public int totalIncidents;
         public int totalStoryPoints;
         public List<LinkDto> links;
         public List<IssueAffectedFilesDto> affectedFiles;
