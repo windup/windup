@@ -11,11 +11,17 @@ public class ApplicationIssueDto {
         public String id;
         public String name;
         public String ruleId;
-        public String levelOfEffort;
+        public EffortDto effort;
         public int totalIncidents;
         public int totalStoryPoints;
         public List<LinkDto> links;
         public List<IssueAffectedFilesDto> affectedFiles;
+    }
+
+    public static class EffortDto {
+        public String type;
+        public int points;
+        public String description;
     }
 
     public static class LinkDto {

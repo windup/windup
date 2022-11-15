@@ -49,8 +49,6 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
         Set<String> includeTags = Collections.emptySet();
         Set<String> excludeTags = Collections.emptySet();
 
-        SourceReportService sourceReportService = new SourceReportService(context);
-
         return new ProjectService(context).getRootProjectModels().stream().map(projectModel -> {
             Set<ProjectModel> projectModels = getProjects(projectModel);
 
@@ -80,7 +78,13 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
 
                     issueData.id = problemSummary.getId().toString();
                     issueData.ruleId = problemSummary.getRuleID();
-                    issueData.levelOfEffort = EffortReportService.getEffortLevelDescription(EffortReportService.Verbosity.VERBOSE, problemSummary.getEffortPerIncident());
+
+                    EffortReportService.EffortLevel effortLevel = EffortReportService.EffortLevel.forPoints(problemSummary.getEffortPerIncident());
+                    issueData.effort = new ApplicationIssueDto.EffortDto();
+                    issueData.effort.type = effortLevel.getShortDescription();
+                    issueData.effort.description = effortLevel.getVerboseDescription();
+                    issueData.effort.points = effortLevel.getPoints();
+
                     issueData.totalIncidents = problemSummary.getNumberFound();
                     issueData.totalStoryPoints = problemSummary.getNumberFound() * problemSummary.getEffortPerIncident();
                     issueData.name = problemSummary.getIssueName();
