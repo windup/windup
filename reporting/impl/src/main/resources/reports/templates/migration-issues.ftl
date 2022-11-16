@@ -154,6 +154,8 @@
         </div>
         <!-- / Navbar -->
 
+        <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+
         <div class="container-fluid" role="main">
             <div class="row">
                 <div class="page-header page-header-no-border">
@@ -173,10 +175,46 @@
                 </div>
             </div>
 
+            <#assign sourcesAndTargets = getSourcesAndTargets(problemsBySeverity)>
+            <#if sourcesAndTargets.getTargetTechs()?has_content || sourcesAndTargets.getSourceTechs()?has_content>
+                <div class="dropdown-group">
+                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                        <div class="dropdown inline-drop">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Targets
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <!-- options -->
+                                <#list sourcesAndTargets.getTargetTechs() as tt>
+                                    <li><a href="#">${tt}</a></li>
+                                </#list>
+                            </ul>
+                        </div>
+                    </#if>
+                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                        <div class="dropdown inline-drop">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Sources
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="dropdown-sources" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <!-- options -->
+                                <#list sourcesAndTargets.getSourceTechs() as st>
+                                    <li><a href="#">${st}</a></li>
+                                </#list>
+                            </ul>
+                        </div>
+                    </#if>
+                    <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
+                </div>
+            </#if>
+            <script src="data/sources_and_targets.js"></script>
+            <script src="resources/js/windup-issues-filtering.js"></script>
+
             <div class="row">
                 <div class="container-fluid theme-showcase" role="main">
                     <!-- HEAD -->
-                    <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
                     <#if !problemsBySeverity?has_content>
                         <div>
                             No issues were found by the existing rules. If you would like to add custom rules,
@@ -313,5 +351,8 @@
         <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 
         <#include "include/problem_summary.ftl">
+        <#include "include/sources_targets.ftl">
+
+        <script src="data/sources_and_targets.js"></script>
     </body>
 </html>

@@ -572,3 +572,15 @@ h1 .glyphicon-info-sign:before {
 .label-success.active, .label-warning.active, .label-danger.active {
     border-style: inset;
 }
+
+.filtered-out {
+    display: none;
+}
+
+.inline-drop {
+    display: inline;
+}
+
+.dropdown-group {
+    margin: 15px;
+}
