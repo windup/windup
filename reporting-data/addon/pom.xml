@@ -31,6 +31,12 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-archives</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>

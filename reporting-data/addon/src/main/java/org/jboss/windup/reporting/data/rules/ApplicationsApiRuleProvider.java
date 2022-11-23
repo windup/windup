@@ -105,7 +105,7 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
         }
     }
 
-    private Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails) {
+    public static Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails) {
         Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         results.putAll(classificationEffortDetails);
         for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet()) {
@@ -118,7 +118,7 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
         return results;
     }
 
-    private int sumPoints(Map<Integer, Integer> results) {
+    public static int sumPoints(Map<Integer, Integer> results) {
         int sum = 0;
         for (Map.Entry<Integer, Integer> entry : results.entrySet()) {
             sum += entry.getKey() * entry.getValue();
