@@ -7,8 +7,8 @@ $(document).ready(function () {
         let targetsDropdown = $("#dropdown-targets");
         let sourcesDropdown = $("#dropdown-sources");
 
-        targetsDropdown.children().each(attachFilterBehaviour(ISSUES_BY_TARGET));
-        sourcesDropdown.children().each(attachFilterBehaviour(ISSUES_BY_SOURCE));
+        targetsDropdown.children().each(attachFilterBehaviour(WINDUP_TECHNOLOGIES[appId].issuesByTarget));
+        sourcesDropdown.children().each(attachFilterBehaviour(WINDUP_TECHNOLOGIES[appId].issuesBySource));
 
         let clear = $("#clear");
         clear.click(clearCallback);

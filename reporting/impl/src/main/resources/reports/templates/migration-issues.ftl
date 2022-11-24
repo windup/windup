@@ -138,6 +138,15 @@
         </style>
 
         <script src="resources/js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="data/issue_summaries.js"></script>
+        <script>
+            // Set applicationId here so that it's available to all scripts
+            <#if reportModel.projectModel??>
+                let appId = ${reportModel.projectModel.getElement().id()?c};
+            <#else>
+                let appId = "allIssues";
+            </#if>
+        </script>
     </head>
     <body role="document" class="migration-issues">
         <!-- Navbar -->
@@ -209,7 +218,13 @@
                     <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
                 </div>
             </#if>
-            <script src="data/sources_and_targets.js"></script>
+            <script>
+                var scriptName = typeof appId !== "undefined" ? "data/sources_and_targets-" + appId + ".js" : "data/sources_and_targets-allIssues.js";
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = scriptName;
+                document.body.appendChild(script);
+            </script>
             <script src="resources/js/windup-issues-filtering.js"></script>
 
             <div class="row">
@@ -353,6 +368,5 @@
         <#include "include/problem_summary.ftl">
         <#include "include/sources_targets.ftl">
 
-        <script src="data/sources_and_targets.js"></script>
     </body>
 </html>
