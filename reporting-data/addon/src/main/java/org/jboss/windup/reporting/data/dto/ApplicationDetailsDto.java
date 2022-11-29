@@ -24,6 +24,7 @@ public class ApplicationDetailsDto {
     public static class MavenDto {
         public String name;
         public String mavenIdentifier;
+        public String projectSite;
         public String sha1;
         public String version;
         public String description;

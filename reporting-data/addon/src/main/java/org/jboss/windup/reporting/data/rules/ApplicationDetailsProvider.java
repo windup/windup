@@ -41,7 +41,7 @@ public class ApplicationDetailsProvider extends AbstractApiRuleProvider {
 
     @Override
     public String getBasePath() {
-        return "application-details";
+        return "applications-details";
     }
 
     @Override
@@ -150,6 +150,7 @@ public class ApplicationDetailsProvider extends AbstractApiRuleProvider {
 
         fileDto.maven = new ApplicationDetailsDto.MavenDto();
         fileDto.maven.mavenIdentifier = canonicalProject.getProperty("mavenIdentifier");
+        fileDto.maven.projectSite = canonicalProject.getURL();
         fileDto.maven.name = canonicalProject.getName();
         fileDto.maven.version = canonicalProject.getVersion();
         fileDto.maven.description = canonicalProject.getDescription();
