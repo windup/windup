@@ -187,20 +187,6 @@
             <#assign sourcesAndTargets = getSourcesAndTargets(problemsBySeverity)>
             <#if sourcesAndTargets.getTargetTechs()?has_content || sourcesAndTargets.getSourceTechs()?has_content>
                 <div class="dropdown-group">
-                    <#if sourcesAndTargets.getTargetTechs()?has_content>
-                        <div class="dropdown inline-drop">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Targets
-                                <span class="caret"></span>
-                            </button>
-                            <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <!-- options -->
-                                <#list sourcesAndTargets.getTargetTechs() as tt>
-                                    <li><a href="#">${tt}</a></li>
-                                </#list>
-                            </ul>
-                        </div>
-                    </#if>
                     <#if sourcesAndTargets.getSourceTechs()?has_content>
                         <div class="dropdown inline-drop">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -215,7 +201,34 @@
                             </ul>
                         </div>
                     </#if>
+                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                        <div class="dropdown inline-drop">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Targets
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <!-- options -->
+                                <#list sourcesAndTargets.getTargetTechs() as tt>
+                                    <li><a href="#">${tt}</a></li>
+                                </#list>
+                            </ul>
+                        </div>
+                    </#if>
                     <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
+                    <br/>
+                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected sources:
+                            <div class="selected-item" id="selected-sources"></div>
+                        </div>
+                    </#if>
+                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected targets:
+                            <div class="selected-item" id="selected-targets"></div>
+                        </div>
+                    </#if>
                 </div>
             </#if>
             <script>

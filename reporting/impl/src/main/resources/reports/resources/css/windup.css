@@ -584,3 +584,8 @@ h1 .glyphicon-info-sign:before {
 .dropdown-group {
     margin: 15px;
 }
+
+.selected-tech {
+    display: flex;
+    flex-wrap: wrap;
+}

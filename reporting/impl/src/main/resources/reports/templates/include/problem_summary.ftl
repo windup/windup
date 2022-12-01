@@ -11,12 +11,12 @@
                     {description: "${markdownToHtml(description)?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
                         tts: [
                             <#list problemSummary.getTargetTechnologies() as tt>
-                                "${tt}"
+                                "${tt}",
                             </#list>
                         ],
                         sts: [
                         <#list problemSummary.getSourceTechnologies() as st>
-                            "${st}"
+                            "${st}",
                         </#list>
                         ],
                         problemSummaryID: "${problemSummary.id}", files: [
