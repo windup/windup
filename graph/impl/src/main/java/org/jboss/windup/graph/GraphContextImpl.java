@@ -304,11 +304,11 @@ public class GraphContextImpl implements GraphContext {
         // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
         // This is actually more important than performance on some of the smaller machines out there, and
         // the performance decrease seems to be minimal.
-        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
+        conf.setProperty("storage.berkeleyje.cache-percentage", 1);
 
         // Set READ UNCOMMITTED to improve performance
-        conf.setProperty("storage.berkeleydb.lock-mode", LockMode.READ_UNCOMMITTED);
-        conf.setProperty("storage.berkeleydb.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleyje.lock-mode", LockMode.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleyje.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
 
         // Increase storage write buffer since we basically do a large bulk load during the first phases.
         // See http://s3.thinkaurelius.com/docs/titan/current/bulk-loading.html
