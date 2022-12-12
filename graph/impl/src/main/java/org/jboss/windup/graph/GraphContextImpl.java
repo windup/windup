@@ -14,11 +14,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.syncleus.ferma.ClassInitializer;
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.BaseConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ConfigurationUtils;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.sleepycat.je.LockMode;
+import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.DelegatingFramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.Traversable;
@@ -302,18 +304,17 @@ public class GraphContextImpl implements GraphContext {
         // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
         // This is actually more important than performance on some of the smaller machines out there, and
         // the performance decrease seems to be minimal.
-        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
+        conf.setProperty("storage.berkeleyje.cache-percentage", 1);
 
         // Set READ UNCOMMITTED to improve performance
-        conf.setProperty("storage.berkeleydb.lock-mode", LockMode.READ_UNCOMMITTED);
-        conf.setProperty("storage.berkeleydb.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleyje.lock-mode", LockMode.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleyje.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
 
         // Increase storage write buffer since we basically do a large bulk load during the first phases.
         // See http://s3.thinkaurelius.com/docs/titan/current/bulk-loading.html
         conf.setProperty("storage.buffer-size", "4096");
 
-        // Turn off transactions to improve performance
-        conf.setProperty("storage.transactions", false);
+        conf.setProperty("storage.transactions", true);
 
         conf.setProperty("ids.block-size", 25000);
         // conf.setProperty("ids.flush", true);
@@ -438,11 +439,15 @@ public class GraphContextImpl implements GraphContext {
 
     private void writeToPropertiesFile(Configuration conf, File file) {
         try {
-            PropertiesConfiguration propConf = new PropertiesConfiguration(file);
-            propConf.append(conf);
-            propConf.save();
+            // based upon https://issues.apache.org/jira/browse/CONFIGURATION-714
+            // Copy source configuration to PropertiesConfiguration
+            PropertiesConfiguration properties = new PropertiesConfiguration();
+            ConfigurationUtils.copy(conf, properties);
+            // Save PropertiesConfiguration
+            FileHandler handler = new FileHandler(properties);
+            handler.save(file);
         } catch (ConfigurationException ex) {
-            throw new RuntimeException("Failed writing Titan config to " + file.getAbsolutePath() + ": " + ex.getMessage(), ex);
+            throw new RuntimeException("Failed writing JanusGraph config to " + file.getAbsolutePath() + ": " + ex.getMessage(), ex);
         }
     }
 
@@ -528,7 +533,7 @@ public class GraphContextImpl implements GraphContext {
         }
 
         @Override
-        public void vertexPropertyChanged(Vertex vertex, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
+        public void vertexPropertyChanged(Vertex vertex, VertexProperty oldValue, Object setValue,
                                           Object... vertexPropertyKeyValues) {
             GraphContextImpl graphContext = getGraphContext();
             if (graphContext == null || graphContext.graphListeners == null)
