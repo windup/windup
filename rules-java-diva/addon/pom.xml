@@ -19,6 +19,12 @@
             <groupId>com.github.konveyor.tackle-diva</groupId>
             <artifactId>diva-core</artifactId>
             <version>0.1.11</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.core.runtime</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Addon Dependencies -->
