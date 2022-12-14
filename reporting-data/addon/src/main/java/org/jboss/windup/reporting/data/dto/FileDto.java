@@ -9,6 +9,7 @@ public class FileDto {
     public String id;
     public String fullPath;
     public String prettyPath;
+    public String prettyFileName;
     public String sourceType;
     public int storyPoints;
     public List<HintDto> hints;

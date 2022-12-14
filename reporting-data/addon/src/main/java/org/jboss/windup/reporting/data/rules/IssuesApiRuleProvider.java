@@ -133,7 +133,7 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
         return traversal.getAllProjects(true);
     }
 
-    private String getPrettyPathForFile(FileModel fileModel) {
+    public static String getPrettyPathForFile(FileModel fileModel) {
         if (fileModel instanceof JavaClassFileModel) {
             JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
             if (jcfm.getJavaClass() == null) {

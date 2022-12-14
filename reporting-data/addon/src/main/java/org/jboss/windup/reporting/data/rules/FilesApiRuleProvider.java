@@ -146,6 +146,7 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                 .map(SourceReportToProjectEdgeModel::getFullPath)
                 .collect(Collectors.joining(" | "));
         fileDto.prettyPath = sourceFile.getPrettyPath();
+        fileDto.prettyFileName = IssuesApiRuleProvider.getPrettyPathForFile(sourceFile);
         fileDto.sourceType = resolveSourceType(sourceFile);
         fileDto.storyPoints = storyPoints;
         fileDto.hints = reportModel.getSourceFileModel().getInlineHints().stream()
