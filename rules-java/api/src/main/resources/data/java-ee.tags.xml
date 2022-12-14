@@ -2,7 +2,7 @@
 <tags setName="java">
     <tag name="framework:" pseudo="true">
     </tag>
-    <tag name="java-ee" prime="true" title="Java EE" color="#00CC00">
+    <tag name="java-ee" prime="true" title="Java EE / Jakarta EE" color="#00CC00">
         <tag name="servlet"/>
         <tag name="datasource"/>
         <tag name="application-server:" pseudo="true">
