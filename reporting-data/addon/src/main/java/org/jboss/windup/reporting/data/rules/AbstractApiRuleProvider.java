@@ -114,8 +114,8 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
         // Enrich Javascript file
         File outputJSFile = outputBaseDir.resolve(JAVASCRIPT_OUTPUT).toFile();
         try (FileWriter writer = new FileWriter(outputJSFile, true)) {
-            writer.append("window." + getBasePath() + "=" + getAllJsonString + ";");
-            writer.append("window." + getBasePath() + "_by_id=" + getByIdJsonString + ";");
+            writer.append("window[\"" + getBasePath() + "\"]=" + getAllJsonString + ";");
+            writer.append("window[\"" + getBasePath() + "_by_id\"]=" + getByIdJsonString + ";");
             LOG.info("Exporting json data to file: " + outputJSFile.getPath());
         } catch (IOException e) {
             LOG.error("Error exporting data to: " + outputJSFile.getPath());
