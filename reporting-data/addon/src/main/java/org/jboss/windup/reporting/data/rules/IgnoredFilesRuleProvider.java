@@ -41,17 +41,17 @@ public class IgnoredFilesRuleProvider extends AbstractApiRuleProvider {
             ProjectModel application = inputPath.getProjectModel();
             GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context, IgnoredFileModel.class);
 
-            List<ApplicationIgnoredFilesDto.FileDto> filesDto = new ArrayList<>();
+            List<ApplicationIgnoredFilesDto.IgnoredFileDto> filesDto = new ArrayList<>();
             for (IgnoredFileModel file : ignoredFilesModelService.findAll()) {
                 Set<ProjectModel> fileApplications = ProjectTraversalCache.getApplicationsForProject(context, file.getProjectModel());
                 if (fileApplications.contains(application)) {
 
-                    ApplicationIgnoredFilesDto.FileDto fileDto = new ApplicationIgnoredFilesDto.FileDto();
-                    fileDto.fileName = file.getFileName();
-                    fileDto.filePath = file.getFilePath();
-                    fileDto.reason = file.getIgnoredRegex();
+                    ApplicationIgnoredFilesDto.IgnoredFileDto ignoredFileDto = new ApplicationIgnoredFilesDto.IgnoredFileDto();
+                    ignoredFileDto.fileName = file.getFileName();
+                    ignoredFileDto.filePath = file.getFilePath();
+                    ignoredFileDto.reason = file.getIgnoredRegex();
 
-                    filesDto.add(fileDto);
+                    filesDto.add(ignoredFileDto);
                 }
             }
 

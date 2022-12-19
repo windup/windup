@@ -13,11 +13,10 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
-import org.jboss.windup.reporting.data.dto.ApplicationIssueDto;
+import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.service.EffortReportService;
-import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 
@@ -67,20 +66,20 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
             }
 
             // Fill Data
-            ApplicationIssueDto applicationIssueDto = new ApplicationIssueDto();
-            applicationIssueDto.applicationId = projectModel.getId().toString();
-            applicationIssueDto.issues = new HashMap<>();
+            ApplicationIssuesDto applicationIssuesDto = new ApplicationIssuesDto();
+            applicationIssuesDto.applicationId = projectModel.getId().toString();
+            applicationIssuesDto.issues = new HashMap<>();
 
             for (Map.Entry<String, List<ProblemSummary>> entry : primarySummariesByString.entrySet()) {
                 String key = entry.getKey();
-                List<ApplicationIssueDto.IssueDto> value = entry.getValue().stream().map(problemSummary -> {
-                    ApplicationIssueDto.IssueDto issueData = new ApplicationIssueDto.IssueDto();
+                List<ApplicationIssuesDto.IssueDto> value = entry.getValue().stream().map(problemSummary -> {
+                    ApplicationIssuesDto.IssueDto issueData = new ApplicationIssuesDto.IssueDto();
 
                     issueData.id = problemSummary.getId().toString();
                     issueData.ruleId = problemSummary.getRuleID();
 
                     EffortReportService.EffortLevel effortLevel = EffortReportService.EffortLevel.forPoints(problemSummary.getEffortPerIncident());
-                    issueData.effort = new ApplicationIssueDto.EffortDto();
+                    issueData.effort = new ApplicationIssuesDto.EffortDto();
                     issueData.effort.type = effortLevel.getShortDescription();
                     issueData.effort.description = effortLevel.getVerboseDescription();
                     issueData.effort.points = effortLevel.getPoints();
@@ -89,17 +88,17 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                     issueData.totalStoryPoints = problemSummary.getNumberFound() * problemSummary.getEffortPerIncident();
                     issueData.name = problemSummary.getIssueName();
                     issueData.links = problemSummary.getLinks().stream().map(link -> {
-                        ApplicationIssueDto.LinkDto linkDto = new ApplicationIssueDto.LinkDto();
+                        ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
                         linkDto.title = link.getTitle();
                         linkDto.href = link.getLink();
                         return linkDto;
                     }).collect(Collectors.toList());
                     issueData.affectedFiles = StreamSupport.stream(problemSummary.getDescriptions().spliterator(), false)
                             .map(description -> {
-                                ApplicationIssueDto.IssueAffectedFilesDto issueAffectedFilesDto = new ApplicationIssueDto.IssueAffectedFilesDto();
+                                ApplicationIssuesDto.IssueAffectedFilesDto issueAffectedFilesDto = new ApplicationIssuesDto.IssueAffectedFilesDto();
                                 issueAffectedFilesDto.description = description;
                                 issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
-                                    ApplicationIssueDto.IssueFileDto issueFileDto = new ApplicationIssueDto.IssueFileDto();
+                                    ApplicationIssuesDto.IssueFileDto issueFileDto = new ApplicationIssuesDto.IssueFileDto();
                                     issueFileDto.fileId = fileSummary.getFile().getId().toString();
                                     issueFileDto.fileName = getPrettyPathForFile(fileSummary.getFile());
                                     issueFileDto.occurrences = fileSummary.getOccurrences();
@@ -112,10 +111,10 @@ public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
                     return issueData;
                 }).collect(Collectors.toList());
 
-                applicationIssueDto.issues.put(key.toLowerCase().replaceAll("migration ", ""), value);
+                applicationIssuesDto.issues.put(key.toLowerCase().replaceAll("migration ", ""), value);
             }
 
-            return applicationIssueDto;
+            return applicationIssuesDto;
         }).collect(Collectors.toList());
     }
 

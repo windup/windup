@@ -21,7 +21,7 @@ public class FileDto {
         public String title;
         public String ruleId;
         public String content;
-        public List<ApplicationIssueDto.LinkDto> links;
+        public List<ApplicationIssuesDto.LinkDto> links;
     }
 
     public static class TagDto {

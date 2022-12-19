@@ -8,10 +8,10 @@ public class ApplicationDependenciesDto {
 
     public static class DependencyDto {
         public String name;
-        public String mavenIdentifier;
         public String sha1;
         public String version;
         public String organization;
+        public String mavenIdentifier;
         public List<String> foundPaths;
     }
 }
