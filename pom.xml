@@ -11,7 +11,7 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
-    <version>6.0.1-SNAPSHOT</version>
+    <version>6.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Parent</name>
@@ -21,9 +21,9 @@
         <version.forge>3.10.0.Final</version.forge>
         <version.furnace>2.29.1.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
-        <version.janusgraph>0.3.1</version.janusgraph>
-        <version.tinkerpop.blueprints>3.3.3</version.tinkerpop.blueprints>
-        <version.freemarker>2.3.26-incubating</version.freemarker>
+        <version.janusgraph>0.6.2</version.janusgraph>
+        <version.tinkerpop.blueprints>3.5.3</version.tinkerpop.blueprints>
+        <version.freemarker>2.3.31</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
@@ -132,6 +132,7 @@
         <module>test-util</module>
         <module>server-provider-spi</module>
         <module>bootstrap</module>
+        <module>bootstraps-themed</module>
     </modules>
 
     <dependencyManagement>
@@ -193,7 +194,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.2.2</version>
+                <version>2.13.4.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -210,6 +211,7 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.11.0</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -571,94 +573,7 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>windup</id>
-            <activation>
-                <property>
-                    <name>!downstream</name>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Windup</distribution.brand.name>
-                <distribution.brand.name-acronym>WINDUP</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://github.com/windup/windup</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>windup-cli</distribution.brand.cli-name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources-windup</directory>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-        <profile>
-            <id>mta</id>
-            <activation>
-                <property>
-                    <name>downstream</name>
-                    <value>mta</value>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Migration Toolkit for Applications by Red Hat (MTA)</distribution.brand.name>
-                <distribution.brand.name-acronym>MTA</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://developers.redhat.com/products/mta/overview/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>mta-cli</distribution.brand.cli-name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources-mta</directory>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-        <profile>
-            <id>tackle</id>
-            <activation>
-                <property>
-                    <name>downstream</name>
-                    <value>tackle</value>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Tackle Analysis</distribution.brand.name>
-                <distribution.brand.name-acronym>TACKLE</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://github.com/windup/windup/wiki</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>tackle-cli</distribution.brand.cli-name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources-tackle</directory>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-        <profile>
-            <id>mtr</id>
-            <activation>
-                <property>
-                    <name>downstream</name>
-                    <value>mtr</value>
-                </property>
-            </activation>
-            <properties>
-                <distribution.brand.name>Migration Toolkit for Runtimes by Red Hat (MTR)</distribution.brand.name>
-                <distribution.brand.name-acronym>MTR</distribution.brand.name-acronym>
-                <distribution.brand.documentation.url>https://developers.redhat.com/products/mtr/overview/</distribution.brand.documentation.url>
-                <distribution.brand.cli-name>mtr-cli</distribution.brand.cli-name>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources-mtr</directory>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
     </profiles>
+
 
 </project>

@@ -1,9 +1,14 @@
-name: Windup PR builder for JDK11
+name: Windup PR/Push builder for JDK11
 
 on:
   pull_request:
     branches: 
       - master
+      - 'releases/**'
+  push:
+    branches:
+      - master
+      - 'releases/**'
 
 jobs:
 

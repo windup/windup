@@ -177,6 +177,9 @@ public class ToolingModeCommand implements Command {
         // enableClassNotFoundAnalysis
         options.put(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS, this.enableClassNotFoundAnalysis());
 
+        // enableTransactionAnalysis
+        options.put(IOptionKeys.ENABLE_TRANSACTION_ANALYSIS, this.enableTransactionAnalysis());
+
         // enableTattletale
         options.put(IOptionKeys.ENABLE_TATTLETALE, this.enableTattletale());
 
@@ -330,6 +333,11 @@ public class ToolingModeCommand implements Command {
     // enableClassNotFoundAnalysis
     private boolean enableClassNotFoundAnalysis() {
         return this.arguments.contains(toArg(IOptionKeys.ENABLE_CLASS_NOT_FOUND_ANALYSIS));
+    }
+
+    // enableTransactionAnalysis
+    private boolean enableTransactionAnalysis() {
+        return this.arguments.contains(toArg(IOptionKeys.ENABLE_TRANSACTION_ANALYSIS));
     }
 
     // enableTattletale
