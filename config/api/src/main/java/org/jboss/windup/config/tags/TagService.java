@@ -3,6 +3,7 @@ package org.jboss.windup.config.tags;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,6 +30,10 @@ import org.xml.sax.SAXException;
 @Singleton
 public class TagService {
     private final ConcurrentMap<String, Tag> definedTags = new ConcurrentHashMap<>();
+
+    public Collection<Tag> getAllTags() {
+        return definedTags.values();
+    }
 
     /**
      * Read the tag structure from the provided stream.
