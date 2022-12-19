@@ -67,9 +67,47 @@ $(document).ready(function () {
                     $(e).prev().addClass("filtered-out");
                 }
             });
+
+        // recalculate incidents found and story points
+        let issuesLeft = issueIds
+            .filter((i, e) => filteredIssues.includes($(e).attr("data-summary-id")))
+            .map((i, e) => $(e).attr("data-summary-id"))
+            .get();
+
+        // set numbers
+        calculateNumbers(issuesLeft);
+    }
+
+    function calculateNumbers(issues) {
+        // get all severity IDs
+        let severities = Object.values(categories);
+
+        // for each severity type, get issue IDs of the ones left out from filtering
+        // and calculate number + effort
+        for (let severity of severities) {
+            let numbersBySeverity = problemSummaryNumbers[severity];
+            if (numbersBySeverity) {
+                let issuesLeftForSeverity = Object.keys(numbersBySeverity)
+                    .filter(ps => issues.includes(ps))
+                    .map(issue => problemSummaryNumbers[severity][issue]);
+                let totalNumber = issuesLeftForSeverity.map(issue => issue.numberFound).reduce((acc, val) => acc + val, 0);
+                let totalEffort = issuesLeftForSeverity.map(issue => issue.storyPoints).reduce((acc, val) => acc + val, 0);
+                $(`#table-${severity} > tfoot > tr > td[data-column='1']`).text(totalNumber);
+                $(`#table-${severity} > tfoot > tr > td[data-column='4']`).text(totalEffort);
+            }
+        }
+
+    }
+
+    function clearNumbers() {
+        let issues = $("tr[data-summary-id]");
+        let allIssueIds = issues.map((i, e) => $(e).attr("data-summary-id"))
+            .get();
+        calculateNumbers(allIssueIds);
     }
 
     function clearAll() {
+        clearNumbers();
         clearIssues();
         clearTechs();
     }

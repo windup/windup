@@ -137,6 +137,8 @@
             */
         </style>
 
+        <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+
         <script src="resources/js/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="data/issue_summaries.js"></script>
         <script>
@@ -146,6 +148,26 @@
             <#else>
                 let appId = "allIssues";
             </#if>
+
+            <#assign categories = getIssueCategories(event)>
+            let categories = {
+                <#list categories?keys as key>
+                    "${key}": "${categories[key]}",
+                </#list>
+            };
+
+            let problemSummaryNumbers = {
+                <#list problemsBySeverity?keys as severity>
+                    "${categories[severity]}": {
+                        <#list problemsBySeverity[severity] as problemSummary>
+                        "${problemSummary.id}": {
+                            "numberFound": ${problemSummary.numberFound},
+                            "storyPoints": ${problemSummary.effortPerIncident * problemSummary.numberFound}
+                        },
+                        </#list>
+                    },
+                </#list>
+            }
         </script>
     </head>
     <body role="document" class="migration-issues">
@@ -162,8 +184,6 @@
             </#if>
         </div>
         <!-- / Navbar -->
-
-        <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
 
         <div class="container-fluid" role="main">
             <div class="row">
@@ -251,7 +271,7 @@
                         </div>
                     </#if>
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-bordered table-condensed tablesorter migration-issues-table">
+                        <table id="table-${categories[severity]}" class="table table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr class="tablesorter-ignoreRow" style="background: #337ab7;color: #FFFFFF; font-size: 14pt;">
                                     <td style="border: 0px; padding: 10px 15px"><b>${severity}</b></td>
