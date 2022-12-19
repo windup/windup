@@ -138,7 +138,7 @@ public class ZipUtil {
             ZipInputStream zis = new ZipInputStream(is);
             ZipEntry entry;
             List<String> results = new ArrayList<>();
-            while ((entry = zis.getNextEntry()) != null) {
+            while ((entry = getNextEntry(zis)) != null) {
                 String fullPath = parentPath + "/" + entry.getName();
                 results.add(relativeOnly ? entry.getName() : fullPath);
                 if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName())) {
