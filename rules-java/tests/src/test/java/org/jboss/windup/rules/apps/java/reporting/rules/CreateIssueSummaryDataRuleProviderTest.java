@@ -97,7 +97,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
 
                 Path resource = Paths.get("src/test/resources/test-exports/resources.json");
                 try {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/resource.json"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/resources.json"));
                 } catch (IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported file looks like expected. Exception: " + ex);
                 }
