@@ -13,6 +13,7 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.ExportSummaryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -88,20 +89,15 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .setRuleProviderFilter(predicate)
                     .addInputPath(Paths.get(inputPath))
                     .setOutputDirectory(outputPath)
-                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
-            if (exportFile) {
-                configuration.setExportingSummary(true);
-            }
+                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                    .setOptionValue(ExportSummaryOption.NAME, Boolean.valueOf(exportFile));
             processor.execute(configuration);
             if (exportFile) {
-                Assert.assertTrue(new File(outputPath + "/" + FILE1_NAME + ".json").exists());
-                Assert.assertTrue(new File(outputPath + "/" + FILE2_NAME + ".json").exists());
+                Assert.assertTrue(new File(outputPath + "/resources.json").exists());
 
-                Path resource = Paths.get("src/test/resources/test-exports/" + FILE1_NAME + ".json");
-                Path resource2 = Paths.get("src/test/resources/test-exports/" + FILE2_NAME + ".json");
+                Path resource = Paths.get("src/test/resources/test-exports/resources.json");
                 try {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/" + FILE1_NAME + ".json"));
-                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/" + FILE2_NAME + ".json"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/resource.json"));
                 } catch (IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported file looks like expected. Exception: " + ex);
                 }

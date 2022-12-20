@@ -167,16 +167,16 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
         List<ProblemSummary> mandatorySummaries = summariesBySeverity.get("mandatory");
         Map<Integer,Integer> incidentsByEffort = new HashMap<>();
+        if (mandatorySummaries != null) {
+            mandatorySummaries.stream().forEach(ps -> {
 
-        mandatorySummaries.forEach(ps -> {
-
-            if (!incidentsByEffort.containsKey(ps.getEffortPerIncident()) ) {
-                incidentsByEffort.put(ps.getEffortPerIncident(), ps.getNumberFound());
-            } else {
-                incidentsByEffort.replace(ps.getEffortPerIncident(), incidentsByEffort.get(ps.getEffortPerIncident()) + ps.getNumberFound());
-            }
-        });
-
+                if (!incidentsByEffort.containsKey(ps.getEffortPerIncident())) {
+                    incidentsByEffort.put(ps.getEffortPerIncident(), ps.getNumberFound());
+                } else {
+                    incidentsByEffort.replace(ps.getEffortPerIncident(), incidentsByEffort.get(ps.getEffortPerIncident()) + ps.getNumberFound());
+                }
+            });
+        }
         Map<String, Map<String,Integer>> translatedEffortResults = new HashMap<>();
 
         incidentsByEffort.forEach((k,v) -> {
