@@ -115,9 +115,11 @@ public class ProblemSummaryService {
             RuleSummaryKey key = new RuleSummaryKey(classification.getEffort(), classification.getRuleID(), classification.getClassification());
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null) {
+                List<String> sourceTechnologies = classification.getSourceTechnologies().stream().map(TechnologyReference::new).map(TechnologyReference::toString).collect(Collectors.toList());
+                List<String> targetTechnologies = classification.getTargetTechnologies().stream().map(TechnologyReference::new).map(TechnologyReference::toString).collect(Collectors.toList());
                 summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getIssueCategory(), classification.getRuleID(),
                         classification.getClassification(),
-                        0, classification.getEffort(), List.of(), List.of());
+                        0, classification.getEffort(), sourceTechnologies, targetTechnologies);
                 for (LinkModel link : classification.getLinks()) {
                     summary.addLink(link.getDescription(), link.getLink());
                 }

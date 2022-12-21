@@ -44,6 +44,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.windup.reporting.config.TechnologiesIntersector.*;
 
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
@@ -133,8 +134,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
 
                 WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                List<TechnologyReferenceModel> targetTechnologies = extractTargetTechnologies(configuration, ruleProvider.getMetadata());
-                hintModel.setTargetTechnologies(targetTechnologies);
+                hintModel.setTargetTechnologies(extractTargetTechnologies(configuration, ruleProvider.getMetadata()));
                 hintModel.setSourceTechnologies(extractSourceTechnologies(configuration, ruleProvider.getMetadata()));
             }
 
@@ -193,33 +193,6 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         } finally {
             ExecutionStatistics.get().end("Hint.performParameterized");
         }
-    }
-
-    private List<TechnologyReferenceModel> extractSourceTechnologies(WindupConfigurationModel configuration, RuleProviderMetadata ruleProviderMetadata) {
-        List<TechnologyReferenceModel> configuredSourceTechnologies = configuration.getSourceTechnologies();
-        Set<TechnologyReference> ruleSourceTechnologies = ruleProviderMetadata.getSourceTechnologies();
-
-        return intersectTechnologies(configuredSourceTechnologies, ruleSourceTechnologies);
-    }
-
-    private List<TechnologyReferenceModel> extractTargetTechnologies(WindupConfigurationModel configuration, RuleProviderMetadata ruleProviderMetadata) {
-        List<TechnologyReferenceModel> configuredTargetTechnologies = configuration.getTargetTechnologies();
-        Set<TechnologyReference> ruleTargetTechnologies = ruleProviderMetadata.getTargetTechnologies();
-
-        return intersectTechnologies(configuredTargetTechnologies, ruleTargetTechnologies);
-    }
-
-    private List<TechnologyReferenceModel> intersectTechnologies(Collection<TechnologyReferenceModel> configuredTechnologies, Collection<TechnologyReference> ruleTechnologies) {
-        return configuredTechnologies.stream()
-                .filter(ctr -> {
-                    Set<TechnologyReference> ctrsWithSameId = ruleTechnologies.stream().filter(rtr -> ctr.getTechnologyID().equals(rtr.getId())).collect(toSet());
-                    return !ctrsWithSameId.isEmpty();
-                })
-                .filter(ctm -> ruleTechnologies.stream().filter(rtr -> {
-                    TechnologyReference ctr = new TechnologyReference(ctm);
-                    return !ctr.versionRangesOverlap(rtr.getVersionRange());
-                }).collect(toSet()).isEmpty())
-                .collect(toList());
     }
 
     @Override

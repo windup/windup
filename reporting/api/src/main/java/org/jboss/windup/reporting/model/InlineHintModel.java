@@ -18,7 +18,7 @@ import java.util.List;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel {
+public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel, SourcesAndTargetsModel {
     String TYPE = "InlineHintModel";
     String TYPE_PREFIX = TYPE + "-";
     String TITLE = TYPE_PREFIX + "title";
@@ -28,8 +28,6 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
     String QUICKFIXES = TYPE_PREFIX + "quickfixes";
     String ISSUE_DISPLAY_MODE = "issueDisplayMode";
-    String SOURCE_TECHNOLOGIES = "sourceTechnologies";
-    String TARGET_TECHNOLOGIES = "targetTechnologies";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -108,16 +106,4 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      */
     @Property(RULE_ID)
     String getRuleID();
-
-    @Adjacency(label = SOURCE_TECHNOLOGIES, direction = Direction.OUT)
-    List<TechnologyReferenceModel> getSourceTechnologies();
-
-    @Adjacency(label = SOURCE_TECHNOLOGIES, direction = Direction.OUT)
-    void setSourceTechnologies(List<TechnologyReferenceModel> sourceTechnologies);
-
-    @Adjacency(label = TARGET_TECHNOLOGIES, direction = Direction.OUT)
-    List<TechnologyReferenceModel> getTargetTechnologies();
-
-    @Adjacency(label = TARGET_TECHNOLOGIES, direction = Direction.OUT)
-    void setTargetTechnologies(List<TechnologyReferenceModel> targetTechnologies);
 }
