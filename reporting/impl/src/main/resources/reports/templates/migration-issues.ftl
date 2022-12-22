@@ -168,16 +168,15 @@
                     },
                 </#list>
             }
-        </script>
-    </head>
-    <body role="document" class="migration-issues">
-        <script>
+
             var scriptName = typeof appId !== "undefined" ? "data/sources_and_targets-" + appId + ".js" : "data/sources_and_targets-allIssues.js";
             var script = document.createElement("script");
             script.type = "text/javascript";
             script.src = scriptName;
-            document.body.appendChild(script);
+            document.head.appendChild(script);
         </script>
+    </head>
+    <body role="document" class="migration-issues">
         <script src="resources/js/windup-issues-filtering.js"></script>
 
         <!-- Navbar -->
