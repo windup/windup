@@ -169,16 +169,25 @@
                 </#list>
             }
 
-            var scriptName = typeof appId !== "undefined" ? "data/sources_and_targets-" + appId + ".js" : "data/sources_and_targets-allIssues.js";
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = scriptName;
-            document.head.appendChild(script);
+            // Load scripts sequentially
+            var dataScript = typeof appId !== "undefined" ? "data/sources_and_targets-" + appId + ".js" : "data/sources_and_targets-allIssues.js";
+            let filteringScript = "resources/js/windup-issues-filtering.js";
+            var scriptURLs = [dataScript, filteringScript];
+            function loadScript(index) {
+                if (index >= scriptURLs.length) {
+                    return false;
+                }
+
+                var el = document.createElement('script');
+                el.onload = () => loadScript(index + 1);
+                el.src = scriptURLs[index];
+                document.head.appendChild(el);
+            }
+
+            loadScript(0);
         </script>
     </head>
     <body role="document" class="migration-issues">
-        <script src="resources/js/windup-issues-filtering.js"></script>
-
         <!-- Navbar -->
         <div id="main-navbar" class="navbar navbar-inverse navbar-fixed-top">
             <div class="wu-navbar-header navbar-header">
