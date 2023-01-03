@@ -1,0 +1,19 @@
+.pf-c-select__toggle:before {
+  border-top: var(--pf-c-select__toggle--before--BorderTopWidth) solid
+    var(--pf-c-select__toggle--before--BorderTopColor) !important;
+  border-right: var(--pf-c-select__toggle--before--BorderRightWidth) solid
+    var(--pf-c-select__toggle--before--BorderRightColor) !important;
+  border-bottom: var(--pf-c-select__toggle--before--BorderBottomWidth) solid
+    var(--pf-c-select__toggle--before--BorderBottomColor) !important;
+  border-left: var(--pf-c-select__toggle--before--BorderLeftWidth) solid
+    var(--pf-c-select__toggle--before--BorderLeftColor) !important;
+}
+
+.windupGlyphMargin {
+  /* background: url("./images/windup.png") no-repeat; */
+  display: block;
+  background-image: url("./images/windup.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  left: 19px;
+}

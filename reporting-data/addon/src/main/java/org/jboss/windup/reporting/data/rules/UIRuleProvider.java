@@ -33,7 +33,7 @@ public class UIRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logger.getLogger(UIRuleProvider.class);
 
-    private final static String UI_ZIP_FILENAME = "windup-ui.zip";
+    private final static String UI_ZIP_FILENAME = "pf4-windup-ui.zip";
 
     @Inject
     private Furnace furnace;

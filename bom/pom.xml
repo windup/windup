@@ -326,6 +326,11 @@
                 <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.reporting</groupId>
+                <artifactId>pf4-windup-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Windup Engine - Utils -->
             <dependency>
