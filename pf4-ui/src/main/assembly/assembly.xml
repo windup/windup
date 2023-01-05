@@ -12,6 +12,16 @@
             <directory>src/main/webapp/build</directory>
             <outputDirectory>./</outputDirectory>
             <filtered>false</filtered>
+            <excludes>
+                <exclude>version.js</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>src/main/webapp/build/version.js</source>
+            <outputDirectory>./</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+    </files>
 </assembly>
