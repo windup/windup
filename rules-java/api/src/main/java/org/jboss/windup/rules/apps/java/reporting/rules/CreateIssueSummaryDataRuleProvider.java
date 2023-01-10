@@ -224,10 +224,8 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                 return "Redesign";
             case 7:
                 return "Architectural";
-            case 13:
-                return "Unknown";
             default:
-                return null;
+                return "Unknown";
         }
     }
 }
