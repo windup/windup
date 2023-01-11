@@ -1,31 +1,32 @@
 export interface ApplicationEJBsDto {
   applicationId: string;
-  beans: BeanDto[];
+  entityBeans: EntityBeanDto[];
+  sessionBeans: SessionBeanDto[];
+  messageDrivenBeans: MessageDrivenBeanDto[];
 }
 
-export type BeanType =
-  | "MESSAGE_DRIVEN_BEAN"
-  | "STATELESS_SESSION_BEAN"
-  | "STATEFUL_SESSION_BEAN"
-  | "ENTITY_BEAN";
+export type SessionBeanType = "STATELESS" | "STATEFUL";
 
 export interface BeanDto {
-  type: BeanType;
-  
-  classFileId: string;
-  beanDescriptorFileId: string;
-  
+  beanName: string;
+  className: string;
+  classFileId?: string;
+  beanDescriptorFileId?: string;
+}
+
+export interface EntityBeanDto extends BeanDto {
+  tableName?: string;
+  persistenceType?: string;
+}
+
+export interface SessionBeanDto extends BeanDto {
+  type: SessionBeanType;
   homeEJBFileId?: string;
   localEJBFileId?: string;
   remoteEJBFileId?: string;
+  jndiLocation?: string;
+}
 
-  beanName: string;
-  className: string;
-
-  tableName?: string;
-  persistenceType?: string;
-
+export interface MessageDrivenBeanDto extends BeanDto {
   jmsDestination?: string;
-
-  jndiLocations?: string[];
 }

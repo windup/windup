@@ -24,7 +24,7 @@ import {
 import { FileEditor } from "@app/shared/components";
 
 import { useEJBsQuery } from "@app/queries/ejb";
-import { BeanDto } from "@app/api/application-ejb";
+import { MessageDrivenBeanDto } from "@app/api/application-ejb";
 import { useFilesQuery } from "@app/queries/files";
 
 const DataKey = "DataKey";
@@ -63,9 +63,8 @@ export const MessageDrivenBeansTable: React.FC<
 
   const beans = useMemo(() => {
     return (
-      allEJBsQuery.data
-        ?.find((f) => f.applicationId === applicationId)
-        ?.beans.filter((f) => f.type === "MESSAGE_DRIVEN_BEAN") || []
+      allEJBsQuery.data?.find((f) => f.applicationId === applicationId)
+        ?.messageDrivenBeans || []
     );
   }, [allEJBsQuery.data, applicationId]);
 
@@ -83,7 +82,7 @@ export const MessageDrivenBeansTable: React.FC<
     changeSortBy: onChangeSortBy,
   } = useTableControls();
 
-  const { pageItems, filteredItems } = useTable<BeanDto>({
+  const { pageItems, filteredItems } = useTable<MessageDrivenBeanDto>({
     items: beans,
     currentPage: currentPage,
     currentSortBy: currentSortBy,
@@ -91,7 +90,7 @@ export const MessageDrivenBeansTable: React.FC<
     filterItem: (item) => true,
   });
 
-  const itemsToRow = (items: BeanDto[]) => {
+  const itemsToRow = (items: MessageDrivenBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
       console.log(item);
@@ -102,7 +101,9 @@ export const MessageDrivenBeansTable: React.FC<
             title: (
               <Button
                 variant={ButtonVariant.link}
-                onClick={() => fileModal.open("showFile", item.beanDescriptorFileId)}
+                onClick={() =>
+                  fileModal.open("showFile", item.beanDescriptorFileId)
+                }
               >
                 {item.beanName}
               </Button>
@@ -119,7 +120,7 @@ export const MessageDrivenBeansTable: React.FC<
             ),
           },
           {
-            title: item.jmsDestination,
+            title: item?.jmsDestination,
           },
         ],
       });

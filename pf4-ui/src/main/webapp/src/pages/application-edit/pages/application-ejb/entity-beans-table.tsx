@@ -7,8 +7,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  Flex,
-  FlexItem,
   Modal,
   Spinner,
   Title,
@@ -26,7 +24,7 @@ import {
 import { FileEditor } from "@app/shared/components";
 
 import { useEJBsQuery } from "@app/queries/ejb";
-import { SessionBeanDto } from "@app/api/application-ejb";
+import { EntityBeanDto } from "@app/api/application-ejb";
 import { useFilesQuery } from "@app/queries/files";
 
 const DataKey = "DataKey";
@@ -38,30 +36,29 @@ const columns: ICell[] = [
     cellTransforms: [],
   },
   {
-    title: "Interface",
+    title: "Class",
     transforms: [],
     cellTransforms: [],
   },
   {
-    title: "Implementation",
+    title: "Table",
     transforms: [],
     cellTransforms: [],
   },
   {
-    title: "JNDI location",
+    title: "Persistence type",
     transforms: [],
     cellTransforms: [],
   },
 ];
 
-export interface IStatelessSessionBeansTableProps {
+export interface IEntityBeanTableProps {
   applicationId?: string;
-  sessionBeanType: "STATELESS" | "STATEFUL";
 }
 
-export const StatelessSessionBeansTable: React.FC<
-  IStatelessSessionBeansTableProps
-> = ({ applicationId, sessionBeanType }) => {
+export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
+  applicationId,
+}) => {
   // Filters
   const [filterText] = useState("");
 
@@ -71,11 +68,10 @@ export const StatelessSessionBeansTable: React.FC<
 
   const beans = useMemo(() => {
     return (
-      allEJBsQuery.data
-        ?.find((f) => f.applicationId === applicationId)
-        ?.sessionBeans.filter((f) => f.type === sessionBeanType) || []
+      allEJBsQuery.data?.find((f) => f.applicationId === applicationId)
+        ?.entityBeans || []
     );
-  }, [allEJBsQuery.data, applicationId, sessionBeanType]);
+  }, [allEJBsQuery.data, applicationId]);
 
   // file editor
   const fileModal = useModal<"showFile", string>();
@@ -91,7 +87,7 @@ export const StatelessSessionBeansTable: React.FC<
     changeSortBy: onChangeSortBy,
   } = useTableControls();
 
-  const { pageItems, filteredItems } = useTable<SessionBeanDto>({
+  const { pageItems, filteredItems } = useTable<EntityBeanDto>({
     items: beans,
     currentPage: currentPage,
     currentSortBy: currentSortBy,
@@ -99,7 +95,7 @@ export const StatelessSessionBeansTable: React.FC<
     filterItem: (item) => true,
   });
 
-  const itemsToRow = (items: SessionBeanDto[]) => {
+  const itemsToRow = (items: EntityBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
       console.log(item);
@@ -107,7 +103,7 @@ export const StatelessSessionBeansTable: React.FC<
         [DataKey]: item,
         cells: [
           {
-            title: item.beanDescriptorFileId ? (
+            title: (
               <Button
                 variant={ButtonVariant.link}
                 onClick={() =>
@@ -116,54 +112,6 @@ export const StatelessSessionBeansTable: React.FC<
               >
                 {item.beanName}
               </Button>
-            ) : (
-              item.beanName
-            ),
-          },
-          {
-            title: (
-              <Flex>
-                {item?.homeEJBFileId && (
-                  <FlexItem>
-                    <Button
-                      variant={ButtonVariant.tertiary}
-                      isSmall
-                      onClick={() =>
-                        fileModal.open("showFile", item?.homeEJBFileId)
-                      }
-                    >
-                      Home
-                    </Button>
-                  </FlexItem>
-                )}
-                {item?.localEJBFileId && (
-                  <FlexItem>
-                    <Button
-                      variant={ButtonVariant.tertiary}
-                      isSmall
-                      onClick={() =>
-                        fileModal.open("showFile", item?.localEJBFileId)
-                      }
-                    >
-                      Local
-                    </Button>
-                  </FlexItem>
-                )}
-                {item?.remoteEJBFileId && (
-                  <FlexItem>
-                    <Button
-                      variant={ButtonVariant.secondary}
-                      isSmall
-                      isDanger
-                      onClick={() =>
-                        fileModal.open("showFile", item?.remoteEJBFileId)
-                      }
-                    >
-                      Remote
-                    </Button>
-                  </FlexItem>
-                )}
-              </Flex>
             ),
           },
           {
@@ -177,7 +125,10 @@ export const StatelessSessionBeansTable: React.FC<
             ),
           },
           {
-            title: item?.jndiLocation,
+            title: item?.tableName,
+          },
+          {
+            title: item?.persistenceType,
           },
         ],
       });
