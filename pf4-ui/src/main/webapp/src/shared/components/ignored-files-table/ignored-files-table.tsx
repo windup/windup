@@ -25,6 +25,7 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
+import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { IgnoredFileDto } from "@app/api/application-ignored-files";
 import { useIgnoredFilesQuery } from "@app/queries/ignored-files";
 
@@ -75,7 +76,7 @@ export const IgnoredFilesTable: React.FC<IIgnoredFilesTableProps> = ({
   const allIgnoredFiles = useIgnoredFilesQuery();
 
   const dependencies = useMemo(() => {
-    if (applicationId === "") {
+    if (applicationId === ALL_APPLICATIONS_ID) {
       return [...(allIgnoredFiles.data || [])].flatMap((e) => e.ignoredFiles);
     }
 

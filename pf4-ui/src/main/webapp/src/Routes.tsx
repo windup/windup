@@ -25,6 +25,9 @@ const ApplicationEditDependencies = lazy(
 const ApplicationEditIgnoredFiles = lazy(
   () => import("./pages/application-edit/pages/application-ignored-files")
 );
+const ApplicationEJB = lazy(
+  () => import("./pages/application-edit/pages/application-ejb")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -117,6 +120,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationEditIgnoredFiles,
           path: "ignored-files",
+        },
+        {
+          Component: ApplicationEJB,
+          path: "ejb",
         },
       ],
     },

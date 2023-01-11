@@ -58,6 +58,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "Ignored files",
       path: `/applications/${application?.id}/ignored-files`,
     },
+    {
+      title: "EJB",
+      path: `/applications/${application?.id}/ejb`,
+    },
   ];
 
   return (
