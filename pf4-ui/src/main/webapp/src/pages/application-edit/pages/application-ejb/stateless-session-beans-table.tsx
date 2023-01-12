@@ -4,16 +4,11 @@ import {
   Bullseye,
   Button,
   ButtonVariant,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
   Flex,
   FlexItem,
   Modal,
   Spinner,
-  Title,
 } from "@patternfly/react-core";
-import { ArrowUpIcon } from "@patternfly/react-icons";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
 import {
   ConditionalRender,
@@ -23,11 +18,11 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
-import { FileEditor } from "@app/shared/components";
 
-import { useEJBsQuery } from "@app/queries/ejb";
 import { SessionBeanDto } from "@app/api/application-ejb";
+import { useEJBsQuery } from "@app/queries/ejb";
 import { useFilesQuery } from "@app/queries/files";
+import { FileEditor } from "@app/shared/components";
 
 const DataKey = "DataKey";
 
@@ -55,7 +50,7 @@ const columns: ICell[] = [
 ];
 
 export interface IStatelessSessionBeansTableProps {
-  applicationId?: string;
+  applicationId: string;
   sessionBeanType: "STATELESS" | "STATEFUL";
 }
 
@@ -110,6 +105,7 @@ export const StatelessSessionBeansTable: React.FC<
             title: item.beanDescriptorFileId ? (
               <Button
                 variant={ButtonVariant.link}
+                isInline
                 onClick={() =>
                   fileModal.open("showFile", item.beanDescriptorFileId)
                 }
@@ -167,13 +163,16 @@ export const StatelessSessionBeansTable: React.FC<
             ),
           },
           {
-            title: (
+            title: item.classFileId ? (
               <Button
                 variant={ButtonVariant.link}
+                isInline
                 onClick={() => fileModal.open("showFile", item.classFileId)}
               >
                 {item.className}
               </Button>
+            ) : (
+              item.className
             ),
           },
           {
@@ -199,43 +198,29 @@ export const StatelessSessionBeansTable: React.FC<
           </Bullseye>
         }
       >
-        {applicationId === undefined ? (
-          <Bullseye>
-            <EmptyState>
-              <EmptyStateIcon icon={ArrowUpIcon} />
-              <Title headingLevel="h4" size="lg">
-                Select an application
-              </Title>
-              <EmptyStateBody>
-                Select an application whose data you want to get access to.
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        ) : (
-          <SimpleTableWithToolbar
-            hasTopPagination
-            hasBottomPagination
-            totalCount={filteredItems.length}
-            // Sorting
-            sortBy={
-              currentSortBy || { index: undefined, defaultDirection: "asc" }
-            }
-            onSort={onChangeSortBy}
-            // Pagination
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-            // Table
-            rows={rows}
-            cells={columns}
-            actions={actions}
-            // Fech data
-            isLoading={allEJBsQuery.isFetching}
-            loadingVariant="skeleton"
-            fetchError={allEJBsQuery.isError}
-            // Toolbar filters
-            filtersApplied={filterText.trim().length > 0}
-          />
-        )}
+        <SimpleTableWithToolbar
+          hasTopPagination
+          hasBottomPagination
+          totalCount={filteredItems.length}
+          // Sorting
+          sortBy={
+            currentSortBy || { index: undefined, defaultDirection: "asc" }
+          }
+          onSort={onChangeSortBy}
+          // Pagination
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+          // Table
+          rows={rows}
+          cells={columns}
+          actions={actions}
+          // Fech data
+          isLoading={allEJBsQuery.isFetching}
+          loadingVariant="skeleton"
+          fetchError={allEJBsQuery.isError}
+          // Toolbar filters
+          filtersApplied={filterText.trim().length > 0}
+        />
       </ConditionalRender>
       <Modal
         title={`File ${fileModalMappedFile?.prettyPath}`}

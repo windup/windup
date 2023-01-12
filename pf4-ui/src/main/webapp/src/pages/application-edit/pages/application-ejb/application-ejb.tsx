@@ -14,10 +14,11 @@ import {
 import { InfoAltIcon } from "@patternfly/react-icons";
 
 import { ApplicationDto } from "@app/api/application";
+import { useEJBsQuery } from "@app/queries/ejb";
+
+import { EntityBeanTable } from "./entity-beans-table";
 import { MessageDrivenBeansTable } from "./message-driven-beans-table";
 import { StatelessSessionBeansTable } from "./stateless-session-beans-table";
-import { useEJBsQuery } from "@app/queries/ejb";
-import { EntityBeanTable } from "./entity-beans-table";
 
 export const ApplicationEJBs: React.FC = () => {
   const application = useOutletContext<ApplicationDto | null>();
@@ -73,7 +74,9 @@ export const ApplicationEJBs: React.FC = () => {
           <Card>
             <CardTitle>Message driven beans</CardTitle>
             <CardBody>
-              <MessageDrivenBeansTable applicationId={application?.id} />
+              {application?.id && (
+                <MessageDrivenBeansTable applicationId={application?.id} />
+              )}
             </CardBody>
           </Card>
         </PageSection>
@@ -83,10 +86,12 @@ export const ApplicationEJBs: React.FC = () => {
           <Card>
             <CardTitle>Stateless sessions beans</CardTitle>
             <CardBody>
-              <StatelessSessionBeansTable
-                applicationId={application?.id}
-                sessionBeanType="STATELESS"
-              />
+              {application?.id && (
+                <StatelessSessionBeansTable
+                  applicationId={application?.id}
+                  sessionBeanType="STATELESS"
+                />
+              )}
             </CardBody>
           </Card>
         </PageSection>
@@ -96,10 +101,12 @@ export const ApplicationEJBs: React.FC = () => {
           <Card>
             <CardTitle>Stateful sessions beans</CardTitle>
             <CardBody>
-              <StatelessSessionBeansTable
-                applicationId={application?.id}
-                sessionBeanType="STATEFUL"
-              />
+              {application?.id && (
+                <StatelessSessionBeansTable
+                  applicationId={application?.id}
+                  sessionBeanType="STATEFUL"
+                />
+              )}
             </CardBody>
           </Card>
         </PageSection>
@@ -109,7 +116,9 @@ export const ApplicationEJBs: React.FC = () => {
           <Card>
             <CardTitle>Entity beans</CardTitle>
             <CardBody>
-              <EntityBeanTable applicationId={application?.id} />
+              {application?.id && (
+                <EntityBeanTable applicationId={application?.id} />
+              )}
             </CardBody>
           </Card>
         </PageSection>

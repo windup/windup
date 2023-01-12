@@ -16,10 +16,9 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
-
-import { EntityBeanDto } from "@app/api/application-ejb";
-import { useEJBsQuery } from "@app/queries/ejb";
+import { SpringBeanDto } from "@app/api/application-spring-beans";
 import { useFilesQuery } from "@app/queries/files";
+import { useSpringBeansQuery } from "@app/queries/spring-beans";
 import { FileEditor } from "@app/shared/components";
 
 const DataKey = "DataKey";
@@ -35,44 +34,34 @@ const columns: ICell[] = [
     transforms: [],
     cellTransforms: [],
   },
-  {
-    title: "Table",
-    transforms: [],
-    cellTransforms: [],
-  },
-  {
-    title: "Persistence type",
-    transforms: [],
-    cellTransforms: [],
-  },
 ];
 
-export interface IEntityBeanTableProps {
+export interface ISpringBeansTableProps {
   applicationId: string;
 }
 
-export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
+export const SpringBeansTable: React.FC<ISpringBeansTableProps> = ({
   applicationId,
 }) => {
   // Filters
   const [filterText] = useState("");
 
   // Queries
-  const allFiles = useFilesQuery();
-  const allEJBsQuery = useEJBsQuery();
+  const allFilesQuery = useFilesQuery();
+  const allSpringBeansQuery = useSpringBeansQuery();
 
   const beans = useMemo(() => {
     return (
-      allEJBsQuery.data?.find((f) => f.applicationId === applicationId)
-        ?.entityBeans || []
+      allSpringBeansQuery.data?.find((f) => f.applicationId === applicationId)
+        ?.beans || []
     );
-  }, [allEJBsQuery.data, applicationId]);
+  }, [allSpringBeansQuery.data, applicationId]);
 
   // file editor
   const fileModal = useModal<"showFile", string>();
   const fileModalMappedFile = useMemo(() => {
-    return allFiles.data?.find((file) => file.id === fileModal.data);
-  }, [allFiles.data, fileModal.data]);
+    return allFilesQuery.data?.find((file) => file.id === fileModal.data);
+  }, [allFilesQuery.data, fileModal.data]);
 
   // Rows
   const {
@@ -82,7 +71,7 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
     changeSortBy: onChangeSortBy,
   } = useTableControls();
 
-  const { pageItems, filteredItems } = useTable<EntityBeanDto>({
+  const { pageItems, filteredItems } = useTable<SpringBeanDto>({
     items: beans,
     currentPage: currentPage,
     currentSortBy: currentSortBy,
@@ -90,7 +79,7 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
     filterItem: (item) => true,
   });
 
-  const itemsToRow = (items: EntityBeanDto[]) => {
+  const itemsToRow = (items: SpringBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
       console.log(item);
@@ -125,12 +114,6 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
               item.className
             ),
           },
-          {
-            title: item?.tableName,
-          },
-          {
-            title: item?.persistenceType,
-          },
         ],
       });
     });
@@ -144,7 +127,7 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
   return (
     <>
       <ConditionalRender
-        when={allEJBsQuery.isLoading}
+        when={allSpringBeansQuery.isLoading}
         then={
           <Bullseye>
             <Spinner />
@@ -168,9 +151,9 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
           cells={columns}
           actions={actions}
           // Fech data
-          isLoading={allEJBsQuery.isFetching}
+          isLoading={allSpringBeansQuery.isFetching}
           loadingVariant="skeleton"
-          fetchError={allEJBsQuery.isError}
+          fetchError={allSpringBeansQuery.isError}
           // Toolbar filters
           filtersApplied={filterText.trim().length > 0}
         />

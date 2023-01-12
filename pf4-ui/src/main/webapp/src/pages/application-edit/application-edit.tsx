@@ -62,6 +62,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "EJB",
       path: `/applications/${application?.id}/ejb`,
     },
+    {
+      title: "Spring beans",
+      path: `/applications/${application?.id}/spring-beans`,
+    },
   ];
 
   return (
