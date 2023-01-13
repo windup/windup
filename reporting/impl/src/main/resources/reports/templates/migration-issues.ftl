@@ -266,6 +266,20 @@
                             <div class="selected-item" id="selected-targets"></div>
                         </div>
                     </#if>
+
+                    <!-- CODE FOR AND/OR SELECTION
+                    <div class="dropdown inline-drop">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Composition
+                            <span class="caret"></span>
+                        </button>
+                        <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a id="op-and" href="#">AND</a></li>
+                            <li><a id="op-or" href="#">OR</a></li>
+                        </ul>
+                    </div>
+                    -->
+
                 </div>
             </#if>
 
