@@ -31,6 +31,9 @@ const ApplicationEJB = lazy(
 const ApplicationSpringBeans = lazy(
   () => import("./pages/application-edit/pages/application-spring-beans")
 );
+const ApplicationRemoteServices = lazy(
+  () => import("./pages/application-edit/pages/application-remote-services")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -131,6 +134,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationSpringBeans,
           path: "spring-beans",
+        },
+        {
+          Component: ApplicationRemoteServices,
+          path: "remote-services",
         },
       ],
     },

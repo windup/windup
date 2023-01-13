@@ -66,6 +66,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "Spring beans",
       path: `/applications/${application?.id}/spring-beans`,
     },
+    {
+      title: "Remote services",
+      path: `/applications/${application?.id}/remote-services`,
+    },
   ];
 
   return (
