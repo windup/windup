@@ -38,7 +38,7 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider {
                 .begin()
                 .addRule()
                 .when(JavaClass
-                        .references("javax.ws.rs.Path")
+                        .references("{ee-flavor}.ws.rs.Path")
                         .at(TypeReferenceLocation.ANNOTATION)
                         .as(JAXRS_ANNOTATIONS))
                 .perform(Iteration.over(JAXRS_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
@@ -47,6 +47,7 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider {
                         extractMetadata(event, payload);
                     }
                 }).endIteration())
+                .where("ee-flavor").matches("javax|jakarta")
                 .withId(ruleIDPrefix + "_JAXRSAnnotationRule");
     }
 

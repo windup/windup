@@ -1,25 +1,14 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.windup.exec.WindupProcessor;
-import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
@@ -30,9 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DiscoverEjbConfigurationTest extends AbstractTest {
-    @Inject
-    private WindupProcessor processor;
+public class DiscoverEjbConfigurationXmlRuleProviderTest extends AbstractTest {
 
     @Inject
     private GraphContextFactory factory;
@@ -85,7 +72,7 @@ public class DiscoverEjbConfigurationTest extends AbstractTest {
     @Test
     public void testEJBMessageDrivenNotInEJBXML() throws Exception {
         try (GraphContext context = factory.create(true)) {
-            String inputPath = "src/test/resources/ejb/mdb";
+            String inputPath = "src/test/resources/ejb/mdb/implements";
             executeAnalysis(context, inputPath);
 
             GraphService<EjbMessageDrivenModel> ejbMessageDrivenService = new GraphService<>(context, EjbMessageDrivenModel.class);
@@ -164,23 +151,5 @@ public class DiscoverEjbConfigurationTest extends AbstractTest {
         }
     }
 
-    private void executeAnalysis(GraphContext context, String inputPathString) throws IOException {
-        ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
-        pm.setName("Main Project");
-        FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
-        inputPath.setFilePath(inputPathString);
 
-        Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup").resolve(UUID.randomUUID().toString());
-        FileUtils.deleteDirectory(outputPath.toFile());
-        Files.createDirectories(outputPath);
-
-        pm.addFileModel(inputPath);
-        pm.setRootFileModel(inputPath);
-        WindupConfiguration windupConfiguration = new WindupConfiguration()
-                .setGraphContext(context);
-        windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
-        windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
-        windupConfiguration.setOutputDirectory(outputPath);
-        processor.execute(windupConfiguration);
-    }
 }
