@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -97,6 +98,11 @@ public class DiscoverEjbConfigurationXmlRuleProviderTest extends AbstractTest {
             boolean sessionBeanFound = false;
             boolean localHomeFound = false;
             boolean localObjectFound = false;
+            boolean homeJakartaFound = false;
+            boolean remoteJakartaFound = false;
+            boolean sessionBeanJakartaFound = false;
+            boolean localHomeJakartaFound = false;
+            boolean localObjectJakartaFound = false;
             for (EjbSessionBeanModel sessionBeanModel : ejbSessionService.findAll()) {
                 if (sessionBeanModel.getEjbHome() != null && sessionBeanModel.getEjbHome().getQualifiedName().equals("EJB2SessionHomeNotInEJBXML"))
                     homeFound = true;
@@ -108,12 +114,27 @@ public class DiscoverEjbConfigurationXmlRuleProviderTest extends AbstractTest {
                     localHomeFound = true;
                 if (sessionBeanModel.getEjbLocal() != null && sessionBeanModel.getEjbLocal().getQualifiedName().equals("EJBLocalObjectNotInEJBXML"))
                     localObjectFound = true;
+                if (sessionBeanModel.getEjbHome() != null && sessionBeanModel.getEjbHome().getQualifiedName().equals("JakartaEJB2SessionHomeNotInEJBXML"))
+                    homeJakartaFound = true;
+                if (sessionBeanModel.getEjbRemote() != null && sessionBeanModel.getEjbRemote().getQualifiedName().equals("JakartaEJB2RemoteInterfaceNotInEJBXML"))
+                    remoteJakartaFound = true;
+                if (sessionBeanModel.getEjbClass() != null && sessionBeanModel.getEjbClass().getQualifiedName().equals("JakartaEJB2SessionBeanNotInEJBXML"))
+                    sessionBeanJakartaFound = true;
+                if (sessionBeanModel.getEjbLocalHome() != null && sessionBeanModel.getEjbLocalHome().getQualifiedName().equals("JakartaEJBLocalHomeNotInEJBXML"))
+                    localHomeJakartaFound = true;
+                if (sessionBeanModel.getEjbLocal() != null && sessionBeanModel.getEjbLocal().getQualifiedName().equals("JakartaEJBLocalObjectNotInEJBXML"))
+                    localObjectJakartaFound = true;
             }
             Assert.assertTrue(homeFound);
             Assert.assertTrue(remoteFound);
             Assert.assertTrue(sessionBeanFound);
             Assert.assertTrue(localHomeFound);
             Assert.assertTrue(localObjectFound);
+            Assert.assertTrue(homeJakartaFound);
+            Assert.assertTrue(remoteJakartaFound);
+            Assert.assertTrue(sessionBeanJakartaFound);
+            Assert.assertTrue(localHomeJakartaFound);
+            Assert.assertTrue(localObjectJakartaFound);
         }
     }
 
@@ -123,13 +144,15 @@ public class DiscoverEjbConfigurationXmlRuleProviderTest extends AbstractTest {
             String inputPath = "src/test/resources/ejb/entity";
             executeAnalysis(context, inputPath);
 
-            GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(context, EjbEntityBeanModel.class);
-            int entitiesFound = 0;
-            for (EjbEntityBeanModel entityBeanModel : ejbEntityService.findAll()) {
-                Assert.assertEquals("EJB2EntityNotInEJBXML", entityBeanModel.getEjbClass().getClassName());
-                entitiesFound++;
-            }
-            Assert.assertEquals(1, entitiesFound);
+            List<String> classesFound = new GraphService<>(context, EjbEntityBeanModel.class)
+                    .findAll()
+                    .stream()
+                    .map(EjbEntityBeanModel::getEjbClass)
+                    .map(JavaClassModel::getClassName)
+                    .collect(Collectors.toList());
+            Assert.assertTrue(classesFound.contains("EJB2EntityNotInEJBXML"));
+            Assert.assertTrue(classesFound.contains("JakartaEJB2EntityNotInEJBXML"));
+            Assert.assertEquals(2, classesFound.size());
         }
     }
 
