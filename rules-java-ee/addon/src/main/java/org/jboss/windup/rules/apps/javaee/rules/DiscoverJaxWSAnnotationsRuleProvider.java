@@ -44,7 +44,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider {
                 .begin()
                 .addRule()
                 .when(JavaClass
-                        .references("javax.jws.WebService")
+                        .references("{ee-flavor}.jws.WebService")
                         .at(TypeReferenceLocation.ANNOTATION)
                         .as(JAXWS_ANNOTATIONS))
                 .perform(Iteration.over(JAXWS_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
@@ -53,6 +53,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider {
                         extractMetadata(event, payload);
                     }
                 }).endIteration())
+                .where("ee-flavor").matches("javax|jakarta")
                 .withId(ruleIDPrefix + "_JAXWSAnnotationRule");
     }
 
