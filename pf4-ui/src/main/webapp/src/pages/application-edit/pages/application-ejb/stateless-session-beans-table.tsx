@@ -97,7 +97,6 @@ export const StatelessSessionBeansTable: React.FC<
   const itemsToRow = (items: SessionBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [

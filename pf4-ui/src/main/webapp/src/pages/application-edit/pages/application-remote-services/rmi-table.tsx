@@ -81,7 +81,6 @@ export const RMITable: React.FC<IRMITableProps> = ({ applicationId }) => {
   const itemsToRow = (items: RmiServiceDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [

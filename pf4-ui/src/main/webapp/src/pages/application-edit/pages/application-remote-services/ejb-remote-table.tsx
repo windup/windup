@@ -83,7 +83,6 @@ export const EJBRemoteTable: React.FC<IEJBRemoteTableProps> = ({
   const itemsToRow = (items: EjbRemoteServiceDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [

@@ -34,6 +34,9 @@ const ApplicationSpringBeans = lazy(
 const ApplicationRemoteServices = lazy(
   () => import("./pages/application-edit/pages/application-remote-services")
 );
+const ApplicationServerResources = lazy(
+  () => import("./pages/application-edit/pages/application-server-resources")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -138,6 +141,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationRemoteServices,
           path: "remote-services",
+        },
+        {
+          Component: ApplicationServerResources,
+          path: "server-resources",
         },
       ],
     },

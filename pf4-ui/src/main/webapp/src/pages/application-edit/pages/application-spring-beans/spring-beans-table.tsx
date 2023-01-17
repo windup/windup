@@ -82,7 +82,6 @@ export const SpringBeansTable: React.FC<ISpringBeansTableProps> = ({
   const itemsToRow = (items: SpringBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [

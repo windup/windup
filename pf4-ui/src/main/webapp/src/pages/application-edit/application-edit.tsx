@@ -70,6 +70,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "Remote services",
       path: `/applications/${application?.id}/remote-services`,
     },
+    {
+      title: "Server resources",
+      path: `/applications/${application?.id}/server-resources`,
+    },
   ];
 
   return (

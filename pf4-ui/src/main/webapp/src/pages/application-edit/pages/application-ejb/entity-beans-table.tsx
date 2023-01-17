@@ -93,7 +93,6 @@ export const EntityBeanTable: React.FC<IEntityBeanTableProps> = ({
   const itemsToRow = (items: EntityBeanDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [

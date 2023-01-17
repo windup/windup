@@ -81,7 +81,6 @@ export const JaxWsTable: React.FC<IJaxWsTableProps> = ({ applicationId }) => {
   const itemsToRow = (items: JaxWsServiceDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      console.log(item);
       rows.push({
         [DataKey]: item,
         cells: [
