@@ -31,6 +31,9 @@ const ApplicationEJB = lazy(
 const ApplicationJPA = lazy(
   () => import("./pages/application-edit/pages/application-jpa")
 );
+const ApplicationHibernate = lazy(
+  () => import("./pages/application-edit/pages/application-hibernate")
+);
 const ApplicationSpringBeans = lazy(
   () => import("./pages/application-edit/pages/application-spring-beans")
 );
@@ -140,6 +143,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationJPA,
           path: "jpa",
+        },
+        {
+          Component: ApplicationHibernate,
+          path: "hibernate",
         },
         {
           Component: ApplicationSpringBeans,

@@ -67,6 +67,10 @@ export const ApplicationEdit: React.FC = () => {
       path: `/applications/${application?.id}/jpa`,
     },
     {
+      title: "Hibernate",
+      path: `/applications/${application?.id}/hibernate`,
+    },
+    {
       title: "Spring beans",
       path: `/applications/${application?.id}/spring-beans`,
     },
