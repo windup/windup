@@ -28,6 +28,9 @@ const ApplicationEditIgnoredFiles = lazy(
 const ApplicationEJB = lazy(
   () => import("./pages/application-edit/pages/application-ejb")
 );
+const ApplicationJPA = lazy(
+  () => import("./pages/application-edit/pages/application-jpa")
+);
 const ApplicationSpringBeans = lazy(
   () => import("./pages/application-edit/pages/application-spring-beans")
 );
@@ -133,6 +136,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationEJB,
           path: "ejb",
+        },
+        {
+          Component: ApplicationJPA,
+          path: "jpa",
         },
         {
           Component: ApplicationSpringBeans,
