@@ -1,40 +1,42 @@
+// WINDUP_TECHNOLOGIES[appId] = {
+//   issuesBySource: {
+//     springboot: ['497dbb09-3327-4e51-beb1-faa4f2f55cb8', 'cd1923a1-7267-41aa-85d1-7fb3bd1d1c89', ...],
+//     weblogic: [ ... ]
+//   },
+//   issuesByTarget: { ...same as above },
+//   sourceTechs: [ "springboot", "weblogic" ],
+//   targetTechs: [ ...same as above ]
+// }
 $(document).ready(function () {
-
     let selectedSources = [];
     let selectedTargets = [];
 
     // AND/OR SELECTION CODE
-    // var selectedOperation = "OR";
-    // $("#op-and").click({}, () => { selectedOperation = "AND"; });
-    // $("#op-or").click({},  () => { selectedOperation = "OR"   });
-
-    let eventifyPush = function(arr, callback) {
-        arr.push = function(e) {
-            if (!arr.includes(e)) {
-                Array.prototype.push.call(arr, e);
-                callback(arr);
-            }
-        };
-    };
-
-    eventifyPush(selectedSources, function(updatedSources) {
-        let techAdded = updatedSources[updatedSources.length - 1];
-        $("#selected-sources").append(createRemovableTag(techAdded, updatedSources, WINDUP_TECHNOLOGIES[appId].issuesBySource));
+    var selectedOperation = "OR";
+    $("#op-and").click({}, () => {
+        selectedOperation = "AND";
+        $("#op-button").text("Matches all filters (AND)")
+        filterCallback();
+    });
+    $("#op-or").click({}, () => {
+        selectedOperation = "OR";
+        $("#op-button").text("Matches any filter (OR)")
+        filterCallback();
     });
 
-    eventifyPush(selectedTargets, function(updatedTargets) {
-        let techAdded = updatedTargets[updatedTargets.length - 1];
-        $("#selected-targets").append(createRemovableTag(techAdded, updatedTargets, WINDUP_TECHNOLOGIES[appId].issuesByTarget));
-    });
+    $("#selected-filters").hide();
 
-    function createRemovableTag(techId, selectedArray, issues) {
-        let techTagEl = $(`<div class="label label-info selected-item">${techId}<a href="#"><span class="glyphicon glyphicon-remove"></span></a> </div>`);
+    function createRemovableTag(args) {
+        let techTagEl = $(`<div class="label label-info selected-item">${args.data.techId}<a href="#"><span class="glyphicon glyphicon-remove"></span></a> </div>`);
         $(techTagEl).find('span').click({}, function() {
+            // remove item from list of selected techs
+            args.data.selectedTechs.splice(args.data.selectedTechs.indexOf(args.data.techId), 1);
             // filter issues
-            filterCallback({ data: { tech: techId, issueIdsByTech: issues, selectedTechs: selectedArray, op: "DEL" } });
+            filterCallback();
             // remove tag itself
             $(techTagEl).remove();
         });
+        args.data.selectedTechsTagsElement.append(techTagEl);
         return techTagEl;
     }
 
@@ -45,75 +47,70 @@ $(document).ready(function () {
         let sourcesDropdown = $("#dropdown-sources");
         let targetsDropdown = $("#dropdown-targets");
 
-        // WINDUP_TECHNOLOGIES[appId] = {
-        //   issuesBySource: {
-        //     springboot: ['497dbb09-3327-4e51-beb1-faa4f2f55cb8', 'cd1923a1-7267-41aa-85d1-7fb3bd1d1c89', ...],
-        //     weblogic: [ ... ]
-        //   },
-        //   issuesByTarget: { ...same as above },
-        //   sourceTechs: [ "springboot", "weblogic" ],
-        //   targetTechs: [ ...same as above ]
-        // }
-        sourcesDropdown.children().each(attachFilterBehaviour(WINDUP_TECHNOLOGIES[appId].issuesBySource, selectedSources));
-        targetsDropdown.children().each(attachFilterBehaviour(WINDUP_TECHNOLOGIES[appId].issuesByTarget, selectedTargets));
+        sourcesDropdown.children().each(attachFilterBehaviour(selectedSources, $("#selected-sources")));
+        targetsDropdown.children().each(attachFilterBehaviour(selectedTargets, $("#selected-targets")));
 
-        let clear = $("#clear");
-        clear.click(clearAll);
+        $("#clear").click(clearAll);
     }
 
-    function attachFilterBehaviour(issueIdsByTech, selectedArray) {
+    function attachFilterBehaviour(selectedTechs, selectedTechsTagsElement) {
         function filterBehaviour() {
             let techId = this.textContent;
-            $(this).click({tech: techId, issueIdsByTech: issueIdsByTech, selectedTechs: selectedArray, op: "ADD"}, filterCallback);
+            // add tech to list of currently selected techs
+            $(this).click(() => selectedTechs.push(techId));
+            // filter
+            $(this).click(filterCallback);
+            // add tech tag to list
+            $(this).click({ techId, selectedTechs, selectedTechsTagsElement }, createRemovableTag);
         }
-
         return filterBehaviour;
     }
 
-    function filterCallback(args) {
+    function filterCallback() {
         // get all issues elements
         let issueElements = $("tr[data-summary-id]");
-        // get the chosen technology
-        let chosenTech = args.data.tech;
 
-        // add/remove chosen tech to list of selected techs
-        if (args.data.op === "ADD") {
-            args.data.selectedTechs.push(chosenTech);
+        // pick ids for currently selected technologies in both sources and targets
+        let issuesBySource = WINDUP_TECHNOLOGIES[appId].issuesBySource;
+        let issuesByTarget = WINDUP_TECHNOLOGIES[appId].issuesByTarget;
+
+        // gather all issue ids for all selected technologies
+        let issueIdsForSelectedTechs = [];
+        for (let source of selectedSources) {
+            issueIdsForSelectedTechs.push(issuesBySource[source]);
+        }
+        for (let target of selectedTargets) {
+            issueIdsForSelectedTechs.push(issuesByTarget[target]);
+        }
+
+        var filteredIssueIds = [];
+        if (selectedOperation === "AND") {
+            // do intersection of all ids
+            filteredIssueIds = issueIdsForSelectedTechs.reduce((a, b) => a.filter(c => b.includes(c)), issueIdsForSelectedTechs[0] || []);
         } else {
-            args.data.selectedTechs = args.data.selectedTechs.filter(tech => tech !== chosenTech);
-        }
-
-        // get the IDs for the chosen techs
-        var issueIdsForSelectedTechs = [];
-        for (let tech of args.data.selectedTechs) {
-            issueIdsForSelectedTechs = issueIdsForSelectedTechs.concat(args.data.issueIdsByTech[tech]);
-        }
-
-        // no issues filtered, show all
-        if (issueIdsForSelectedTechs.length === 0) {
-            issueIdsForSelectedTechs = issueElements.map((i, e) => $(e).attr("data-summary-id")).get();
+            // do union of all ids
+            filteredIssueIds = issueIdsForSelectedTechs.reduce((a, b) => [...new Set([...a, ...b])], [])
         }
 
         // clear previously selected issues
         clearIssues();
 
-        // hide issues according to selected technologies
-        issueElements.filter((i, e) => !issueIdsForSelectedTechs.includes($(e).attr("data-summary-id")))
-            .each((i, e) => {
-                if (!$(e).hasClass("filtered-out")) {
-                    $(e).addClass("filtered-out");
-                    $(e).prev().addClass("filtered-out");
-                }
-            });
+        if (filteredIssueIds.length !== 0 || (filteredIssueIds.length === 0 && (selectedSources.length !== 0 || selectedTargets.length !== 0))) {
+            // hide issues which don't comply with the filtering
+            issueElements.filter((i, e) => !filteredIssueIds.includes($(e).attr("data-summary-id")))
+                .each((i, e) => {
+                    $(e).hide();
+                    $(e).prev().hide();
+                });
 
-        // recalculate incidents found and story points
-        let issuesLeft = issueElements
-            .filter((i, e) => issueIdsForSelectedTechs.includes($(e).attr("data-summary-id")))
-            .map((i, e) => $(e).attr("data-summary-id"))
-            .get();
+            $("#selected-filters").show();
 
-        // set numbers
-        calculateNumbers(issuesLeft);
+            // set numbers
+            calculateNumbers(filteredIssueIds);
+        } else {
+            $("#selected-filters").hide();
+            clearNumbers();
+        }
     }
 
     function calculateNumbers(issues) {
@@ -146,11 +143,15 @@ $(document).ready(function () {
         clearNumbers();
         clearIssues();
         clearTechs();
+
+        $("#selected-filters").hide()
     }
 
     function clearIssues() {
         // show all issues again
-        $(".filtered-out").removeClass("filtered-out");
+        let issueElements = $("tr[data-summary-id]");
+        issueElements.show();
+        issueElements.prev().show();
     }
 
     function clearTechs() {
@@ -161,6 +162,8 @@ $(document).ready(function () {
         // clear selected techs arrays
         selectedSources.length = 0;
         selectedTargets.length = 0
+
+        $("#selected-filters").hide()
     }
 
     filtering();

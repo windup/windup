@@ -223,64 +223,67 @@
 
             <#assign sourcesAndTargets = getSourcesAndTargets(problemsBySeverity)>
             <#if sourcesAndTargets.getTargetTechs()?has_content || sourcesAndTargets.getSourceTechs()?has_content>
-                <div class="dropdown-group">
-                    <#if sourcesAndTargets.getSourceTechs()?has_content>
-                        <div class="dropdown inline-drop">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Sources
-                                <span class="caret"></span>
-                            </button>
-                            <ul id="dropdown-sources" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <!-- options -->
-                                <#list sourcesAndTargets.getSourceTechs() as st>
-                                    <li><a href="#">${st}</a></li>
-                                </#list>
-                            </ul>
+            <div class="container-fluid">
+                <div class="row toolbar-pf">
+                    <div class="col-sm-3">
+                        <form class="toolbar-pf-actions" id="filter-form">
+                            <div class="form-group toolbar-pf-filter" id="filter-div" style="padding-left: 0;">
+                                <label class="sr-only filter-by" for="filter">Sources</label>
+                                <div class="input-group">
+                                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-by">Sources</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="dropdown-sources">
+                                            <#list sourcesAndTargets.getSourceTechs() as st>
+                                                <li><a href="#">${st}</a></li>
+                                            </#list>
+                                        </ul>
+                                    </div>
+                                    </#if>
+                                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-by">Targets</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="dropdown-targets">
+                                            <#list sourcesAndTargets.getTargetTechs() as tt>
+                                                <li><a href="#">${tt}</a></li>
+                                            </#list>
+                                        </ul>
+                                    </div>
+                                    </#if>
+                                    <div class="input-group-btn" id="filter-type">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-type" id="op-button">Matches any filter (OR)</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a id="op-and" href="#">Matches all filters (AND)</a></li>
+                                            <li><a id="op-or" href="#">Matches any filter (OR)</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="selected-filters">
+                            <#if sourcesAndTargets.getSourceTechs()?has_content>
+                                <div class="selected-tech">
+                                    Selected sources:
+                                    <div class="selected-item" id="selected-sources"></div>
+                                </div>
+                            </#if>
+                            <#if sourcesAndTargets.getTargetTechs()?has_content>
+                                <div class="selected-tech">
+                                    Selected targets:
+                                    <div class="selected-item" id="selected-targets"></div>
+                                </div>
+                            </#if>
+                            <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
                         </div>
-                    </#if>
-                    <#if sourcesAndTargets.getTargetTechs()?has_content>
-                        <div class="dropdown inline-drop">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Targets
-                                <span class="caret"></span>
-                            </button>
-                            <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <!-- options -->
-                                <#list sourcesAndTargets.getTargetTechs() as tt>
-                                    <li><a href="#">${tt}</a></li>
-                                </#list>
-                            </ul>
-                        </div>
-                    </#if>
-                    <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
-                    <br/>
-                    <#if sourcesAndTargets.getSourceTechs()?has_content>
-                        <div class="selected-tech">
-                            Selected sources:
-                            <div class="selected-item" id="selected-sources"></div>
-                        </div>
-                    </#if>
-                    <#if sourcesAndTargets.getTargetTechs()?has_content>
-                        <div class="selected-tech">
-                            Selected targets:
-                            <div class="selected-item" id="selected-targets"></div>
-                        </div>
-                    </#if>
-
-                    <!-- CODE FOR AND/OR SELECTION
-                    <div class="dropdown inline-drop">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Composition
-                            <span class="caret"></span>
-                        </button>
-                        <ul id="dropdown-targets" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a id="op-and" href="#">AND</a></li>
-                            <li><a id="op-or" href="#">OR</a></li>
-                        </ul>
-                    </div>
-                    -->
-
-                </div>
+                    </div><!-- /col -->
+                </div><!-- /row -->
+            </div>
             </#if>
 
             <div class="row">

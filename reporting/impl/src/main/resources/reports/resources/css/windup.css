@@ -589,3 +589,7 @@ h1 .glyphicon-info-sign:before {
     display: flex;
     flex-wrap: wrap;
 }
+
+#selected-filters {
+    margin-bottom: 8px;
+}
