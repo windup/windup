@@ -43,22 +43,24 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin()
                 .addRule()
-                .when(JavaClass.references("javax.ejb.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
+                .when(JavaClass.references("{ee-flavor}.ejb.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         extractEJBMetadata(event, payload);
                     }
                 })
                 .where("annotationType").matches("Stateless|Stateful")
+                .where("ee-flavor").matches("javax|jakarta")
                 .withId(ruleIDPrefix + "_StatelessAndStatefulRule")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.MessageDriven").at(TypeReferenceLocation.ANNOTATION))
+                .when(JavaClass.references("{ee-flavor}.ejb.MessageDriven").at(TypeReferenceLocation.ANNOTATION))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
                         extractMessageDrivenMetadata(event, payload);
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .withId(ruleIDPrefix + "_MessageDrivenRule");
     }
 

@@ -2,7 +2,10 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.janusgraph.core.JanusGraphException;
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.bootstrap.Bootstrap;
 import org.jboss.windup.bootstrap.ConsoleProgressMonitor;
 import org.jboss.windup.bootstrap.commands.Command;
@@ -290,7 +293,16 @@ public class RunWindupCommand implements Command, FurnaceDependent {
                 System.out.println("If using that option was unintentional, please run Windup again to generate reports.");
             }
         } catch (Exception e) {
-            System.err.println("Execution failed due to: " + e.getMessage());
+            // Due to different classloaders involved in loading these exceptions,
+            // the comparison must be based on exceptions' fully qualified names
+            final Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if (rootCause != null &&
+                    JanusGraphException.class.getName().equals(Proxies.unwrap(e).getClass().getName()) &&
+                    "com.sleepycat.je.DiskLimitException".equals(rootCause.getClass().getName())) {
+                System.err.printf("Execution failed due to disk space issue in the output path. Please check the field 'freeDiskLimit' in the next message: it represents the minimum free space required (in bytes)%n%s%n", ExceptionUtils.getRootCause(e).getMessage());
+            } else {
+                System.err.println("Execution failed due to: " + e.getMessage());
+            }
             e.printStackTrace();
         }
 
