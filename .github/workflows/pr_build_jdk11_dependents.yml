@@ -78,7 +78,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -nsu
 
@@ -101,6 +103,6 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-build-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -s settings.xml -nsu
