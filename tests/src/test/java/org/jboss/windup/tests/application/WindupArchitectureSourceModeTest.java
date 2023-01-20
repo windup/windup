@@ -212,6 +212,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
                 "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "",
                 "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessJakartaEJB", "",
+                "org.windup.examples.ejb.simplestateless.JakartaSimpleStatelessEJB"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulJakartaEJB", "",
+                "org.windup.examples.ejb.simplestateful.JakartaSimpleStatefulEJB"));
     }
 
     private void validateCompatibleReport(GraphContext context) {

@@ -56,11 +56,11 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin().addRule()
                 .when(JavaClass
-                        .references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
-                        .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
-                        .or(JavaClass.references("javax.persistence.NamedQuery").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERY_LIST))
-                        .or(JavaClass.references("javax.persistence.NamedQueries").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERIES_LIST))
-                        .or(JavaClass.references("javax.persistence.DiscriminatorValue").at(TypeReferenceLocation.ANNOTATION).as(DISCRIMINATOR_VALUE_LIST))
+                        .references("{ee-flavor}.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
+                        .or(JavaClass.references("{ee-flavor}.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
+                        .or(JavaClass.references("{ee-flavor}.persistence.NamedQuery").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERY_LIST))
+                        .or(JavaClass.references("{ee-flavor}.persistence.NamedQueries").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERIES_LIST))
+                        .or(JavaClass.references("{ee-flavor}.persistence.DiscriminatorValue").at(TypeReferenceLocation.ANNOTATION).as(DISCRIMINATOR_VALUE_LIST))
                 )
                 .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
@@ -68,6 +68,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider {
                         extractEntityBeanMetadata(event, payload);
                     }
                 }).endIteration())
+                .where("ee-flavor").matches("javax|jakarta")
                 .withId(ruleIDPrefix + "_JPAEntityBeanRule");
     }
 
