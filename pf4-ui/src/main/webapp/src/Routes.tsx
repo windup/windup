@@ -43,6 +43,9 @@ const ApplicationRemoteServices = lazy(
 const ApplicationServerResources = lazy(
   () => import("./pages/application-edit/pages/application-server-resources")
 );
+const ApplicationUnparsableFiles = lazy(
+  () => import("./pages/application-edit/pages/application-unparsable-files")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -159,6 +162,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationServerResources,
           path: "server-resources",
+        },
+        {
+          Component: ApplicationUnparsableFiles,
+          path: "unparsable-files",
         },
       ],
     },

@@ -49,7 +49,7 @@ public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvi
                     .map(projectModel -> {
                         ApplicationUnparsableFilesDto.SubProjectDto subProjectDto = new ApplicationUnparsableFilesDto.SubProjectDto();
                         subProjectDto.path = projectModel.getRootFileModel().getPrettyPath();
-                        projectModel.getUnparsableFiles().stream()
+                        subProjectDto.unparsableFiles = projectModel.getUnparsableFiles().stream()
                                 .map(fileModel -> {
                                     SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(fileModel);
 
@@ -65,7 +65,8 @@ public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvi
                                     }
 
                                     return unparsableFileDto;
-                                });
+                                })
+                                .collect(Collectors.toList());
                         return subProjectDto;
                     })
                     .collect(Collectors.toList());
@@ -80,32 +81,6 @@ public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvi
     public Map<String, Object> getById(GraphRewrite event) {
         return Collections.emptyMap();
     }
-
-//    private List<ApplicationUnparsableFilesDto.SubProjectDto> getSubProjects(GraphContext context , ProjectModel application) {
-//        SourceReportService sourceReportService = new SourceReportService(context);
-//        ProjectModelTraversal traversal = new ProjectModelTraversal(application);
-//
-//        traversal.getCanonicalProject().getUnparsableFiles().stream()
-//                .filter(fileModel -> !Objects.equals(FileModel.OnParseError.IGNORE, fileModel.getOnParseError()))
-//                .map(fileModel -> {
-//                    ProjectModel canonicalProject = traversal.getCanonicalProject();
-//
-//                    ApplicationUnparsableFilesDto.SubProjectDto subProjectDto = new ApplicationUnparsableFilesDto.SubProjectDto();
-//                    subProjectDto.path = canonicalProject.getRootFileModel().getPrettyPath();
-//                    application.getUnparsableFiles().forEach(fileModel1 -> {
-//
-//                    });
-//
-//                    SourceReportModel result = sourceReportService.getSourceReportForFileModel(fileModel);
-//                    result.getReportFilename();
-//
-//                    fileModel.getFileName();
-//                    fileModel.getFilePath();
-//                    fileModel.getOnParseError();
-//                    fileModel.getParseError();
-//                    return subProjectDto;
-//                });
-//    }
 
     private List<ProjectModel> getProjectsWithUnparsableFiles(ProjectModelTraversal traversal) {
         List<ProjectModel> results = new ArrayList<>();

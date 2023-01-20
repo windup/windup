@@ -82,6 +82,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "Server resources",
       path: `/applications/${application?.id}/server-resources`,
     },
+    {
+      title: "Unparsable files",
+      path: `/applications/${application?.id}/unparsable-files`,
+    },
   ];
 
   return (
