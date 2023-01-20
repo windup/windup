@@ -31,12 +31,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -93,11 +91,12 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .setOptionValue(ExportSummaryOption.NAME, Boolean.valueOf(exportFile));
             processor.execute(configuration);
             if (exportFile) {
-                Assert.assertTrue(new File(outputPath + "/resources.json").exists());
+                File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary_"));
+                Assert.assertTrue(candidates.length > 0);
 
-                Path resource = Paths.get("src/test/resources/test-exports/resources.json");
+                Path resource = Paths.get("src/test/resources/test-exports/analysisSummary_XX.json");
                 try {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/resources.json"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), Arrays.stream(candidates).findFirst().get().getPath()));
                 } catch (IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported file looks like expected. Exception: " + ex);
                 }
