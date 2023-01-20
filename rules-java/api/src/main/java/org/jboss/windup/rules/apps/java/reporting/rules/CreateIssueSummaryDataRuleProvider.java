@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -77,6 +78,8 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
 
+                Map<String, Map<String, Map<String, Map<String, Integer>>>> analysisSummaryMap = new HashMap<>();
+
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication, new OnlyOnceTraversalStrategy());
@@ -101,8 +104,13 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                     issueSummaryWriter.write(";" + NEWLINE);
                     if (windupConfiguration.isExportingSummary())
                     {
-                        writeExportSummaryFile(windupConfiguration,summariesBySeverity, inputApplication);
+                        analysisSummaryMap.put(inputApplicationFile.getFileName(), writeApplicationExportSummary(summariesBySeverity));
                     }
+                }
+
+                if (windupConfiguration.isExportingSummary())
+                {
+                    writeJsonOutputFile(analysisSummaryMap, windupConfiguration);
                 }
 
                 issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
@@ -142,31 +150,30 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
     }
 
-    private void writeExportSummaryFile(WindupConfigurationModel windupConfig, Map<String, List<ProblemSummary>> summariesBySeverity, ProjectModel project){
-        String outputFolderPath = windupConfig.getOutputPath().getFilePath() + File.separator;
+    private Map<String, Map<String, Map<String, Integer>>> writeApplicationExportSummary(Map<String, List<ProblemSummary>> summariesBySeverity) {
 
-        Map<String, Map<String,Integer>> translatedResults = new HashMap<>();
+        Map<String, Map<String, Integer>> translatedResults = new HashMap<>();
 
 
         summariesBySeverity.forEach((k, v) -> {
             int incidents = 0;
             int effortPoints = 0;
-            for (ProblemSummary summary: v) {
+            for (ProblemSummary summary : v) {
                 incidents += summary.getNumberFound();
                 effortPoints += summary.getNumberFound() * summary.getEffortPerIncident();
             }
-            HashMap<String,Integer> results = new HashMap<>();
+            HashMap<String, Integer> results = new HashMap<>();
             results.put("incidents", incidents);
             results.put("totalStoryPoints", effortPoints);
-            translatedResults.put(k,results);
-            });
-                    
-                
-        Map<String, Map<String,Map<String,Integer>>> resultsWithTitle = new HashMap<>();
+            translatedResults.put(k, results);
+        });
+
+
+        Map<String, Map<String, Map<String, Integer>>> resultsWithTitle = new HashMap<>();
         resultsWithTitle.put("Incidents By Category", translatedResults);
 
         List<ProblemSummary> mandatorySummaries = summariesBySeverity.get("mandatory");
-        Map<Integer,Integer> incidentsByEffort = new HashMap<>();
+        Map<Integer, Integer> incidentsByEffort = new HashMap<>();
         if (mandatorySummaries != null) {
             mandatorySummaries.stream().forEach(ps -> {
 
@@ -177,25 +184,33 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                 }
             });
         }
-        Map<String, Map<String,Integer>> translatedEffortResults = new HashMap<>();
+        Map<String, Map<String, Integer>> translatedEffortResults = new HashMap<>();
 
-        incidentsByEffort.forEach((k,v) -> {
-            HashMap<String,Integer> results = new HashMap<>();
+        incidentsByEffort.forEach((k, v) -> {
+            HashMap<String, Integer> results = new HashMap<>();
 
             results.put("incidents", v);
             results.put("totalStoryPoints", k * v);
-            translatedEffortResults.put(getEffortDescription(k),results);
+            translatedEffortResults.put(getEffortDescription(k), results);
         });
 
         resultsWithTitle.put("Mandatory Incidents By Type", translatedEffortResults);
+        return resultsWithTitle;
+    }
+
+    private void writeJsonOutputFile(Map analysisSummary, WindupConfigurationModel windupConfig){
+        String outputFolderPath = windupConfig.getOutputPath().getFilePath() + File.separator;
 
         ObjectMapper mapper = new ObjectMapper();
         String json;
 
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMDDHHmm");
+        String analysisTime = format.format(new Date());
+
         FileWriter writer = null;
         try {
-            json = mapper.writeValueAsString(resultsWithTitle);
-            String filename = PathUtil.cleanFileName(project.getRootFileModel().getFileName()) + ".json";
+            json = mapper.writeValueAsString(analysisSummary);
+            String filename = "analysisSummary_" + analysisTime + ".json";
             writer = new FileWriter(outputFolderPath + filename);
             writer.write(json);
         } catch (JsonProcessingException e) {
