@@ -78,7 +78,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
 
-                Map<String, Map<String, Map<String, Map<String, Integer>>>> analysisSummaryMap = new HashMap<>();
+                List analysisSummaryList = new ArrayList();
 
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
@@ -104,13 +104,13 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                     issueSummaryWriter.write(";" + NEWLINE);
                     if (windupConfiguration.isExportingSummary())
                     {
-                        analysisSummaryMap.put(inputApplicationFile.getFileName(), writeApplicationExportSummary(summariesBySeverity));
+                        analysisSummaryList.add(writeApplicationExportSummary(summariesBySeverity, inputApplicationFile.getFileName()));
                     }
                 }
 
                 if (windupConfiguration.isExportingSummary())
                 {
-                    writeJsonOutputFile(analysisSummaryMap, windupConfiguration);
+                    writeJsonOutputFile(analysisSummaryList, windupConfiguration);
                 }
 
                 issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
@@ -150,10 +150,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
     }
 
-    private Map<String, Map<String, Map<String, Integer>>> writeApplicationExportSummary(Map<String, List<ProblemSummary>> summariesBySeverity) {
+    private Map writeApplicationExportSummary(Map<String, List<ProblemSummary>> summariesBySeverity, String application) {
 
         Map<String, Map<String, Integer>> translatedResults = new HashMap<>();
-
 
         summariesBySeverity.forEach((k, v) -> {
             int incidents = 0;
@@ -169,8 +168,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
         });
 
 
-        Map<String, Map<String, Map<String, Integer>>> resultsWithTitle = new HashMap<>();
-        resultsWithTitle.put("Incidents By Category", translatedResults);
+        Map<String, Object> resultsWithTitle = new LinkedHashMap<>();
+        resultsWithTitle.put("application:", application);
+        resultsWithTitle.put("incidentsByCategory", translatedResults);
 
         List<ProblemSummary> mandatorySummaries = summariesBySeverity.get("mandatory");
         Map<Integer, Integer> incidentsByEffort = new HashMap<>();
@@ -194,11 +194,11 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
             translatedEffortResults.put(getEffortDescription(k), results);
         });
 
-        resultsWithTitle.put("Mandatory Incidents By Type", translatedEffortResults);
+        resultsWithTitle.put("mandatoryIncidentsByType", translatedEffortResults);
         return resultsWithTitle;
     }
 
-    private void writeJsonOutputFile(Map analysisSummary, WindupConfigurationModel windupConfig){
+    private void writeJsonOutputFile(List analysisSummary, WindupConfigurationModel windupConfig){
         String outputFolderPath = windupConfig.getOutputPath().getFilePath() + File.separator;
 
         ObjectMapper mapper = new ObjectMapper();
