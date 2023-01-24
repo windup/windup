@@ -266,23 +266,23 @@
                                 </div>
                             </div>
                         </form>
-                        <div id="selected-filters">
-                            <#if sourcesAndTargets.getSourceTechs()?has_content>
-                                <div class="selected-tech">
-                                    Selected sources:
-                                    <div class="selected-item" id="selected-sources"></div>
-                                </div>
-                            </#if>
-                            <#if sourcesAndTargets.getTargetTechs()?has_content>
-                                <div class="selected-tech">
-                                    Selected targets:
-                                    <div class="selected-item" id="selected-targets"></div>
-                                </div>
-                            </#if>
-                            <div class="inline-drop" id="clear"><a href="#">Clear</a></div>
-                        </div>
                     </div><!-- /col -->
                 </div><!-- /row -->
+                <div id="selected-filters">
+                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected sources:
+                            <div class="selected-item" id="selected-sources"></div>
+                        </div>
+                    </#if>
+                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected targets:
+                            <div class="selected-item" id="selected-targets"></div>
+                        </div>
+                    </#if>
+                    <div class="inline-drop" id="clear"><a href="#">Clear all filters</a></div>
+                </div>
             </div>
             </#if>
 

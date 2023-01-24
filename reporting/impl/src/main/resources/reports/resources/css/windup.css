@@ -593,3 +593,7 @@ h1 .glyphicon-info-sign:before {
 #selected-filters {
     margin-bottom: 8px;
 }
+
+.label.label-info.selected-item a {
+    color: white;
+}
