@@ -32,6 +32,7 @@ import { getMarkdown } from "@app/utils/rule-utils";
 
 interface IFileEditorProps {
   file: FileDto;
+  lineToFocus?: number;
   hintToFocus?: HintDto;
   props?: Partial<
     Omit<CodeEditorProps, "ref" | "code" | "options" | "onEditorDidMount">
@@ -41,6 +42,7 @@ interface IFileEditorProps {
 export const FileEditor: React.FC<IFileEditorProps> = ({
   file,
   props,
+  lineToFocus,
   hintToFocus,
 }) => {
   const allRules = useRulesQuery();
@@ -224,6 +226,11 @@ export const FileEditor: React.FC<IFileEditorProps> = ({
     // if (hintTo && hintTo.line) {
     //   editor.revealLineInCenter(hintTo.line);
     // }
+
+    if (lineToFocus) {
+      const offset = new Set(hints.map((f) => f.line));
+      editor.revealLineNearTop(lineToFocus + offset.size);
+    }
 
     // Open warning programatically
     // editor.trigger("anystring", `editor.action.marker.next`, "s");

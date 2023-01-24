@@ -19,6 +19,7 @@ import {
 } from "@patternfly/react-core";
 
 import { useApplicationsQuery } from "@app/queries/applications";
+import { useTransactionsQuery } from "@app/queries/transactions";
 
 export const ApplicationEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -26,12 +27,23 @@ export const ApplicationEdit: React.FC = () => {
   const routeParams = useMatch("/applications/:applicationId/*");
 
   const applicationsQuery = useApplicationsQuery();
+  const applicationsTransactions = useTransactionsQuery();
+
   const application = useMemo(() => {
     const applicationId = routeParams?.params.applicationId;
     return (
       applicationsQuery.data?.find((app) => app.id === applicationId) || null
     );
   }, [routeParams?.params, applicationsQuery.data]);
+
+  const applicationTransactions = useMemo(() => {
+    const applicationId = routeParams?.params.applicationId;
+    return (
+      applicationsTransactions.data?.find(
+        (app) => app.applicationId === applicationId
+      )?.transactions || null
+    );
+  }, [routeParams?.params, applicationsTransactions.data]);
 
   const tabItems: { title: string; path: string }[] = [
     {
@@ -87,6 +99,13 @@ export const ApplicationEdit: React.FC = () => {
       path: `/applications/${application?.id}/unparsable-files`,
     },
   ];
+
+  if (applicationTransactions && applicationTransactions.length > 0) {
+    tabItems.push({
+      title: "Transactions",
+      path: `/applications/${application?.id}/transactions`,
+    });
+  }
 
   return (
     <>

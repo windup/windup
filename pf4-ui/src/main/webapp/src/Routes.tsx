@@ -46,6 +46,9 @@ const ApplicationServerResources = lazy(
 const ApplicationUnparsableFiles = lazy(
   () => import("./pages/application-edit/pages/application-unparsable-files")
 );
+const ApplicationTransactions = lazy(
+  () => import("./pages/application-edit/pages/application-transactions")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -166,6 +169,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationUnparsableFiles,
           path: "unparsable-files",
+        },
+        {
+          Component: ApplicationTransactions,
+          path: "transactions",
         },
       ],
     },
