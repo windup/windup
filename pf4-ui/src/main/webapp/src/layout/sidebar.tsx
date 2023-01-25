@@ -6,7 +6,6 @@ import { css } from "@patternfly/react-styles";
 
 import { useSimpleContext } from "@app/context/simple-context";
 
-
 import { LayoutTheme } from "./layout-constants";
 
 export const SidebarApp: React.FC = () => {
@@ -65,6 +64,16 @@ export const SidebarApp: React.FC = () => {
             }
           >
             Dependencies
+          </NavLink>
+        </NavList>
+        <NavList>
+          <NavLink
+            to="/rules"
+            className={({ isActive }) =>
+              css("pf-c-nav__link", isActive ? "pf-m-current" : "")
+            }
+          >
+            Rules
           </NavLink>
         </NavList>
       </Nav>

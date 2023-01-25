@@ -6,6 +6,7 @@ import ApplicationList from "./pages/application-list";
 const IssuesList = lazy(() => import("./pages/issues-list"));
 const TechnologiesList = lazy(() => import("./pages/technologies-list"));
 const DependenciesList = lazy(() => import("./pages/dependencies-list"));
+const RulesList = lazy(() => import("./pages/rules-list"));
 const ApplicationEdit = lazy(() => import("./pages/application-edit"));
 const ApplicationEditDashboard = lazy(
   () => import("./pages/application-edit/pages/application-dashboard")
@@ -107,6 +108,12 @@ export const AppRoutes = () => {
     {
       Component: DependenciesList,
       path: "/dependencies/applications/:applicationId",
+      hasDescendant: false,
+    },
+    // Rules
+    {
+      Component: RulesList,
+      path: "/rules",
       hasDescendant: false,
     },
     // Edit application
