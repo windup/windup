@@ -52,6 +52,11 @@ import { technologiesToArray } from "@app/utils/rule-utils";
 import { IssueOverview } from "./components/issue-overview";
 import { Technologies } from "./components/technologies";
 
+interface SelectedFile {
+  fileId: string;
+  ruleId: string;
+}
+
 const toOption = (option: string | ToolbarChip): OptionWithValue => {
   if (typeof option === "string") {
     const toStringFn = () => option;
@@ -164,9 +169,9 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       : undefined;
   }, [rulesByIssueId, issueModal.data]);
 
-  const fileModal = useModal<"showFile", string>();
+  const fileModal = useModal<"showFile", SelectedFile>();
   const fileModalMappedFile = useMemo(() => {
-    return allFiles.data?.find((file) => file.id === fileModal.data);
+    return allFiles.data?.find((file) => file.id === fileModal.data?.fileId);
   }, [allFiles.data, fileModal.data]);
 
   const issues = useMemo(() => {
@@ -326,7 +331,12 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                 <div className="pf-u-m-sm">
                   <IssueOverview
                     issue={item}
-                    onShowFile={(file) => fileModal.open("showFile", file)}
+                    onShowFile={(file) =>
+                      fileModal.open("showFile", {
+                        fileId: file,
+                        ruleId: item.ruleId,
+                      })
+                    }
                   />
                 </div>
               ),
@@ -628,7 +638,14 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
           </Button>,
         ]}
       >
-        {fileModalMappedFile && <FileEditor file={fileModalMappedFile} />}
+        {fileModalMappedFile && (
+          <FileEditor
+            file={fileModalMappedFile}
+            hintToFocus={fileModalMappedFile.hints.find(
+              (f) => f.ruleId === fileModal.data?.ruleId
+            )}
+          />
+        )}
       </Modal>
     </>
   );

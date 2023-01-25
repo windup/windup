@@ -69,8 +69,10 @@ export const FileEditor: React.FC<IFileEditorProps> = ({
   }, [disposables]);
 
   const drawerRef = React.useRef<any>();
-  const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
-  const [drawerHint, setDrawerHint] = useState<HintDto>();
+  const [isDrawerExpanded, setIsDrawerExpanded] = useState(
+    hintToFocus ? true : false
+  );
+  const [drawerHint, setDrawerHint] = useState(hintToFocus);
   const onDrawerExpand = () => {
     drawerRef.current && drawerRef.current.focus();
   };
@@ -222,14 +224,12 @@ export const FileEditor: React.FC<IFileEditorProps> = ({
 
     setDisposables(newDisposables);
 
-    // const hintTo = hintToFocus || firstHint;
-    // if (hintTo && hintTo.line) {
-    //   editor.revealLineInCenter(hintTo.line);
-    // }
-
+    const offset = 5;
+    if (hintToFocus && hintToFocus.line) {
+      editor.revealLineNearTop(hintToFocus.line + offset);
+    }
     if (lineToFocus) {
-      const offset = new Set(hints.map((f) => f.line));
-      editor.revealLineNearTop(lineToFocus + offset.size);
+      editor.revealLineNearTop(lineToFocus + offset);
     }
 
     // Open warning programatically
