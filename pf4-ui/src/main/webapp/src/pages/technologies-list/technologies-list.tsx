@@ -11,7 +11,6 @@ import {
   PageSectionVariants,
   SearchInput,
   SelectVariant,
-  Spinner,
   Text,
   TextContent,
   Title,
@@ -35,7 +34,6 @@ import {
   sortable,
 } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   OptionWithValue,
   SimpleSelect,
   SimpleTableWithToolbar,
@@ -313,14 +311,7 @@ export const TechnologiesList: React.FC = () => {
         </TextContent>
       </PageSection>
       <PageSection variant={PageSectionVariants.default}>
-        <ConditionalRender
-          when={allTechnologies.isLoading}
-          then={
-            <Bullseye>
-              <Spinner />
-            </Bullseye>
-          }
-        >
+        <>
           {applicationId === undefined ? (
             <Bullseye>
               <EmptyState>
@@ -405,7 +396,7 @@ export const TechnologiesList: React.FC = () => {
               }
             />
           )}
-        </ConditionalRender>
+        </>
       </PageSection>
     </>
   );

@@ -3,16 +3,13 @@ import { useOutletContext } from "react-router-dom";
 
 import { useSelectionState } from "@migtools/lib-ui";
 import {
-  Bullseye,
   Button,
   ButtonVariant,
   Modal,
   PageSection,
-  Spinner,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow, IRowData } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useModal,
   useTable,
@@ -168,43 +165,32 @@ export const UnparsableFiles: React.FC = () => {
 
   return (
     <PageSection>
-      <ConditionalRender
-        when={allUnparsableFilesQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Expand
-          onCollapse={(_event, _rowIndex, _isOpen, rowData) => {
-            const issue = getRow(rowData);
-            toggleRowExpanded(issue);
-          }}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allUnparsableFilesQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allUnparsableFilesQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
+      <SimpleTableWithToolbar
+        hasTopPagination
+        hasBottomPagination
+        totalCount={filteredItems.length}
+        // Expand
+        onCollapse={(_event, _rowIndex, _isOpen, rowData) => {
+          const issue = getRow(rowData);
+          toggleRowExpanded(issue);
+        }}
+        // Sorting
+        sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+        onSort={onChangeSortBy}
+        // Pagination
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        // Table
+        rows={rows}
+        cells={columns}
+        actions={actions}
+        // Fech data
+        isLoading={allUnparsableFilesQuery.isFetching}
+        loadingVariant="skeleton"
+        fetchError={allUnparsableFilesQuery.isError}
+        // Toolbar filters
+        filtersApplied={filterText.trim().length > 0}
+      />
       <Modal
         title={`File ${fileModalMappedFile?.prettyPath}`}
         isOpen={fileModal.isOpen && fileModal.action === "showFile"}

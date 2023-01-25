@@ -1,6 +1,8 @@
 import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import { Bullseye, Spinner } from "@patternfly/react-core";
+
 // At least one page should not have lazy() for not having "[mini-css-extract-plugin] Conflicting order." error
 import ApplicationList from "./pages/application-list";
 const IssuesList = lazy(() => import("./pages/issues-list"));
@@ -186,7 +188,13 @@ export const AppRoutes = () => {
   ];
 
   return (
-    <Suspense fallback={<span>Loading...</span>}>
+    <Suspense
+      fallback={
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
+      }
+    >
       <Routes>
         {routes.map(({ path, hasDescendant, Component, children }, index) => (
           <Route

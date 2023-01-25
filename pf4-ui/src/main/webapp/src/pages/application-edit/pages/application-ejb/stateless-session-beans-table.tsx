@@ -1,23 +1,19 @@
 import React, { useMemo, useState } from "react";
 
 import {
-  Bullseye,
   Button,
   ButtonVariant,
   Flex,
   FlexItem,
   Modal,
-  Spinner,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useModal,
   useTable,
   useTableControls,
 } from "@project-openubl/lib-ui";
-
 
 import { SessionBeanDto } from "@app/api/application-ejb";
 import { useEJBsQuery } from "@app/queries/ejb";
@@ -189,38 +185,27 @@ export const StatelessSessionBeansTable: React.FC<
 
   return (
     <>
-      <ConditionalRender
-        when={allEJBsQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allEJBsQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allEJBsQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
+      <SimpleTableWithToolbar
+        hasTopPagination
+        hasBottomPagination
+        totalCount={filteredItems.length}
+        // Sorting
+        sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+        onSort={onChangeSortBy}
+        // Pagination
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        // Table
+        rows={rows}
+        cells={columns}
+        actions={actions}
+        // Fech data
+        isLoading={allEJBsQuery.isFetching}
+        loadingVariant="skeleton"
+        fetchError={allEJBsQuery.isError}
+        // Toolbar filters
+        filtersApplied={filterText.trim().length > 0}
+      />
       <Modal
         title={`File ${fileModalMappedFile?.prettyPath}`}
         isOpen={fileModal.isOpen && fileModal.action === "showFile"}

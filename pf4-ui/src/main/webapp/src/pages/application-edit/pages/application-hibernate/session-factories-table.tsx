@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 
 import { useSelectionState } from "@migtools/lib-ui";
-import { Bullseye, Spinner } from "@patternfly/react-core";
 import {
   Caption,
   IAction,
@@ -16,7 +15,6 @@ import {
   Tr,
 } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useTable,
   useTableControls,
@@ -152,44 +150,31 @@ export const SessionFactoriesTable: React.FC<ISessionFactoriesTableProps> = ({
   const actions: IAction[] = [];
 
   return (
-    <>
-      <ConditionalRender
-        when={allHibernateQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Expand
-          onCollapse={(_event, _rowIndex, _isOpen, rowData) => {
-            const issue = getRow(rowData);
-            toggleRowExpanded(issue);
-          }}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allHibernateQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allHibernateQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
-    </>
+    <SimpleTableWithToolbar
+      hasTopPagination
+      hasBottomPagination
+      totalCount={filteredItems.length}
+      // Expand
+      onCollapse={(_event, _rowIndex, _isOpen, rowData) => {
+        const issue = getRow(rowData);
+        toggleRowExpanded(issue);
+      }}
+      // Sorting
+      sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+      onSort={onChangeSortBy}
+      // Pagination
+      currentPage={currentPage}
+      onPageChange={onPageChange}
+      // Table
+      rows={rows}
+      cells={columns}
+      actions={actions}
+      // Fech data
+      isLoading={allHibernateQuery.isFetching}
+      loadingVariant="skeleton"
+      fetchError={allHibernateQuery.isError}
+      // Toolbar filters
+      filtersApplied={filterText.trim().length > 0}
+    />
   );
 };

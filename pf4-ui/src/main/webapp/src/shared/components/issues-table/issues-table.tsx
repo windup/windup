@@ -10,7 +10,6 @@ import {
   Modal,
   SearchInput,
   SelectVariant,
-  Spinner,
   Title,
   ToolbarChip,
   ToolbarChipGroup,
@@ -30,7 +29,6 @@ import {
   truncate,
 } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   OptionWithValue,
   SimpleSelect,
   SimpleTableWithToolbar,
@@ -372,14 +370,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
 
   return (
     <>
-      <ConditionalRender
-        when={allApplications.isLoading || allIssues.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
+      <>
         {applicationId === undefined ? (
           <Bullseye>
             <EmptyState>
@@ -415,7 +406,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
             cells={columns}
             actions={actions}
             // Fech data
-            isLoading={allIssues.isFetching}
+            isLoading={allIssues.isLoading || allApplications.isLoading}
             loadingVariant="skeleton"
             fetchError={allIssues.isError}
             // Toolbar filters
@@ -613,7 +604,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
             }
           />
         )}
-      </ConditionalRender>
+      </>
 
       <Modal
         title={`Rule: ${issueModalMappedRule?.id}`}

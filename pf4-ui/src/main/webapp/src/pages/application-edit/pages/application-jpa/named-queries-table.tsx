@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from "react";
 
-import { Bullseye, Spinner } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useTable,
   useTableControls,
@@ -86,39 +84,26 @@ export const NamedQueriesTable: React.FC<INamedQueriesTableProps> = ({
   const actions: IAction[] = [];
 
   return (
-    <>
-      <ConditionalRender
-        when={allJPAsQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allJPAsQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allJPAsQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
-    </>
+    <SimpleTableWithToolbar
+      hasTopPagination
+      hasBottomPagination
+      totalCount={filteredItems.length}
+      // Sorting
+      sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+      onSort={onChangeSortBy}
+      // Pagination
+      currentPage={currentPage}
+      onPageChange={onPageChange}
+      // Table
+      rows={rows}
+      cells={columns}
+      actions={actions}
+      // Fech data
+      isLoading={allJPAsQuery.isFetching}
+      loadingVariant="skeleton"
+      fetchError={allJPAsQuery.isError}
+      // Toolbar filters
+      filtersApplied={filterText.trim().length > 0}
+    />
   );
 };

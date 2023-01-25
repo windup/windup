@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
 
-import { Bullseye, List, ListItem, Spinner } from "@patternfly/react-core";
+import { List, ListItem } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useTable,
   useTableControls,
@@ -110,39 +109,26 @@ export const DatasourcesTable: React.FC<IDatasourcesTableProps> = ({
   const actions: IAction[] = [];
 
   return (
-    <>
-      <ConditionalRender
-        when={allServerResourcesQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allServerResourcesQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allServerResourcesQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
-    </>
+    <SimpleTableWithToolbar
+      hasTopPagination
+      hasBottomPagination
+      totalCount={filteredItems.length}
+      // Sorting
+      sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+      onSort={onChangeSortBy}
+      // Pagination
+      currentPage={currentPage}
+      onPageChange={onPageChange}
+      // Table
+      rows={rows}
+      cells={columns}
+      actions={actions}
+      // Fech data
+      isLoading={allServerResourcesQuery.isFetching}
+      loadingVariant="skeleton"
+      fetchError={allServerResourcesQuery.isError}
+      // Toolbar filters
+      filtersApplied={filterText.trim().length > 0}
+    />
   );
 };

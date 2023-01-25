@@ -1,15 +1,12 @@
 import React, { useMemo, useState } from "react";
 
 import {
-  Bullseye,
   Button,
   ButtonVariant,
   Modal,
-  Spinner,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useModal,
   useTable,
@@ -112,38 +109,27 @@ export const JaxRsTable: React.FC<IJaxRsTableProps> = ({ applicationId }) => {
 
   return (
     <>
-      <ConditionalRender
-        when={allRemoteServicesQuery.isLoading}
-        then={
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        }
-      >
-        <SimpleTableWithToolbar
-          hasTopPagination
-          hasBottomPagination
-          totalCount={filteredItems.length}
-          // Sorting
-          sortBy={
-            currentSortBy || { index: undefined, defaultDirection: "asc" }
-          }
-          onSort={onChangeSortBy}
-          // Pagination
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-          // Table
-          rows={rows}
-          cells={columns}
-          actions={actions}
-          // Fech data
-          isLoading={allRemoteServicesQuery.isFetching}
-          loadingVariant="skeleton"
-          fetchError={allRemoteServicesQuery.isError}
-          // Toolbar filters
-          filtersApplied={filterText.trim().length > 0}
-        />
-      </ConditionalRender>
+      <SimpleTableWithToolbar
+        hasTopPagination
+        hasBottomPagination
+        totalCount={filteredItems.length}
+        // Sorting
+        sortBy={currentSortBy || { index: undefined, defaultDirection: "asc" }}
+        onSort={onChangeSortBy}
+        // Pagination
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        // Table
+        rows={rows}
+        cells={columns}
+        actions={actions}
+        // Fech data
+        isLoading={allRemoteServicesQuery.isFetching}
+        loadingVariant="skeleton"
+        fetchError={allRemoteServicesQuery.isError}
+        // Toolbar filters
+        filtersApplied={filterText.trim().length > 0}
+      />
       <Modal
         title={`File ${fileModalMappedFile?.prettyPath}`}
         isOpen={fileModal.isOpen && fileModal.action === "showFile"}

@@ -13,7 +13,6 @@ import {
   List,
   ListItem,
   SearchInput,
-  Spinner,
   Title,
   ToolbarItem,
 } from "@patternfly/react-core";
@@ -28,7 +27,6 @@ import {
   truncate,
 } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useTable,
   useTableControls,
@@ -211,14 +209,7 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
   }, [applicationId, onPageChange]);
 
   return (
-    <ConditionalRender
-      when={allDependencies.isLoading}
-      then={
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      }
-    >
+    <>
       {applicationId === undefined ? (
         <Bullseye>
           <EmptyState>
@@ -272,6 +263,6 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
           }
         />
       )}
-    </ConditionalRender>
+    </>
   );
 };

@@ -6,7 +6,6 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   SearchInput,
-  Spinner,
   Title,
   ToolbarItem,
 } from "@patternfly/react-core";
@@ -19,7 +18,6 @@ import {
   sortable,
 } from "@patternfly/react-table";
 import {
-  ConditionalRender,
   SimpleTableWithToolbar,
   useTable,
   useTableControls,
@@ -136,14 +134,7 @@ export const IgnoredFilesTable: React.FC<IIgnoredFilesTableProps> = ({
   const actions: IAction[] = [];
 
   return (
-    <ConditionalRender
-      when={allIgnoredFiles.isLoading}
-      then={
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      }
-    >
+    <>
       {applicationId === undefined ? (
         <Bullseye>
           <EmptyState>
@@ -192,6 +183,6 @@ export const IgnoredFilesTable: React.FC<IIgnoredFilesTableProps> = ({
           }
         />
       )}
-    </ConditionalRender>
+    </>
   );
 };
