@@ -9,6 +9,7 @@ if (
   const application1: ApplicationDto = {
     id: "app-1",
     name: "app1.jar",
+    isVirtual: false,
     tags: ["tag1", "tag2"],
     storyPoints: 45,
     incidents: {
@@ -24,6 +25,7 @@ if (
   const application2: ApplicationDto = {
     id: "app-2",
     name: "app2.jar",
+    isVirtual: true,
     tags: ["tag1", "tag2"],
     storyPoints: 90,
     incidents: {

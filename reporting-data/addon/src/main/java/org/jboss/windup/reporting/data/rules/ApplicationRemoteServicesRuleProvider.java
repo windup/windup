@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
         phase = ReportRenderingPhase.class,
         haltOnException = true
 )
-public class ApplicationRemoveServicesRuleProvider extends AbstractApiRuleProvider {
+public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvider {
 
     @Override
     public String getBasePath() {

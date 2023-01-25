@@ -4,6 +4,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.AllTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
@@ -41,55 +42,66 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
         ClassificationService classificationService = new ClassificationService(context);
         InlineHintService inlineHintService = new InlineHintService(context);
 
-        return new ProjectService(context).getRootProjectModels().stream().map(projectModel -> {
-            AllTraversalStrategy traversalStrategy = new AllTraversalStrategy();
-            ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel, traversalStrategy);
+        return new ProjectService(context).getRootProjectModels().stream()
+                .map(projectModel -> {
+                    AllTraversalStrategy traversalStrategy = new AllTraversalStrategy();
+                    ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel, traversalStrategy);
 
-            // Tags
-            Set<String> tags = new HashSet<>();
-            Iterable<TechnologyTagModel> technologyTagModels = new TechnologyTagService(context).findTechnologyTagsForProject(projectModelTraversal);
-            for (TechnologyTagModel tag : technologyTagModels) {
-                if (!Objects.equals(tag.getName(), "Decompiled Java File")) {
-                    tags.add(getTagFrom(tag));
-                }
-            }
+                    // Tags
+                    Set<String> tags = new HashSet<>();
+                    Iterable<TechnologyTagModel> technologyTagModels = new TechnologyTagService(context).findTechnologyTagsForProject(projectModelTraversal);
+                    for (TechnologyTagModel tag : technologyTagModels) {
+                        if (!Objects.equals(tag.getName(), "Decompiled Java File")) {
+                            tags.add(getTagFrom(tag));
+                        }
+                    }
 
-            // Story points
-            Set<String> includeTags = Collections.emptySet();
-            Set<String> excludeTags = Collections.emptySet();
-            Set<String> issueCategories = Collections.emptySet();
+                    // Story points
+                    Set<String> includeTags = Collections.emptySet();
+                    Set<String> excludeTags = Collections.emptySet();
+                    Set<String> issueCategories = Collections.emptySet();
 
-            Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
-            Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
-            Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
+                    Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
+                    Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, true, false);
+                    Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
 
-            int storyPoints = sumPoints(results);
+                    int storyPoints = sumPoints(results);
 
-            // Incidents
-            Map<IssueCategoryModel, Integer> incidentsClassificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
-            Map<IssueCategoryModel, Integer> incidentsHintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
+                    // Incidents
+                    Map<IssueCategoryModel, Integer> incidentsClassificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
+                    Map<IssueCategoryModel, Integer> incidentsHintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
 
-            Map<IssueCategoryModel, Integer> allIncidents = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
-            addAllIncidents(allIncidents, incidentsClassificationEffortDetails);
-            addAllIncidents(allIncidents, incidentsHintEffortDetails);
+                    Map<IssueCategoryModel, Integer> allIncidents = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
+                    addAllIncidents(allIncidents, incidentsClassificationEffortDetails);
+                    addAllIncidents(allIncidents, incidentsHintEffortDetails);
 
-            Map<String, Integer> incidents = new HashMap<>();
-            for (Map.Entry<IssueCategoryModel, Integer> entry : allIncidents.entrySet()) {
-                String key = entry.getKey().getName().trim().toLowerCase().replaceAll("migration ", "");
-                incidents.put(key, entry.getValue());
-            }
+                    Map<String, Integer> incidents = new HashMap<>();
+                    for (Map.Entry<IssueCategoryModel, Integer> entry : allIncidents.entrySet()) {
+                        String key = entry.getKey().getName().trim().toLowerCase().replaceAll("migration ", "");
+                        incidents.put(key, entry.getValue());
+                    }
 
-            // Fill result
-            ApplicationDto applicationDto = new ApplicationDto();
+                    // Fill result
+                    ApplicationDto applicationDto = new ApplicationDto();
 
-            applicationDto.id = projectModel.getId().toString();
-            applicationDto.name = projectModel.getName();
-            applicationDto.tags = tags;
-            applicationDto.storyPoints = storyPoints;
-            applicationDto.incidents = incidents;
+                    boolean isProjectVirtual = Objects.equals(projectModel.getProjectType(), "VIRTUAL");
 
-            return applicationDto;
-        }).collect(Collectors.toList());
+                    String applicationName;
+                    if (projectModel.getRootFileModel() instanceof ApplicationModel) {
+                        applicationName = ((ApplicationModel) projectModel.getRootFileModel()).getApplicationName();
+                    } else {
+                        applicationName = projectModel.getName();
+                    }
+
+                    applicationDto.id = projectModel.getId().toString();
+                    applicationDto.name = isProjectVirtual && projectModel.getName() != null ? projectModel.getName() : applicationName;
+                    applicationDto.isVirtual = isProjectVirtual;
+                    applicationDto.tags = tags;
+                    applicationDto.storyPoints = storyPoints;
+                    applicationDto.incidents = incidents;
+
+                    return applicationDto;
+                }).collect(Collectors.toList());
     }
 
     @Override

@@ -25,12 +25,14 @@ import {
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
+  Tooltip,
 } from "@patternfly/react-core";
 import {
   ExpandIcon,
   FilterIcon,
   TagIcon,
   TaskIcon,
+  InfoCircleIcon,
 } from "@patternfly/react-icons";
 import {
   ICell,
@@ -191,7 +193,28 @@ export const ApplicationList: React.FC = () => {
         isOpen: isSomeCellSelected(item.id, columnKeys),
         cells: [
           {
-            title: <Link to={`/applications/${item.id}`}>{item.name}</Link>,
+            title: (
+              <>
+                <Link to={`/applications/${item.id}`}>{item.name}</Link>
+                {item.isVirtual && (
+                  <>
+                    {" "}
+                    <Tooltip
+                      content={
+                        <div>
+                          This groups all issues found in libraries included in
+                          multiple applications.
+                        </div>
+                      }
+                    >
+                      <Label isCompact color="blue" icon={<InfoCircleIcon />}>
+                        Shared libraries
+                      </Label>
+                    </Tooltip>
+                  </>
+                )}
+              </>
+            ),
           },
           {
             title: (

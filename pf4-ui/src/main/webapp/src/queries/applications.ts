@@ -14,7 +14,12 @@ export const useApplicationsQuery = (): UseQueryResult<
 > => {
   const sortListCallback = useCallback(
     (data: ApplicationDto[]): ApplicationDto[] => {
-      return data.sort((a, b) => a.name.localeCompare(b.name));
+      return data.sort((a, b) => {
+        if (a.isVirtual) return -1;
+        if (b.isVirtual) return 1;
+
+        return a.name.localeCompare(b.name);
+      });
     },
     []
   );

@@ -6,6 +6,7 @@ import java.util.Set;
 public class ApplicationDto {
     public String id;
     public String name;
+    public boolean isVirtual;
     public Set<String> tags;
     public int storyPoints;
     public Map<String, Integer> incidents;
