@@ -12,6 +12,8 @@ import {
   ContextSelectorProps,
 } from "@patternfly/react-core";
 
+import "./simple-context.css";
+
 export interface Context {
   key: string;
   label: string;
@@ -103,6 +105,7 @@ export const SimpleContextSelector: React.FC<ISimpleContextSelectorProps> = ({
       onToggle={toggleSelector}
       searchInputValue={filterText}
       onSearchInputChange={setFilterText}
+      className="firstChildBordered"
       {...props}
     >
       {allContexts

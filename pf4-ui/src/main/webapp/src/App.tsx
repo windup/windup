@@ -27,12 +27,17 @@ const App: React.FC = () => {
     <HashRouter>
       <ProcessedQueriesContextProvider>
         <SimpleContextProvider
-          allContexts={(applications.data || [])
-            .map((e) => ({
+          allContexts={[
+            {
+              key: ALL_APPLICATIONS_ID,
+              label: "All applications",
+            },
+          ].concat(
+            (applications.data || []).map((e) => ({
               key: e.id,
               label: e.name,
             }))
-            .concat({ key: ALL_APPLICATIONS_ID, label: "All applications" })}
+          )}
         >
           <DefaultLayout>
             <AppRoutes />
