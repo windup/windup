@@ -2,16 +2,13 @@ import React, { useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import {
-  Bullseye,
   Card,
   CardBody,
-  CardTitle,
-  EmptyState,
-  EmptyStateIcon,
   PageSection,
-  Title,
+  Tab,
+  Tabs,
+  TabTitleText,
 } from "@patternfly/react-core";
-import { InfoAltIcon } from "@patternfly/react-icons";
 
 import { ApplicationDto } from "@app/api/application";
 import { useEJBsQuery } from "@app/queries/ejb";
@@ -49,80 +46,68 @@ export const ApplicationEJBs: React.FC = () => {
 
   return (
     <>
-      {(messageDrivenBeans?.length ?? 0) +
-        (statelessSessionBeans?.length ?? 0) +
-        (statefulSessionBeans?.length ?? 0) +
-        (entityBeans?.length ?? 0) ===
-        0 && (
-        <PageSection>
-          <Card>
-            <CardBody>
-              <Bullseye>
-                <EmptyState>
-                  <EmptyStateIcon icon={InfoAltIcon} />
-                  <Title headingLevel="h4" size="lg">
-                    No EJBs found
-                  </Title>
-                </EmptyState>
-              </Bullseye>
-            </CardBody>
-          </Card>
-        </PageSection>
-      )}
-      {messageDrivenBeans && messageDrivenBeans.length > 0 && (
-        <PageSection>
-          <Card>
-            <CardTitle>Message driven beans</CardTitle>
-            <CardBody>
-              {application?.id && (
-                <MessageDrivenBeansTable applicationId={application?.id} />
-              )}
-            </CardBody>
-          </Card>
-        </PageSection>
-      )}
-      {statelessSessionBeans && statelessSessionBeans.length > 0 && (
-        <PageSection>
-          <Card>
-            <CardTitle>Stateless sessions beans</CardTitle>
-            <CardBody>
-              {application?.id && (
-                <StatelessSessionBeansTable
-                  applicationId={application?.id}
-                  sessionBeanType="STATELESS"
-                />
-              )}
-            </CardBody>
-          </Card>
-        </PageSection>
-      )}
-      {statefulSessionBeans && statefulSessionBeans.length > 0 && (
-        <PageSection>
-          <Card>
-            <CardTitle>Stateful sessions beans</CardTitle>
-            <CardBody>
-              {application?.id && (
-                <StatelessSessionBeansTable
-                  applicationId={application?.id}
-                  sessionBeanType="STATEFUL"
-                />
-              )}
-            </CardBody>
-          </Card>
-        </PageSection>
-      )}
-      {entityBeans && entityBeans.length > 0 && (
-        <PageSection>
-          <Card>
-            <CardTitle>Entity beans</CardTitle>
-            <CardBody>
-              {application?.id && (
-                <EntityBeanTable applicationId={application?.id} />
-              )}
-            </CardBody>
-          </Card>
-        </PageSection>
-      )}
+      <PageSection>
+        <Card>
+          <CardBody>
+            <Tabs defaultActiveKey={0}>
+              <Tab
+                eventKey={0}
+                title={
+                  <TabTitleText>
+                    Message driven beans ({messageDrivenBeans?.length})
+                  </TabTitleText>
+                }
+              >
+                {application?.id && (
+                  <MessageDrivenBeansTable applicationId={application?.id} />
+                )}
+              </Tab>
+              <Tab
+                eventKey={1}
+                title={
+                  <TabTitleText>
+                    Stateless sessions beans ({statelessSessionBeans?.length})
+                  </TabTitleText>
+                }
+              >
+                {application?.id && (
+                  <StatelessSessionBeansTable
+                    applicationId={application?.id}
+                    sessionBeanType="STATELESS"
+                  />
+                )}
+              </Tab>
+              <Tab
+                eventKey={2}
+                title={
+                  <TabTitleText>
+                    Stateful sessions beans ({statefulSessionBeans?.length})
+                  </TabTitleText>
+                }
+              >
+                {application?.id && (
+                  <StatelessSessionBeansTable
+                    applicationId={application?.id}
+                    sessionBeanType="STATEFUL"
+                  />
+                )}
+              </Tab>
+              <Tab
+                eventKey={3}
+                title={
+                  <TabTitleText>
+                    Entity beans({entityBeans?.length})
+                  </TabTitleText>
+                }
+              >
+                {application?.id && (
+                  <EntityBeanTable applicationId={application?.id} />
+                )}
+              </Tab>
+            </Tabs>
+          </CardBody>
+        </Card>
+      </PageSection>
     </>
   );
 };
