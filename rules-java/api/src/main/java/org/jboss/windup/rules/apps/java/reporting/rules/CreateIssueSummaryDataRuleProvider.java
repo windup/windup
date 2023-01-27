@@ -14,25 +14,36 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
+import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
-import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -103,7 +114,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                     issueSummaryWriter.write(";" + NEWLINE);
                     if (windupConfiguration.isExportingSummary())
                     {
-                        analysisSummaryList.add(writeApplicationExportSummary(summariesBySeverity, inputApplicationFile.getFileName()));
+                        analysisSummaryList.add(writeApplicationExportSummary(summariesBySeverity, inputApplicationFile, event.getGraphContext()));
                     }
                 }
 
@@ -149,7 +160,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
     }
 
-    private Map writeApplicationExportSummary(Map<String, List<ProblemSummary>> summariesBySeverity, String application) {
+    private Map writeApplicationExportSummary(Map<String, List<ProblemSummary>> summariesBySeverity, FileModel application, GraphContext context) {
 
         Map<String, Map<String, Integer>> translatedResults = new HashMap<>();
 
@@ -168,7 +179,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
 
         Map<String, Object> resultsWithTitle = new LinkedHashMap<>();
-        resultsWithTitle.put("application:", application);
+        resultsWithTitle.put("application:", application.getFileName());
         resultsWithTitle.put("incidentsByCategory", translatedResults);
 
         List<ProblemSummary> mandatorySummaries = summariesBySeverity.get("mandatory");
@@ -194,6 +205,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
         });
 
         resultsWithTitle.put("mandatoryIncidentsByType", translatedEffortResults);
+        resultsWithTitle.put("technologyTags", getTechnologyTagsForApplication(application, context));
         return resultsWithTitle;
     }
 
@@ -224,6 +236,48 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
             }
         }
 
+    }
+
+    private List getTechnologyTagsForApplication(FileModel application, GraphContext context){
+        Iterable<TechnologyTagModel> fileTags = new TechnologyTagService(context).findTechnologyTagsForFile(application);
+        //TechReportService techReportService = new TechReportService(context);
+        //TechReportService.TechStatsMatrix matrix = techReportService.getTechStatsMap(application.getProjectModel());
+        List results = new ArrayList();
+        fileTags.forEach(model -> {
+            Map tag = new HashMap();
+            tag.put("name", model.getName());
+            results.add(tag);
+        });
+
+        // Classifications
+        {
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(application.getElement());
+            pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+            FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(context.getFramed(), pipeline.toList(), ClassificationModel.class);
+            for (ClassificationModel classification : iterable){
+                classification.getTags().forEach(tagName -> {
+                    Map tag = new HashMap();
+                    tag.put("name", tagName);
+                    results.add(tag);
+                });
+            }
+        }
+
+        // Hints
+        {
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(application.getElement());
+            pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(FileLocationModel.TYPE));
+            pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+            FramedVertexIterable<InlineHintModel> iterable = new FramedVertexIterable<>(context.getFramed(), pipeline.toList(), InlineHintModel.class);
+            for (InlineHintModel hint : iterable) {
+                hint.getTags().forEach(tagName -> {
+                    Map tag = new HashMap();
+                    tag.put("name", tagName);
+                    results.add(tag);
+                });
+            }
+        }
+        return results;
     }
 
     private String getEffortDescription(Integer effort){
