@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CSVLink } from "react-csv";
 
 import { useSelectionState } from "@migtools/lib-ui";
 import {
@@ -49,11 +50,41 @@ import { technologiesToArray } from "@app/utils/rule-utils";
 
 import { IssueOverview } from "./components/issue-overview";
 import { Technologies } from "./components/technologies";
+import { ApplicationDto } from "@app/api/application";
+import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
+
+const csvHeaders = [
+  { label: "Rule Id", key: "ruleId" },
+  { label: "Issue Category", key: "issueCategory" },
+  { label: "Title", key: "issueTitle" },
+  { label: "Description", key: "issueDescription" },
+  { label: "Links", key: "links" },
+  { label: "Application", key: "application" },
+  { label: "File Name", key: "fileName" },
+  { label: "File path", key: "filePath" },
+  { label: "Line", key: "line" },
+  { label: "Story points", key: "storyPoinst" },
+];
+
+interface CSVData {
+  ruleId: string;
+  issueCategory: string;
+  issueTitle: string;
+  issueDescription: string;
+  links: string;
+  application: string;
+  fileName: string;
+  filePath: string;
+  line: number;
+  storyPoinst: number;
+}
 
 interface SelectedFile {
   fileId: string;
   ruleId: string;
 }
+
+//
 
 const toOption = (option: string | ToolbarChip): OptionWithValue => {
   if (typeof option === "string") {
@@ -87,6 +118,12 @@ const toToolbarChip = (option: OptionWithValue): ToolbarChip => {
     node: option.toString(),
   };
 };
+
+//
+
+export interface TableData extends IssueProcessed {
+  application: ApplicationDto;
+}
 
 const DataKey = "DataKey";
 
@@ -136,7 +173,7 @@ export const compareByColumnIndex = (
   }
 };
 
-const getRow = (rowData: IRowData): IssueProcessed => {
+const getRow = (rowData: IRowData): TableData => {
   return rowData[DataKey];
 };
 
@@ -153,14 +190,14 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   >();
 
   // Queries
-  const allApplications = useApplicationsQuery();
-  const allIssues = useIssuesQuery();
-  const allFiles = useFilesQuery();
+  const allApplicationsQuery = useApplicationsQuery();
+  const allIssuesQuery = useIssuesQuery();
+  const allFilesQuery = useFilesQuery();
 
   const { technologies, rulesByIssueId } = useProcessedQueriesContext();
 
   // Modal
-  const issueModal = useModal<"showRule", IssueProcessed>();
+  const issueModal = useModal<"showRule", TableData>();
   const issueModalMappedRule = useMemo(() => {
     return issueModal.data != null
       ? rulesByIssueId.get(issueModal.data.id)
@@ -169,43 +206,59 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
 
   const fileModal = useModal<"showFile", SelectedFile>();
   const fileModalMappedFile = useMemo(() => {
-    return allFiles.data?.find((file) => file.id === fileModal.data?.fileId);
-  }, [allFiles.data, fileModal.data]);
+    return allFilesQuery.data?.find(
+      (file) => file.id === fileModal.data?.fileId
+    );
+  }, [allFilesQuery.data, fileModal.data]);
 
   const issues = useMemo(() => {
+    let applicationIssues: ApplicationIssuesProcessed[] = [];
     if (applicationId === ALL_APPLICATIONS_ID) {
-      return [...(allIssues.data || [])].flatMap((e) => e.issues);
+      const allAppIssues: ApplicationIssuesProcessed[] = [
+        ...(allIssuesQuery.data || []),
+      ];
+      applicationIssues = [...allAppIssues];
+    } else {
+      const singleAppIssues = allIssuesQuery.data?.find(
+        (f) => f.applicationId === applicationId
+      );
+      applicationIssues = singleAppIssues ? [singleAppIssues] : [];
     }
 
-    return (
-      allIssues.data?.find((f) => f.applicationId === applicationId)?.issues ||
-      []
-    );
-  }, [allIssues.data, applicationId]);
+    return applicationIssues.flatMap((elem) => {
+      return elem.issues.map((issue) => {
+        const application = allApplicationsQuery.data?.find(
+          (app) => app.id === elem.applicationId
+        );
+        const result: TableData = { ...issue, application: application! };
+        return result;
+      });
+    });
+  }, [allApplicationsQuery.data, allIssuesQuery.data, applicationId]);
 
   //
   const categories = useMemo(() => {
-    const allCategories = (allIssues.data || [])
+    const allCategories = (allIssuesQuery.data || [])
       .flatMap((f) => f.issues)
       .map((e) => e.category);
     return Array.from(new Set(allCategories)).sort((a, b) =>
       a.localeCompare(b)
     );
-  }, [allIssues.data]);
+  }, [allIssuesQuery.data]);
 
   const levelOfEfforts = useMemo(() => {
-    const allLevelOfEfforts = (allIssues.data || [])
+    const allLevelOfEfforts = (allIssuesQuery.data || [])
       .flatMap((f) => f.issues)
       .map((e) => e.effort.description);
     return Array.from(new Set(allLevelOfEfforts)).sort((a, b) =>
       a.localeCompare(b)
     );
-  }, [allIssues.data]);
+  }, [allIssuesQuery.data]);
 
   const {
     isItemSelected: isRowExpanded,
     toggleItemSelected: toggleRowExpanded,
-  } = useSelectionState<IssueProcessed>({
+  } = useSelectionState<TableData>({
     items: issues,
     isEqual: (a, b) => a.id === b.id,
   });
@@ -217,7 +270,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     changeSortBy: onChangeSortBy,
   } = useTableControls();
 
-  const { pageItems, filteredItems } = useTable<IssueProcessed>({
+  const { pageItems, filteredItems } = useTable<TableData>({
     items: issues,
     currentPage: currentPage,
     currentSortBy: currentSortBy,
@@ -285,7 +338,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     },
   });
 
-  const itemsToRow = (items: IssueProcessed[]) => {
+  const itemsToRow = (items: TableData[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
       const isExpanded = isRowExpanded(item);
@@ -368,6 +421,46 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     onPageChange({ page: 1 });
   }, [applicationId, filters, onPageChange]);
 
+  // CSV
+  const csvData = useMemo(() => {
+    return filteredItems.flatMap((issue) => {
+      return issue.affectedFiles.flatMap((issueFiles) => {
+        return issueFiles.files.flatMap((file) => {
+          const fileDto = allFilesQuery.data?.find((f) => f.id === file.fileId);
+          const hintsDto = fileDto?.hints.filter(
+            (hint) => hint.ruleId === issue.ruleId
+          );
+
+          const issueDescription = issueFiles.description.replaceAll('"', "'");
+          const links =
+            issue.links && issue.links.length > 0
+              ? "[" +
+                issue.links.map((f) => `${f.href},${f.title}`).join("][") +
+                "]"
+              : "";
+          const storyPoints = issue.totalStoryPoints / issue.totalIncidents;
+
+          return (hintsDto || []).map((hint) => {
+            const data: CSVData = {
+              ruleId: issue.ruleId,
+              issueCategory: issue.category,
+              issueTitle: issue.name,
+              issueDescription: issueDescription,
+              links: links,
+              application: issue.application.name,
+              fileName: file.fileName,
+              filePath: fileDto?.fullPath!,
+              line: hint.line,
+              storyPoinst: storyPoints,
+            };
+
+            return data;
+          });
+        });
+      });
+    });
+  }, [filteredItems, allFilesQuery.data]);
+
   return (
     <>
       <>
@@ -406,9 +499,11 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
             cells={columns}
             actions={actions}
             // Fech data
-            isLoading={allIssues.isLoading || allApplications.isLoading}
+            isLoading={
+              allIssuesQuery.isLoading || allApplicationsQuery.isLoading
+            }
             loadingVariant="skeleton"
-            fetchError={allIssues.isError}
+            fetchError={allIssuesQuery.isError}
             // Toolbar filters
             toolbarClearAllFilters={clearAllFilters}
             filtersApplied={filterText.trim().length > 0}
@@ -600,6 +695,19 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                     />
                   </ToolbarFilter>
                 </ToolbarGroup>
+                <ToolbarItem variant="separator" />
+                <ToolbarItem>
+                  <CSVLink
+                    headers={csvHeaders}
+                    data={csvData}
+                    separator=","
+                    enclosingCharacter={'"'}
+                    filename="issues.csv"
+                    className="pf-c-button pf-m-primary"
+                  >
+                    Export CSV
+                  </CSVLink>
+                </ToolbarItem>
               </>
             }
           />
