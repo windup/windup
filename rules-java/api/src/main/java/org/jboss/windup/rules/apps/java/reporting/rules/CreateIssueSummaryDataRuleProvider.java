@@ -73,6 +73,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
+                issueSummaryWriter.write("var WINDUP_TECHNOLOGIES = [];" + NEWLINE);
 
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();

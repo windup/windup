@@ -9,7 +9,17 @@
                         <#assign ruleID = problemSummary.ruleID!"">
                         <#assign issueName = problemSummary.issueName!"">
                     {description: "${markdownToHtml(description)?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
-                    problemSummaryID: "${problemSummary.id}", files: [
+                        tts: [
+                            <#list problemSummary.getTargetTechnologies() as tt>
+                                "${tt}",
+                            </#list>
+                        ],
+                        sts: [
+                        <#list problemSummary.getSourceTechnologies() as st>
+                            "${st}",
+                        </#list>
+                        ],
+                        problemSummaryID: "${problemSummary.id}", files: [
                         <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
                         <#--
                             If this is an application specific report, then the report model will contain the

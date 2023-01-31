@@ -5,6 +5,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.ToFileModelTransformable;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -21,7 +22,7 @@ import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MOD
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel {
+public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel, SourcesAndTargetsModel {
     String TYPE = "ClassificationModel";
     String TYPE_PREFIX = TYPE + "-";
     String RULE_ID = TYPE_PREFIX + "ruleID";

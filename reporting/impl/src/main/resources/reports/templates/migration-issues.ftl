@@ -106,6 +106,26 @@
             /* Reduce the padding, default is too big. */
             .hint-detail-panel > .panel-body { padding-bottom: 0; }
 
+            .technology {
+                display: inline-block;
+                padding: 5px;
+                margin: auto;
+                border-radius: 3px;
+                color: white;
+            }
+
+            .source {
+                background-color: green;
+            }
+
+            .target {
+                background-color: orange;
+            }
+
+            .tech-list {
+                margin-left: 5px;
+            }
+
             /* Colors of various effort levels. */
             /* Commented out for now (jsight - 2016/02/15)
             tr.problemSummary.effortINFO td.level { color: #1B540E; }
@@ -117,7 +137,55 @@
             */
         </style>
 
+        <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+
         <script src="resources/js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="data/issue_summaries.js"></script>
+        <script>
+            // Set applicationId here so that it's available to all scripts
+            <#if reportModel.projectModel??>
+                let appId = ${reportModel.projectModel.getElement().id()?c};
+            <#else>
+                let appId = "allIssues";
+            </#if>
+
+            <#assign categories = getIssueCategories(event)>
+            let categories = {
+                <#list categories?keys as key>
+                    "${key}": "${categories[key]}",
+                </#list>
+            };
+
+            let problemSummaryNumbers = {
+                <#list problemsBySeverity?keys as severity>
+                    "${categories[severity]}": {
+                        <#list problemsBySeverity[severity] as problemSummary>
+                        "${problemSummary.id}": {
+                            "numberFound": ${problemSummary.numberFound},
+                            "storyPoints": ${problemSummary.effortPerIncident * problemSummary.numberFound}
+                        },
+                        </#list>
+                    },
+                </#list>
+            }
+
+            // Load scripts sequentially
+            var dataScript = typeof appId !== "undefined" ? "data/sources_and_targets-" + appId + ".js" : "data/sources_and_targets-allIssues.js";
+            let filteringScript = "resources/js/windup-issues-filtering.js";
+            var scriptURLs = [dataScript, filteringScript];
+            function loadScript(index) {
+                if (index >= scriptURLs.length) {
+                    return false;
+                }
+
+                var el = document.createElement('script');
+                el.onload = () => loadScript(index + 1);
+                el.src = scriptURLs[index];
+                document.head.appendChild(el);
+            }
+
+            loadScript(0);
+        </script>
     </head>
     <body role="document" class="migration-issues">
         <!-- Navbar -->
@@ -153,10 +221,74 @@
                 </div>
             </div>
 
+            <#assign sourcesAndTargets = getSourcesAndTargets(problemsBySeverity)>
+            <#if sourcesAndTargets.getTargetTechs()?has_content || sourcesAndTargets.getSourceTechs()?has_content>
+            <div class="container-fluid">
+                <div class="row toolbar-pf">
+                    <div class="col-sm-3">
+                        <form class="toolbar-pf-actions" id="filter-form">
+                            <div class="form-group toolbar-pf-filter" id="filter-div" style="padding-left: 0;">
+                                <label class="sr-only filter-by" for="filter">Sources</label>
+                                <div class="input-group">
+                                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-by">Sources</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="dropdown-sources">
+                                            <#list sourcesAndTargets.getSourceTechs() as st>
+                                                <li><a href="#">${st}</a></li>
+                                            </#list>
+                                        </ul>
+                                    </div>
+                                    </#if>
+                                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-by">Targets</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="dropdown-targets">
+                                            <#list sourcesAndTargets.getTargetTechs() as tt>
+                                                <li><a href="#">${tt}</a></li>
+                                            </#list>
+                                        </ul>
+                                    </div>
+                                    </#if>
+                                    <div class="input-group-btn" id="filter-type">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"><span class="filter-type" id="op-button">Matches any filter (OR)</span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a id="op-and" href="#">Matches all filters (AND)</a></li>
+                                            <li><a id="op-or" href="#">Matches any filter (OR)</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- /col -->
+                </div><!-- /row -->
+                <div id="selected-filters">
+                    <#if sourcesAndTargets.getSourceTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected sources:
+                            <div class="selected-item" id="selected-sources"></div>
+                        </div>
+                    </#if>
+                    <#if sourcesAndTargets.getTargetTechs()?has_content>
+                        <div class="selected-tech">
+                            Selected targets:
+                            <div class="selected-item" id="selected-targets"></div>
+                        </div>
+                    </#if>
+                    <div class="inline-drop" id="clear"><a href="#">Clear all filters</a></div>
+                </div>
+            </div>
+            </#if>
+
             <div class="row">
                 <div class="container-fluid theme-showcase" role="main">
                     <!-- HEAD -->
-                    <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
                     <#if !problemsBySeverity?has_content>
                         <div>
                             No issues were found by the existing rules. If you would like to add custom rules,
@@ -165,7 +297,7 @@
                         </div>
                     </#if>
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-bordered table-condensed tablesorter migration-issues-table">
+                        <table id="table-${categories[severity]}" class="table table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr class="tablesorter-ignoreRow" style="background: #337ab7;color: #FFFFFF; font-size: 14pt;">
                                     <td style="border: 0px; padding: 10px 15px"><b>${severity}</b></td>
@@ -249,7 +381,6 @@
                                     </div>
                                     <div class="panel-body">
                                         {{{../description}}}
-                                    </div>
 
                                     {{#if ../resourceLinks}}
                                         <div class="panel-body">
@@ -260,6 +391,27 @@
                                             </ul>
                                         </div>
                                     {{/if}}
+
+                                    {{#if ../sts}}
+                                    Sources:</br>
+                                    <div class="tech-list">
+                                        {{#each ../sts}}
+                                        <span class="technology source">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                    {{/if}}
+
+                                    {{#if ../tts}}
+                                    Targets:</br>
+                                    <div class="tech-list">
+                                        {{#each ../tts}}
+                                        <span class="technology target">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                    {{/if}}
+                                    </div>
+
+                                    </br>
                                 </div>
                             </td>
                         {{/if}}
@@ -273,5 +425,7 @@
         <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 
         <#include "include/problem_summary.ftl">
+        <#include "include/sources_targets.ftl">
+
     </body>
 </html>
