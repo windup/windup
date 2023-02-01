@@ -19,7 +19,8 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from "@patternfly/react-core";
-import { FilterIcon, InfoAltIcon } from "@patternfly/react-icons";
+import FilterIcon from "@patternfly/react-icons/dist/esm/icons/filter-icon";
+import InfoAltIcon from "@patternfly/react-icons/dist/esm/icons/info-alt-icon";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import { OptionWithValue, SimpleSelect } from "@project-openubl/lib-ui";
 

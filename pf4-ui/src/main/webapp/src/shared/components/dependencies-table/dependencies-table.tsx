@@ -16,7 +16,7 @@ import {
   Title,
   ToolbarItem,
 } from "@patternfly/react-core";
-import { ArrowUpIcon } from "@patternfly/react-icons";
+import ArrowUpIcon from "@patternfly/react-icons/dist/esm/icons/arrow-up-icon";
 import {
   IAction,
   ICell,

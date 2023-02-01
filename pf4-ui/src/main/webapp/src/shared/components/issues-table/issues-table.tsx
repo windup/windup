@@ -18,7 +18,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
-import { ArrowUpIcon } from "@patternfly/react-icons";
+import ArrowUpIcon from "@patternfly/react-icons/dist/esm/icons/arrow-up-icon";
 import {
   IAction,
   ICell,
@@ -39,9 +39,11 @@ import {
   useToolbar,
 } from "@project-openubl/lib-ui";
 
+import { ApplicationDto } from "@app/api/application";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
 import { IssueProcessed } from "@app/models/api-enriched";
+import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
@@ -50,8 +52,6 @@ import { technologiesToArray } from "@app/utils/rule-utils";
 
 import { IssueOverview } from "./components/issue-overview";
 import { Technologies } from "./components/technologies";
-import { ApplicationDto } from "@app/api/application";
-import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
 
 const csvHeaders = [
   { label: "Rule Id", key: "ruleId" },

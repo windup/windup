@@ -27,13 +27,11 @@ import {
   ToolbarItem,
   Tooltip,
 } from "@patternfly/react-core";
-import {
-  ExpandIcon,
-  FilterIcon,
-  TagIcon,
-  TaskIcon,
-  InfoCircleIcon,
-} from "@patternfly/react-icons";
+import ExpandIcon from "@patternfly/react-icons/dist/esm/icons/expand-icon";
+import FilterIcon from "@patternfly/react-icons/dist/esm/icons/filter-icon";
+import InfoCircleIcon from "@patternfly/react-icons/dist/esm/icons/info-circle-icon";
+import TagIcon from "@patternfly/react-icons/dist/esm/icons/tag-icon";
+import TaskIcon from "@patternfly/react-icons/dist/esm/icons/task-icon";
 import {
   ICell,
   IExtraData,

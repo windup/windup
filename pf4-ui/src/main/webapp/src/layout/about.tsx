@@ -10,13 +10,11 @@ import {
   ListItem,
   TextContent,
 } from "@patternfly/react-core";
-import {
-  GithubIcon,
-  BookOpenIcon,
-  GlobeIcon,
-  EnvelopeIcon,
-  InfoAltIcon,
-} from "@patternfly/react-icons";
+import BookOpenIcon from "@patternfly/react-icons/dist/esm/icons/book-open-icon";
+import EnvelopeIcon from "@patternfly/react-icons/dist/esm/icons/envelope-icon";
+import GithubIcon from "@patternfly/react-icons/dist/esm/icons/github-icon";
+import GlobeIcon from "@patternfly/react-icons/dist/esm/icons/globe-icon";
+import InfoAltIcon from "@patternfly/react-icons/dist/esm/icons/info-alt-icon";
 
 import { Theme } from "./theme-constants";
 

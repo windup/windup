@@ -20,7 +20,8 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
-import { ArrowUpIcon, FilterIcon } from "@patternfly/react-icons";
+import ArrowUpIcon from "@patternfly/react-icons/dist/esm/icons/arrow-up-icon";
+import FilterIcon from "@patternfly/react-icons/dist/esm/icons/filter-icon";
 import {
   ICell,
   IExtraData,

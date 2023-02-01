@@ -14,7 +14,7 @@ import {
   PageHeaderToolsGroup,
   PageHeaderToolsItem,
 } from "@patternfly/react-core";
-import { HelpIcon } from "@patternfly/react-icons";
+import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 
 import avatarImage from "@app/images/avatar.svg";
 
