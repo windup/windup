@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.data.rules;
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -26,12 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RuleMetadata(
-        phase = ReportRenderingPhase.class,
+        phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
@@ -67,10 +66,10 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
 
                 Consumer<ApplicationEJBsDto.BeanDto> setCommonBeanData = beanDto -> {
                     beanDto.beanName = beanBaseModel.getBeanName();
-                    beanDto.className = beanBaseModel.getEjbClass().getQualifiedName();
 
                     JavaClassModel clz = beanBaseModel.getEjbClass();
                     if (clz != null) {
+                        beanDto.className = beanBaseModel.getEjbClass().getQualifiedName();
                         beanDto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                 .map(sourceReportService::getSourceReportForFileModel)
                                 .filter(Objects::nonNull)

@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportRenderingPhase.class,
+        phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvider {

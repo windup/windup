@@ -15,6 +15,7 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
@@ -280,12 +281,14 @@ public class RunWindupCommand implements Command, FurnaceDependent {
             getWindupProcessor().execute(windupConfiguration);
 
             final Boolean skipReports = (Boolean) windupConfiguration.getOptionMap().get(SkipReportsRenderingOption.NAME);
+            final Boolean legacyReports = (Boolean) windupConfiguration.getOptionMap().get(LegacyReportsRenderingOption.NAME);
             if (!skipReports) {
-                Path indexHtmlPathWindupUI = windupConfiguration.getOutputDirectory().resolve("windup-ui").resolve("index.html").normalize().toAbsolutePath();
-                System.out.println("[Tech preview] windup-ui created: " + indexHtmlPathWindupUI + System.getProperty("line.separator")
-                        +"               Access it at this URL: " + indexHtmlPathWindupUI.toUri());
-
-                Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
+                Path indexHtmlPath;
+                if (legacyReports) {
+                    indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
+                } else {
+                    indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("pf4-reports").resolve("index.html").normalize().toAbsolutePath();
+                }
                 System.out.println("Report created: " + indexHtmlPath + System.getProperty("line.separator")
                         + "              Access it at this URL: " + indexHtmlPath.toUri());
             } else {

@@ -24,8 +24,9 @@ import org.jboss.windup.util.exception.WindupException;
 public class ReportService extends GraphService<ReportModel> {
     private static final String REPORTS_DIR = "reports";
     private static final String DATA = "data";
-    public static final String API = "api";
-    public static final String WINDUP_UI = "windup-ui";
+
+    public static final String WINDUP_UI = "pf4-reports";
+    public static final String WINDUP_UI_DATA = "pf4-reports-data";
 
     private static final Set<String> usedFilenames = new HashSet<>();
 
@@ -48,7 +49,7 @@ public class ReportService extends GraphService<ReportModel> {
     public Path getApiDataDirectory()
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
-        Path path = cfg.getOutputPath().asFile().toPath().resolve(API);
+        Path path = cfg.getOutputPath().asFile().toPath().resolve(WINDUP_UI_DATA);
         createDirectoryIfNeeded(path);
         return path.toAbsolutePath();
     }

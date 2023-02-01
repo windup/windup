@@ -2,9 +2,8 @@ package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -12,7 +11,6 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationSpringBeansDto;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
-import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RuleMetadata(
-        phase = ReportRenderingPhase.class,
+        phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationSpringBeansRuleProvider extends AbstractApiRuleProvider {

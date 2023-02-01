@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-
 public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logger.getLogger(AbstractApiRuleProvider.class);
@@ -119,7 +118,6 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
             LOG.info("Exporting json data to file: " + outputJSFile.getPath());
         } catch (IOException e) {
             LOG.error("Error exporting data to: " + outputJSFile.getPath());
-            return;
         }
     }
 

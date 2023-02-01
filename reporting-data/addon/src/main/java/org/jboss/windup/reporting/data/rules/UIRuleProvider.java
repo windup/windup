@@ -9,7 +9,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.PostFinalizePhase;
+import org.jboss.windup.config.phase.PostReportPf4RenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ZipUtil;
@@ -26,7 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RuleMetadata(
-        phase = PostFinalizePhase.class,
+        phase = PostReportPf4RenderingPhase.class,
         haltOnException = true
 )
 public class UIRuleProvider extends AbstractRuleProvider {
@@ -84,12 +84,13 @@ public class UIRuleProvider extends AbstractRuleProvider {
             // Set data
             Path sourceWindupJS = apiDataDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
 
-            Path targetWindupJS = uiDirectory.resolve(ReportService.API).resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
+            Path targetWindupJS = uiDirectory.resolve("api").resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT); // "The 'api' folder represents 'pf4-ui/src/main/webapp/public/api'"
             Files.delete(targetWindupJS);
 
             Files.copy(sourceWindupJS, targetWindupJS);
 
             // Clean
+            Files.delete(sourceWindupJS);
             Files.delete(uiDirectory.resolve(UI_ZIP_FILENAME));
         } catch (IOException e) {
             throw new RuntimeException(e);

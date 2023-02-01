@@ -14,6 +14,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleProvider;
@@ -25,9 +26,11 @@ import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.PostReportPf4RenderingPhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
@@ -284,24 +287,45 @@ public class WindupProcessorImpl implements WindupProcessor {
             config.setRuleProviderFilter(providerFilter);
         }
 
+        NotPredicate skipReportsProviderFilter;
+
         Boolean skipReports = false;
         // if skipReportsRendering option is set filter rules in related phases
         if (config.getOptionMap().containsKey(SkipReportsRenderingOption.NAME)) {
             skipReports = (Boolean) config.getOptionMap().get(SkipReportsRenderingOption.NAME);
         }
         if (skipReports) {
-            NotPredicate skipReportsProviderFilter = new NotPredicate(
-                    new RuleProviderPhasePredicate(PreReportGenerationPhase.class, ReportGenerationPhase.class,
-                            ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class));
-            Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
-            Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
-            if (configuredProvider != null) {
-                providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
+            skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                    PreReportGenerationPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class,
+                    ReportPf4RenderingPhase.class, PostReportPf4RenderingPhase.class
+            ));
+        } else {
+            Boolean legacyReports = false;
+            if (config.getOptionMap().containsKey(LegacyReportsRenderingOption.NAME)) {
+                legacyReports = (Boolean) config.getOptionMap().get(LegacyReportsRenderingOption.NAME);
             }
 
-            LOG.info("Adding RuleProvider filter for skipping reports: " + providerFilter);
-            config.setRuleProviderFilter(providerFilter);
+            if (legacyReports) {
+                skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                        ReportPf4RenderingPhase.class,
+                        PostReportPf4RenderingPhase.class
+                ));
+            } else {
+                skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                        ReportRenderingPhase.class,
+                        PostReportRenderingPhase.class
+                ));
+            }
         }
+
+        Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
+        Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
+        if (configuredProvider != null) {
+            providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
+        }
+
+        config.setRuleProviderFilter(providerFilter);
+        LOG.info("Adding RuleProvider filter for skipping reports: " + providerFilter);
 
         return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }

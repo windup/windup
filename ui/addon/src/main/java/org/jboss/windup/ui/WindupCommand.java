@@ -41,6 +41,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -227,15 +228,16 @@ public class WindupCommand implements UICommand {
 
             uiProgressMonitor.done();
 
-            Path indexHtmlPathWindupUI = windupConfiguration.getOutputDirectory().resolve("windup-ui").resolve("index.html").normalize().toAbsolutePath();
-            String windupUIMsg = "[Tech preview] windup-ui created: " + indexHtmlPathWindupUI + System.getProperty("line.separator")
-                    + "              Access it at this URL: " + indexHtmlPathWindupUI.toUri();
+            Boolean legacyReports = (Boolean) windupConfiguration.getOptionMap().get(LegacyReportsRenderingOption.NAME);
 
-            Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-            String windupMsg = "Report created: " + indexHtmlPath + System.getProperty("line.separator")
-                    + "              Access it at this URL: " + indexHtmlPath.toUri();
-
-            return Results.success(windupUIMsg + System.getProperty("line.separator") + windupMsg);
+            Path indexHtmlPath;
+            if (legacyReports) {
+                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
+            } else {
+                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("pf4-reports").resolve("index.html").normalize().toAbsolutePath();
+            }
+            return Results.success("Report created: " + indexHtmlPath + System.getProperty("line.separator")
+                    + "              Access it at this URL: " + indexHtmlPath.toUri());
         }
     }
 
