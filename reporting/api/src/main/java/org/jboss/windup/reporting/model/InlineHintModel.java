@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
@@ -17,7 +18,7 @@ import java.util.List;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel {
+public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel, SourcesAndTargetsModel {
     String TYPE = "InlineHintModel";
     String TYPE_PREFIX = TYPE + "-";
     String TITLE = TYPE_PREFIX + "title";
