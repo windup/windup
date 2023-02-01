@@ -51,6 +51,9 @@
                         </goals>
                         <configuration>
                             <arguments>run build</arguments>
+                            <environmentVariables>
+                                <REACT_APP_THEME>${product-name}</REACT_APP_THEME>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>

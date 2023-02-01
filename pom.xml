@@ -575,6 +575,31 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>windup</id>
+            <properties>
+                <product-name>windup</product-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>tackle</id>
+            <properties>
+                <product-name>tackle</product-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>mtr</id>
+            <properties>
+                <product-name>mtr</product-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <properties>
+                <product-name>mta</product-name>
+            </properties>
+        </profile>
     </profiles>
 
 

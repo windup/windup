@@ -16,7 +16,7 @@ import {
 } from "@patternfly/react-core";
 import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 
-import avatarImage from "@app/images/avatar.svg";
+// import avatarImage from "@app/images/avatar.svg";
 
 import { AboutApp } from "./about";
 import { Theme } from "./theme-constants";
@@ -34,7 +34,7 @@ export const HeaderApp: React.FC = () => {
     <>
       <AboutApp isOpen={isAboutOpen} onClose={toggleIsAboutOpen} />
       <PageHeader
-        logo={<Brand src={Theme.logoNavbarSrc} alt="Brand"></Brand>}
+        logo={<Brand src={Theme.logoNavbarSrc} alt="Brand" />}
         logoProps={{
           onClick: () => navigate("/"),
         }}
@@ -75,7 +75,7 @@ export const HeaderApp: React.FC = () => {
                   ]}
                 />
               </PageHeaderToolsItem>
-              <Avatar src={avatarImage} alt="Avatar image" />
+              {/* <Avatar src={avatarImage} alt="Avatar image" /> */}
             </PageHeaderToolsGroup>
           </PageHeaderTools>
         }
