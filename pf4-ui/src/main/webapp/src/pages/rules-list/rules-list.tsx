@@ -474,7 +474,7 @@ export const RulesList: React.FC = () => {
                       setFilter("result", newElements);
                     }}
                     hasInlineFilter
-                    onClear={() => setFilter("status", [])}
+                    onClear={() => setFilter("result", [])}
                   />
                 </ToolbarFilter>
               </ToolbarGroup>
