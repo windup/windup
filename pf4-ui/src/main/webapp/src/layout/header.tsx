@@ -2,7 +2,6 @@ import React, { useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  Avatar,
   Brand,
   Button,
   ButtonVariant,
