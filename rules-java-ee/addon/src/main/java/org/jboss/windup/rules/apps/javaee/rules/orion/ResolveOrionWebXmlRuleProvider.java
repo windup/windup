@@ -54,7 +54,6 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         //mark as vendor extension; create reference to web.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT);
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
         for (Element orionWeb : $(doc).child("orion-web-app")) {
             String majorVersion = $(orionWeb).attr("schema-major-version");
@@ -65,7 +64,7 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
                 if (StringUtils.isNotBlank(minorVersion)) {
                     version = version + "." + minorVersion;
                 }
-                technologyTag.setVersion(version);
+                technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT, version);
             }
         }
 

@@ -106,7 +106,6 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
 
         classificationService.attachClassification(event, evaluationContext, xml, IssueCategoryRegistry.INFORMATION, "Web XML", " Web Application Deployment Descriptors");
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
         String webXmlVersion = getVersion(xml, doc);
@@ -118,9 +117,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         if (StringUtils.isNotBlank(webXmlVersion)) {
             webXmlVersion = StringUtils.replace(webXmlVersion, "_", ".");
             webXml.setSpecificationVersion(webXmlVersion);
-
-            // set the tag version
-            technologyTag.setVersion(webXmlVersion);
+            technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL, webXmlVersion);
         }
 
         String displayName = $(doc).child("display-name").text();
