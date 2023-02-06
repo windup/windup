@@ -55,18 +55,20 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
+        String version = null;
         for (Element orionWeb : $(doc).child("orion-web-app")) {
             String majorVersion = $(orionWeb).attr("schema-major-version");
             String minorVersion = $(orionWeb).attr("schema-minor-version");
 
             if (StringUtils.isNotBlank(majorVersion)) {
-                String version = majorVersion;
+                version = majorVersion;
                 if (StringUtils.isNotBlank(minorVersion)) {
                     version = version + "." + minorVersion;
                 }
-                technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT, version);
             }
         }
+        if (!StringUtils.isBlank(version)) technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT, version);
+        else technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT);
 
         for (Element resourceRef : $(doc).find("resource-ref-mapping").get()) {
             String jndiLocation = $(resourceRef).attr("location");
