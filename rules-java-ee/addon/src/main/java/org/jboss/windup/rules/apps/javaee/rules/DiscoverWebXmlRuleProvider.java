@@ -118,6 +118,8 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
             webXmlVersion = StringUtils.replace(webXmlVersion, "_", ".");
             webXml.setSpecificationVersion(webXmlVersion);
             technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL, webXmlVersion);
+        } else {
+            technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         }
 
         String displayName = $(doc).child("display-name").text();
