@@ -115,8 +115,7 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
             classificationService.attachClassification(event, context, processDefinitionImage, "JBPM Process Image", "JBPM 3 Process Image.");
 
             TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-            TechnologyTagModel techTag = technologyTagService.addTagToFileModel(processDefinitionImage, "JBoss Process Image", TechnologyTagLevel.IMPORTANT);
-            techTag.setVersion("3");
+            technologyTagService.addTagToFileModel(processDefinitionImage, "JBoss Process Image", TechnologyTagLevel.IMPORTANT, "3");
         }
     }
 }

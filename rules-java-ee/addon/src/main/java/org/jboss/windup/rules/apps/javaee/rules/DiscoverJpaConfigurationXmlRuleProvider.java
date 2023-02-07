@@ -74,12 +74,8 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         JPAEntityService jpaEntityService = new JPAEntityService(graphContext);
 
         TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlFileModel, TECH_TAG, TECH_TAG_LEVEL);
-
         String version = $(doc).attr("version");
-        if (StringUtils.isNotBlank(version)) {
-            technologyTag.setVersion(version);
-        }
+        technologyTagService.addTagToFileModel(xmlFileModel, TECH_TAG, TECH_TAG_LEVEL, version);
 
         // check the root XML node.
         JPAConfigurationFileModel jpaConfigurationModel = jpaConfigurationFileService.addTypeToModel(xmlFileModel);
