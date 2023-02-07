@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Comparator;
 
 /**
@@ -16,6 +18,9 @@ public class DefaultTechnologyTagComparator implements Comparator<TechnologyTagM
         int diff = level1.ordinal() - level2.ordinal();
         if (diff == 0) {
             diff = o1.getName().compareTo(o2.getName());
+            if (diff == 0) {
+                diff = StringUtils.compare(o1.getVersion(), o2.getVersion());
+            }
         }
         return diff;
     }

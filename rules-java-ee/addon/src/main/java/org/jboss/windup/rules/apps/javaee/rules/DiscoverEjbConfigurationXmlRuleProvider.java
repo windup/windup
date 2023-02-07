@@ -292,9 +292,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc) {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
         classificationService.attachClassification(event, context, xmlModel, IssueCategoryRegistry.INFORMATION, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
+        String version;
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null) {
             // check doctype.
@@ -302,15 +302,13 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 // move to next document.
                 return;
             }
-            String version = processDoctypeVersion(xmlModel.getDoctype());
-            extractMetadata(event, context, xmlModel, doc, version);
+            version = processDoctypeVersion(xmlModel.getDoctype());
         } else {
             String namespace = $(doc).find("ejb-jar").namespaceURI();
             if (StringUtils.isBlank(namespace)) {
                 namespace = doc.getFirstChild().getNamespaceURI();
             }
-
-            String version = $(doc).attr("version");
+            version = $(doc).attr("version");
 
             // if the version attribute isn't found, then grab it from the XSD name if we can.
             if (StringUtils.isBlank(version)) {
@@ -321,12 +319,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 }
             }
 
-            if (StringUtils.isNotBlank(version)) {
-                technologyTag.setVersion(version);
-            }
-
-            extractMetadata(event, context, xmlModel, doc, version);
         }
+        technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL, version);
+        extractMetadata(event, context, xmlModel, doc, version);
     }
 
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xml, Document doc, String versionInformation) {
