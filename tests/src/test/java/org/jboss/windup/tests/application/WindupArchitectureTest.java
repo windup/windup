@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -151,6 +152,11 @@ public abstract class WindupArchitectureTest {
                 windupConfiguration.addDefaultUserLabelsDirectory(uRulesDir.toPath());
             }
         }
+
+        // This class is mainly used to test legacy reports hence
+        // Enabling legacy reports by default
+        windupConfiguration.setOptionValue(LegacyReportsRenderingOption.NAME, true);
+
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
