@@ -33,6 +33,7 @@ import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Or;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +50,9 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     @Override
     public ConditionBuilder when() {
-        return Query.fromType(NamespaceMetaModel.class).withProperty(NamespaceMetaModel.NAMESPACE_URI, "http://java.sun.com/xml/ns/persistence");
+        return Or.any(Query.fromType(NamespaceMetaModel.class).withProperty(NamespaceMetaModel.NAMESPACE_URI, "http://java.sun.com/xml/ns/persistence"),
+                Query.fromType(NamespaceMetaModel.class).withProperty(NamespaceMetaModel.NAMESPACE_URI, "http://xmlns.jcp.org/xml/ns/persistence"),
+                Query.fromType(NamespaceMetaModel.class).withProperty(NamespaceMetaModel.NAMESPACE_URI, "https://jakarta.ee/xml/ns/persistence"));
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, NamespaceMetaModel payload) {
