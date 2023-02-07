@@ -17,7 +17,7 @@ public class SourceModeTest extends AbstractBootstrapTestWithRules {
 
     @Test
     public void sourceMode() throws IOException {
-        bootstrap("--input", "../test-files/src_example",
+        bootstrap("--legacyReports", "--input", "../test-files/src_example",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",
@@ -30,7 +30,7 @@ public class SourceModeTest extends AbstractBootstrapTestWithRules {
 
     @Test
     public void shouldNotIncludeTargetFolderInAnalysis() throws IOException {
-        bootstrap("--input", "../test-files/src_example_with_target/project-with-target",
+        bootstrap("--legacyReports", "--input", "../test-files/src_example_with_target/project-with-target",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--target", "eap7",
                 "--sourceMode",

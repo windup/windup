@@ -60,7 +60,7 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
         try (GraphContext context = createGraphContext(outputPath)) {
             Map<String, Object> explodedAppOption = new HashMap<>();
             explodedAppOption.put(ExplodedAppInputOption.NAME, true);
-            super.runTest(context, Collections.singletonList(explodedAppDir.toString()), null, false, Collections.emptyList(),
+            super.runTest(context, true, Collections.singletonList(explodedAppDir.toString()), null, false, Collections.emptyList(),
                     Collections.emptyList(), explodedAppOption);
             validateJarDependencyGraphReport(context);
         } finally {

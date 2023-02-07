@@ -41,7 +41,7 @@ public class IgnoreJavaClassTest extends WindupArchitectureTest {
     @Test
     public void testIgnoreFiles() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
-            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false);
+            super.runTest(context, true, "../test-files/jee-example-app-1.0.0.ear", false);
             validateFilesWereIgnored(context, true);
         }
 

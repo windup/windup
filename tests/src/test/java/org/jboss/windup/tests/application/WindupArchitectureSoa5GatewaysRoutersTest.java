@@ -35,7 +35,7 @@ public class WindupArchitectureSoa5GatewaysRoutersTest extends WindupArchitectur
     @Test
     public void testRunWindupSourceMode() throws Exception {
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, "../test-files/soa/soa5_gateways_routers", true);
+            super.runTest(context, true, "../test-files/soa/soa5_gateways_routers", true);
         }
     }
 }

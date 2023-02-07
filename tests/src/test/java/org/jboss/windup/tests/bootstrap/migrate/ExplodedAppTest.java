@@ -23,7 +23,7 @@ public class ExplodedAppTest extends AbstractBootstrapTestWithRules {
 
         File output = tmp.newFolder("output");
 
-        bootstrap("--input", explodedAppDir.getAbsolutePath(),
+        bootstrap("--legacyReports", "--input", explodedAppDir.getAbsolutePath(),
                 "--output", output.getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",

@@ -40,7 +40,7 @@ public class WindupArchitectureSourceWithBadPOMTest extends WindupArchitectureTe
             // The test-files folder in the project root dir.
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, "../test-files/src_example_bad_maven", true);
+            super.runTest(context, true, "../test-files/src_example_bad_maven", true);
         }
     }
 }

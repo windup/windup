@@ -60,7 +60,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest {
         paths.add(path3);
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, paths, false);
+            super.runTest(context, true, paths, false);
             checkEJBDescriptors(context);
             checkWebXmls(context);
             validateApplicationList(context);

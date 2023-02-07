@@ -61,7 +61,7 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
         final String path = "../test-files/catchalltest";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, true);
+            super.runTest(context, true, path, true);
 
             validateReports(context);
         }

@@ -65,7 +65,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         final String includedPackage = "org.apache.wicket.application";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.emptyList());
+            super.runTest(context, true, path, null, false, Collections.singletonList(includedPackage), Collections.emptyList());
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, "");
         }
@@ -79,7 +79,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         final String includedPackage = "org.apache.wicket.application";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.singletonList(excludedPackage));
+            super.runTest(context, true, path, null, false, Collections.singletonList(includedPackage), Collections.singletonList(excludedPackage));
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, excludedPackage);
         }
@@ -101,7 +101,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         identifier.addIdentifier(testIdService);
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, Collections.singletonList(path), null, false,
+            super.runTest(context, true, Collections.singletonList(path), null, false,
                     Collections.emptyList(), Collections.emptyList(), Map.of("analyzeKnownLibraries", false));
 
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);

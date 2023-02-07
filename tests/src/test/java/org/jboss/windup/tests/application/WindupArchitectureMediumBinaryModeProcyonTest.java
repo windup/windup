@@ -17,7 +17,7 @@ public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchite
         try (GraphContext context = createGraphContext()) {
             Properties props = System.getProperties();
             props.setProperty("windup.decompiler", "Procyon");
-            super.runTest(context, path, false);
+            super.runTest(context, true, path, false);
             props.remove("windup.decompiler");
             allDecompiledFilesAreLinked(context);
         }

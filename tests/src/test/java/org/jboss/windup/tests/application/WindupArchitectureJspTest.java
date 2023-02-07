@@ -65,7 +65,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
         final String path = "../test-files/jsptest";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, false);
+            super.runTest(context, true, path, false);
 
             Assert.assertEquals(2, provider.taglibsFound);
             Assert.assertEquals(2, provider.enumerationRuleHitCount);

@@ -43,7 +43,7 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
     @Test
     public void testRunWindupTiny() throws Exception {
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, "../test-files/Windup1x-javaee-example-tiny.war", false);
+            super.runTest(context, true, "../test-files/Windup1x-javaee-example-tiny.war", false);
             validateArchiveHashes(context);
             validateJavaClassModels(context);
         }

@@ -73,7 +73,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     public void testRunWindupJEEExampleMode() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
+            super.runTest(context, true, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
 
             validateEjbXmlReferences(context);
             validateReports(context);
@@ -86,7 +86,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     public void testTechReportFrameworksWar() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
+            super.runTest(context, true, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
             validateTechReportFrameworksWar(context);
             validateTechReportPointsCount(context);
         }

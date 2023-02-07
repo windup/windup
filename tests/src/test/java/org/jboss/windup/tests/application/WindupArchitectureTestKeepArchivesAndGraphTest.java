@@ -51,7 +51,7 @@ public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchit
         final Path outputPath = getDefaultPath();
 
         try (GraphContext context = createGraphContext(outputPath)) {
-            super.runTest(context, path, false, Collections.singletonList("filter.out.everything"));
+            super.runTest(context, true, path, false, Collections.singletonList("filter.out.everything"));
         }
         // check if archives are still there
         Path archivesPath = outputPath.resolve("archives");
@@ -67,7 +67,7 @@ public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchit
         try (GraphContext context = createGraphContext(outputPath)) {
             Map<String, Object> keepOption = new HashMap<>();
             keepOption.put(KeepWorkDirsOption.NAME, true);
-            super.runTest(context, Collections.singletonList(path), null, false, Collections.singletonList("filter.out.everything"),
+            super.runTest(context, true, Collections.singletonList(path), null, false, Collections.singletonList("filter.out.everything"),
                     Collections.singletonList("filter.out.everything"), keepOption);
         }
         // check if archives are still there
