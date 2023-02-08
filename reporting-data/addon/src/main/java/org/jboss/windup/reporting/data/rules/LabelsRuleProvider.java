@@ -25,14 +25,16 @@ import java.util.stream.Collectors;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class LabelsApiRuleProvider extends AbstractApiRuleProvider {
+public class LabelsRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "labels";
 
     @Inject
     private LabelLoader labelLoader;
 
     @Override
     public String getBasePath() {
-        return "labels";
+        return PATH;
     }
 
     @Override

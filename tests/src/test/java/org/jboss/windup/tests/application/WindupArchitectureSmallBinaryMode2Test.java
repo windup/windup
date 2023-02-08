@@ -1,9 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -18,6 +14,10 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTest {

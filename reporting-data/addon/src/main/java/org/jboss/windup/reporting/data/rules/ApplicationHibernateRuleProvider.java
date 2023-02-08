@@ -34,9 +34,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationHibernateRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "hibernate";
+
     @Override
     public String getBasePath() {
-        return "hibernate";
+        return PATH;
     }
 
     @Override

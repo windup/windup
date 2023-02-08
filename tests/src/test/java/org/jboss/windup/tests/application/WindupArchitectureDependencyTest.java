@@ -1,5 +1,6 @@
 package org.jboss.windup.tests.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -7,6 +8,8 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.data.dto.ApplicationDependenciesDto;
+import org.jboss.windup.reporting.data.rules.DependenciesRuleProvider;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.testutil.html.TestDependencyReportUtil;
@@ -18,6 +21,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
@@ -30,6 +34,7 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
@@ -62,5 +67,30 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("example-0-1.0.0.jar",
                 "example-0:test:1.0.0", "9e9944d81b31d376643f100775aba3d0b83210ef", "1.0.0", "",
                 Arrays.asList(FOUND_PATH_LIB)));
+    }
+
+    @Test
+    public void testRunWindupDependencies_newReport() throws Exception {
+        try (GraphContext context = createGraphContext()) {
+            super.runTest(context, false, "../test-files/application-with-dependencies.ear", false, Collections.emptyList());
+
+            File dependenciesJson = new ReportService(context).getApiDataDirectory()
+                    .resolve(DependenciesRuleProvider.PATH + ".json")
+                    .toFile();
+
+            ApplicationDependenciesDto[] appDependenciesDtoList = new ObjectMapper().readValue(dependenciesJson, ApplicationDependenciesDto[].class);
+            Assert.assertEquals(1, appDependenciesDtoList.length);
+
+            Optional<ApplicationDependenciesDto.DependencyDto> dependencyDto = appDependenciesDtoList[0].dependencies.stream()
+                    .filter(dto -> dto.name.equals("example-0-1.0.0.jar"))
+                    .findFirst();
+
+            Assert.assertTrue(dependencyDto.isPresent());
+            Assert.assertEquals("example-0:test:1.0.0", dependencyDto.get().mavenIdentifier);
+            Assert.assertEquals("9e9944d81b31d376643f100775aba3d0b83210ef", dependencyDto.get().sha1);
+            Assert.assertEquals("1.0.0", dependencyDto.get().version);
+            Assert.assertNull(dependencyDto.get().organization);
+            Assert.assertTrue(dependencyDto.get().foundPaths.containsAll(Arrays.asList(FOUND_PATH_LIB)));
+        }
     }
 }

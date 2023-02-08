@@ -32,9 +32,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationTransactionsRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "transactions";
+
     @Override
     public String getBasePath() {
-        return "transactions";
+        return PATH;
     }
 
     @Override

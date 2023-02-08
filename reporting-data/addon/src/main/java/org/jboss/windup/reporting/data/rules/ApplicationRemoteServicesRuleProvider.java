@@ -33,9 +33,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "remote-services";
+
     @Override
     public String getBasePath() {
-        return "remote-services";
+        return PATH;
     }
 
     @Override

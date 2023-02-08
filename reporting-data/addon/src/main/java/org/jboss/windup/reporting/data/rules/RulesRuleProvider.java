@@ -21,11 +21,13 @@ import java.util.stream.Collectors;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class RulesApiRuleProvider extends AbstractApiRuleProvider {
+public class RulesRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "rules";
 
     @Override
     public String getBasePath() {
-        return "rules";
+        return PATH;
     }
 
     @Override

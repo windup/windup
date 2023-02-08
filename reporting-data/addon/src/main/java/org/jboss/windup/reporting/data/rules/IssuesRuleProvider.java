@@ -35,11 +35,13 @@ import java.util.stream.StreamSupport;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class IssuesApiRuleProvider extends AbstractApiRuleProvider {
+public class IssuesRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "issues";
 
     @Override
     public String getBasePath() {
-        return "issues";
+        return PATH;
     }
 
     @Override

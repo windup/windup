@@ -17,14 +17,16 @@ import java.util.stream.Collectors;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class TagsApiRuleProvider extends AbstractApiRuleProvider {
+public class TagsRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "tags";
 
     @Inject
     private TagServiceHolder tagServiceHolder;
 
     @Override
     public String getBasePath() {
-        return "tags";
+        return PATH;
     }
 
     @Override

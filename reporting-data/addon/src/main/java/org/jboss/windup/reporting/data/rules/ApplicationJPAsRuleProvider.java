@@ -37,9 +37,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "jpa";
+
     @Override
     public String getBasePath() {
-        return "jpa";
+        return PATH;
     }
 
     @Override

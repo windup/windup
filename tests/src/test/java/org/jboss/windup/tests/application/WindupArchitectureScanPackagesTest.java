@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -32,6 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {

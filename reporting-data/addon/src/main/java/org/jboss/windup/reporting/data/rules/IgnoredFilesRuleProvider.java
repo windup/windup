@@ -25,6 +25,8 @@ import java.util.Set;
 )
 public class IgnoredFilesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "ignored-files";
+
     @Override
     public String getBasePath() {
         return "ignored-files";

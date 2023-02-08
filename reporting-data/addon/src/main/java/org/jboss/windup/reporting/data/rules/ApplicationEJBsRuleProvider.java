@@ -35,9 +35,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "ejb";
+
     @Override
     public String getBasePath() {
-        return "ejb";
+        return PATH;
     }
 
     @Override

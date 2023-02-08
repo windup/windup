@@ -32,9 +32,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationSpringBeansRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "spring-beans";
+
     @Override
     public String getBasePath() {
-        return "spring-beans";
+        return PATH;
     }
 
     @Override

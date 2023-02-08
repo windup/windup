@@ -29,9 +29,11 @@ import java.util.stream.Collectors;
 )
 public class DependenciesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "dependencies";
+
     @Override
     public String getBasePath() {
-        return "dependencies";
+        return PATH;
     }
 
     @Override

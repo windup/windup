@@ -24,9 +24,11 @@ import java.util.Set;
 )
 public class PackageIncidentsRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "packages-incidents";
+
     @Override
     public String getBasePath() {
-        return "packages-incidents";
+        return PATH;
     }
 
     @Override

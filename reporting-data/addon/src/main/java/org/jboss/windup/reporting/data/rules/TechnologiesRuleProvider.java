@@ -36,13 +36,15 @@ import static java.util.stream.Collectors.toList;
 )
 public class TechnologiesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "technologies";
+
     public static final String MAPPING_OF_PLACEMENT_NAMES = "techReport:mappingOfPlacementTagNames";
 
     private static final Logger LOG = Logger.getLogger(TechnologiesRuleProvider.class.getName());
 
     @Override
     public String getBasePath() {
-        return "technologies";
+        return PATH;
     }
 
     @Override

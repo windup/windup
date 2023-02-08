@@ -1,12 +1,12 @@
 package org.jboss.windup.tests.application;
 
-import java.util.Properties;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Properties;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest {

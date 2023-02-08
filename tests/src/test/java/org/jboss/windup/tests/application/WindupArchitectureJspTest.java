@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -35,6 +29,11 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.nio.file.Path;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureJspTest extends WindupArchitectureTest {

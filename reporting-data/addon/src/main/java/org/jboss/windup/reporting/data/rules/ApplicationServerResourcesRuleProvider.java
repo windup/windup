@@ -32,9 +32,11 @@ import java.util.stream.StreamSupport;
 )
 public class ApplicationServerResourcesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "server-resources";
+
     @Override
     public String getBasePath() {
-        return "server-resources";
+        return PATH;
     }
 
     @Override

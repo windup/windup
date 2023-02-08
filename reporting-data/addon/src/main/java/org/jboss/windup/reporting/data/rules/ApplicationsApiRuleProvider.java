@@ -30,9 +30,11 @@ import java.util.stream.Collectors;
 )
 public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "applications";
+
     @Override
     public String getBasePath() {
-        return "applications";
+        return PATH;
     }
 
     @Override

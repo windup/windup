@@ -37,11 +37,13 @@ import java.util.stream.StreamSupport;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class ApplicationDetailsProvider extends AbstractApiRuleProvider {
+public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "applications-details";
 
     @Override
     public String getBasePath() {
-        return "applications-details";
+        return PATH;
     }
 
     @Override

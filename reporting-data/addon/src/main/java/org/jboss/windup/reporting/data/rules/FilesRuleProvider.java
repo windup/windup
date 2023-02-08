@@ -44,14 +44,16 @@ import java.util.stream.StreamSupport;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class FilesApiRuleProvider extends AbstractApiRuleProvider {
+public class FilesRuleProvider extends AbstractApiRuleProvider {
+
+    public static final String PATH = "files";
 
     @Inject
     private Imported<SourceTypeResolver> resolvers;
 
     @Override
     public String getBasePath() {
-        return "files";
+        return PATH;
     }
 
     @Override
@@ -143,7 +145,7 @@ public class FilesApiRuleProvider extends AbstractApiRuleProvider {
                 .map(SourceReportToProjectEdgeModel::getFullPath)
                 .collect(Collectors.joining(" | "));
         fileDto.prettyPath = sourceFile.getPrettyPath();
-        fileDto.prettyFileName = IssuesApiRuleProvider.getPrettyPathForFile(sourceFile);
+        fileDto.prettyFileName = IssuesRuleProvider.getPrettyPathForFile(sourceFile);
         fileDto.sourceType = resolveSourceType(sourceFile);
         fileDto.storyPoints = storyPoints;
         fileDto.hints = reportModel.getSourceFileModel().getInlineHints().stream()

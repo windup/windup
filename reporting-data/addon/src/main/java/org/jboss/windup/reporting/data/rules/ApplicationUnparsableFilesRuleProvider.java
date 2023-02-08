@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 )
 public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvider {
 
+    public static final String PATH = "unparsable-files";
+
     @Override
     public String getBasePath() {
         return "unparsable-files";

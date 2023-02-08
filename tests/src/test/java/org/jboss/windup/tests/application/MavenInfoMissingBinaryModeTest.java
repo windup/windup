@@ -2,8 +2,8 @@ package org.jboss.windup.tests.application;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Test;
@@ -16,6 +16,7 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest {
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
@@ -34,4 +35,8 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest {
         super.runTest(true, "../test-files/maven-info-missing.war", false);
     }
 
+    @Test
+    public void testRunMavenInfoMissing_newReports() throws Exception {
+        super.runTest(false, "../test-files/maven-info-missing.war", false);
+    }
 }
