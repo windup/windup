@@ -88,7 +88,9 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
 
                     EjbMessageDrivenModel mdb = (EjbMessageDrivenModel) beanBaseModel;
                     beanDto.beanDescriptorFileId = getDescriptorFileId(sourceReportService, mdb.getEjbDeploymentDescriptor());
-                    beanDto.jmsDestination = mdb.getDestination().getJndiLocation();
+                    if (mdb.getDestination() != null) {
+                        beanDto.jmsDestination = mdb.getDestination().getJndiLocation();
+                    }
                 } else if (beanBaseModel instanceof EjbEntityBeanModel) {
                     ApplicationEJBsDto.EntityBeanDto beanDto = new ApplicationEJBsDto.EntityBeanDto();
                     applicationEJBsDto.entityBeans.add(beanDto);
