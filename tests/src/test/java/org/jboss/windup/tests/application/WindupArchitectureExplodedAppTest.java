@@ -15,9 +15,11 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.testutil.html.TestDependencyGraphReportUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -29,10 +31,10 @@ import java.util.Optional;
 /**
  * @author <a href="mailto:marcorizzi82@gmail.com">Marco Rizzi</a>
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Arquillian.class)
 public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
 
-    final TemporaryFolder tmp = new TemporaryFolder();
     private static final String EXPLODED_APP_DIR = "exploded-app-directory";
 
     @Deployment
@@ -58,6 +60,7 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
 
     @Test
     public void testRunWindupExplodedApp() throws Exception {
+        final TemporaryFolder tmp = new TemporaryFolder();
         tmp.create();
         final File explodedAppDir = tmp.newFolder(EXPLODED_APP_DIR);
         ZipUtil.unzipToFolder(new File("../test-files/spring-small-example.war"), explodedAppDir);
@@ -89,6 +92,7 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
 
     @Test
     public void testRunWindupExplodedApp_newReports() throws Exception {
+        final TemporaryFolder tmp = new TemporaryFolder();
         tmp.create();
         final File explodedAppDir = tmp.newFolder(EXPLODED_APP_DIR);
         ZipUtil.unzipToFolder(new File("../test-files/spring-small-example.war"), explodedAppDir);
