@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.xml;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
@@ -33,6 +33,7 @@ import static org.joox.JOOX.$;
 public class TechnologyTagExistsHandler implements ElementHandler<TechnologyTagExists> {
     static final String ELEMENT_NAME = "technology-tag-exists";
     private static final String NAME = "technology-tag";
+    private static final String VERSION = "version";
 
     @Override
     public TechnologyTagExists processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
@@ -42,7 +43,9 @@ public class TechnologyTagExistsHandler implements ElementHandler<TechnologyTagE
         if (StringUtils.isBlank(technologyTagPattern)) {
             throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + NAME + "' attribute");
         }
-
-        return TechnologyTagExists.withName(technologyTagPattern).in(in);
+        final TechnologyTagExists technologyTagExists = TechnologyTagExists.withName(technologyTagPattern).in(in);
+        final String versionPattern = $(element).attr(VERSION);
+        if (StringUtils.isNotBlank(versionPattern)) technologyTagExists.withVersion(versionPattern);
+        return technologyTagExists;
     }
 }
