@@ -28,8 +28,8 @@ public class HibernateDialectDataSourceTypeResolver {
             return "Derby";
         } else if (StringUtils.contains(dialect, "Pointbase")) {
             return "Pointbase";
-        } else if (StringUtils.contains(dialect, "Postgres")) {
-            return "Postgres";
+        } else if (StringUtils.containsIgnoreCase(dialect, "PostgreSQL")) {
+            return "PostgreSQL";
         } else if (StringUtils.contains(dialect, "SQLServer")) {
             return "SQLServer";
         } else if (StringUtils.contains(dialect, "Sybase")) {
