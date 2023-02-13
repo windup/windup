@@ -1,5 +1,6 @@
 package org.jboss.windup.tests.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -14,6 +15,8 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
+import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -24,6 +27,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -34,6 +38,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureJspTest extends WindupArchitectureTest {
@@ -42,6 +48,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
@@ -59,6 +66,12 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
     @Inject
     private JspRulesProvider provider;
 
+    @Before
+    public void before() {
+        provider.taglibsFound = 0;
+        provider.enumerationRuleHitCount = 0;
+    }
+
     @Test
     public void testRunWindupJsp() throws Exception {
         final String path = "../test-files/jsptest";
@@ -71,6 +84,40 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
 
             validateReports(context);
             validateClassModels(context);
+        }
+    }
+
+    @Test
+    public void testRunWindupJsp_newReports() throws Exception {
+        final String path = "../test-files/jsptest";
+
+        try (GraphContext context = createGraphContext()) {
+            super.runTest(context, false, path, false);
+
+            Assert.assertEquals(2, provider.taglibsFound);
+            Assert.assertEquals(2, provider.enumerationRuleHitCount);
+
+            validateClassModels(context);
+
+            // Validate issues
+            File issuesJson = new ReportService(context).getApiDataDirectory()
+                    .resolve(IssuesRuleProvider.PATH + ".json")
+                    .toFile();
+
+            ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
+            Assert.assertEquals(1, appIssuesDtoList.length);
+
+            Optional<ApplicationIssuesDto.IssueDto> issueDto = appIssuesDtoList[0].issues.values().stream()
+                    .flatMap(Collection::stream)
+                    .filter(dto -> dto.name.equals("Other Taglib Import"))
+                    .findFirst();
+            Assert.assertTrue(issueDto.isPresent());
+
+            Optional<ApplicationIssuesDto.IssueFileDto> fileDto = issueDto.get().affectedFiles.stream()
+                    .flatMap(dto -> dto.files.stream())
+                    .filter(dto -> dto.fileName.equals("src/example-with-taglib.jsp"))
+                    .findFirst();
+            Assert.assertTrue(fileDto.isPresent());
         }
     }
 
