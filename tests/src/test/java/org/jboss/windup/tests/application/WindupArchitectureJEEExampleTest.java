@@ -285,7 +285,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "CXF", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "XFire", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis2", 1, 1));
-        //boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis", 2, 2));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis2-technology-tag", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis", 2, 2));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate OGM", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate", 2, 2));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "EclipseLink", 1, 1));

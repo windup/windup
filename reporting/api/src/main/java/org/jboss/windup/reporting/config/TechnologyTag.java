@@ -25,6 +25,7 @@ public class TechnologyTag extends ParameterizedIterationOperation<FileModel> {
     private static final Logger LOG = Logging.get(TechnologyTag.class);
 
     private final RegexParameterizedPatternBuilder nameBuilder;
+    private RegexParameterizedPatternBuilder version;
     private TechnologyTagLevel technologyTagLevel;
 
     private TechnologyTag(String tagName) {
@@ -38,6 +39,11 @@ public class TechnologyTag extends ParameterizedIterationOperation<FileModel> {
 
     public TechnologyTag withTechnologyTagLevel(TechnologyTagLevel technologyTagLevel) {
         this.technologyTagLevel = technologyTagLevel;
+        return this;
+    }
+
+    public TechnologyTag withVersion(String version) {
+        this.version = new RegexParameterizedPatternBuilder(version);
         return this;
     }
 
@@ -59,7 +65,11 @@ public class TechnologyTag extends ParameterizedIterationOperation<FileModel> {
         try {
             GraphContext graphContext = event.getGraphContext();
             TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
-            technologyTagService.addTagToFileModel(payload, this.nameBuilder.build(event, context), this.technologyTagLevel);
+            if (version != null) {
+                technologyTagService.addTagToFileModel(payload, this.nameBuilder.build(event, context), this.technologyTagLevel, version.build(event, context));
+            } else {
+                technologyTagService.addTagToFileModel(payload, this.nameBuilder.build(event, context), this.technologyTagLevel);
+            }
             LOG.info("TechnologyTag added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
         } finally {
             ExecutionStatistics.get().end("TechnologyTag.performParameterized");
@@ -70,18 +80,22 @@ public class TechnologyTag extends ParameterizedIterationOperation<FileModel> {
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("TechnologyTag.withName(").append(this.nameBuilder.toString()).append(")");
+        result.append(".withVersion(").append(this.version).append(")");
         result.append(".withTechnologyTagLevel(").append(this.technologyTagLevel).append(")");
         return result.toString();
     }
 
     @Override
     public Set<String> getRequiredParameterNames() {
-        return new HashSet<>(this.nameBuilder.getRequiredParameterNames());
+        final Set<String> parameters = new HashSet<>(nameBuilder.getRequiredParameterNames());
+        if (version != null) parameters.addAll(version.getRequiredParameterNames());
+        return parameters;
     }
 
     @Override
     public void setParameterStore(ParameterStore store) {
-        this.nameBuilder.setParameterStore(store);
+        nameBuilder.setParameterStore(store);
+        if (version != null) version.setParameterStore(store);
     }
 
 }

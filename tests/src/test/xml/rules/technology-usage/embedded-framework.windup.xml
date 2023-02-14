@@ -20,19 +20,22 @@
                 <classification title="Embedded framework - Apache Axis" category-id="optional" effort="0">
                     <description>The application embeds the Apache Axis framework.</description>
                 </classification>
-                <technology-tag level="INFORMATIONAL">Apache Axis (embedded)</technology-tag>
+                <technology-tag level="INFORMATIONAL" version="1">Apache Axis (embedded)</technology-tag>
             </perform>
         </rule>
         <rule id="embedded-framework-01010">
             <when>
-                <file filename="axis2{*}.jar"/>
+                <file filename="axis{version}{*}.jar"/>
             </when>
             <perform>
                 <classification title="Embedded framework - Apache Axis2" category-id="optional" effort="0">
                     <description>The application embeds the Apache Axis2 framework.</description>
                 </classification>
-                <technology-tag level="INFORMATIONAL">Apache Axis2 (embedded)</technology-tag>
+                <technology-tag level="INFORMATIONAL" version="{version}">Apache Axis (embedded)</technology-tag>
             </perform>
+            <where param="version">
+                <matches pattern="(2|3)" />
+            </where>
         </rule>
         <rule id="embedded-framework-01100">
             <when>
