@@ -176,7 +176,7 @@ export const EffortsSection: React.FC<IEffortsSectionProps> = ({
               padding={{
                 bottom: 40,
                 top: 20,
-                left: 40,
+                left: 60,
                 right: 0,
               }}
               height={300}

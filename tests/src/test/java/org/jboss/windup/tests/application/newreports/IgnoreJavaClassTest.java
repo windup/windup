@@ -1,5 +1,6 @@
-package org.jboss.windup.tests.application;
+package org.jboss.windup.tests.application.newreports;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -10,6 +11,10 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.reporting.data.dto.ApplicationIgnoredFilesDto;
+import org.jboss.windup.reporting.data.rules.IgnoredFilesRuleProvider;
+import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.tests.application.WindupArchitectureTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +24,11 @@ import java.io.File;
 @RunWith(Arquillian.class)
 public class IgnoreJavaClassTest extends WindupArchitectureTest {
 
-
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
@@ -41,10 +46,17 @@ public class IgnoreJavaClassTest extends WindupArchitectureTest {
     @Test
     public void testIgnoreFiles() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
-            super.runTest(context, true, "../test-files/jee-example-app-1.0.0.ear", false);
+            super.runTest(context, false, "../test-files/jee-example-app-1.0.0.ear", false);
             validateFilesWereIgnored(context, true);
-        }
 
+            File jsonFile = new ReportService(context).getApiDataDirectory()
+                    .resolve(IgnoredFilesRuleProvider.PATH + ".json")
+                    .toFile();
+
+            ApplicationIgnoredFilesDto[] dtoList = new ObjectMapper().readValue(jsonFile, ApplicationIgnoredFilesDto[].class);
+            Assert.assertEquals(1, dtoList.length);
+            Assert.assertEquals(0, dtoList[0].ignoredFiles.size());
+        }
     }
 
     private void validateFilesWereIgnored(GraphContext context, boolean wasIgnored) {

@@ -36,6 +36,10 @@ import { DependencyDto } from "@app/api/application-dependency";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useDependenciesQuery } from "@app/queries/dependencies";
 
+const areDependenciesEquals = (a: DependencyDto, b: DependencyDto) => {
+  return a.name === b.name && a.version === b.version && a.sha1 === b.sha1;
+};
+
 const DataKey = "DataKey";
 
 const columns: ICell[] = [
@@ -78,7 +82,28 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
 
   const dependencies = useMemo(() => {
     if (applicationId === ALL_APPLICATIONS_ID) {
-      return [...(allDependencies.data || [])].flatMap((e) => e.dependencies);
+      return [...(allDependencies.data || [])]
+        .flatMap((e) => e.dependencies)
+        .reduce((prev, current) => {
+          const duplicateDependency = prev.find((f) => {
+            return areDependenciesEquals(f, current);
+          });
+
+          if (duplicateDependency) {
+            return [
+              ...prev.filter((f) => !areDependenciesEquals(f, current)),
+              {
+                ...current,
+                foundPaths: [
+                  ...duplicateDependency.foundPaths,
+                  ...current.foundPaths,
+                ],
+              },
+            ];
+          } else {
+            return [...prev, current];
+          }
+        }, [] as DependencyDto[]);
     }
 
     return (
@@ -93,7 +118,7 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
     toggleItemSelected: toggleRowExpanded,
   } = useSelectionState<DependencyDto>({
     items: dependencies,
-    isEqual: (a, b) => a.name === b.name,
+    isEqual: areDependenciesEquals,
   });
 
   const {

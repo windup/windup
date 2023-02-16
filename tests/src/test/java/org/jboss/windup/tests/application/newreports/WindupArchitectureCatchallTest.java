@@ -1,13 +1,6 @@
-package org.jboss.windup.tests.application;
+package org.jboss.windup.tests.application.newreports;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -19,20 +12,31 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.data.dto.ApplicationDetailsDto;
+import org.jboss.windup.reporting.data.dto.FileDto;
+import org.jboss.windup.reporting.data.rules.ApplicationDetailsRuleProvider;
+import org.jboss.windup.reporting.data.rules.FilesRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
-import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
+import org.jboss.windup.tests.application.WindupArchitectureTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-/**
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- */
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RunWith(Arquillian.class)
 public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
 
@@ -40,6 +44,7 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
@@ -61,33 +66,45 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
         final String path = "../test-files/catchalltest";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, true, path, true);
-
+            super.runTest(context, false, path, true);
             validateReports(context);
         }
     }
 
-    /**
-     * Validate that the report pages were generated correctly
-     */
-    private void validateReports(GraphContext context) {
-        ReportService reportService = new ReportService(context);
-        ReportModel mainApplicationReportModel = getMainApplicationReport(context);
-        Path mainAppReport = reportService.getReportDirectory().resolve(mainApplicationReportModel.getReportFilename());
+    private void validateReports(GraphContext context) throws IOException {
+        File applicationDetailsJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationDetailsRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
-        ReportModel catchallApplicationReportModel = getMigrationIssuesReport(context);
-        Path catchallAppReport = reportService.getReportDirectory().resolve(catchallApplicationReportModel.getReportFilename());
+        ApplicationDetailsDto[] appDetailsDtoList = new ObjectMapper().readValue(applicationDetailsJson, ApplicationDetailsDto[].class);
+        Assert.assertEquals(1, appDetailsDtoList.length);
 
-        TestJavaApplicationOverviewUtil javaApplicationOverviewUtil = new TestJavaApplicationOverviewUtil();
-        javaApplicationOverviewUtil.loadPage(mainAppReport);
-        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithoutCatchallHits", 13);
-        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
-        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
+        FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);
+        Assert.assertTrue(filesDtoList.length > 1);
 
-        TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
-        migrationIssuesReportUtil.loadPage(catchallAppReport);
+        Optional<ApplicationDetailsDto.ApplicationFileDto> catchalltest = appDetailsDtoList[0].applicationFiles.stream()
+                .filter(dto -> dto.fileName.equals("catchalltest"))
+                .findFirst();
+        Assert.assertTrue(catchalltest.isPresent());
 
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("java.util.* found ", 7, 7, "Requires architectural decision or change", 49));
+        List<FileDto> filesDtoCollection = Arrays.asList(filesDtoList);
+        List<FileDto> childrenFiles = catchalltest.get().childrenFileIds.stream()
+                .map(childFileId -> filesDtoCollection.stream()
+                        .filter(fileDto -> fileDto.id.equals(childFileId)).findFirst().orElse(null)
+                ).collect(Collectors.toList());
+
+        boolean fileWithoutCatchallHits_storyPointsMatch = childrenFiles.stream()
+                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithoutCatchallHits"))
+                .allMatch(fileDto -> fileDto.storyPoints == 13);
+        boolean fileWithBoth_storyPointsMatch = childrenFiles.stream()
+                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithBoth"))
+                .allMatch(fileDto -> fileDto.storyPoints == 27);
+        boolean fileWithNoHintsRules_storyPointsMatch = childrenFiles.stream()
+                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithNoHintsRules"))
+                .allMatch(fileDto -> fileDto.storyPoints == 63);
+
+        Assert.assertTrue(fileWithoutCatchallHits_storyPointsMatch);
+        Assert.assertTrue(fileWithBoth_storyPointsMatch);
+        Assert.assertTrue(fileWithNoHintsRules_storyPointsMatch);
     }
 
     @Singleton

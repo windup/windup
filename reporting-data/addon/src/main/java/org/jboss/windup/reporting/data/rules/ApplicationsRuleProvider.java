@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.AllTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.graph.traversal.SharedLibsTraversalStrategy;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.data.dto.ApplicationDto;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
         phase = ReportPf4RenderingPhase.class,
         haltOnException = true
 )
-public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
+public class ApplicationsRuleProvider extends AbstractApiRuleProvider {
 
     public static final String PATH = "applications";
 
@@ -69,6 +70,16 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
 
                     int storyPoints = sumPoints(results);
 
+                    // Story points in shared archives
+                    SharedLibsTraversalStrategy sharedLibsTraversalStrategy = new SharedLibsTraversalStrategy();
+                    ProjectModelTraversal traversal = new ProjectModelTraversal(projectModel, sharedLibsTraversalStrategy);
+
+                    classificationEffortDetails = classificationService.getMigrationEffortByPoints(traversal, includeTags, excludeTags, issueCategories, true, false);
+                    hintEffortDetails = inlineHintService.getMigrationEffortByPoints(traversal, includeTags, excludeTags, issueCategories, true, false);
+                    results = sumMaps(classificationEffortDetails, hintEffortDetails);
+
+                    int storyPointsInSharedArchives = sumPoints(results);
+
                     // Incidents
                     Map<IssueCategoryModel, Integer> incidentsClassificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
                     Map<IssueCategoryModel, Integer> incidentsHintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, projectModelTraversal, includeTags, excludeTags, Collections.emptySet(), true);
@@ -100,6 +111,7 @@ public class ApplicationsApiRuleProvider extends AbstractApiRuleProvider {
                     applicationDto.isVirtual = isProjectVirtual;
                     applicationDto.tags = tags;
                     applicationDto.storyPoints = storyPoints;
+                    applicationDto.storyPointsInSharedArchives = !isProjectVirtual ? storyPointsInSharedArchives : 0;
                     applicationDto.incidents = incidents;
 
                     return applicationDto;

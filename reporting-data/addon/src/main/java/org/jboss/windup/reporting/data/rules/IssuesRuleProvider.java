@@ -113,7 +113,10 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
                     return issueData;
                 }).collect(Collectors.toList());
 
-                applicationIssuesDto.issues.put(key.toLowerCase().replaceAll("migration ", ""), value);
+                String category = key.toLowerCase().trim()
+                        .replaceAll("migration ", "")
+                        .replaceAll(" ", "-");
+                applicationIssuesDto.issues.put(category, value);
             }
 
             return applicationIssuesDto;

@@ -1,11 +1,6 @@
-package org.jboss.windup.tests.application;
+package org.jboss.windup.tests.application.newreports;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -20,6 +15,8 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
+import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -28,13 +25,23 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
+import org.jboss.windup.tests.application.WindupArchitectureTest;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureJspTest extends WindupArchitectureTest {
@@ -43,6 +50,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
             @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting-data"),
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
@@ -65,7 +73,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
         final String path = "../test-files/jsptest";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, true, path, false);
+            super.runTest(context, false, path, false);
 
             Assert.assertEquals(2, provider.taglibsFound);
             Assert.assertEquals(2, provider.enumerationRuleHitCount);
@@ -117,14 +125,31 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
     /**
      * Validate that the report pages were generated correctly
      */
-    private void validateReports(GraphContext context) {
-        ReportService reportService = new ReportService(context);
-        ReportModel reportModel = super.getMainApplicationReport(context);
-        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
+    private void validateReports(GraphContext context) throws IOException {
+        Assert.assertEquals(2, provider.taglibsFound);
+        Assert.assertEquals(2, provider.enumerationRuleHitCount);
 
-        TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
-        util.loadPage(appReportPath);
-        util.checkFilePathAndIssues("jsptest", "src/example-with-taglib.jsp", "Other Taglib Import");
+        validateClassModels(context);
+
+        // Validate issues
+        File issuesJson = new ReportService(context).getApiDataDirectory()
+                .resolve(IssuesRuleProvider.PATH + ".json")
+                .toFile();
+
+        ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
+        Assert.assertEquals(1, appIssuesDtoList.length);
+
+        Optional<ApplicationIssuesDto.IssueDto> issueDto = appIssuesDtoList[0].issues.values().stream()
+                .flatMap(Collection::stream)
+                .filter(dto -> dto.name.equals("Other Taglib Import"))
+                .findFirst();
+        Assert.assertTrue(issueDto.isPresent());
+
+        Optional<ApplicationIssuesDto.IssueFileDto> fileDto = issueDto.get().affectedFiles.stream()
+                .flatMap(dto -> dto.files.stream())
+                .filter(dto -> dto.fileName.equals("src/example-with-taglib.jsp"))
+                .findFirst();
+        Assert.assertTrue(fileDto.isPresent());
     }
 
     @Singleton

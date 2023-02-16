@@ -131,8 +131,8 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
 
         Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(storyPointsTraversal, Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), false, false);
         Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(storyPointsTraversal, Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), false, false);
-        Map<Integer, Integer> results = ApplicationsApiRuleProvider.sumMaps(classificationEffortDetails, hintEffortDetails);
-        int storyPoints = ApplicationsApiRuleProvider.sumPoints(results);
+        Map<Integer, Integer> results = ApplicationsRuleProvider.sumMaps(classificationEffortDetails, hintEffortDetails);
+        int storyPoints = ApplicationsRuleProvider.sumPoints(results);
 
         // Issues
         SourceReportService sourceReportService = new SourceReportService(context);

@@ -74,7 +74,7 @@ export const IssueOverview: React.FC<IIssueOverviewProps> = ({
                 <CardBody>
                   <SimpleMarkdown
                     children={getMarkdown(
-                      affectedFile.description,
+                      affectedFile.description || "",
                       issue.links
                     )}
                   />

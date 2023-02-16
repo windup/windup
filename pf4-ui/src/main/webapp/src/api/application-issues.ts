@@ -41,7 +41,7 @@ export interface IssueDto {
 }
 
 export interface IssueAffectedFilesDto {
-  description: string;
+  description?: string;
   files: IssueFileDto[];
 }
 

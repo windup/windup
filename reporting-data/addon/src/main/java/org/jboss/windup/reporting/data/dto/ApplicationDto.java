@@ -9,5 +9,6 @@ public class ApplicationDto {
     public boolean isVirtual;
     public Set<String> tags;
     public int storyPoints;
+    public int storyPointsInSharedArchives;
     public Map<String, Integer> incidents;
 }

@@ -173,7 +173,7 @@ export const IncidentsSection: React.FC<IIncidentsSectionProps> = ({
               padding={{
                 bottom: 40,
                 top: 20,
-                left: 40,
+                left: 60,
                 right: 0,
               }}
               height={300}

@@ -70,7 +70,7 @@ interface CSVData {
   ruleId: string;
   issueCategory: string;
   issueTitle: string;
-  issueDescription: string;
+  issueDescription?: string;
   links: string;
   application: string;
   fileName: string;
@@ -431,7 +431,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
             (hint) => hint.ruleId === issue.ruleId
           );
 
-          const issueDescription = issueFiles.description.replaceAll('"', "'");
+          const issueDescription = issueFiles.description?.replaceAll('"', "'");
           const links =
             issue.links && issue.links.length > 0
               ? "[" +
