@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.ui</groupId>
         <artifactId>windup-ui-parent</artifactId>
-        <version>6.1.3.Final</version>
+        <version>6.1.4-SNAPSHOT</version>
     </parent>
     <artifactId>windup-ui-tests</artifactId>
     <name>Windup Engine - UI Tests</name>

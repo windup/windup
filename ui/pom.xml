@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>6.1.3.Final</version>
+        <version>6.1.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.ui</groupId>
