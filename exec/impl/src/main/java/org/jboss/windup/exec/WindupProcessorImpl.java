@@ -199,6 +199,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         configuration.getAllIgnoreDirectories().forEach(dir -> configurationModel.addUserIgnorePath(getFileModel(graphContext, dir)));
 
         configurationModel.setAnalyzeKnownLibraries(configuration.isAnalyseKnownLibrariesSet());
+        configurationModel.setSkipSourceCodeReportsRendering(configuration.getOptionValue(WindupConfigurationModel.SKIP_SOURCE_CODE_REPORTS_RENDERING));
 
         return configurationModel;
     }
