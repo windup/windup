@@ -61,13 +61,13 @@ public class UnparsablesReportTest extends WindupArchitectureTest {
         ApplicationUnparsableFilesDto[] dtoList = new ObjectMapper().readValue(jsonFile, ApplicationUnparsableFilesDto[].class);
         Assert.assertEquals(1, dtoList.length);
 
-        Optional<ApplicationUnparsableFilesDto.SubProjectDto> subProjectDto = dtoList[0].subProjects.stream()
-                .filter(dto -> dto.path.equals("jee-example-app-1.0.0.ear/jee-example-services.jar"))
+        Optional<ApplicationUnparsableFilesDto.SubProjectDto> subProjectDto = dtoList[0].getSubProjects().stream()
+                .filter(dto -> dto.getPath().equals("jee-example-app-1.0.0.ear/jee-example-services.jar"))
                 .findFirst();
         Assert.assertTrue(subProjectDto.isPresent());
 
-        List<String> filenames = subProjectDto.get().unparsableFiles.stream()
-                .map(unparsableFileDto -> unparsableFileDto.fileName)
+        List<String> filenames = subProjectDto.get().getUnparsableFiles().stream()
+                .map(unparsableFileDto -> unparsableFileDto.getFileName())
                 .collect(Collectors.toList());
         Assert.assertTrue(filenames.containsAll(Arrays.asList("NonParsable.class", "NonParsable.xml")));
         Assert.assertFalse(filenames.contains("unparsable.map"));

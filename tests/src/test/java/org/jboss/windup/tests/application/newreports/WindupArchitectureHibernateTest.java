@@ -164,24 +164,24 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest {
             String tag
     ) {
         // Verify app details exists
-        Optional<ApplicationDetailsDto.ApplicationFileDto> appFileDto = appDetailsDto.applicationFiles.stream()
-                .filter(dto -> dto.fileName.equals(filename))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> appFileDto = appDetailsDto.getApplicationFiles().stream()
+                .filter(dto -> dto.getFileName().equals(filename))
                 .findFirst();
         Assert.assertTrue(appFileDto.isPresent());
 
         // Get child files
-        List<FileDto> appChildrenFiles = appFileDto.get().childrenFileIds.stream()
+        List<FileDto> appChildrenFiles = appFileDto.get().getChildrenFileIds().stream()
                 .map(childFileId -> filesDtoCollection.stream()
-                        .filter(fileDto -> fileDto.id.equals(childFileId))
+                        .filter(fileDto -> fileDto.getId().equals(childFileId))
                         .findFirst()
                         .orElse(null)
                 ).collect(Collectors.toList());
 
         // Verify file and tag
         boolean pathAndTagExist = appChildrenFiles.stream()
-                .filter(fileDto -> fileDto.prettyFileName.equals(prettyFilename))
-                .allMatch(fileDto -> fileDto.tags.stream()
-                        .map(f -> f.name)
+                .filter(fileDto -> fileDto.getPrettyFileName().equals(prettyFilename))
+                .allMatch(fileDto -> fileDto.getTags().stream()
+                        .map(f -> f.getName())
                         .anyMatch(s -> s.equals(tag))
                 );
         Assert.assertTrue(pathAndTagExist);
@@ -194,18 +194,18 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest {
         ApplicationHibernateDto[] appHibernatesDtoList = new ObjectMapper().readValue(hibernateJson, ApplicationHibernateDto[].class);
         Assert.assertEquals(1, appHibernatesDtoList.length);
 
-        Assert.assertEquals(1, appHibernatesDtoList[0].hibernateConfigurations.size());
-        Assert.assertEquals(1, appHibernatesDtoList[0].hibernateConfigurations.get(0).sessionFactories.size());
+        Assert.assertEquals(1, appHibernatesDtoList[0].getHibernateConfigurations().size());
+        Assert.assertEquals(1, appHibernatesDtoList[0].getHibernateConfigurations().get(0).getSessionFactories().size());
 
-        Map<String, String> properties = appHibernatesDtoList[0].hibernateConfigurations.get(0).sessionFactories.get(0).properties;
+        Map<String, String> properties = appHibernatesDtoList[0].getHibernateConfigurations().get(0).getSessionFactories().get(0).getProperties();
         Assert.assertEquals("2", properties.get("connection.pool_size"));
         Assert.assertEquals("org.hibernate.cache.NoCacheProvider", properties.get("cache.provider_class"));
         Assert.assertEquals("org.hibernate.dialect.HSQLDialect", properties.get("dialect"));
         Assert.assertEquals("org.hibernate.context.ManagedSessionContext", properties.get("current_session_context_class"));
 
-        boolean entityItemExists = appHibernatesDtoList[0].entities.stream().anyMatch(entityDto -> entityDto.tableName.equals("Items") && entityDto.className.equals("org.hibernate.test.cache.Item"));
-        boolean entityPersonExists = appHibernatesDtoList[0].entities.stream().anyMatch(entityDto -> entityDto.tableName.equals("PERSON") && entityDto.className.equals("org.hibernate.tutorial.domain.Person"));
-        boolean entityEventsExists = appHibernatesDtoList[0].entities.stream().anyMatch(entityDto -> entityDto.tableName.equals("EVENTS") && entityDto.className.equals("org.hibernate.tutorial.domain.Event"));
+        boolean entityItemExists = appHibernatesDtoList[0].getEntities().stream().anyMatch(entityDto -> entityDto.getTableName().equals("Items") && entityDto.getClassName().equals("org.hibernate.test.cache.Item"));
+        boolean entityPersonExists = appHibernatesDtoList[0].getEntities().stream().anyMatch(entityDto -> entityDto.getTableName().equals("PERSON") && entityDto.getClassName().equals("org.hibernate.tutorial.domain.Person"));
+        boolean entityEventsExists = appHibernatesDtoList[0].getEntities().stream().anyMatch(entityDto -> entityDto.getTableName().equals("EVENTS") && entityDto.getClassName().equals("org.hibernate.tutorial.domain.Event"));
 
         Assert.assertTrue(entityItemExists);
         Assert.assertTrue(entityPersonExists);

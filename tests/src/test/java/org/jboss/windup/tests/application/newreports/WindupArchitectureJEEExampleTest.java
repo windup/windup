@@ -160,19 +160,19 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appDetailsDtoList.length);
 
         // Verify app details
-        Optional<ApplicationDetailsDto.ApplicationFileDto> jeeExample = appDetailsDtoList[0].applicationFiles.stream()
-                .filter(dto -> dto.rootPath.equals("jee-example-app-1.0.0.ear/jee-example-services.jar"))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> jeeExample = appDetailsDtoList[0].getApplicationFiles().stream()
+                .filter(dto -> dto.getRootPath().equals("jee-example-app-1.0.0.ear/jee-example-services.jar"))
                 .findFirst();
         Assert.assertTrue(jeeExample.isPresent());
 
-        Optional<FileDto> metaInfEjbJarXml = Stream.of(filesDtoList).filter(dto -> dto.prettyFileName.equals("META-INF/ejb-jar.xml"))
+        Optional<FileDto> metaInfEjbJarXml = Stream.of(filesDtoList).filter(dto -> dto.getPrettyFileName().equals("META-INF/ejb-jar.xml"))
                 .findFirst();
         Assert.assertTrue(metaInfEjbJarXml.isPresent());
 
         // Verify tags
-        boolean tagMatches = metaInfEjbJarXml.get().tags.stream()
-                .anyMatch(tagDto -> tagDto.name.equals("EJB XML") &&
-                        tagDto.version.equals("2.1")
+        boolean tagMatches = metaInfEjbJarXml.get().getTags().stream()
+                .anyMatch(tagDto -> tagDto.getName().equals("EJB XML") &&
+                        tagDto.getVersion().equals("2.1")
                 );
         Assert.assertTrue(tagMatches);
 
@@ -189,34 +189,34 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         ApplicationEJBsDto[] dtoList = new ObjectMapper().readValue(ejbFile, ApplicationEJBsDto[].class);
         Assert.assertEquals(1, dtoList.length);
 
-        Optional<ApplicationEJBsDto.MessageDrivenBeanDto> logEventSubscriber = dtoList[0].messageDrivenBeans.stream()
-                .filter(dto -> dto.beanName.equals("LogEventSubscriber"))
+        Optional<ApplicationEJBsDto.MessageDrivenBeanDto> logEventSubscriber = dtoList[0].getMessageDrivenBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("LogEventSubscriber"))
                 .findFirst();
         Assert.assertTrue(logEventSubscriber.isPresent());
-        Assert.assertEquals("LogEventSubscriber", logEventSubscriber.get().beanName);
-        Assert.assertEquals("com.acme.anvil.service.jms.LogEventSubscriber", logEventSubscriber.get().className);
+        Assert.assertEquals("LogEventSubscriber", logEventSubscriber.get().getBeanName());
+        Assert.assertEquals("com.acme.anvil.service.jms.LogEventSubscriber", logEventSubscriber.get().getClassName());
 
-        Optional<ApplicationEJBsDto.SessionBeanDto> itemLookupBean = dtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("ItemLookupBean"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> itemLookupBean = dtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("ItemLookupBean"))
                 .findFirst();
         Assert.assertTrue(itemLookupBean.isPresent());
-        Assert.assertEquals(ApplicationEJBsDto.SessionBeanType.STATELESS, itemLookupBean.get().type);
-        Assert.assertEquals("ItemLookupBean", itemLookupBean.get().beanName);
-        Assert.assertEquals("com.acme.anvil.service.ItemLookupBean", itemLookupBean.get().className);
-        Assert.assertNotNull(itemLookupBean.get().homeEJBFileId);
-        Assert.assertNotNull(itemLookupBean.get().localEJBFileId);
-        Assert.assertNotNull(itemLookupBean.get().remoteEJBFileId);
+        Assert.assertEquals(ApplicationEJBsDto.SessionBeanType.STATELESS, itemLookupBean.get().getType());
+        Assert.assertEquals("ItemLookupBean", itemLookupBean.get().getBeanName());
+        Assert.assertEquals("com.acme.anvil.service.ItemLookupBean", itemLookupBean.get().getClassName());
+        Assert.assertNotNull(itemLookupBean.get().getHomeEJBFileId());
+        Assert.assertNotNull(itemLookupBean.get().getLocalEJBFileId());
+        Assert.assertNotNull(itemLookupBean.get().getRemoteEJBFileId());
 
-        Optional<ApplicationEJBsDto.SessionBeanDto> productCatalogBean = dtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("ProductCatalogBean"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> productCatalogBean = dtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("ProductCatalogBean"))
                 .findFirst();
         Assert.assertTrue(productCatalogBean.isPresent());
-        Assert.assertEquals(ApplicationEJBsDto.SessionBeanType.STATELESS, productCatalogBean.get().type);
-        Assert.assertEquals("ProductCatalogBean", productCatalogBean.get().beanName);
-        Assert.assertEquals("com.acme.anvil.service.ProductCatalogBean", productCatalogBean.get().className);
-        Assert.assertNotNull(productCatalogBean.get().homeEJBFileId);
-        Assert.assertNotNull(productCatalogBean.get().localEJBFileId);
-        Assert.assertNotNull(productCatalogBean.get().remoteEJBFileId);
+        Assert.assertEquals(ApplicationEJBsDto.SessionBeanType.STATELESS, productCatalogBean.get().getType());
+        Assert.assertEquals("ProductCatalogBean", productCatalogBean.get().getBeanName());
+        Assert.assertEquals("com.acme.anvil.service.ProductCatalogBean", productCatalogBean.get().getClassName());
+        Assert.assertNotNull(productCatalogBean.get().getHomeEJBFileId());
+        Assert.assertNotNull(productCatalogBean.get().getLocalEJBFileId());
+        Assert.assertNotNull(productCatalogBean.get().getRemoteEJBFileId());
     }
 
     private void validateTechReportJEEExample(GraphContext context) throws IOException {
@@ -227,23 +227,23 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         ApplicationTechnologiesDto[] appTechnologiesDtoList = new ObjectMapper().readValue(technologiesFile, ApplicationTechnologiesDto[].class);
         Assert.assertEquals(1, appTechnologiesDtoList.length);
 
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("View").get("Web").size());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("View").get("Web").get("Web XML File").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Web").size());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Web").get("Web XML File").intValue());
 
-        Assert.assertEquals(2, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("EJB").size());
-        Assert.assertEquals(4, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("EJB").get("Stateless (SLSB)").intValue());
-        Assert.assertEquals(2, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("EJB").get("Message (MDB)").intValue());
+        Assert.assertEquals(2, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("EJB").size());
+        Assert.assertEquals(4, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("EJB").get("Stateless (SLSB)").intValue());
+        Assert.assertEquals(2, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("EJB").get("Message (MDB)").intValue());
 
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Sustain").get("Transactions").size());
-        Assert.assertEquals(3, appTechnologiesDtoList[0].technologyGroups.get("Sustain").get("Transactions").get("JTA").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Sustain").get("Transactions").size());
+        Assert.assertEquals(3, appTechnologiesDtoList[0].getTechnologyGroups().get("Sustain").get("Transactions").get("JTA").intValue());
 
-        Assert.assertEquals(0, appTechnologiesDtoList[0].technologyGroups.get("View").get("Rich").size());
-        Assert.assertEquals(0, appTechnologiesDtoList[0].technologyGroups.get("Sustain").get("Test").size());
-        Assert.assertEquals(0, appTechnologiesDtoList[0].technologyGroups.get("Sustain").get("Logging").size());
-        Assert.assertEquals(0, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Processing").size());
-        Assert.assertEquals(0, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Inversion of Control").size());
+        Assert.assertEquals(0, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Rich").size());
+        Assert.assertEquals(0, appTechnologiesDtoList[0].getTechnologyGroups().get("Sustain").get("Test").size());
+        Assert.assertEquals(0, appTechnologiesDtoList[0].getTechnologyGroups().get("Sustain").get("Logging").size());
+        Assert.assertEquals(0, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Processing").size());
+        Assert.assertEquals(0, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Inversion of Control").size());
 
-        Assert.assertTrue(appTechnologiesDtoList[0].technologyGroups.get("Store").values().stream().allMatch(Map::isEmpty));
+        Assert.assertTrue(appTechnologiesDtoList[0].getTechnologyGroups().get("Store").values().stream().allMatch(Map::isEmpty));
     }
 
     private void validateLabels(GraphContext context) throws IOException {
@@ -272,9 +272,9 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         Assert.assertEquals(3, labelsDtoList.length);
 
         boolean targetsExists = Stream.of(labelsDtoList)
-                .allMatch(labelDto -> labelDto.id.equals("target1") ||
-                        labelDto.id.equals("target2") ||
-                        labelDto.id.equals("target3")
+                .allMatch(labelDto -> labelDto.getId().equals("target1") ||
+                        labelDto.getId().equals("target2") ||
+                        labelDto.getId().equals("target3")
                 );
         Assert.assertTrue(targetsExists);
     }
@@ -287,7 +287,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         ApplicationDto[] applicationDtoList = new ObjectMapper().readValue(applicationsFile, ApplicationDto[].class);
         Assert.assertEquals(1, applicationDtoList.length);
 
-        boolean appContainsTags = applicationDtoList[0].tags.containsAll(Arrays.asList(
+        boolean appContainsTags = applicationDtoList[0].getTags().containsAll(Arrays.asList(
                 "Web XML 2.4",
                 "WebLogic EJB XML",
                 "WebLogic Web XML",
@@ -308,28 +308,28 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         ApplicationTechnologiesDto[] appTechnologiesDtoList = new ObjectMapper().readValue(technologiesFile, ApplicationTechnologiesDto[].class);
         Assert.assertEquals(1, appTechnologiesDtoList.length);
 
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("View").get("Web").size());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("View").get("Web").get("Web XML File").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Web").size());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Web").get("Web XML File").intValue());
 
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("View").get("Markup").size());
-        Assert.assertEquals(4, appTechnologiesDtoList[0].technologyGroups.get("View").get("Markup").get("HTML").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Markup").size());
+        Assert.assertEquals(4, appTechnologiesDtoList[0].getTechnologyGroups().get("View").get("Markup").get("HTML").intValue());
 
-        Assert.assertEquals(5, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").size());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").get("CXF").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").get("XFire").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").get("Axis2").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").get("Axis2-technology-tag").intValue());
-        Assert.assertEquals(2, appTechnologiesDtoList[0].technologyGroups.get("Connect").get("WebService").get("Axis").intValue());
+        Assert.assertEquals(5, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").size());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").get("CXF").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").get("XFire").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").get("Axis2").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").get("Axis2-technology-tag").intValue());
+        Assert.assertEquals(2, appTechnologiesDtoList[0].getTechnologyGroups().get("Connect").get("WebService").get("Axis").intValue());
 
-        Assert.assertEquals(3, appTechnologiesDtoList[0].technologyGroups.get("Store").get("Object Mapping").size());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Store").get("Object Mapping").get("Hibernate OGM").intValue());
-        Assert.assertEquals(2, appTechnologiesDtoList[0].technologyGroups.get("Store").get("Object Mapping").get("Hibernate").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Store").get("Object Mapping").get("EclipseLink").intValue());
+        Assert.assertEquals(3, appTechnologiesDtoList[0].getTechnologyGroups().get("Store").get("Object Mapping").size());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Store").get("Object Mapping").get("Hibernate OGM").intValue());
+        Assert.assertEquals(2, appTechnologiesDtoList[0].getTechnologyGroups().get("Store").get("Object Mapping").get("Hibernate").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Store").get("Object Mapping").get("EclipseLink").intValue());
 
-        Assert.assertEquals(3, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Rules & Processes").size());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Rules & Processes").get("Drools").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Rules & Processes").get("JBPM").intValue());
-        Assert.assertEquals(1, appTechnologiesDtoList[0].technologyGroups.get("Execute").get("Rules & Processes").get("iLog").intValue());
+        Assert.assertEquals(3, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Rules & Processes").size());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Rules & Processes").get("Drools").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Rules & Processes").get("JBPM").intValue());
+        Assert.assertEquals(1, appTechnologiesDtoList[0].getTechnologyGroups().get("Execute").get("Rules & Processes").get("iLog").intValue());
     }
 
 }

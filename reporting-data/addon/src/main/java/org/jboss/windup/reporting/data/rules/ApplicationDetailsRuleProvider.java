@@ -61,13 +61,13 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
 
             //
             ApplicationDetailsDto applicationDetailsDto = new ApplicationDetailsDto();
-            applicationDetailsDto.applicationId = projectModel.getId().toString();
-            applicationDetailsDto.messages = getMessages(context, projectModel);
-            applicationDetailsDto.applicationFiles = toFileDto(
+            applicationDetailsDto.setApplicationId(projectModel.getId().toString());
+            applicationDetailsDto.setMessages(getMessages(context, projectModel));
+            applicationDetailsDto.setApplicationFiles(toFileDto(
                     context,
                     new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy()),
                     sha1ToPathsMapper
-            );
+            ));
 
             result.add(applicationDetailsDto);
         }
@@ -102,8 +102,8 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
                 dupeCheck.add(line.getMessage());
 
                 ApplicationDetailsDto.MessageDto message = new ApplicationDetailsDto.MessageDto();
-                message.value = line.getMessage();
-                message.ruleId = line.getRuleID();
+                message.setValue(line.getMessage());
+                message.setRuleId(line.getRuleID());
                 result.add(message);
             }
         }
@@ -144,26 +144,27 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
 
         // Map values
         ApplicationDetailsDto.ApplicationFileDto fileDto = new ApplicationDetailsDto.ApplicationFileDto();
-        fileDto.fileId = projectModel.getRootFileModel().getId().toString();
-        fileDto.fileName = fileName;
-        fileDto.rootPath = rootPath;
-        fileDto.storyPoints = storyPoints;
-        fileDto.childrenFileIds = childrenFiles;
+        fileDto.setFileId(projectModel.getRootFileModel().getId().toString());
+        fileDto.setFileName(fileName);
+        fileDto.setRootPath(rootPath);
+        fileDto.setStoryPoints(storyPoints);
+        fileDto.setChildrenFileIds(childrenFiles);
 
-        fileDto.maven = new ApplicationDetailsDto.MavenDto();
-        fileDto.maven.mavenIdentifier = canonicalProject.getProperty("mavenIdentifier");
-        fileDto.maven.projectSite = canonicalProject.getURL();
-        fileDto.maven.name = canonicalProject.getName();
-        fileDto.maven.version = canonicalProject.getVersion();
-        fileDto.maven.description = canonicalProject.getDescription();
-        fileDto.maven.duplicatePaths = duplicatePaths.size() > 1 ? duplicatePaths : null;
+        fileDto.setMaven(new ApplicationDetailsDto.MavenDto());
+        fileDto.getMaven().setMavenIdentifier(canonicalProject.getProperty("mavenIdentifier"));
+        fileDto.getMaven().setProjectSite(canonicalProject.getURL());
+        fileDto.getMaven().setName(canonicalProject.getName());
+        fileDto.getMaven().setVersion(canonicalProject.getVersion());
+        fileDto.getMaven().setDescription(canonicalProject.getDescription());
+        fileDto.getMaven().setDuplicatePaths(duplicatePaths.size() > 1 ? duplicatePaths : null);
         if (canonicalProject.getRootFileModel() instanceof ArchiveModel) {
-            fileDto.maven.organizations = ((ArchiveModel) canonicalProject.getRootFileModel()).getOrganizationModels()
+            fileDto.getMaven().setOrganizations(((ArchiveModel) canonicalProject.getRootFileModel()).getOrganizationModels()
                     .stream().map(OrganizationModel::getName)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+            );
         }
         if (canonicalProject.getRootFileModel() instanceof IdentifiedArchiveModel) {
-            fileDto.maven.sha1 = canonicalProject.getRootFileModel().getSHA1Hash();
+            fileDto.getMaven().setSha1(canonicalProject.getRootFileModel().getSHA1Hash());
         }
 
         result.add(fileDto);

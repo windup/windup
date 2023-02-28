@@ -34,13 +34,14 @@ public class TagsRuleProvider extends AbstractApiRuleProvider {
         TagService tagService = tagServiceHolder.getTagService();
         return tagService.getAllTags().stream().map(tag -> {
                     TagDto tagDto = new TagDto();
-                    tagDto.name = tag.getName();
-                    tagDto.title = tag.getTitle();
-                    tagDto.isRoot = tag.isPrime();
-                    tagDto.isPseudo = tag.isPseudo();
-                    tagDto.parentsTagNames = tag.getParentTags().stream()
+                    tagDto.setName(tag.getName());
+                    tagDto.setTitle(tag.getTitle());
+                    tagDto.setRoot(tag.isPrime());
+                    tagDto.setPseudo(tag.isPseudo());
+                    tagDto.setParentsTagNames(tag.getParentTags().stream()
                             .map(Tag::getName)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toList())
+                    );
                     return tagDto;
                 })
                 .collect(Collectors.toList());

@@ -56,10 +56,10 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
             EjbBeanService ejbService = new EjbBeanService(context);
 
             ApplicationEJBsDto applicationEJBsDto = new ApplicationEJBsDto();
-            applicationEJBsDto.applicationId = application.getId().toString();
-            applicationEJBsDto.entityBeans = new ArrayList<>();
-            applicationEJBsDto.sessionBeans = new ArrayList<>();
-            applicationEJBsDto.messageDrivenBeans = new ArrayList<>();
+            applicationEJBsDto.setApplicationId(application.getId().toString());
+            applicationEJBsDto.setEntityBeans(new ArrayList<>());
+            applicationEJBsDto.setSessionBeans(new ArrayList<>());
+            applicationEJBsDto.setMessageDrivenBeans(new ArrayList<>());
 
             for (EjbBeanBaseModel beanBaseModel : ejbService.findAll()) {
                 if (!Iterables.contains(beanBaseModel.getApplications(), application)) {
@@ -67,81 +67,87 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
                 }
 
                 Consumer<ApplicationEJBsDto.BeanDto> setCommonBeanData = beanDto -> {
-                    beanDto.beanName = beanBaseModel.getBeanName();
+                    beanDto.setBeanName(beanBaseModel.getBeanName());
 
                     JavaClassModel clz = beanBaseModel.getEjbClass();
                     if (clz != null) {
-                        beanDto.className = beanBaseModel.getEjbClass().getQualifiedName();
-                        beanDto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
+                        beanDto.setClassName(beanBaseModel.getEjbClass().getQualifiedName());
+                        beanDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                 .map(sourceReportService::getSourceReportForFileModel)
                                 .filter(Objects::nonNull)
                                 .map(f -> f.getSourceFileModel().getId().toString())
                                 .findFirst()
-                                .orElse(null);
+                                .orElse(null)
+                        );
                     }
                 };
 
                 if (beanBaseModel instanceof EjbMessageDrivenModel) {
                     ApplicationEJBsDto.MessageDrivenBeanDto beanDto = new ApplicationEJBsDto.MessageDrivenBeanDto();
-                    applicationEJBsDto.messageDrivenBeans.add(beanDto);
+                    applicationEJBsDto.getMessageDrivenBeans().add(beanDto);
                     setCommonBeanData.accept(beanDto);
 
                     EjbMessageDrivenModel mdb = (EjbMessageDrivenModel) beanBaseModel;
-                    beanDto.beanDescriptorFileId = getDescriptorFileId(sourceReportService, mdb.getEjbDeploymentDescriptor());
+                    beanDto.setBeanDescriptorFileId(getDescriptorFileId(sourceReportService, mdb.getEjbDeploymentDescriptor()));
                     if (mdb.getDestination() != null) {
-                        beanDto.jmsDestination = mdb.getDestination().getJndiLocation();
+                        beanDto.setJmsDestination(mdb.getDestination().getJndiLocation());
                     }
                 } else if (beanBaseModel instanceof EjbEntityBeanModel) {
                     ApplicationEJBsDto.EntityBeanDto beanDto = new ApplicationEJBsDto.EntityBeanDto();
-                    applicationEJBsDto.entityBeans.add(beanDto);
+                    applicationEJBsDto.getEntityBeans().add(beanDto);
                     setCommonBeanData.accept(beanDto);
 
                     EjbEntityBeanModel entity = (EjbEntityBeanModel) beanBaseModel;
-                    beanDto.beanDescriptorFileId = getDescriptorFileId(sourceReportService, entity.getEjbDeploymentDescriptor());
-                    beanDto.tableName = entity.getTableName();
-                    beanDto.persistenceType = entity.getPersistenceType();
+                    beanDto.setBeanDescriptorFileId(getDescriptorFileId(sourceReportService, entity.getEjbDeploymentDescriptor()));
+                    beanDto.setTableName(entity.getTableName());
+                    beanDto.setPersistenceType(entity.getPersistenceType());
                 } else if (beanBaseModel instanceof EjbSessionBeanModel) {
                     ApplicationEJBsDto.SessionBeanDto beanDto = new ApplicationEJBsDto.SessionBeanDto();
-                    applicationEJBsDto.sessionBeans.add(beanDto);
+                    applicationEJBsDto.getSessionBeans().add(beanDto);
                     setCommonBeanData.accept(beanDto);
 
                     EjbSessionBeanModel sessionBean = (EjbSessionBeanModel) beanBaseModel;
-                    beanDto.beanDescriptorFileId = getDescriptorFileId(sourceReportService, sessionBean.getEjbDeploymentDescriptor());
-                    beanDto.type = "stateful".equalsIgnoreCase(beanBaseModel.getSessionType()) ? ApplicationEJBsDto.SessionBeanType.STATEFUL : ApplicationEJBsDto.SessionBeanType.STATELESS;
+                    beanDto.setBeanDescriptorFileId(getDescriptorFileId(sourceReportService, sessionBean.getEjbDeploymentDescriptor()));
+                    beanDto.setType("stateful".equalsIgnoreCase(beanBaseModel.getSessionType()) ? ApplicationEJBsDto.SessionBeanType.STATEFUL : ApplicationEJBsDto.SessionBeanType.STATELESS);
 
                     if (sessionBean.getEjbHome() != null) {
-                        beanDto.homeEJBFileId = StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbHome().getQualifiedName()).spliterator(), false)
+                        beanDto.setHomeEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbHome().getQualifiedName()).spliterator(), false)
                                 .map(sourceReportService::getSourceReportForFileModel)
                                 .filter(Objects::nonNull)
                                 .map(f -> f.getSourceFileModel().getId().toString())
                                 .findFirst()
-                                .orElse(null);
+                                .orElse(null)
+                        );
                     }
                     if (sessionBean.getEjbLocal() != null) {
-                        beanDto.localEJBFileId = StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbLocal().getQualifiedName()).spliterator(), false)
+                        beanDto.setLocalEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbLocal().getQualifiedName()).spliterator(), false)
                                 .map(sourceReportService::getSourceReportForFileModel)
                                 .filter(Objects::nonNull)
                                 .map(f -> f.getSourceFileModel().getId().toString())
                                 .findFirst()
-                                .orElse(null);
+                                .orElse(null)
+                        );
                     }
                     if (sessionBean.getEjbRemote() != null) {
-                        beanDto.remoteEJBFileId = StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbRemote().getQualifiedName()).spliterator(), false)
+                        beanDto.setRemoteEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbRemote().getQualifiedName()).spliterator(), false)
                                 .map(sourceReportService::getSourceReportForFileModel)
                                 .filter(Objects::nonNull)
                                 .map(f -> f.getSourceFileModel().getId().toString())
                                 .findFirst()
-                                .orElse(null);
+                                .orElse(null)
+                        );
                     }
 
-                    beanDto.jndiLocation = Stream.of(
+                    beanDto.setJndiLocation(Stream
+                            .of(
                                     sessionBean.getGlobalJndiReference() != null ? sessionBean.getGlobalJndiReference().getJndiLocation() : null,
                                     sessionBean.getModuleJndiReference() != null ? sessionBean.getModuleJndiReference().getJndiLocation() : null,
                                     sessionBean.getLocalJndiReference() != null ? sessionBean.getLocalJndiReference().getJndiLocation() : null
                             )
                             .filter(Objects::nonNull)
                             .findFirst()
-                            .orElse(null);
+                            .orElse(null)
+                    );
                 }
             }
 

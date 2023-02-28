@@ -13,14 +13,11 @@ import org.jboss.windup.reporting.data.dto.ApplicationDependenciesDto;
 import org.jboss.windup.reporting.data.rules.DependenciesRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.tests.application.WindupArchitectureTest;
-import org.jboss.windup.testutil.html.TestDependencyGraphReportUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.junit.Assert;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,17 +81,17 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appDependenciesDtoList.length);
 
         // Verify total number of dependencies
-        Assert.assertEquals(15, appDependenciesDtoList[0].dependencies.size());
+        Assert.assertEquals(15, appDependenciesDtoList[0].getDependencies().size());
 
         // Verify commons-logging-1.1.1.jar
-        Optional<ApplicationDependenciesDto.DependencyDto> dependencyDto = appDependenciesDtoList[0].dependencies.stream()
-                .filter(dto -> dto.name.equals("commons-logging-1.1.1.jar"))
+        Optional<ApplicationDependenciesDto.DependencyDto> dependencyDto = appDependenciesDtoList[0].getDependencies().stream()
+                .filter(dto -> dto.getName().equals("commons-logging-1.1.1.jar"))
                 .findFirst();
         Assert.assertTrue(dependencyDto.isPresent());
 
         // Verify standard-1.1.2.jar
-        dependencyDto = appDependenciesDtoList[0].dependencies.stream()
-                .filter(dto -> dto.name.equals("standard-1.1.2.jar"))
+        dependencyDto = appDependenciesDtoList[0].getDependencies().stream()
+                .filter(dto -> dto.getName().equals("standard-1.1.2.jar"))
                 .findFirst();
         Assert.assertTrue(dependencyDto.isPresent());
     }

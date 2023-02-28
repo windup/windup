@@ -1,19 +1,24 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationCompatibleFilesDto {
-    public String applicationId;
-    public List<ArtifactDto> artifacts;
+    private String applicationId;
+    private List<ArtifactDto> artifacts;
 
+    @Data
     public static class ArtifactDto {
-        public String name;
-        public List<FileDto> files;
+        private String name;
+        private List<FileDto> files;
     }
 
+    @Data
     public static class FileDto {
-        public String fileId;
-        public String fileName;
+        private String fileId;
+        private String fileName;
     }
 
 }

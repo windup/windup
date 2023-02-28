@@ -1,11 +1,14 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class TagDto {
-    public String name;
-    public String title;
-    public boolean isRoot;
-    public boolean isPseudo;
-    public List<String> parentsTagNames;
+    private String name;
+    private String title;
+    private boolean isRoot;
+    private boolean isPseudo;
+    private List<String> parentsTagNames;
 }

@@ -124,11 +124,11 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appSpringDtoList.length);
 
         // Assert bean
-        Optional<ApplicationSpringBeansDto.SpringBeanDto> springBeanDto = appSpringDtoList[0].beans.stream()
-                .filter(dto -> dto.beanName.equals("WEB-INF/spring-mvc-context.xml"))
+        Optional<ApplicationSpringBeansDto.SpringBeanDto> springBeanDto = appSpringDtoList[0].getBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("WEB-INF/spring-mvc-context.xml"))
                 .findFirst();
         Assert.assertTrue(springBeanDto.isPresent());
-        Assert.assertEquals("org.springframework.web.servlet.view.InternalResourceViewResolver", springBeanDto.get().className);
+        Assert.assertEquals("org.springframework.web.servlet.view.InternalResourceViewResolver", springBeanDto.get().getClassName());
     }
 
     private void validateAppDetails(GraphContext context) throws IOException {
@@ -146,19 +146,19 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
         Assert.assertTrue(appDetailsDtoList.length > 0);
 
         //
-        Optional<ApplicationDetailsDto.ApplicationFileDto> sectionDto = appDetailsDtoList[0].applicationFiles.stream()
-                .filter(dto -> dto.fileName.equals("spring-small-example.war"))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> sectionDto = appDetailsDtoList[0].getApplicationFiles().stream()
+                .filter(dto -> dto.getFileName().equals("spring-small-example.war"))
                 .findFirst();
         Assert.assertTrue(sectionDto.isPresent());
 
-        Optional<FileDto> childFile = sectionDto.get().childrenFileIds.stream()
-                .map(childFileId -> Arrays.stream(filesDtoList).filter(f -> f.id.equals(childFileId)).findFirst().orElse(null))
+        Optional<FileDto> childFile = sectionDto.get().getChildrenFileIds().stream()
+                .map(childFileId -> Arrays.stream(filesDtoList).filter(f -> f.getId().equals(childFileId)).findFirst().orElse(null))
                 .filter(Objects::nonNull)
-                .filter(dto -> dto.prettyFileName.equals("WEB-INF/spring-business-context.xml"))
+                .filter(dto -> dto.getPrettyFileName().equals("WEB-INF/spring-business-context.xml"))
                 .findFirst();
         Assert.assertTrue(childFile.isPresent());
-        Assert.assertTrue(childFile.get().tags.stream()
-                .map(f -> f.name)
+        Assert.assertTrue(childFile.get().getTags().stream()
+                .map(f -> f.getName())
                 .collect(Collectors.toList())
                 .contains("Spring XML")
         );

@@ -1,21 +1,26 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationTransactionsDto {
-    public String applicationId;
-    public List<TransactionDto> transactions;
+    private String applicationId;
+    private List<TransactionDto> transactions;
 
+    @Data
     public static class TransactionDto {
-        public String className;
-        public String classFileId;
-        public String methodName;
-        public List<StackTraceDto> stackTraces;
+        private String className;
+        private String classFileId;
+        private String methodName;
+        private List<StackTraceDto> stackTraces;
     }
 
+    @Data
     public static class StackTraceDto {
-        public String sql;
-        public int lineNumber;
+        private String sql;
+        private int lineNumber;
     }
 
 }

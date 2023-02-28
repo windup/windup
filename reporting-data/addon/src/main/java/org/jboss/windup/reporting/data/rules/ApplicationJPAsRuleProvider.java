@@ -62,10 +62,10 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationJPAsDto applicationJPAsDto = new ApplicationJPAsDto();
-            applicationJPAsDto.applicationId = application.getId().toString();
-            applicationJPAsDto.entities = new ArrayList<>();
-            applicationJPAsDto.namesQueries = new ArrayList<>();
-            applicationJPAsDto.jpaConfigurations = new ArrayList<>();
+            applicationJPAsDto.setApplicationId(application.getId().toString());
+            applicationJPAsDto.setEntities(new ArrayList<>());
+            applicationJPAsDto.setNamesQueries(new ArrayList<>());
+            applicationJPAsDto.setJpaConfigurations(new ArrayList<>());
 
             GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
@@ -83,27 +83,29 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
             StreamSupport.stream(jpaConfigurationWindupVertexListModel.spliterator(), false)
                     .forEach(jpaConfigurationFileModel -> {
                         ApplicationJPAsDto.JPAConfigurationDto jpaConfigurationDto = new ApplicationJPAsDto.JPAConfigurationDto();
-                        applicationJPAsDto.jpaConfigurations.add(jpaConfigurationDto);
+                        applicationJPAsDto.getJpaConfigurations().add(jpaConfigurationDto);
 
-                        jpaConfigurationDto.path = jpaConfigurationFileModel.getPrettyPath();
-                        jpaConfigurationDto.version = jpaConfigurationFileModel.getSpecificationVersion();
-                        jpaConfigurationDto.persistentUnits = jpaConfigurationFileModel.getPersistenceUnits().stream()
+                        jpaConfigurationDto.setPath(jpaConfigurationFileModel.getPrettyPath());
+                        jpaConfigurationDto.setVersion(jpaConfigurationFileModel.getSpecificationVersion());
+                        jpaConfigurationDto.setPersistentUnits(jpaConfigurationFileModel.getPersistenceUnits().stream()
                                 .map(persistenceUnitModel -> {
                                     ApplicationJPAsDto.PersistentUnitDto persistentUnitDto = new ApplicationJPAsDto.PersistentUnitDto();
-                                    persistentUnitDto.name = persistenceUnitModel.getName();
-                                    persistentUnitDto.properties = new HashMap<>(persistenceUnitModel.getProperties());
-                                    persistentUnitDto.datasources = persistenceUnitModel.getDataSources().stream()
+                                    persistentUnitDto.setName(persistenceUnitModel.getName());
+                                    persistentUnitDto.setProperties(new HashMap<>(persistenceUnitModel.getProperties()));
+                                    persistentUnitDto.setDatasources(persistenceUnitModel.getDataSources().stream()
                                             .map(dataSourceModel -> {
                                                 ApplicationJPAsDto.DatasourceDto datasourceDto = new ApplicationJPAsDto.DatasourceDto();
-                                                datasourceDto.jndiLocation = dataSourceModel.getJndiLocation();
-                                                datasourceDto.databaseTypeName = dataSourceModel.getDatabaseTypeName();
-                                                datasourceDto.isXA = Objects.equals(dataSourceModel.getXa(), true);
+                                                datasourceDto.setJndiLocation(dataSourceModel.getJndiLocation());
+                                                datasourceDto.setDatabaseTypeName(dataSourceModel.getDatabaseTypeName());
+                                                datasourceDto.setXA(Objects.equals(dataSourceModel.getXa(), true));
                                                 return datasourceDto;
                                             })
-                                            .collect(Collectors.toList());
+                                            .collect(Collectors.toList())
+                                    );
                                     return persistentUnitDto;
                                 })
-                                .collect(Collectors.toList());
+                                .collect(Collectors.toList())
+                        );
                     });
 
             // Entities
@@ -117,20 +119,21 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
             StreamSupport.stream(jpaEntityWindupVertexListModel.spliterator(), false)
                     .forEach(jpaEntityModel -> {
                         ApplicationJPAsDto.JPAEntityDto jpaEntityDto = new ApplicationJPAsDto.JPAEntityDto();
-                        applicationJPAsDto.entities.add(jpaEntityDto);
+                        applicationJPAsDto.getEntities().add(jpaEntityDto);
 
-                        jpaEntityDto.entityName = jpaEntityModel.getEntityName();
-                        jpaEntityDto.tableName = jpaEntityModel.getTableName();
+                        jpaEntityDto.setEntityName(jpaEntityModel.getEntityName());
+                        jpaEntityDto.setTableName(jpaEntityModel.getTableName());
 
                         JavaClassModel clz = jpaEntityModel.getJavaClass();
                         if (clz != null) {
-                            jpaEntityDto.className = clz.getQualifiedName();
-                            jpaEntityDto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
+                            jpaEntityDto.setClassName(clz.getQualifiedName());
+                            jpaEntityDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         }
                     });
 
@@ -145,10 +148,10 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
             StreamSupport.stream(jpaNamedQueryWindupVertexListModel.spliterator(), false)
                     .forEach(jpaNamedQueryModel -> {
                         ApplicationJPAsDto.JPANamedQueryDto jpaNamedQueryDto = new ApplicationJPAsDto.JPANamedQueryDto();
-                        applicationJPAsDto.namesQueries.add(jpaNamedQueryDto);
+                        applicationJPAsDto.getNamesQueries().add(jpaNamedQueryDto);
 
-                        jpaNamedQueryDto.queryName = jpaNamedQueryModel.getQueryName();
-                        jpaNamedQueryDto.query = jpaNamedQueryModel.getQuery();
+                        jpaNamedQueryDto.setQueryName(jpaNamedQueryModel.getQueryName());
+                        jpaNamedQueryDto.setQuery(jpaNamedQueryModel.getQuery());
                     });
 
             result.add(applicationJPAsDto);

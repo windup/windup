@@ -49,17 +49,17 @@ public class IgnoredFilesRuleProvider extends AbstractApiRuleProvider {
                 if (fileApplications.contains(application)) {
 
                     ApplicationIgnoredFilesDto.IgnoredFileDto ignoredFileDto = new ApplicationIgnoredFilesDto.IgnoredFileDto();
-                    ignoredFileDto.fileName = file.getFileName();
-                    ignoredFileDto.filePath = file.getFilePath();
-                    ignoredFileDto.reason = file.getIgnoredRegex();
+                    ignoredFileDto.setFileName(file.getFileName());
+                    ignoredFileDto.setFilePath(file.getFilePath());
+                    ignoredFileDto.setReason(file.getIgnoredRegex());
 
                     filesDto.add(ignoredFileDto);
                 }
             }
 
             ApplicationIgnoredFilesDto applicationIgnoredFilesDto = new ApplicationIgnoredFilesDto();
-            applicationIgnoredFilesDto.applicationId = application.getId().toString();
-            applicationIgnoredFilesDto.ignoredFiles = filesDto;
+            applicationIgnoredFilesDto.setApplicationId(application.getId().toString());
+            applicationIgnoredFilesDto.setIgnoredFiles(filesDto);
 
             result.add(applicationIgnoredFilesDto);
         }

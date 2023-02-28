@@ -1,6 +1,9 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
+@Data
 public class FileContentDto {
-    public String id;
-    public String content;
+    private String id;
+    private String content;
 }

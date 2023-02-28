@@ -1,25 +1,31 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class ApplicationHibernateDto {
-    public String applicationId;
-    public List<HibernateEntityDto> entities;
-    public List<HibernateConfigurationDto> hibernateConfigurations;
+    private String applicationId;
+    private List<HibernateEntityDto> entities;
+    private List<HibernateConfigurationDto> hibernateConfigurations;
 
+    @Data
     public static class HibernateEntityDto {
-        public String className;
-        public String classFileId;
-        public String tableName;
+        private String className;
+        private String classFileId;
+        private String tableName;
     }
 
+    @Data
     public static class HibernateConfigurationDto {
-        public String path;
-        public List<HibernateSessionFactoryDto> sessionFactories;
+        private String path;
+        private List<HibernateSessionFactoryDto> sessionFactories;
     }
 
+    @Data
     public static class HibernateSessionFactoryDto {
-        public Map<String, String> properties;
+        private Map<String, String> properties;
     }
 }

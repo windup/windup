@@ -1,42 +1,50 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class ApplicationJPAsDto {
-    public String applicationId;
-    public List<JPAEntityDto> entities;
-    public List<JPANamedQueryDto> namesQueries;
-    public List<JPAConfigurationDto> jpaConfigurations;
+    private String applicationId;
+    private List<JPAEntityDto> entities;
+    private List<JPANamedQueryDto> namesQueries;
+    private List<JPAConfigurationDto> jpaConfigurations;
 
+    @Data
     public static class JPAEntityDto {
-        public String entityName;
-        public String className;
-        public String classFileId;
-        public String tableName;
+        private String entityName;
+        private String className;
+        private String classFileId;
+        private String tableName;
     }
 
+    @Data
     public static class JPANamedQueryDto {
-        public String queryName;
-        public String query;
+        private String queryName;
+        private String query;
     }
 
+    @Data
     public static class JPAConfigurationDto {
-        public String path;
-        public String version;
-        public List<PersistentUnitDto> persistentUnits;
+        private String path;
+        private String version;
+        private List<PersistentUnitDto> persistentUnits;
     }
 
+    @Data
     public static class PersistentUnitDto {
-        public String name;
-        public Map<String, String> properties;
-        public List<DatasourceDto> datasources;
+        private String name;
+        private Map<String, String> properties;
+        private List<DatasourceDto> datasources;
     }
 
+    @Data
     public static class DatasourceDto {
-        public String jndiLocation;
-        public String databaseTypeName;
-        public boolean isXA;
+        private String jndiLocation;
+        private String databaseTypeName;
+        private boolean isXA;
     }
 
 }

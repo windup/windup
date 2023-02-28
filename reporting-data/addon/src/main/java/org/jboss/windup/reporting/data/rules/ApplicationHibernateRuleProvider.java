@@ -58,9 +58,9 @@ public class ApplicationHibernateRuleProvider extends AbstractApiRuleProvider {
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationHibernateDto applicationHibernateDto = new ApplicationHibernateDto();
-            applicationHibernateDto.applicationId = application.getId().toString();
-            applicationHibernateDto.entities = new ArrayList<>();
-            applicationHibernateDto.hibernateConfigurations = new ArrayList<>();
+            applicationHibernateDto.setApplicationId(application.getId().toString());
+            applicationHibernateDto.setEntities(new ArrayList<>());
+            applicationHibernateDto.setHibernateConfigurations(new ArrayList<>());
 
             GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
@@ -75,16 +75,17 @@ public class ApplicationHibernateRuleProvider extends AbstractApiRuleProvider {
             StreamSupport.stream(hibernateConfigurationWindupVertexListModel.spliterator(), false)
                     .forEach(jpaConfigurationFileModel -> {
                         ApplicationHibernateDto.HibernateConfigurationDto hibernateConfigurationDto = new ApplicationHibernateDto.HibernateConfigurationDto();
-                        applicationHibernateDto.hibernateConfigurations.add(hibernateConfigurationDto);
+                        applicationHibernateDto.getHibernateConfigurations().add(hibernateConfigurationDto);
 
-                        hibernateConfigurationDto.path = jpaConfigurationFileModel.getPrettyPath();
-                        hibernateConfigurationDto.sessionFactories = jpaConfigurationFileModel.getHibernateSessionFactories().stream()
+                        hibernateConfigurationDto.setPath(jpaConfigurationFileModel.getPrettyPath());
+                        hibernateConfigurationDto.setSessionFactories(jpaConfigurationFileModel.getHibernateSessionFactories().stream()
                                 .map(sessionFactoryModel -> {
                                     ApplicationHibernateDto.HibernateSessionFactoryDto hibernateSessionFactoryDto = new ApplicationHibernateDto.HibernateSessionFactoryDto();
-                                    hibernateSessionFactoryDto.properties = new HashMap<>(sessionFactoryModel.getSessionFactoryProperties());
+                                    hibernateSessionFactoryDto.setProperties(new HashMap<>(sessionFactoryModel.getSessionFactoryProperties()));
                                     return hibernateSessionFactoryDto;
                                 })
-                                .collect(Collectors.toList());
+                                .collect(Collectors.toList())
+                        );
                     });
 
             // Entities
@@ -98,19 +99,20 @@ public class ApplicationHibernateRuleProvider extends AbstractApiRuleProvider {
             StreamSupport.stream(hibernateEntityWindupVertexListModel.spliterator(), false)
                     .forEach(hibernateEntityModel -> {
                         ApplicationHibernateDto.HibernateEntityDto hibernateEntityDto = new ApplicationHibernateDto.HibernateEntityDto();
-                        applicationHibernateDto.entities.add(hibernateEntityDto);
+                        applicationHibernateDto.getEntities().add(hibernateEntityDto);
 
-                        hibernateEntityDto.tableName = hibernateEntityModel.getTableName();
+                        hibernateEntityDto.setTableName(hibernateEntityModel.getTableName());
 
                         JavaClassModel clz = hibernateEntityModel.getJavaClass();
                         if (clz != null) {
-                            hibernateEntityDto.className = clz.getQualifiedName();
-                            hibernateEntityDto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
+                            hibernateEntityDto.setClassName(clz.getQualifiedName());
+                            hibernateEntityDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         }
                     });
 

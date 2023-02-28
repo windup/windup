@@ -48,8 +48,8 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
             List<ApplicationDependenciesDto.DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>());
 
             ApplicationDependenciesDto applicationDependenciesDto = new ApplicationDependenciesDto();
-            applicationDependenciesDto.applicationId = projectModel.getId().toString();
-            applicationDependenciesDto.dependencies = dependencies;
+            applicationDependenciesDto.setApplicationId(projectModel.getId().toString());
+            applicationDependenciesDto.setDependencies(dependencies);
             result.add(applicationDependenciesDto);
         }
         return result;
@@ -115,14 +115,15 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
             // Generate DTO
             if (shouldDtoBeGenerated) {
                 ApplicationDependenciesDto.DependencyDto dependencyDto = new ApplicationDependenciesDto.DependencyDto();
-                dependencyDto.name = groupModel.getCanonicalProject().getRootFileModel().getFileName();
-                dependencyDto.mavenIdentifier = groupModel.getCanonicalProject().getProperty("mavenIdentifier");
-                dependencyDto.sha1 = archiveModel.getSHA1Hash();
-                dependencyDto.version = canonicalArchive.getProjectModel().getVersion();
-                dependencyDto.organization = canonicalArchive.getProjectModel().getOrganization();
-                dependencyDto.foundPaths = groupModel.getArchives().stream()
+                dependencyDto.setName(groupModel.getCanonicalProject().getRootFileModel().getFileName());
+                dependencyDto.setMavenIdentifier(groupModel.getCanonicalProject().getProperty("mavenIdentifier"));
+                dependencyDto.setSha1(archiveModel.getSHA1Hash());
+                dependencyDto.setVersion(canonicalArchive.getProjectModel().getVersion());
+                dependencyDto.setOrganization(canonicalArchive.getProjectModel().getOrganization());
+                dependencyDto.setFoundPaths(groupModel.getArchives().stream()
                         .map(DependencyReportToArchiveEdgeModel::getFullPath)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList())
+                );
                 result.add(dependencyDto);
             }
         }

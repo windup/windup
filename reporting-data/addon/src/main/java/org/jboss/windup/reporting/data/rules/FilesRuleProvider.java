@@ -87,10 +87,10 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
                 .forEach(fileDtoEntry -> {
                     FileContentDto contentDto = new FileContentDto();
 
-                    contentDto.id = fileDtoEntry.getKey().id;
-                    contentDto.content = fileDtoEntry.getValue();
+                    contentDto.setId(fileDtoEntry.getKey().getId());
+                    contentDto.setContent(fileDtoEntry.getValue());
 
-                    result.put(contentDto.id, contentDto);
+                    result.put(contentDto.getId(), contentDto);
                 });
 
         return result;
@@ -140,51 +140,57 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
         // Fill Data
         FileDto fileDto = new FileDto();
 
-        fileDto.id = sourceFile.getId().toString();
-        fileDto.fullPath = reportModel.getProjectEdges().stream()
+        fileDto.setId(sourceFile.getId().toString());
+        fileDto.setFullPath(reportModel.getProjectEdges().stream()
                 .map(SourceReportToProjectEdgeModel::getFullPath)
-                .collect(Collectors.joining(" | "));
-        fileDto.prettyPath = sourceFile.getPrettyPath();
-        fileDto.prettyFileName = IssuesRuleProvider.getPrettyPathForFile(sourceFile);
-        fileDto.sourceType = resolveSourceType(sourceFile);
-        fileDto.storyPoints = storyPoints;
-        fileDto.hints = reportModel.getSourceFileModel().getInlineHints().stream()
+                .collect(Collectors.joining(" | "))
+        );
+        fileDto.setPrettyPath(sourceFile.getPrettyPath());
+        fileDto.setPrettyFileName(IssuesRuleProvider.getPrettyPathForFile(sourceFile));
+        fileDto.setSourceType(resolveSourceType(sourceFile));
+        fileDto.setStoryPoints(storyPoints);
+        fileDto.setHints(reportModel.getSourceFileModel().getInlineHints().stream()
                 .map(inlineHintModel -> {
                     FileDto.HintDto hintDto = new FileDto.HintDto();
 
-                    hintDto.ruleId = inlineHintModel.getRuleID();
-                    hintDto.line = inlineHintModel.getLineNumber();
-                    hintDto.title = inlineHintModel.getTitle();
-                    hintDto.content = inlineHintModel.getHint();
-                    hintDto.links = inlineHintModel.getLinks().stream()
+                    hintDto.setRuleId(inlineHintModel.getRuleID());
+                    hintDto.setLine(inlineHintModel.getLineNumber());
+                    ;
+                    hintDto.setTitle(inlineHintModel.getTitle());
+                    hintDto.setContent(inlineHintModel.getHint());
+                    hintDto.setLinks(inlineHintModel.getLinks().stream()
                             .map(linkModel -> {
                                 ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
-                                linkDto.title = linkModel.getDescription();
-                                linkDto.href = linkModel.getLink();
+                                linkDto.setTitle(linkModel.getDescription());
+                                linkDto.setHref(linkModel.getLink());
                                 return linkDto;
                             })
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toList())
+                    );
 
                     return hintDto;
                 })
-                .collect(Collectors.toList());
-        fileDto.tags = StreamSupport.stream(technologyTagsForFile.spliterator(), false)
+                .collect(Collectors.toList())
+        );
+        fileDto.setTags(StreamSupport.stream(technologyTagsForFile.spliterator(), false)
                 .map(technologyTagModel -> {
                     FileDto.TagDto tagDto = new FileDto.TagDto();
-                    tagDto.name = technologyTagModel.getName();
-                    tagDto.version = technologyTagModel.getVersion();
-                    tagDto.level = technologyTagModel.getLevel();
+                    tagDto.setName(technologyTagModel.getName());
+                    tagDto.setVersion(technologyTagModel.getVersion());
+                    tagDto.setLevel(technologyTagModel.getLevel());
                     return tagDto;
                 })
-                .collect(Collectors.toList());
-        fileDto.classificationsAndHintsTags = Stream
+                .collect(Collectors.toList())
+        );
+        fileDto.setClassificationsAndHintsTags(Stream
                 .concat(
                         StreamSupport.stream(classificationModels.spliterator(), false),
                         StreamSupport.stream(hintModels.spliterator(), false)
                 )
                 .map(TaggableModel::getTags)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+        );
 
         return new AbstractMap.SimpleEntry<>(fileDto, reportModel.getSourceBody());
     }

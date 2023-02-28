@@ -1,8 +1,11 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.Map;
 
+@Data
 public class ApplicationTechnologiesDto {
-    public String applicationId;
-    public Map<String, Map<String, Map<String, Integer>>> technologyGroups;
+    private String applicationId;
+    private Map<String, Map<String, Map<String, Integer>>> technologyGroups;
 }

@@ -1,12 +1,15 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.Set;
 
+@Data
 public class LabelDto {
-    public String id;
-    public String name;
-    public String description;
-    public Set<String> supported;
-    public Set<String> unsuitable;
-    public Set<String> neutral;
+    private String id;
+    private String name;
+    private String description;
+    private Set<String> supported;
+    private Set<String> unsuitable;
+    private Set<String> neutral;
 }

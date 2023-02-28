@@ -1,38 +1,45 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationRemoteServicesDto {
-    public String applicationId;
-    public List<JaxRsServiceDto> jaxRsServices;
-    public List<JaxWsServiceDto> jaxWsServices;
-    public List<EjbRemoteServiceDto> ejbRemoteServices;
-    public List<RmiServiceDto> rmiServices;
+    private String applicationId;
+    private List<JaxRsServiceDto> jaxRsServices;
+    private List<JaxWsServiceDto> jaxWsServices;
+    private List<EjbRemoteServiceDto> ejbRemoteServices;
+    private List<RmiServiceDto> rmiServices;
 
+    @Data
     public static class JaxRsServiceDto {
-        public String path;
-        public String interfaceName;
-        public String interfaceFileId;
+        private String path;
+        private String interfaceName;
+        private String interfaceFileId;
     }
 
+    @Data
     public static class JaxWsServiceDto {
-        public String interfaceName;
-        public String interfaceFileId;
-        public String implementationName;
-        public String implementationFileId;
+        private String interfaceName;
+        private String interfaceFileId;
+        private String implementationName;
+        private String implementationFileId;
     }
 
+    @Data
     public static class EjbRemoteServiceDto {
-        public String interfaceName;
-        public String interfaceFileId;
-        public String implementationName;
-        public String implementationFileId;
+        private String interfaceName;
+        private String interfaceFileId;
+        private String implementationName;
+        private String implementationFileId;
     }
 
+    @Data
     public static class RmiServiceDto {
-        public String interfaceName;
-        public String interfaceFileId;
-        public String implementationName;
-        public String implementationFileId;
+        private String interfaceName;
+        private String interfaceFileId;
+        private String implementationName;
+        private String implementationFileId;
     }
 }

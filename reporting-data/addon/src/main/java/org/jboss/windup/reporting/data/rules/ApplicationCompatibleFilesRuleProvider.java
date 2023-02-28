@@ -54,11 +54,11 @@ public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvi
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationCompatibleFilesDto applicationCompatibleFilesDto = new ApplicationCompatibleFilesDto();
-            applicationCompatibleFilesDto.applicationId = application.getId().toString();
-            applicationCompatibleFilesDto.artifacts = new ArrayList<>();
+            applicationCompatibleFilesDto.setApplicationId(application.getId().toString());
+            applicationCompatibleFilesDto.setArtifacts(new ArrayList<>());
 
             ProjectModelTraversal traversal = new ProjectModelTraversal(application, new AllTraversalStrategy());
-            populateArrayWithArtifactDtos(context, traversal, applicationCompatibleFilesDto.artifacts);
+            populateArrayWithArtifactDtos(context, traversal, applicationCompatibleFilesDto.getArtifacts());
 
             result.add(applicationCompatibleFilesDto);
         }
@@ -79,24 +79,26 @@ public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvi
 
         // Dto
         ApplicationCompatibleFilesDto.ArtifactDto artifactDto = new ApplicationCompatibleFilesDto.ArtifactDto();
-        artifactDto.name = rootFileModel.getPrettyPath();
-        artifactDto.files = getAllCompatibleFiles(context, traversal)
+        artifactDto.setName(rootFileModel.getPrettyPath());
+        artifactDto.setFiles(getAllCompatibleFiles(context, traversal)
                 .stream()
                 .filter(fileModel -> fileModel.getPrettyPathWithinProject() != null && !fileModel.getPrettyPathWithinProject().isEmpty())
                 .map(fileModel -> {
                     ApplicationCompatibleFilesDto.FileDto fileDto = new ApplicationCompatibleFilesDto.FileDto();
-                    fileDto.fileName = getFilename(fileModel);
+                    fileDto.setFileName(getFilename(fileModel));
 
                     SourceReportModel sourceReportForFileModel = sourceReportService.getSourceReportForFileModel(fileModel);
                     if (sourceReportForFileModel != null) {
-                        fileDto.fileId = sourceReportForFileModel.getSourceFileModel()
+                        fileDto.setFileId(sourceReportForFileModel.getSourceFileModel()
                                 .getId()
-                                .toString();
+                                .toString()
+                        );
                     }
 
                     return fileDto;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
 
         accumulator.add(artifactDto);
 

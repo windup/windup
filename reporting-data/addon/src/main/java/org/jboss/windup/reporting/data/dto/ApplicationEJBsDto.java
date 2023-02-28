@@ -1,41 +1,48 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationEJBsDto {
-    public String applicationId;
-    public List<EntityBeanDto> entityBeans;
-    public List<SessionBeanDto> sessionBeans;
-    public List<MessageDrivenBeanDto> messageDrivenBeans;
+    private String applicationId;
+    private List<EntityBeanDto> entityBeans;
+    private List<SessionBeanDto> sessionBeans;
+    private List<MessageDrivenBeanDto> messageDrivenBeans;
 
     public enum SessionBeanType {
         STATELESS,
         STATEFUL
     }
 
+    @Data
     public static abstract class BeanDto {
-        public String beanName;
-        public String className;
+        private String beanName;
+        private String className;
 
-        public String classFileId;
-        public String beanDescriptorFileId;
+        private String classFileId;
+        private String beanDescriptorFileId;
     }
 
+    @Data
     public static class EntityBeanDto extends BeanDto {
-        public String tableName;
-        public String persistenceType;
+        private String tableName;
+        private String persistenceType;
     }
 
+    @Data
     public static class SessionBeanDto extends BeanDto {
-        public SessionBeanType type;
-        public String homeEJBFileId;
-        public String localEJBFileId;
-        public String remoteEJBFileId;
-        public String jndiLocation;
+        private SessionBeanType type;
+        private String homeEJBFileId;
+        private String localEJBFileId;
+        private String remoteEJBFileId;
+        private String jndiLocation;
     }
 
+    @Data
     public static class MessageDrivenBeanDto extends BeanDto {
-        public String jmsDestination;
+        private String jmsDestination;
     }
 
 }

@@ -1,42 +1,50 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class ApplicationIssuesDto {
-    public String applicationId;
-    public Map<String, List<IssueDto>> issues;
+    private String applicationId;
+    private Map<String, List<IssueDto>> issues;
 
+    @Data
     public static class IssueDto {
-        public String id;
-        public String name;
-        public String ruleId;
-        public EffortDto effort;
-        public int totalIncidents;
-        public int totalStoryPoints;
-        public List<LinkDto> links;
-        public List<IssueAffectedFilesDto> affectedFiles;
+        private String id;
+        private String name;
+        private String ruleId;
+        private EffortDto effort;
+        private int totalIncidents;
+        private int totalStoryPoints;
+        private List<LinkDto> links;
+        private List<IssueAffectedFilesDto> affectedFiles;
     }
 
+    @Data
     public static class EffortDto {
-        public String type;
-        public int points;
-        public String description;
+        private String type;
+        private int points;
+        private String description;
     }
 
+    @Data
     public static class LinkDto {
-        public String title;
-        public String href;
+        private String title;
+        private String href;
     }
 
+    @Data
     public static class IssueAffectedFilesDto {
-        public String description;
-        public List<IssueFileDto> files;
+        private String description;
+        private List<IssueFileDto> files;
     }
 
+    @Data
     public static class IssueFileDto {
-        public String fileId;
-        public String fileName;
-        public int occurrences;
+        private String fileId;
+        private String fileName;
+        private int occurrences;
     }
 }

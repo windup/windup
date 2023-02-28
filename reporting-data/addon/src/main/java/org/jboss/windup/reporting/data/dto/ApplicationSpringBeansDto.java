@@ -1,17 +1,21 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationSpringBeansDto {
-    public String applicationId;
-    public List<SpringBeanDto> beans;
+    private String applicationId;
+    private List<SpringBeanDto> beans;
 
+    @Data
     public static class SpringBeanDto {
-        public String beanName;
-        public String className;
+        private String beanName;
+        private String className;
 
-        public String classFileId;
-        public String beanDescriptorFileId;
+        private String classFileId;
+        private String beanDescriptorFileId;
     }
 
 }

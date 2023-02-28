@@ -55,13 +55,20 @@ public class WindupArchitectureSeamBookingSourceTest extends WindupArchitectureT
             AtomicBoolean foundJavaSource = new AtomicBoolean(false);
             AtomicBoolean foundMavenXML = new AtomicBoolean(false);
             technologyTagModels.forEach(technologyTagModel -> {
-                if ("EJB XML".equals(technologyTagModel.getName()) && "3.0".equals(technologyTagModel.getVersion())) foundEjbJar.set(true);
-                if ("JPA XML".equals(technologyTagModel.getName()) && "1.0".equals(technologyTagModel.getVersion())) foundJpaJar.set(true);
-                if ("Web XML".equals(technologyTagModel.getName()) && "2.5".equals(technologyTagModel.getVersion())) foundWebXMLJar.set(true);
-                if ("Properties".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null) foundProperties.set(true);
-                if ("JBoss EJB XML".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null) foundJBossEJBXML.set(true);
-                if ("Java Source".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null) foundJavaSource.set(true);
-                if ("Maven XML".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null) foundMavenXML.set(true);
+                if ("EJB XML".equals(technologyTagModel.getName()) && "3.0".equals(technologyTagModel.getVersion()))
+                    foundEjbJar.set(true);
+                if ("JPA XML".equals(technologyTagModel.getName()) && "1.0".equals(technologyTagModel.getVersion()))
+                    foundJpaJar.set(true);
+                if ("Web XML".equals(technologyTagModel.getName()) && "2.5".equals(technologyTagModel.getVersion()))
+                    foundWebXMLJar.set(true);
+                if ("Properties".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null)
+                    foundProperties.set(true);
+                if ("JBoss EJB XML".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null)
+                    foundJBossEJBXML.set(true);
+                if ("Java Source".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null)
+                    foundJavaSource.set(true);
+                if ("Maven XML".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null)
+                    foundMavenXML.set(true);
             });
             Assert.assertTrue("Not found EJB XML tag", foundEjbJar.get());
             Assert.assertTrue("Not found JPA XML tag", foundJpaJar.get());

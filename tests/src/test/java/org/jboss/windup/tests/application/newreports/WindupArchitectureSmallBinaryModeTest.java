@@ -58,7 +58,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
             ApplicationCompatibleFilesDto[] appCompatibleFilesDtoList = new ObjectMapper().readValue(appCompatibleFilesJson, ApplicationCompatibleFilesDto[].class);
             Assert.assertEquals(1, appCompatibleFilesDtoList.length);
-            Assert.assertTrue(appCompatibleFilesDtoList[0].artifacts.size() > 0);
+            Assert.assertTrue(appCompatibleFilesDtoList[0].getArtifacts().size() > 0);
 
             // Verify file has been identified
             File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
@@ -67,7 +67,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Assert.assertTrue(fileDtos.length > 1);
 
             Optional<FileDto> fileDto = Stream.of(fileDtos)
-                    .filter(f -> f.prettyFileName.equals("com.acme.anvil.service.ProductCatalogBean"))
+                    .filter(f -> f.getPrettyFileName().equals("com.acme.anvil.service.ProductCatalogBean"))
                     .findFirst();
             Assert.assertTrue(fileDto.isPresent());
 
@@ -77,9 +77,9 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             ApplicationDetailsDto[] applicationDetailsDtos = new ObjectMapper().readValue(appDetailsJson, ApplicationDetailsDto[].class);
             Assert.assertEquals(1, applicationDetailsDtos.length);
 
-            Optional<ApplicationDetailsDto.ApplicationFileDto> childAppDto = applicationDetailsDtos[0].applicationFiles.stream()
-                    .filter(applicationFileDto -> applicationFileDto.maven != null &&
-                            Objects.equals(applicationFileDto.maven.description, "Used only to support migration activities.")
+            Optional<ApplicationDetailsDto.ApplicationFileDto> childAppDto = applicationDetailsDtos[0].getApplicationFiles().stream()
+                    .filter(applicationFileDto -> applicationFileDto.getMaven() != null &&
+                            Objects.equals(applicationFileDto.getMaven().getDescription(), "Used only to support migration activities.")
                     )
                     .findFirst();
             Assert.assertTrue(childAppDto.isPresent());

@@ -64,10 +64,9 @@ public class ApplicationTransactionsRuleProvider extends AbstractApiRuleProvider
             ApplicationTransactionsDto applicationTransactionsDto = new ApplicationTransactionsDto();
             result.add(applicationTransactionsDto);
 
-            applicationTransactionsDto.applicationId = application.getId().toString();
-            applicationTransactionsDto.transactions = StreamSupport.stream(windupVertexListModel.spliterator(), false)
+            applicationTransactionsDto.setApplicationId(application.getId().toString());
+            applicationTransactionsDto.setTransactions(StreamSupport.stream(windupVertexListModel.spliterator(), false)
                     .map(divaContextModel -> {
-
                         ApplicationTransactionsDto.TransactionDto transactionDto = divaContextModel.getConstraints().stream()
                                 .map(divaConstraintModel -> {
                                     ApplicationTransactionsDto.TransactionDto dto = new ApplicationTransactionsDto.TransactionDto();
@@ -75,17 +74,18 @@ public class ApplicationTransactionsRuleProvider extends AbstractApiRuleProvider
                                     if (divaConstraintModel instanceof DivaEntryMethodModel) {
                                         DivaEntryMethodModel divaEntryMethodModel = (DivaEntryMethodModel) divaConstraintModel;
 
-                                        dto.methodName = divaEntryMethodModel.getMethodName();
+                                        dto.setMethodName(divaEntryMethodModel.getMethodName());
 
                                         JavaClassModel clz = divaEntryMethodModel.getJavaClass();
                                         if (clz != null) {
-                                            dto.className = clz.getQualifiedName();
-                                            dto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
+                                            dto.setClassName(clz.getQualifiedName());
+                                            dto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                                     .map(sourceReportService::getSourceReportForFileModel)
                                                     .filter(Objects::nonNull)
                                                     .map(f -> f.getSourceFileModel().getId().toString())
                                                     .findFirst()
-                                                    .orElse(null);
+                                                    .orElse(null)
+                                            );
                                         }
                                     }
 
@@ -94,25 +94,26 @@ public class ApplicationTransactionsRuleProvider extends AbstractApiRuleProvider
                                 .findFirst()
                                 .orElseGet(ApplicationTransactionsDto.TransactionDto::new);
 
-                        transactionDto.stackTraces = divaContextModel.getTransactions().stream()
+                        transactionDto.setStackTraces(divaContextModel.getTransactions().stream()
                                 .flatMap(divaTxModel -> divaTxModel.getOps().stream()
                                         .map(divaOpModel -> {
                                             ApplicationTransactionsDto.StackTraceDto dto = new ApplicationTransactionsDto.StackTraceDto();
                                             if (divaOpModel instanceof DivaSqlOpModel) {
                                                 DivaSqlOpModel op = (DivaSqlOpModel) divaOpModel;
-                                                dto.sql = op.getSql();
+                                                dto.setSql(op.getSql());
                                             }
 
-                                            dto.lineNumber = divaOpModel.getStackTrace().getLocation().getLineNumber();
+                                            dto.setLineNumber(divaOpModel.getStackTrace().getLocation().getLineNumber());
                                             return dto;
                                         })
                                 )
-                                .collect(Collectors.toList());
-
+                                .collect(Collectors.toList())
+                        );
 
                         return transactionDto;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+            );
         }
 
         return result;

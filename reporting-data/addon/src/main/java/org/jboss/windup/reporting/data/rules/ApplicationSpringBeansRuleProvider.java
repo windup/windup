@@ -53,49 +53,52 @@ public class ApplicationSpringBeansRuleProvider extends AbstractApiRuleProvider 
             SpringBeanService springBeanService = new SpringBeanService(context);
 
             ApplicationSpringBeansDto applicationSpringBeansDto = new ApplicationSpringBeansDto();
-            applicationSpringBeansDto.applicationId = application.getId().toString();
+            applicationSpringBeansDto.setApplicationId(application.getId().toString());
 
             Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(application);
             if (!models.iterator().hasNext()) {
-                applicationSpringBeansDto.beans = Collections.emptyList();
+                applicationSpringBeansDto.setBeans(Collections.emptyList());
                 continue;
             }
             GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
             WindupVertexListModel<SpringBeanModel> springBeanList = listService.create();
             springBeanList.addAll(models);
 
-            applicationSpringBeansDto.beans = StreamSupport.stream(springBeanList.spliterator(), false)
+            applicationSpringBeansDto.setBeans(StreamSupport.stream(springBeanList.spliterator(), false)
                     .map(springBeanModel -> {
                         ApplicationSpringBeansDto.SpringBeanDto springBeanDto = new ApplicationSpringBeansDto.SpringBeanDto();
-                        springBeanDto.beanName = springBeanModel.getSpringBeanName();
-                        springBeanDto.className = springBeanModel.getJavaClass().getQualifiedName();
+                        springBeanDto.setBeanName(springBeanModel.getSpringBeanName());
+                        springBeanDto.setClassName(springBeanModel.getJavaClass().getQualifiedName());
 
                         SpringConfigurationFileModel springConfiguration = springBeanModel.getSpringConfiguration();
                         if (springConfiguration != null) {
                             // If beanName could not be identified try to extract it from SpringConfiguration
-                            if (springBeanDto.beanName == null) {
-                                springBeanDto.beanName = springConfiguration.getPrettyPathWithinProject();
+                            if (springBeanDto.getBeanName() == null) {
+                                springBeanDto.setBeanName(springConfiguration.getPrettyPathWithinProject());
                             }
 
-                            springBeanDto.beanDescriptorFileId = sourceReportService.getSourceReportForFileModel(springConfiguration)
+                            springBeanDto.setBeanDescriptorFileId(sourceReportService.getSourceReportForFileModel(springConfiguration)
                                     .getSourceFileModel()
                                     .getId()
-                                    .toString();
+                                    .toString()
+                            );
                         }
 
                         JavaClassModel clz = springBeanModel.getJavaClass();
                         if (clz != null) {
-                            springBeanDto.classFileId = StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
+                            springBeanDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         }
 
                         return springBeanDto;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+            );
 
             result.add(applicationSpringBeansDto);
         }

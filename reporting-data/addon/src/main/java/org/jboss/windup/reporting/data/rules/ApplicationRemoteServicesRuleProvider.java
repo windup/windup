@@ -54,11 +54,11 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationRemoteServicesDto applicationRemoteServicesDto = new ApplicationRemoteServicesDto();
-            applicationRemoteServicesDto.applicationId = application.getId().toString();
-            applicationRemoteServicesDto.jaxRsServices = new ArrayList<>();
-            applicationRemoteServicesDto.jaxWsServices = new ArrayList<>();
-            applicationRemoteServicesDto.ejbRemoteServices = new ArrayList<>();
-            applicationRemoteServicesDto.rmiServices = new ArrayList<>();
+            applicationRemoteServicesDto.setApplicationId(application.getId().toString());
+            applicationRemoteServicesDto.setJaxRsServices(new ArrayList<>());
+            applicationRemoteServicesDto.setJaxWsServices(new ArrayList<>());
+            applicationRemoteServicesDto.setEjbRemoteServices(new ArrayList<>());
+            applicationRemoteServicesDto.setRmiServices(new ArrayList<>());
 
             List<RemoteServiceModel> remoteServiceModelList = remoteServices.findAll().stream()
                     .filter(remoteServiceModel -> remoteServiceModel.isAssociatedWithApplication(application))
@@ -74,79 +74,86 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
                             JaxRSWebServiceModel jaxRSWebServiceModel = (JaxRSWebServiceModel) remoteServiceModel;
 
                             ApplicationRemoteServicesDto.JaxRsServiceDto jaxRsServiceDto = new ApplicationRemoteServicesDto.JaxRsServiceDto();
-                            applicationRemoteServicesDto.jaxRsServices.add(jaxRsServiceDto);
+                            applicationRemoteServicesDto.getJaxRsServices().add(jaxRsServiceDto);
 
-                            jaxRsServiceDto.path = jaxRSWebServiceModel.getPath();
-                            jaxRsServiceDto.interfaceName = jaxRSWebServiceModel.getImplementationClass().getQualifiedName();
-                            jaxRsServiceDto.interfaceFileId = StreamSupport.stream(javaClassService.getJavaSource(jaxRSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
+                            jaxRsServiceDto.setPath(jaxRSWebServiceModel.getPath());
+                            jaxRsServiceDto.setInterfaceName(jaxRSWebServiceModel.getImplementationClass().getQualifiedName());
+                            jaxRsServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxRSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         } else if (remoteServiceModel instanceof JaxWSWebServiceModel) {
                             JaxWSWebServiceModel jaxWSWebServiceModel = (JaxWSWebServiceModel) remoteServiceModel;
 
                             ApplicationRemoteServicesDto.JaxWsServiceDto jaxWsServiceDto = new ApplicationRemoteServicesDto.JaxWsServiceDto();
-                            applicationRemoteServicesDto.jaxWsServices.add(jaxWsServiceDto);
+                            applicationRemoteServicesDto.getJaxWsServices().add(jaxWsServiceDto);
 
-                            jaxWsServiceDto.interfaceName = jaxWSWebServiceModel.getInterface().getQualifiedName();
-                            jaxWsServiceDto.interfaceFileId = StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getInterface().getQualifiedName()).spliterator(), false)
+                            jaxWsServiceDto.setInterfaceName(jaxWSWebServiceModel.getInterface().getQualifiedName());
+                            jaxWsServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getInterface().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
 
-                            jaxWsServiceDto.implementationName = jaxWSWebServiceModel.getImplementationClass().getQualifiedName();
-                            jaxWsServiceDto.implementationFileId = StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
+                            jaxWsServiceDto.setImplementationName(jaxWSWebServiceModel.getImplementationClass().getQualifiedName());
+                            jaxWsServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         } else if (remoteServiceModel instanceof EjbRemoteServiceModel) {
                             EjbRemoteServiceModel ejbRemoteServiceModel = (EjbRemoteServiceModel) remoteServiceModel;
 
                             ApplicationRemoteServicesDto.EjbRemoteServiceDto ejbRemoteServiceDto = new ApplicationRemoteServicesDto.EjbRemoteServiceDto();
-                            applicationRemoteServicesDto.ejbRemoteServices.add(ejbRemoteServiceDto);
+                            applicationRemoteServicesDto.getEjbRemoteServices().add(ejbRemoteServiceDto);
 
-                            ejbRemoteServiceDto.interfaceName = ejbRemoteServiceModel.getInterface().getQualifiedName();
-                            ejbRemoteServiceDto.interfaceFileId = StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getInterface().getQualifiedName()).spliterator(), false)
+                            ejbRemoteServiceDto.setInterfaceName(ejbRemoteServiceModel.getInterface().getQualifiedName());
+                            ejbRemoteServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getInterface().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
 
-                            ejbRemoteServiceDto.implementationName = ejbRemoteServiceModel.getImplementationClass().getQualifiedName();
-                            ejbRemoteServiceDto.implementationFileId = StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
+                            ejbRemoteServiceDto.setImplementationName(ejbRemoteServiceModel.getImplementationClass().getQualifiedName());
+                            ejbRemoteServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         } else if (remoteServiceModel instanceof RMIServiceModel) {
                             RMIServiceModel rmiServiceModel = (RMIServiceModel) remoteServiceModel;
 
                             ApplicationRemoteServicesDto.RmiServiceDto rmiServiceDto = new ApplicationRemoteServicesDto.RmiServiceDto();
-                            applicationRemoteServicesDto.rmiServices.add(rmiServiceDto);
+                            applicationRemoteServicesDto.getRmiServices().add(rmiServiceDto);
 
-                            rmiServiceDto.interfaceName = rmiServiceModel.getInterface().getQualifiedName();
-                            rmiServiceDto.interfaceFileId = StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getInterface().getQualifiedName()).spliterator(), false)
+                            rmiServiceDto.setInterfaceName(rmiServiceModel.getInterface().getQualifiedName());
+                            rmiServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getInterface().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
 
-                            rmiServiceDto.implementationName = rmiServiceModel.getImplementationClass().getQualifiedName();
-                            rmiServiceDto.implementationFileId = StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
+                            rmiServiceDto.setImplementationName(rmiServiceModel.getImplementationClass().getQualifiedName());
+                            rmiServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
                                     .map(sourceReportService::getSourceReportForFileModel)
                                     .filter(Objects::nonNull)
                                     .map(f -> f.getSourceFileModel().getId().toString())
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(null)
+                            );
                         }
                     });
 

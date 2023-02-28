@@ -45,33 +45,36 @@ public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvi
 
 
             ApplicationUnparsableFilesDto applicationUnparsableFilesDto = new ApplicationUnparsableFilesDto();
-            applicationUnparsableFilesDto.applicationId = application.getId().toString();
-            applicationUnparsableFilesDto.subProjects = getProjectsWithUnparsableFiles(new ProjectModelTraversal(application))
+            applicationUnparsableFilesDto.setApplicationId(application.getId().toString());
+            applicationUnparsableFilesDto.setSubProjects(getProjectsWithUnparsableFiles(new ProjectModelTraversal(application))
                     .stream()
                     .map(projectModel -> {
                         ApplicationUnparsableFilesDto.SubProjectDto subProjectDto = new ApplicationUnparsableFilesDto.SubProjectDto();
-                        subProjectDto.path = projectModel.getRootFileModel().getPrettyPath();
-                        subProjectDto.unparsableFiles = projectModel.getUnparsableFiles().stream()
+                        subProjectDto.setPath(projectModel.getRootFileModel().getPrettyPath());
+                        subProjectDto.setUnparsableFiles(projectModel.getUnparsableFiles().stream()
                                 .map(fileModel -> {
                                     SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(fileModel);
 
                                     ApplicationUnparsableFilesDto.UnparsableFileDto unparsableFileDto = new ApplicationUnparsableFilesDto.UnparsableFileDto();
-                                    unparsableFileDto.fileName = fileModel.getFileName();
-                                    unparsableFileDto.filePath = fileModel.getFilePath();
-                                    unparsableFileDto.parseError = fileModel.getParseError();
+                                    unparsableFileDto.setFileName(fileModel.getFileName());
+                                    unparsableFileDto.setFilePath(fileModel.getFilePath());
+                                    unparsableFileDto.setParseError(fileModel.getParseError());
 
                                     if (sourceReportModel != null && sourceReportModel.getReportFilename() != null) {
-                                        unparsableFileDto.fileId = sourceReportModel.getSourceFileModel()
+                                        unparsableFileDto.setFileId(sourceReportModel.getSourceFileModel()
                                                 .getId()
-                                                .toString();
+                                                .toString()
+                                        );
                                     }
 
                                     return unparsableFileDto;
                                 })
-                                .collect(Collectors.toList());
+                                .collect(Collectors.toList())
+                        );
                         return subProjectDto;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+            );
 
             result.add(applicationUnparsableFilesDto);
         }

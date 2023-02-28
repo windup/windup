@@ -108,13 +108,13 @@ public class ApplicationsRuleProvider extends AbstractApiRuleProvider {
                         applicationName = projectModel.getName();
                     }
 
-                    applicationDto.id = projectModel.getId().toString();
-                    applicationDto.name = isProjectVirtual && projectModel.getName() != null ? projectModel.getName() : applicationName;
-                    applicationDto.isVirtual = isProjectVirtual;
-                    applicationDto.tags = tags;
-                    applicationDto.storyPoints = storyPoints;
-                    applicationDto.storyPointsInSharedArchives = !isProjectVirtual ? storyPointsInSharedArchives : 0;
-                    applicationDto.incidents = incidents;
+                    applicationDto.setId(projectModel.getId().toString());
+                    applicationDto.setName(isProjectVirtual && projectModel.getName() != null ? projectModel.getName() : applicationName);
+                    applicationDto.setVirtual(isProjectVirtual);
+                    applicationDto.setTags(tags);
+                    applicationDto.setStoryPoints(storyPoints);
+                    applicationDto.setStoryPointsInSharedArchives(!isProjectVirtual ? storyPointsInSharedArchives : 0);
+                    applicationDto.setIncidents(incidents);
 
                     return applicationDto;
                 }).collect(Collectors.toList());

@@ -1,15 +1,19 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationHardcodedIpAddressesDto {
-    public String applicationId;
-    public List<FileDto> files;
+    private String applicationId;
+    private List<FileDto> files;
 
+    @Data
     public static class FileDto {
-        public String fileId;
-        public int lineNumber;
-        public int columnNumber;
-        public String ipAddress;
+        private String fileId;
+        private int lineNumber;
+        private int columnNumber;
+        private String ipAddress;
     }
 }

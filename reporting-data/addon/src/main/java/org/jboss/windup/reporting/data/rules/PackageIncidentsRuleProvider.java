@@ -47,8 +47,8 @@ public class PackageIncidentsRuleProvider extends AbstractApiRuleProvider {
             Map<String, Integer> packages = typeReferenceService.getPackageUseFrequencies(projectModel, includeTags, excludeTags, 2, true);
 
             ApplicationPackageIncidentsDto applicationPackageIncidentsDto = new ApplicationPackageIncidentsDto();
-            applicationPackageIncidentsDto.applicationId = projectModel.getId().toString();
-            applicationPackageIncidentsDto.packages = packages;
+            applicationPackageIncidentsDto.setApplicationId(projectModel.getId().toString());
+            applicationPackageIncidentsDto.setPackages(packages);
             result.add(applicationPackageIncidentsDto);
         }
         return result;

@@ -67,16 +67,16 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
         ApplicationDependenciesDto[] appDependenciesDtoList = new ObjectMapper().readValue(dependenciesJson, ApplicationDependenciesDto[].class);
         Assert.assertEquals(1, appDependenciesDtoList.length);
 
-        Optional<ApplicationDependenciesDto.DependencyDto> dependencyDto = appDependenciesDtoList[0].dependencies.stream()
-                .filter(dto -> dto.name.equals("example-0-1.0.0.jar"))
+        Optional<ApplicationDependenciesDto.DependencyDto> dependencyDto = appDependenciesDtoList[0].getDependencies().stream()
+                .filter(dto -> dto.getName().equals("example-0-1.0.0.jar"))
                 .findFirst();
 
         Assert.assertTrue(dependencyDto.isPresent());
-        Assert.assertEquals("example-0:test:1.0.0", dependencyDto.get().mavenIdentifier);
-        Assert.assertEquals("9e9944d81b31d376643f100775aba3d0b83210ef", dependencyDto.get().sha1);
-        Assert.assertEquals("1.0.0", dependencyDto.get().version);
-        Assert.assertNull(dependencyDto.get().organization);
-        Assert.assertTrue(dependencyDto.get().foundPaths.containsAll(Arrays.asList(FOUND_PATH_LIB)));
+        Assert.assertEquals("example-0:test:1.0.0", dependencyDto.get().getMavenIdentifier());
+        Assert.assertEquals("9e9944d81b31d376643f100775aba3d0b83210ef", dependencyDto.get().getSha1());
+        Assert.assertEquals("1.0.0", dependencyDto.get().getVersion());
+        Assert.assertNull(dependencyDto.get().getOrganization());
+        Assert.assertTrue(dependencyDto.get().getFoundPaths().containsAll(Arrays.asList(FOUND_PATH_LIB)));
     }
 
 }

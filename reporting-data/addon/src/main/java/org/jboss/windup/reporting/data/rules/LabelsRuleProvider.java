@@ -54,12 +54,12 @@ public class LabelsRuleProvider extends AbstractApiRuleProvider {
         return labels.stream().map(label -> {
             LabelDto labelDto = new LabelDto();
 
-            labelDto.id = label.getId();
-            labelDto.name = label.getName();
-            labelDto.description = label.getDescription();
-            labelDto.supported = new HashSet<>(label.getSupported());
-            labelDto.unsuitable = new HashSet<>(label.getUnsuitable());
-            labelDto.neutral = new HashSet<>(label.getNeutral());
+            labelDto.setId(label.getId());
+            labelDto.setName(label.getName());
+            labelDto.setDescription(label.getDescription());
+            labelDto.setSupported(new HashSet<>(label.getSupported()));
+            labelDto.setUnsuitable(new HashSet<>(label.getUnsuitable()));
+            labelDto.setNeutral(new HashSet<>(label.getNeutral()));
 
             return labelDto;
         }).collect(Collectors.toList());

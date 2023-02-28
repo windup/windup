@@ -55,7 +55,7 @@ public class IgnoreJavaClassTest extends WindupArchitectureTest {
 
             ApplicationIgnoredFilesDto[] dtoList = new ObjectMapper().readValue(jsonFile, ApplicationIgnoredFilesDto[].class);
             Assert.assertEquals(1, dtoList.length);
-            Assert.assertEquals(0, dtoList[0].ignoredFiles.size());
+            Assert.assertEquals(0, dtoList[0].getIgnoredFiles().size());
         }
     }
 

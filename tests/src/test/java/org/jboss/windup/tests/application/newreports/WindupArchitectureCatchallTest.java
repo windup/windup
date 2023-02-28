@@ -81,26 +81,26 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
         FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);
         Assert.assertTrue(filesDtoList.length > 1);
 
-        Optional<ApplicationDetailsDto.ApplicationFileDto> catchalltest = appDetailsDtoList[0].applicationFiles.stream()
-                .filter(dto -> dto.fileName.equals("catchalltest"))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> catchalltest = appDetailsDtoList[0].getApplicationFiles().stream()
+                .filter(dto -> dto.getFileName().equals("catchalltest"))
                 .findFirst();
         Assert.assertTrue(catchalltest.isPresent());
 
         List<FileDto> filesDtoCollection = Arrays.asList(filesDtoList);
-        List<FileDto> childrenFiles = catchalltest.get().childrenFileIds.stream()
+        List<FileDto> childrenFiles = catchalltest.get().getChildrenFileIds().stream()
                 .map(childFileId -> filesDtoCollection.stream()
-                        .filter(fileDto -> fileDto.id.equals(childFileId)).findFirst().orElse(null)
+                        .filter(fileDto -> fileDto.getId().equals(childFileId)).findFirst().orElse(null)
                 ).collect(Collectors.toList());
 
         boolean fileWithoutCatchallHits_storyPointsMatch = childrenFiles.stream()
-                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithoutCatchallHits"))
-                .allMatch(fileDto -> fileDto.storyPoints == 13);
+                .filter(fileDto -> fileDto.getPrettyFileName().equals("FileWithoutCatchallHits"))
+                .allMatch(fileDto -> fileDto.getStoryPoints() == 13);
         boolean fileWithBoth_storyPointsMatch = childrenFiles.stream()
-                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithBoth"))
-                .allMatch(fileDto -> fileDto.storyPoints == 27);
+                .filter(fileDto -> fileDto.getPrettyFileName().equals("FileWithBoth"))
+                .allMatch(fileDto -> fileDto.getStoryPoints() == 27);
         boolean fileWithNoHintsRules_storyPointsMatch = childrenFiles.stream()
-                .filter(fileDto -> fileDto.prettyFileName.equals("FileWithNoHintsRules"))
-                .allMatch(fileDto -> fileDto.storyPoints == 63);
+                .filter(fileDto -> fileDto.getPrettyFileName().equals("FileWithNoHintsRules"))
+                .allMatch(fileDto -> fileDto.getStoryPoints() == 63);
 
         Assert.assertTrue(fileWithoutCatchallHits_storyPointsMatch);
         Assert.assertTrue(fileWithBoth_storyPointsMatch);

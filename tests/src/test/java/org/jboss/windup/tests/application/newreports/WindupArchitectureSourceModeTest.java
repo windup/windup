@@ -206,10 +206,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         ApplicationSpringBeansDto[] appSpringDtoList = new ObjectMapper().readValue(appSpringJson, ApplicationSpringBeansDto[].class);
         Assert.assertEquals(1, appSpringDtoList.length);
 
-        Optional<ApplicationSpringBeansDto.SpringBeanDto> springBeanDto = appSpringDtoList[0].beans.stream()
-                .filter(dto -> Objects.equals(dto.beanName, "mysamplebean") &&
-                        Objects.equals(dto.className, "org.example.MyExampleBean") &&
-                        dto.beanDescriptorFileId != null
+        Optional<ApplicationSpringBeansDto.SpringBeanDto> springBeanDto = appSpringDtoList[0].getBeans().stream()
+                .filter(dto -> Objects.equals(dto.getBeanName(), "mysamplebean") &&
+                        Objects.equals(dto.getClassName(), "org.example.MyExampleBean") &&
+                        dto.getBeanDescriptorFileId() != null
                 )
                 .findFirst();
         Assert.assertTrue(springBeanDto.isPresent());
@@ -224,40 +224,40 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appEJBDtoList.length);
 
         // MDB
-        Optional<ApplicationEJBsDto.MessageDrivenBeanDto> myNameForMessageDrivenBean = appEJBDtoList[0].messageDrivenBeans.stream()
-                .filter(dto -> dto.beanName.equals("MyNameForMessageDrivenBean"))
+        Optional<ApplicationEJBsDto.MessageDrivenBeanDto> myNameForMessageDrivenBean = appEJBDtoList[0].getMessageDrivenBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("MyNameForMessageDrivenBean"))
                 .findFirst();
         Assert.assertTrue(myNameForMessageDrivenBean.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.messagedriven.MessageDrivenBean", myNameForMessageDrivenBean.get().className);
-        Assert.assertEquals("jms/MyQueue", myNameForMessageDrivenBean.get().jmsDestination);
+        Assert.assertEquals("org.windup.examples.ejb.messagedriven.MessageDrivenBean", myNameForMessageDrivenBean.get().getClassName());
+        Assert.assertEquals("jms/MyQueue", myNameForMessageDrivenBean.get().getJmsDestination());
 
         // Stateless
-        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatelessEJB = appEJBDtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("MyNameForSimpleStatelessEJB"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatelessEJB = appEJBDtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("MyNameForSimpleStatelessEJB"))
                 .findFirst();
-        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatelessJakartaEJB = appEJBDtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("MyNameForSimpleStatelessJakartaEJB"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatelessJakartaEJB = appEJBDtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("MyNameForSimpleStatelessJakartaEJB"))
                 .findFirst();
 
         Assert.assertTrue(myNameForSimpleStatelessEJB.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.simplestateless.SimpleStatelessEJB", myNameForSimpleStatelessEJB.get().className);
+        Assert.assertEquals("org.windup.examples.ejb.simplestateless.SimpleStatelessEJB", myNameForSimpleStatelessEJB.get().getClassName());
 
         Assert.assertTrue(myNameForSimpleStatelessJakartaEJB.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.simplestateless.JakartaSimpleStatelessEJB", myNameForSimpleStatelessJakartaEJB.get().className);
+        Assert.assertEquals("org.windup.examples.ejb.simplestateless.JakartaSimpleStatelessEJB", myNameForSimpleStatelessJakartaEJB.get().getClassName());
 
         // Stateful
-        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatefulEJB = appEJBDtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("MyNameForSimpleStatefulEJB"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatefulEJB = appEJBDtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("MyNameForSimpleStatefulEJB"))
                 .findFirst();
-        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatefulJakartaEJB = appEJBDtoList[0].sessionBeans.stream()
-                .filter(dto -> dto.beanName.equals("MyNameForSimpleStatefulJakartaEJB"))
+        Optional<ApplicationEJBsDto.SessionBeanDto> myNameForSimpleStatefulJakartaEJB = appEJBDtoList[0].getSessionBeans().stream()
+                .filter(dto -> dto.getBeanName().equals("MyNameForSimpleStatefulJakartaEJB"))
                 .findFirst();
 
         Assert.assertTrue(myNameForSimpleStatefulEJB.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.simplestateful.SimpleStatefulEJB", myNameForSimpleStatefulEJB.get().className);
+        Assert.assertEquals("org.windup.examples.ejb.simplestateful.SimpleStatefulEJB", myNameForSimpleStatefulEJB.get().getClassName());
 
         Assert.assertTrue(myNameForSimpleStatefulJakartaEJB.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.simplestateful.JakartaSimpleStatefulEJB", myNameForSimpleStatefulJakartaEJB.get().className);
+        Assert.assertEquals("org.windup.examples.ejb.simplestateful.JakartaSimpleStatefulEJB", myNameForSimpleStatefulJakartaEJB.get().getClassName());
     }
 
     private void validateCompatibleReport(GraphContext context) throws IOException {
@@ -269,13 +269,13 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appCompatibleFilesDtoList.length);
 
         //
-        Optional<ApplicationCompatibleFilesDto.FileDto> fileDto1 = appCompatibleFilesDtoList[0].artifacts.stream()
-                .flatMap(dto -> dto.files.stream())
-                .filter(dto -> Objects.equals(dto.fileName, "src/main/resources/springexample/spring-sample-file.xml"))
+        Optional<ApplicationCompatibleFilesDto.FileDto> fileDto1 = appCompatibleFilesDtoList[0].getArtifacts().stream()
+                .flatMap(dto -> dto.getFiles().stream())
+                .filter(dto -> Objects.equals(dto.getFileName(), "src/main/resources/springexample/spring-sample-file.xml"))
                 .findFirst();
-        Optional<ApplicationCompatibleFilesDto.FileDto> fileDto2 = appCompatibleFilesDtoList[0].artifacts.stream()
-                .flatMap(dto -> dto.files.stream())
-                .filter(dto -> Objects.equals(dto.fileName, "org/windup/examples/ejb/entitybean/SecondEntity.java"))
+        Optional<ApplicationCompatibleFilesDto.FileDto> fileDto2 = appCompatibleFilesDtoList[0].getArtifacts().stream()
+                .flatMap(dto -> dto.getFiles().stream())
+                .filter(dto -> Objects.equals(dto.getFileName(), "org/windup/examples/ejb/entitybean/SecondEntity.java"))
                 .findFirst();
 
         Assert.assertTrue(fileDto1.isPresent());
@@ -291,20 +291,20 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appJPADtoList.length);
 
         //
-        Optional<ApplicationJPAsDto.JPAEntityDto> simpleEntity = appJPADtoList[0].entities.stream()
-                .filter(dto -> Objects.equals(dto.entityName, "SimpleEntity"))
+        Optional<ApplicationJPAsDto.JPAEntityDto> simpleEntity = appJPADtoList[0].getEntities().stream()
+                .filter(dto -> Objects.equals(dto.getEntityName(), "SimpleEntity"))
                 .findFirst();
-        Optional<ApplicationJPAsDto.JPAEntityDto> simpleEntityNoTableName = appJPADtoList[0].entities.stream()
-                .filter(dto -> Objects.equals(dto.entityName, "SimpleEntityNoTableName"))
+        Optional<ApplicationJPAsDto.JPAEntityDto> simpleEntityNoTableName = appJPADtoList[0].getEntities().stream()
+                .filter(dto -> Objects.equals(dto.getEntityName(), "SimpleEntityNoTableName"))
                 .findFirst();
 
         Assert.assertTrue(simpleEntity.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.entitybean.SimpleEntity", simpleEntity.get().className);
-        Assert.assertEquals("SimpleEntityTable", simpleEntity.get().tableName);
+        Assert.assertEquals("org.windup.examples.ejb.entitybean.SimpleEntity", simpleEntity.get().getClassName());
+        Assert.assertEquals("SimpleEntityTable", simpleEntity.get().getTableName());
 
         Assert.assertTrue(simpleEntityNoTableName.isPresent());
-        Assert.assertEquals("org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", simpleEntityNoTableName.get().className);
-        Assert.assertEquals("SimpleEntityNoTableName", simpleEntityNoTableName.get().tableName);
+        Assert.assertEquals("org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", simpleEntityNoTableName.get().getClassName());
+        Assert.assertEquals("SimpleEntityNoTableName", simpleEntityNoTableName.get().getTableName());
     }
 
     private void validateMigrationIssuesReport(GraphContext context) throws IOException {
@@ -316,7 +316,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         Assert.assertEquals(1, appIssuesDtoList.length);
 
         //
-        List<ApplicationIssuesDto.IssueDto> allIssuesDto = appIssuesDtoList[0].issues.values().stream()
+        List<ApplicationIssuesDto.IssueDto> allIssuesDto = appIssuesDtoList[0].getIssues().values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
@@ -328,13 +328,13 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
 
     public void assertIssue(List<ApplicationIssuesDto.IssueDto> issueDtoList, String issueName, int totalIncidents, int totalStoryPoints, String effortDescription) {
         Optional<ApplicationIssuesDto.IssueDto> issueDto = issueDtoList.stream()
-                .filter(dto -> dto.name.equals(issueName))
+                .filter(dto -> dto.getName().equals(issueName))
                 .findFirst();
         Assert.assertTrue(issueDto.isPresent());
 
-        Assert.assertEquals(totalIncidents, issueDto.get().totalIncidents);
-        Assert.assertEquals(totalStoryPoints, issueDto.get().totalStoryPoints);
-        Assert.assertEquals(effortDescription, issueDto.get().effort.description);
+        Assert.assertEquals(totalIncidents, issueDto.get().getTotalIncidents());
+        Assert.assertEquals(totalStoryPoints, issueDto.get().getTotalStoryPoints());
+        Assert.assertEquals(effortDescription, issueDto.get().getEffort().getDescription());
     }
 
     public void validateApplicationDetails(GraphContext context) throws IOException {
@@ -352,15 +352,15 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
         Assert.assertNotNull(fileDtoList);
 
         // Verify appFile
-        Optional<ApplicationDetailsDto.ApplicationFileDto> childGroupFile = appDetailsDtoList[0].applicationFiles.stream()
-                .filter(applicationFileDto -> applicationFileDto.fileName.equals("src_example"))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> childGroupFile = appDetailsDtoList[0].getApplicationFiles().stream()
+                .filter(applicationFileDto -> applicationFileDto.getFileName().equals("src_example"))
                 .findFirst();
         Assert.assertTrue(childGroupFile.isPresent());
 
         // Map appFile children files
-        List<FileDto> childrenFilesDtoList = childGroupFile.get().childrenFileIds.stream()
+        List<FileDto> childrenFilesDtoList = childGroupFile.get().getChildrenFileIds().stream()
                 .map(s -> Arrays.stream(fileDtoList)
-                        .filter(fileDto -> Objects.equals(fileDto.id, s))
+                        .filter(fileDto -> Objects.equals(fileDto.getId(), s))
                         .findFirst()
                         .orElse(null)
                 )
@@ -398,25 +398,25 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
     public void validateChildFile(List<FileDto> childrenFilesDtoList, String filename, String expectedTag, String expectedClasificationHint, String expectedHint) {
         Optional<FileDto> fileDto = childrenFilesDtoList.stream()
                 .filter(Objects::nonNull)
-                .filter(dto -> dto.prettyFileName.equals(filename))
+                .filter(dto -> dto.getPrettyFileName().equals(filename))
                 .findFirst();
         Assert.assertTrue(fileDto.isPresent());
 
         if (expectedTag != null) {
-            Assert.assertTrue(fileDto.get().tags.stream()
-                    .map(t -> t.name)
+            Assert.assertTrue(fileDto.get().getTags().stream()
+                    .map(t -> t.getName())
                     .collect(Collectors.toList())
                     .contains(expectedTag)
             );
         }
 
         if (expectedClasificationHint != null) {
-            Assert.assertTrue(fileDto.get().classificationsAndHintsTags.contains(expectedClasificationHint));
+            Assert.assertTrue(fileDto.get().getClassificationsAndHintsTags().contains(expectedClasificationHint));
         }
 
         if (expectedHint != null) {
-            Assert.assertTrue(fileDto.get().hints.stream()
-                    .map(t -> t.title)
+            Assert.assertTrue(fileDto.get().getHints().stream()
+                    .map(t -> t.getTitle())
                     .collect(Collectors.toList())
                     .contains(expectedHint)
             );

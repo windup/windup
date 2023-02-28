@@ -90,8 +90,8 @@ public class TechnologiesRuleProvider extends AbstractApiRuleProvider {
             });
 
             ApplicationTechnologiesDto applicationTechnologiesDto = new ApplicationTechnologiesDto();
-            applicationTechnologiesDto.applicationId = application.getId().toString();
-            applicationTechnologiesDto.technologyGroups = allTechnologiesForApp;
+            applicationTechnologiesDto.setApplicationId(application.getId().toString());
+            applicationTechnologiesDto.setTechnologyGroups(allTechnologiesForApp);
             result.add(applicationTechnologiesDto);
         }
 

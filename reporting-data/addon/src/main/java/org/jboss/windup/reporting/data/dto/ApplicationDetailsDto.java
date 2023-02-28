@@ -1,34 +1,40 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationDetailsDto {
-    public String applicationId;
-    public List<MessageDto> messages;
-    public List<ApplicationFileDto> applicationFiles;
+    private String applicationId;
+    private List<MessageDto> messages;
+    private List<ApplicationFileDto> applicationFiles;
 
+    @Data
     public static class MessageDto {
-        public String value;
-        public String ruleId;
+        private String value;
+        private String ruleId;
     }
 
+    @Data
     public static class ApplicationFileDto {
-        public String fileId;
-        public String fileName;
-        public String rootPath;
-        public int storyPoints;
-        public MavenDto maven;
-        public List<String> childrenFileIds;
+        private String fileId;
+        private String fileName;
+        private String rootPath;
+        private int storyPoints;
+        private MavenDto maven;
+        private List<String> childrenFileIds;
     }
 
+    @Data
     public static class MavenDto {
-        public String name;
-        public String mavenIdentifier;
-        public String projectSite;
-        public String sha1;
-        public String version;
-        public String description;
-        public List<String> organizations;
-        public List<String> duplicatePaths;
+        private String name;
+        private String mavenIdentifier;
+        private String projectSite;
+        private String sha1;
+        private String version;
+        private String description;
+        private List<String> organizations;
+        private List<String> duplicatePaths;
     }
 }

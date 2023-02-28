@@ -52,12 +52,12 @@ public class ApplicationServerResourcesRuleProvider extends AbstractApiRuleProvi
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationServerResourcesDto applicationServerResourcesDto = new ApplicationServerResourcesDto();
-            applicationServerResourcesDto.applicationId = application.getId().toString();
-            applicationServerResourcesDto.datasources = new ArrayList<>();
-            applicationServerResourcesDto.jmsDestinations = new ArrayList<>();
-            applicationServerResourcesDto.jmsConnectionFactories = new ArrayList<>();
-            applicationServerResourcesDto.threadPools = new ArrayList<>();
-            applicationServerResourcesDto.otherJndiEntries = new ArrayList<>();
+            applicationServerResourcesDto.setApplicationId(application.getId().toString());
+            applicationServerResourcesDto.setDatasources(new ArrayList<>());
+            applicationServerResourcesDto.setJmsDestinations(new ArrayList<>());
+            applicationServerResourcesDto.setJmsConnectionFactories(new ArrayList<>());
+            applicationServerResourcesDto.setThreadPools(new ArrayList<>());
+            applicationServerResourcesDto.setOtherJndiEntries(new ArrayList<>());
 
             List<JNDIResourceModel> jndiResourceModelList = jndiResourceService.findAll().stream()
                     .filter(jndiResourceModel -> jndiResourceModel.isAssociatedWithApplication(application))
@@ -77,44 +77,45 @@ public class ApplicationServerResourcesRuleProvider extends AbstractApiRuleProvi
                             DataSourceModel dataSourceModel = (DataSourceModel) jndiResourceModel;
 
                             ApplicationServerResourcesDto.DatasourceDto datasourceDto = new ApplicationServerResourcesDto.DatasourceDto();
-                            applicationServerResourcesDto.datasources.add(datasourceDto);
+                            applicationServerResourcesDto.getDatasources().add(datasourceDto);
 
-                            datasourceDto.jndiLocation = dataSourceModel.getJndiLocation();
-                            datasourceDto.databaseTypeName = dataSourceModel.getDatabaseTypeName();
-                            datasourceDto.databaseTypeVersion = dataSourceModel.getDatabaseTypeVersion();
+                            datasourceDto.setJndiLocation(dataSourceModel.getJndiLocation());
+                            datasourceDto.setDatabaseTypeName(dataSourceModel.getDatabaseTypeName());
+                            datasourceDto.setDatabaseTypeVersion(dataSourceModel.getDatabaseTypeVersion());
 
                             if (dataSourceModel instanceof LinkableModel) {
-                                datasourceDto.links = getLinks((LinkableModel) dataSourceModel);
+                                datasourceDto.setLinks(getLinks((LinkableModel) dataSourceModel));
                             }
                         } else if (jndiResourceModel instanceof JmsDestinationModel) {
                             JmsDestinationModel jmsDestinationModel = (JmsDestinationModel) jndiResourceModel;
 
                             ApplicationServerResourcesDto.JMSDestinationDto jmsDestinationDto = new ApplicationServerResourcesDto.JMSDestinationDto();
-                            applicationServerResourcesDto.jmsDestinations.add(jmsDestinationDto);
+                            applicationServerResourcesDto.getJmsDestinations().add(jmsDestinationDto);
 
-                            jmsDestinationDto.jndiLocation = jmsDestinationModel.getJndiLocation();
-                            jmsDestinationDto.destinationType = jmsDestinationModel.getDestinationType() != null ? jmsDestinationModel.getDestinationType().toString() : null;
+                            jmsDestinationDto.setJndiLocation(jmsDestinationModel.getJndiLocation());
+                            ;
+                            jmsDestinationDto.setDestinationType(jmsDestinationModel.getDestinationType() != null ? jmsDestinationModel.getDestinationType().toString() : null);
 
                             if (jmsDestinationModel instanceof LinkableModel) {
-                                jmsDestinationDto.links = getLinks((LinkableModel) jmsDestinationModel);
+                                jmsDestinationDto.setLinks(getLinks((LinkableModel) jmsDestinationModel));
                             }
                         } else if (jndiResourceModel instanceof JmsConnectionFactoryModel) {
                             JmsConnectionFactoryModel jmsConnectionFactoryModel = (JmsConnectionFactoryModel) jndiResourceModel;
 
                             ApplicationServerResourcesDto.JMSConnectionFactoryDto jmsConnectionFactoryDto = new ApplicationServerResourcesDto.JMSConnectionFactoryDto();
-                            applicationServerResourcesDto.jmsConnectionFactories.add(jmsConnectionFactoryDto);
+                            applicationServerResourcesDto.getJmsConnectionFactories().add(jmsConnectionFactoryDto);
 
-                            jmsConnectionFactoryDto.jndiLocation = jmsConnectionFactoryModel.getJndiLocation();
-                            jmsConnectionFactoryDto.connectionFactoryType = jmsConnectionFactoryModel.getConnectionFactoryType() != null ? jmsConnectionFactoryModel.getConnectionFactoryType().toString() : null;
+                            jmsConnectionFactoryDto.setJndiLocation(jmsConnectionFactoryModel.getJndiLocation());
+                            jmsConnectionFactoryDto.setConnectionFactoryType(jmsConnectionFactoryModel.getConnectionFactoryType() != null ? jmsConnectionFactoryModel.getConnectionFactoryType().toString() : null);
 
                             if (jmsConnectionFactoryModel instanceof LinkableModel) {
-                                jmsConnectionFactoryDto.links = getLinks((LinkableModel) jmsConnectionFactoryModel);
+                                jmsConnectionFactoryDto.setLinks(getLinks((LinkableModel) jmsConnectionFactoryModel));
                             }
                         } else {
                             ApplicationServerResourcesDto.OtherJndiEntryDto otherJndiEntryDto = new ApplicationServerResourcesDto.OtherJndiEntryDto();
-                            applicationServerResourcesDto.otherJndiEntries.add(otherJndiEntryDto);
+                            applicationServerResourcesDto.getOtherJndiEntries().add(otherJndiEntryDto);
 
-                            otherJndiEntryDto.jndiLocation = jndiResourceModel.getJndiLocation();
+                            otherJndiEntryDto.setJndiLocation(jndiResourceModel.getJndiLocation());
                         }
                     });
 
@@ -126,14 +127,14 @@ public class ApplicationServerResourcesRuleProvider extends AbstractApiRuleProvi
             StreamSupport.stream(threadPoolsWindupVertexListModel.spliterator(), false)
                     .forEach(threadPoolModel -> {
                         ApplicationServerResourcesDto.ThreadPoolDto threadPoolDto = new ApplicationServerResourcesDto.ThreadPoolDto();
-                        applicationServerResourcesDto.threadPools.add(threadPoolDto);
+                        applicationServerResourcesDto.getThreadPools().add(threadPoolDto);
 
-                        threadPoolDto.poolName = threadPoolModel.getPoolName();
-                        threadPoolDto.minPoolSize = threadPoolModel.getMinPoolSize();
-                        threadPoolDto.maxPoolSize = threadPoolModel.getMaxPoolSize();
+                        threadPoolDto.setPoolName(threadPoolModel.getPoolName());
+                        threadPoolDto.setMinPoolSize(threadPoolModel.getMinPoolSize());
+                        threadPoolDto.setMaxPoolSize(threadPoolModel.getMaxPoolSize());
 
                         if (threadPoolModel instanceof LinkableModel) {
-                            threadPoolDto.links = getLinks((LinkableModel) threadPoolModel);
+                            threadPoolDto.setLinks(getLinks((LinkableModel) threadPoolModel));
                         }
                     });
 
@@ -151,8 +152,8 @@ public class ApplicationServerResourcesRuleProvider extends AbstractApiRuleProvi
     private List<ApplicationServerResourcesDto.LinkDto> getLinks(LinkableModel linkableModel) {
         return linkableModel.getLinks().stream().map(linkModel -> {
                     ApplicationServerResourcesDto.LinkDto linkDto = new ApplicationServerResourcesDto.LinkDto();
-                    linkDto.link = linkModel.getLink();
-                    linkDto.description = linkModel.getDescription();
+                    linkDto.setLink(linkModel.getLink());
+                    linkDto.setDescription(linkModel.getDescription());
                     return linkDto;
                 })
                 .collect(Collectors.toList());

@@ -1,21 +1,26 @@
 package org.jboss.windup.reporting.data.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ApplicationUnparsableFilesDto {
-    public String applicationId;
-    public List<SubProjectDto> subProjects;
+    private String applicationId;
+    private List<SubProjectDto> subProjects;
 
+    @Data
     public static class SubProjectDto {
-        public String path;
-        public List<UnparsableFileDto> unparsableFiles;
+        private String path;
+        private List<UnparsableFileDto> unparsableFiles;
     }
 
+    @Data
     public static class UnparsableFileDto {
-        public String fileId;
-        public String fileName;
-        public String filePath;
-        public String parseError;
+        private String fileId;
+        private String fileName;
+        private String filePath;
+        private String parseError;
     }
 
 }

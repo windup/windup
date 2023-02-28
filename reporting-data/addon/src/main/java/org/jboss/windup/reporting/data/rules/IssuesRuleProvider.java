@@ -69,46 +69,49 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
 
             // Fill Data
             ApplicationIssuesDto applicationIssuesDto = new ApplicationIssuesDto();
-            applicationIssuesDto.applicationId = projectModel.getId().toString();
-            applicationIssuesDto.issues = new HashMap<>();
+            applicationIssuesDto.setApplicationId(projectModel.getId().toString());
+            applicationIssuesDto.setIssues(new HashMap<>());
 
             for (Map.Entry<String, List<ProblemSummary>> entry : primarySummariesByString.entrySet()) {
                 String key = entry.getKey();
                 List<ApplicationIssuesDto.IssueDto> value = entry.getValue().stream().map(problemSummary -> {
                     ApplicationIssuesDto.IssueDto issueData = new ApplicationIssuesDto.IssueDto();
 
-                    issueData.id = problemSummary.getId().toString();
-                    issueData.ruleId = problemSummary.getRuleID();
+                    issueData.setId(problemSummary.getId().toString());
+                    issueData.setRuleId(problemSummary.getRuleID());
 
                     EffortReportService.EffortLevel effortLevel = EffortReportService.EffortLevel.forPoints(problemSummary.getEffortPerIncident());
-                    issueData.effort = new ApplicationIssuesDto.EffortDto();
-                    issueData.effort.type = effortLevel.getShortDescription();
-                    issueData.effort.description = effortLevel.getVerboseDescription();
-                    issueData.effort.points = effortLevel.getPoints();
+                    issueData.setEffort(new ApplicationIssuesDto.EffortDto());
+                    issueData.getEffort().setType(effortLevel.getShortDescription());
+                    issueData.getEffort().setDescription(effortLevel.getVerboseDescription());
+                    issueData.getEffort().setPoints(effortLevel.getPoints());
 
-                    issueData.totalIncidents = problemSummary.getNumberFound();
-                    issueData.totalStoryPoints = problemSummary.getNumberFound() * problemSummary.getEffortPerIncident();
-                    issueData.name = problemSummary.getIssueName();
-                    issueData.links = problemSummary.getLinks().stream().map(link -> {
-                        ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
-                        linkDto.title = link.getTitle();
-                        linkDto.href = link.getLink();
-                        return linkDto;
-                    }).collect(Collectors.toList());
-                    issueData.affectedFiles = StreamSupport.stream(problemSummary.getDescriptions().spliterator(), false)
+                    issueData.setTotalIncidents(problemSummary.getNumberFound());
+                    issueData.setTotalStoryPoints(problemSummary.getNumberFound() * problemSummary.getEffortPerIncident());
+                    issueData.setName(problemSummary.getIssueName());
+                    issueData.setLinks(problemSummary.getLinks().stream().map(link -> {
+                                ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
+                                linkDto.setTitle(link.getTitle());
+                                linkDto.setHref(link.getLink());
+                                return linkDto;
+                            }).collect(Collectors.toList())
+                    );
+                    issueData.setAffectedFiles(StreamSupport.stream(problemSummary.getDescriptions().spliterator(), false)
                             .map(description -> {
                                 ApplicationIssuesDto.IssueAffectedFilesDto issueAffectedFilesDto = new ApplicationIssuesDto.IssueAffectedFilesDto();
-                                issueAffectedFilesDto.description = description;
-                                issueAffectedFilesDto.files = StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
-                                    ApplicationIssuesDto.IssueFileDto issueFileDto = new ApplicationIssuesDto.IssueFileDto();
-                                    issueFileDto.fileId = fileSummary.getFile().getId().toString();
-                                    issueFileDto.fileName = getPrettyPathForFile(fileSummary.getFile());
-                                    issueFileDto.occurrences = fileSummary.getOccurrences();
-                                    return issueFileDto;
-                                }).collect(Collectors.toList());
+                                issueAffectedFilesDto.setDescription(description);
+                                issueAffectedFilesDto.setFiles(StreamSupport.stream(problemSummary.getFilesForDescription(description).spliterator(), false).map(fileSummary -> {
+                                            ApplicationIssuesDto.IssueFileDto issueFileDto = new ApplicationIssuesDto.IssueFileDto();
+                                            issueFileDto.setFileId(fileSummary.getFile().getId().toString());
+                                            issueFileDto.setFileName(getPrettyPathForFile(fileSummary.getFile()));
+                                            issueFileDto.setOccurrences(fileSummary.getOccurrences());
+                                            return issueFileDto;
+                                        }).collect(Collectors.toList())
+                                );
                                 return issueAffectedFilesDto;
                             })
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toList())
+                    );
 
                     return issueData;
                 }).collect(Collectors.toList());
@@ -116,7 +119,7 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
                 String category = key.toLowerCase().trim()
                         .replaceAll("migration ", "")
                         .replaceAll(" ", "-");
-                applicationIssuesDto.issues.put(category, value);
+                applicationIssuesDto.getIssues().put(category, value);
             }
 
             return applicationIssuesDto;

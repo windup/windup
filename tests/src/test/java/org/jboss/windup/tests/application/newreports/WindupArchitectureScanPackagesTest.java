@@ -110,15 +110,15 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
             ApplicationIssuesDto[] applicationIssuesDtos = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
             Assert.assertEquals(1, applicationIssuesDtos.length);
 
-            Optional<ApplicationIssuesDto.IssueDto> issueDto = applicationIssuesDtos[0].issues.get("information")
+            Optional<ApplicationIssuesDto.IssueDto> issueDto = applicationIssuesDtos[0].getIssues().get("information")
                     .stream()
-                    .filter(i -> i.name.equals("Maven POM (pom.xml)"))
+                    .filter(i -> i.getName().equals("Maven POM (pom.xml)"))
                     .findFirst();
 
             Assert.assertTrue(issueDto.isPresent());
-            Assert.assertEquals(1, issueDto.get().totalIncidents);
-            Assert.assertEquals(0, issueDto.get().totalStoryPoints);
-            Assert.assertEquals("Info", issueDto.get().effort.type);
+            Assert.assertEquals(1, issueDto.get().getTotalIncidents());
+            Assert.assertEquals(0, issueDto.get().getTotalStoryPoints());
+            Assert.assertEquals("Info", issueDto.get().getEffort().getType());
         }
     }
 

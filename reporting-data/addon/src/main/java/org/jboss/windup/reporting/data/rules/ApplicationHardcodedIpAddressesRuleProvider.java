@@ -1,6 +1,5 @@
 package org.jboss.windup.reporting.data.rules;
 
-import freemarker.template.TemplateException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
@@ -14,10 +13,8 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationHardcodedIpAddressesDto;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
-import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.ip.HardcodedIPLocationModel;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +50,7 @@ public class ApplicationHardcodedIpAddressesRuleProvider extends AbstractApiRule
             ProjectModel application = inputPath.getProjectModel();
 
             ApplicationHardcodedIpAddressesDto applicationHardcodedIpAddressesDto = new ApplicationHardcodedIpAddressesDto();
-            applicationHardcodedIpAddressesDto.applicationId = application.getId().toString();
+            applicationHardcodedIpAddressesDto.setApplicationId(application.getId().toString());
 
             // Files
             List<HardcodedIPLocationModel> hardcodedIPLocationModels = ipLocationModelService.findAll().stream()
@@ -66,18 +63,20 @@ public class ApplicationHardcodedIpAddressesRuleProvider extends AbstractApiRule
             WindupVertexListModel<HardcodedIPLocationModel> hardcodedIPLocationModelWindupVertexListModel = new GraphService<>(context, WindupVertexListModel.class).create();
             hardcodedIPLocationModelWindupVertexListModel.addAll(hardcodedIPLocationModels);
 
-            applicationHardcodedIpAddressesDto.files = StreamSupport.stream(hardcodedIPLocationModelWindupVertexListModel.spliterator(), false)
+            applicationHardcodedIpAddressesDto.setFiles(StreamSupport.stream(hardcodedIPLocationModelWindupVertexListModel.spliterator(), false)
                     .map(locationModel -> {
                         ApplicationHardcodedIpAddressesDto.FileDto fileDto = new ApplicationHardcodedIpAddressesDto.FileDto();
-                        fileDto.lineNumber = locationModel.getLineNumber();
-                        fileDto.columnNumber = locationModel.getColumnNumber();
-                        fileDto.ipAddress = locationModel.getSourceSnippit();
-                        fileDto.fileId = sourceReportService.getSourceReportForFileModel(((FileLocationModel) locationModel).getFile())
+                        fileDto.setLineNumber(locationModel.getLineNumber());
+                        fileDto.setColumnNumber(locationModel.getColumnNumber());
+                        fileDto.setIpAddress(locationModel.getSourceSnippit());
+                        fileDto.setFileId(sourceReportService.getSourceReportForFileModel(((FileLocationModel) locationModel).getFile())
                                 .getSourceFileModel().getId()
-                                .toString();
+                                .toString()
+                        );
                         return fileDto;
                     })
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+            );
 
             result.add(applicationHardcodedIpAddressesDto);
         }

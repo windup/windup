@@ -100,37 +100,37 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         Assert.assertTrue(filesDtoList.length > 1);
 
         // Find file
-        Optional<ApplicationDetailsDto.ApplicationFileDto> applicationFileDto = applicationDetailsDto.applicationFiles.stream()
-                .filter(dto -> dto.rootPath.equals(fileRootPath))
+        Optional<ApplicationDetailsDto.ApplicationFileDto> applicationFileDto = applicationDetailsDto.getApplicationFiles().stream()
+                .filter(dto -> dto.getRootPath().equals(fileRootPath))
                 .findFirst();
         Assert.assertTrue(applicationFileDto.isPresent());
 
         // Map child files to Files
-        List<FileDto> fileDtoList = applicationFileDto.get().childrenFileIds.stream()
+        List<FileDto> fileDtoList = applicationFileDto.get().getChildrenFileIds().stream()
                 .map(childFileId -> Stream.of(filesDtoList)
-                        .filter(fileDto -> fileDto.id.equals(childFileId))
+                        .filter(fileDto -> fileDto.getId().equals(childFileId))
                         .findFirst()
                         .orElse(null)
                 ).collect(Collectors.toList());
 
         // Validate total story points
         int totalStoryPoints = fileDtoList.stream()
-                .map(dto -> dto.storyPoints)
+                .map(dto -> dto.getStoryPoints())
                 .reduce(0, Integer::sum);
         Assert.assertEquals(fileExpectedTotalStoryPoints, totalStoryPoints);
 
         // Validate child file
         Optional<FileDto> fileDto = fileDtoList.stream()
-                .filter(dto -> dto.prettyFileName.equals(childFilename))
+                .filter(dto -> dto.getPrettyFileName().equals(childFilename))
                 .findFirst();
         Assert.assertTrue(fileDto.isPresent());
 
         // Validate child file tags
-        boolean tagsMatched = fileDto.get().tags.stream().anyMatch(tagDto -> childFileExpectedTags.contains(tagDto.name));
+        boolean tagsMatched = fileDto.get().getTags().stream().anyMatch(tagDto -> childFileExpectedTags.contains(tagDto.getName()));
         Assert.assertTrue(tagsMatched);
 
         // Validate child file Story points
-        Assert.assertEquals(childFileExpectedStoryPoints, fileDto.get().storyPoints);
+        Assert.assertEquals(childFileExpectedStoryPoints, fileDto.get().getStoryPoints());
     }
 
     private void validateStaticIPReport(GraphContext context) throws IOException {
@@ -146,33 +146,33 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         Assert.assertTrue(filesDtoList.length > 1);
 
         // Assert ip addresses
-        Assert.assertEquals(3, appHardcodedIpAddressList[0].files.size());
-        Assert.assertEquals(1, appHardcodedIpAddressList[0].files.stream()
-                .map(fileDto -> fileDto.fileId)
+        Assert.assertEquals(3, appHardcodedIpAddressList[0].getFiles().size());
+        Assert.assertEquals(1, appHardcodedIpAddressList[0].getFiles().stream()
+                .map(fileDto -> fileDto.getFileId())
                 .collect(Collectors.toSet())
                 .size()
         );
 
-        Set<String> ipAddresses = appHardcodedIpAddressList[0].files.stream()
-                .map(fileDto -> fileDto.ipAddress)
+        Set<String> ipAddresses = appHardcodedIpAddressList[0].getFiles().stream()
+                .map(fileDto -> fileDto.getIpAddress())
                 .collect(Collectors.toSet());
         Assert.assertEquals(1, ipAddresses.size());
         Assert.assertTrue(ipAddresses.contains("127.0.0.1"));
 
-        boolean lineAndColumnNumbersMatch = appHardcodedIpAddressList[0].files.stream()
-                .allMatch(dto -> (dto.lineNumber == 65 && dto.columnNumber == 32) ||
-                        (dto.lineNumber == 721 && dto.columnNumber == 14) ||
-                        (dto.lineNumber == 725 && dto.columnNumber == 14)
+        boolean lineAndColumnNumbersMatch = appHardcodedIpAddressList[0].getFiles().stream()
+                .allMatch(dto -> (dto.getLineNumber() == 65 && dto.getColumnNumber() == 32) ||
+                        (dto.getLineNumber() == 721 && dto.getColumnNumber() == 14) ||
+                        (dto.getLineNumber() == 725 && dto.getColumnNumber() == 14)
                 );
         Assert.assertTrue(lineAndColumnNumbersMatch);
 
         // Assert file associated to ip address
         Optional<FileDto> sourceFile = Stream.of(filesDtoList)
-                .filter(fileDto -> fileDto.id.equals(appHardcodedIpAddressList[0].files.get(0).fileId))
+                .filter(fileDto -> fileDto.getId().equals(appHardcodedIpAddressList[0].getFiles().get(0).getFileId()))
                 .findFirst();
 
         Assert.assertTrue(sourceFile.isPresent());
-        Assert.assertEquals("org.apache.wicket.protocol.http.mock.MockHttpServletRequest", sourceFile.get().prettyFileName);
+        Assert.assertEquals("org.apache.wicket.protocol.http.mock.MockHttpServletRequest", sourceFile.get().getPrettyFileName());
     }
 
     private void validateCompatibleReport(GraphContext context) throws IOException {
@@ -182,20 +182,20 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         Assert.assertEquals(1, applicationCompatibleFilesDtos.length);
 
         // Assert
-        Optional<ApplicationCompatibleFilesDto.FileDto> file1 = applicationCompatibleFilesDtos[0].artifacts.stream()
-                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war"))
-                .flatMap(artifactDto -> artifactDto.files.stream())
-                .filter(fileDto -> fileDto.fileName.equals("org/jboss/devconf/openshift/HomePage.class"))
+        Optional<ApplicationCompatibleFilesDto.FileDto> file1 = applicationCompatibleFilesDtos[0].getArtifacts().stream()
+                .filter(artifactDto -> artifactDto.getName().equals("Windup1x-javaee-example.war"))
+                .flatMap(artifactDto -> artifactDto.getFiles().stream())
+                .filter(fileDto -> fileDto.getFileName().equals("org/jboss/devconf/openshift/HomePage.class"))
                 .findFirst();
-        Optional<ApplicationCompatibleFilesDto.FileDto> file2 = applicationCompatibleFilesDtos[0].artifacts.stream()
-                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
-                .flatMap(artifactDto -> artifactDto.files.stream())
-                .filter(fileDto -> fileDto.fileName.equals("org/joda/time/DateMidnight.class"))
+        Optional<ApplicationCompatibleFilesDto.FileDto> file2 = applicationCompatibleFilesDtos[0].getArtifacts().stream()
+                .filter(artifactDto -> artifactDto.getName().equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
+                .flatMap(artifactDto -> artifactDto.getFiles().stream())
+                .filter(fileDto -> fileDto.getFileName().equals("org/joda/time/DateMidnight.class"))
                 .findFirst();
-        Optional<ApplicationCompatibleFilesDto.FileDto> file3 = applicationCompatibleFilesDtos[0].artifacts.stream()
-                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
-                .flatMap(artifactDto -> artifactDto.files.stream())
-                .filter(fileDto -> fileDto.fileName.equals("org/joda/time/Chronology.class"))
+        Optional<ApplicationCompatibleFilesDto.FileDto> file3 = applicationCompatibleFilesDtos[0].getArtifacts().stream()
+                .filter(artifactDto -> artifactDto.getName().equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
+                .flatMap(artifactDto -> artifactDto.getFiles().stream())
+                .filter(fileDto -> fileDto.getFileName().equals("org/joda/time/Chronology.class"))
                 .findFirst();
 
         Assert.assertTrue(file1.isPresent());
@@ -211,38 +211,38 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         ApplicationDto[] applicationDtos = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
         Assert.assertEquals(1, applicationDtos.length);
 
-        Assert.assertFalse(applicationDtos[0].incidents.containsKey("mandatory"));
-        Assert.assertFalse(applicationDtos[0].incidents.containsKey("potential"));
-        Assert.assertEquals(291, applicationDtos[0].incidents.get("optional").intValue());
-        Assert.assertEquals(10, applicationDtos[0].incidents.get("information").intValue());
-        Assert.assertEquals(3, applicationDtos[0].incidents.get("cloud-mandatory").intValue());
+        Assert.assertFalse(applicationDtos[0].getIncidents().containsKey("mandatory"));
+        Assert.assertFalse(applicationDtos[0].getIncidents().containsKey("potential"));
+        Assert.assertEquals(291, applicationDtos[0].getIncidents().get("optional").intValue());
+        Assert.assertEquals(10, applicationDtos[0].getIncidents().get("information").intValue());
+        Assert.assertEquals(3, applicationDtos[0].getIncidents().get("cloud-mandatory").intValue());
 
         // Assert story points and incidents from issues
         ApplicationIssuesDto[] issuesDtos = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
         Assert.assertEquals(1, applicationDtos.length);
 
-        Assert.assertFalse(issuesDtos[0].issues.containsKey("mandatory"));
-        Assert.assertFalse(issuesDtos[0].issues.containsKey("potential"));
+        Assert.assertFalse(issuesDtos[0].getIssues().containsKey("mandatory"));
+        Assert.assertFalse(issuesDtos[0].getIssues().containsKey("potential"));
 
-        int optionalStoryPoints = issuesDtos[0].issues.get("optional").stream()
-                .map(issueDto -> issueDto.totalStoryPoints)
+        int optionalStoryPoints = issuesDtos[0].getIssues().get("optional").stream()
+                .map(issueDto -> issueDto.getTotalStoryPoints())
                 .reduce(0, Integer::sum);
-        int optionalTotalIncidents = issuesDtos[0].issues.get("optional").stream()
-                .map(issueDto -> issueDto.totalIncidents)
-                .reduce(0, Integer::sum);
-
-        int informationStoryPoints = issuesDtos[0].issues.get("information").stream()
-                .map(issueDto -> issueDto.totalStoryPoints)
-                .reduce(0, Integer::sum);
-        int informationTotalIncidents = issuesDtos[0].issues.get("information").stream()
-                .map(issueDto -> issueDto.totalIncidents)
+        int optionalTotalIncidents = issuesDtos[0].getIssues().get("optional").stream()
+                .map(issueDto -> issueDto.getTotalIncidents())
                 .reduce(0, Integer::sum);
 
-        int cloudMandatoryStoryPoints = issuesDtos[0].issues.get("cloud-mandatory").stream()
-                .map(issueDto -> issueDto.totalStoryPoints)
+        int informationStoryPoints = issuesDtos[0].getIssues().get("information").stream()
+                .map(issueDto -> issueDto.getTotalStoryPoints())
                 .reduce(0, Integer::sum);
-        int cloudMandatoryTotalIncidents = issuesDtos[0].issues.get("cloud-mandatory").stream()
-                .map(issueDto -> issueDto.totalIncidents)
+        int informationTotalIncidents = issuesDtos[0].getIssues().get("information").stream()
+                .map(issueDto -> issueDto.getTotalIncidents())
+                .reduce(0, Integer::sum);
+
+        int cloudMandatoryStoryPoints = issuesDtos[0].getIssues().get("cloud-mandatory").stream()
+                .map(issueDto -> issueDto.getTotalStoryPoints())
+                .reduce(0, Integer::sum);
+        int cloudMandatoryTotalIncidents = issuesDtos[0].getIssues().get("cloud-mandatory").stream()
+                .map(issueDto -> issueDto.getTotalIncidents())
                 .reduce(0, Integer::sum);
 
         Assert.assertEquals(2306, optionalStoryPoints);
@@ -263,10 +263,10 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         Assert.assertTrue(filesDtoList.length > 1);
 
         Optional<FileDto> fileDto = Stream.of(filesDtoList)
-                .filter(f -> f.fullPath.contains("wicket-core-1.5.10.jar/org/apache/wicket/application/AbstractClassResolver.java"))
+                .filter(f -> f.getFullPath().contains("wicket-core-1.5.10.jar/org/apache/wicket/application/AbstractClassResolver.java"))
                 .findFirst();
         Assert.assertTrue(fileDto.isPresent());
-        Assert.assertTrue(fileDto.get().classificationsAndHintsTags.contains("GroovyTestHintTag"));
+        Assert.assertTrue(fileDto.get().getClassificationsAndHintsTags().contains("GroovyTestHintTag"));
     }
 
     protected void validateManifestEntries(GraphContext context) throws Exception {

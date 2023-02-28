@@ -17,7 +17,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
-import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
@@ -26,9 +25,7 @@ import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
 import org.jboss.windup.tests.application.WindupArchitectureTest;
-import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -39,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -139,15 +135,15 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest {
         ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
         Assert.assertEquals(1, appIssuesDtoList.length);
 
-        Optional<ApplicationIssuesDto.IssueDto> issueDto = appIssuesDtoList[0].issues.values().stream()
+        Optional<ApplicationIssuesDto.IssueDto> issueDto = appIssuesDtoList[0].getIssues().values().stream()
                 .flatMap(Collection::stream)
-                .filter(dto -> dto.name.equals("Other Taglib Import"))
+                .filter(dto -> dto.getName().equals("Other Taglib Import"))
                 .findFirst();
         Assert.assertTrue(issueDto.isPresent());
 
-        Optional<ApplicationIssuesDto.IssueFileDto> fileDto = issueDto.get().affectedFiles.stream()
-                .flatMap(dto -> dto.files.stream())
-                .filter(dto -> dto.fileName.equals("src/example-with-taglib.jsp"))
+        Optional<ApplicationIssuesDto.IssueFileDto> fileDto = issueDto.get().getAffectedFiles().stream()
+                .flatMap(dto -> dto.getFiles().stream())
+                .filter(dto -> dto.getFileName().equals("src/example-with-taglib.jsp"))
                 .findFirst();
         Assert.assertTrue(fileDto.isPresent());
     }

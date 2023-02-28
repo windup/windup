@@ -97,33 +97,33 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Supplier<Stream<ApplicationDto>> appDetailsDtoStream = () -> Arrays.stream(appDetailsDtoList);
 
         Optional<ApplicationDto> mainApp = appDetailsDtoStream.get()
-                .filter(applicationDto -> applicationDto.name.equals(MAIN_APP_FILENAME))
+                .filter(applicationDto -> applicationDto.getName().equals(MAIN_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> secondApp = appDetailsDtoStream.get()
-                .filter(applicationDto -> applicationDto.name.equals(SECOND_APP_FILENAME))
+                .filter(applicationDto -> applicationDto.getName().equals(SECOND_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> thirdApp = appDetailsDtoStream.get()
-                .filter(applicationDto -> applicationDto.name.equals(THIRD_APP_FILENAME))
+                .filter(applicationDto -> applicationDto.getName().equals(THIRD_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> sharedLibsApp = appDetailsDtoStream.get()
-                .filter(applicationDto -> applicationDto.name.equals(ProjectService.SHARED_LIBS_APP_NAME))
+                .filter(applicationDto -> applicationDto.getName().equals(ProjectService.SHARED_LIBS_APP_NAME))
                 .findFirst();
 
         Assert.assertTrue(mainApp.isPresent());
-        Assert.assertEquals(649, mainApp.get().storyPoints);
-        Assert.assertEquals(597, mainApp.get().storyPointsInSharedArchives);
+        Assert.assertEquals(649, mainApp.get().getStoryPoints());
+        Assert.assertEquals(597, mainApp.get().getStoryPointsInSharedArchives());
 
         Assert.assertTrue(secondApp.isPresent());
-        Assert.assertEquals(649, secondApp.get().storyPoints);
-        Assert.assertEquals(597, secondApp.get().storyPointsInSharedArchives);
+        Assert.assertEquals(649, secondApp.get().getStoryPoints());
+        Assert.assertEquals(597, secondApp.get().getStoryPointsInSharedArchives());
 
         Assert.assertTrue(thirdApp.isPresent());
-        Assert.assertEquals(589, thirdApp.get().storyPoints);
-        Assert.assertEquals(589, thirdApp.get().storyPointsInSharedArchives);
+        Assert.assertEquals(589, thirdApp.get().getStoryPoints());
+        Assert.assertEquals(589, thirdApp.get().getStoryPointsInSharedArchives());
 
         Assert.assertTrue(sharedLibsApp.isPresent());
-        Assert.assertEquals(597, sharedLibsApp.get().storyPoints);
-        Assert.assertEquals(0, sharedLibsApp.get().storyPointsInSharedArchives);
+        Assert.assertEquals(597, sharedLibsApp.get().getStoryPoints());
+        Assert.assertEquals(0, sharedLibsApp.get().getStoryPointsInSharedArchives());
     }
 
     private void validateApplicationDashboard(GraphContext context) throws IOException {
@@ -138,13 +138,13 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         ApplicationDto[] appDtoList = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
 
         Optional<ApplicationDto> mainApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(MAIN_APP_FILENAME))
+                .filter(dto -> dto.getName().equals(MAIN_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> secondApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(SECOND_APP_FILENAME))
+                .filter(dto -> dto.getName().equals(SECOND_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> sharedApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(ProjectService.SHARED_LIBS_APP_NAME))
+                .filter(dto -> dto.getName().equals(ProjectService.SHARED_LIBS_APP_NAME))
                 .findFirst();
 
         Assert.assertTrue(mainApp.isPresent());
@@ -155,13 +155,13 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(appIssuesJson, ApplicationIssuesDto[].class);
 
         Optional<ApplicationIssuesDto> mainAppIssues = Stream.of(appIssuesDtoList)
-                .filter(dto -> dto.applicationId.equals(mainApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(mainApp.get().getId()))
                 .findFirst();
         Optional<ApplicationIssuesDto> secondAppIssues = Stream.of(appIssuesDtoList)
-                .filter(dto -> dto.applicationId.equals(secondApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(secondApp.get().getId()))
                 .findFirst();
         Optional<ApplicationIssuesDto> sharedAppIssues = Stream.of(appIssuesDtoList)
-                .filter(dto -> dto.applicationId.equals(sharedApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(sharedApp.get().getId()))
                 .findFirst();
 
         Assert.assertTrue(mainAppIssues.isPresent());
@@ -189,13 +189,13 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
     }
 
     private void assertApplicationIssues(ApplicationIssuesDto appIssuesDto, String category, int expectedIncidents, int expectedStoryPoints) {
-        int mainAppPotentialIncidents = appIssuesDto.issues
+        int mainAppPotentialIncidents = appIssuesDto.getIssues()
                 .getOrDefault(category, Collections.emptyList()).stream()
-                .map(dto -> dto.totalIncidents)
+                .map(dto -> dto.getTotalIncidents())
                 .reduce(0, Integer::sum);
-        int mainAppPotentialStoryPoints = appIssuesDto.issues
+        int mainAppPotentialStoryPoints = appIssuesDto.getIssues()
                 .getOrDefault(category, Collections.emptyList()).stream()
-                .map(dto -> dto.totalStoryPoints)
+                .map(dto -> dto.getTotalStoryPoints())
                 .reduce(0, Integer::sum);
 
         Assert.assertEquals(expectedIncidents, mainAppPotentialIncidents);
@@ -213,10 +213,10 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         // Applications
         ApplicationDto[] appDtoList = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
         Optional<ApplicationDto> mainApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(MAIN_APP_FILENAME))
+                .filter(dto -> dto.getName().equals(MAIN_APP_FILENAME))
                 .findFirst();
         Optional<ApplicationDto> secondApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(SECOND_APP_FILENAME))
+                .filter(dto -> dto.getName().equals(SECOND_APP_FILENAME))
                 .findFirst();
 
         Assert.assertTrue(mainApp.isPresent());
@@ -226,32 +226,32 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
 
         Optional<ApplicationIssuesDto> mainAppIssues = Arrays.stream(appIssuesDtoList)
-                .filter(dto -> dto.applicationId.equals(mainApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(mainApp.get().getId()))
                 .findFirst();
         Optional<ApplicationIssuesDto> secondAppIssues = Arrays.stream(appIssuesDtoList)
-                .filter(dto -> dto.applicationId.equals(secondApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(secondApp.get().getId()))
                 .findFirst();
 
         Assert.assertTrue(mainAppIssues.isPresent());
         Assert.assertTrue(secondAppIssues.isPresent());
 
         // Get issues
-        Optional<ApplicationIssuesDto.IssueDto> maven1Issue = mainAppIssues.get().issues.values().stream()
+        Optional<ApplicationIssuesDto.IssueDto> maven1Issue = mainAppIssues.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
-                .filter(dto -> dto.name.equals("Maven POM (pom.xml)"))
+                .filter(dto -> dto.getName().equals("Maven POM (pom.xml)"))
                 .findFirst();
-        Optional<ApplicationIssuesDto.IssueDto> unparsable1Issue = mainAppIssues.get().issues.values().stream()
+        Optional<ApplicationIssuesDto.IssueDto> unparsable1Issue = mainAppIssues.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
-                .filter(dto -> dto.name.equals("Unparsable XML File"))
+                .filter(dto -> dto.getName().equals("Unparsable XML File"))
                 .findFirst();
 
-        Optional<ApplicationIssuesDto.IssueDto> maven2Issue = secondAppIssues.get().issues.values().stream()
+        Optional<ApplicationIssuesDto.IssueDto> maven2Issue = secondAppIssues.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
-                .filter(dto -> dto.name.equals("Maven POM (pom.xml)"))
+                .filter(dto -> dto.getName().equals("Maven POM (pom.xml)"))
                 .findFirst();
-        Optional<ApplicationIssuesDto.IssueDto> unparsable2Issue = secondAppIssues.get().issues.values().stream()
+        Optional<ApplicationIssuesDto.IssueDto> unparsable2Issue = secondAppIssues.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
-                .filter(dto -> dto.name.equals("Unparsable XML File"))
+                .filter(dto -> dto.getName().equals("Unparsable XML File"))
                 .findFirst();
 
         Assert.assertTrue(maven1Issue.isPresent());
@@ -259,21 +259,21 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Assert.assertTrue(maven2Issue.isPresent());
         Assert.assertTrue(unparsable2Issue.isPresent());
 
-        Assert.assertEquals("Info", maven1Issue.get().effort.description);
-        Assert.assertEquals(8, maven1Issue.get().totalIncidents);
-        Assert.assertEquals(0, maven1Issue.get().totalStoryPoints);
+        Assert.assertEquals("Info", maven1Issue.get().getEffort().getDescription());
+        Assert.assertEquals(8, maven1Issue.get().getTotalIncidents());
+        Assert.assertEquals(0, maven1Issue.get().getTotalStoryPoints());
 
-        Assert.assertEquals("Info", unparsable1Issue.get().effort.description);
-        Assert.assertEquals(2, unparsable1Issue.get().totalIncidents);
-        Assert.assertEquals(0, unparsable1Issue.get().totalStoryPoints);
+        Assert.assertEquals("Info", unparsable1Issue.get().getEffort().getDescription());
+        Assert.assertEquals(2, unparsable1Issue.get().getTotalIncidents());
+        Assert.assertEquals(0, unparsable1Issue.get().getTotalStoryPoints());
 
-        Assert.assertEquals("Info", maven2Issue.get().effort.description);
-        Assert.assertEquals(8, maven2Issue.get().totalIncidents);
-        Assert.assertEquals(0, maven2Issue.get().totalStoryPoints);
+        Assert.assertEquals("Info", maven2Issue.get().getEffort().getDescription());
+        Assert.assertEquals(8, maven2Issue.get().getTotalIncidents());
+        Assert.assertEquals(0, maven2Issue.get().getTotalStoryPoints());
 
-        Assert.assertEquals("Info", unparsable2Issue.get().effort.description);
-        Assert.assertEquals(2, unparsable2Issue.get().totalIncidents);
-        Assert.assertEquals(0, unparsable2Issue.get().totalStoryPoints);
+        Assert.assertEquals("Info", unparsable2Issue.get().getEffort().getDescription());
+        Assert.assertEquals(2, unparsable2Issue.get().getTotalIncidents());
+        Assert.assertEquals(0, unparsable2Issue.get().getTotalStoryPoints());
     }
 
     private void validateDependencies(GraphContext graphContext) throws IOException {
@@ -285,25 +285,25 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
 
         // Verify dependencies exists
         Optional<ApplicationDependenciesDto.DependencyDto> log4j = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("log4j-1.2.6.jar"))
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("log4j-1.2.6.jar"))
                 .findFirst();
         Optional<ApplicationDependenciesDto.DependencyDto> jeeExample = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("jee-example-services.jar"))
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("jee-example-services.jar"))
                 .findFirst();
         Optional<ApplicationDependenciesDto.DependencyDto> ehcache = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("ehcache-1.6.2.jar"))
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("ehcache-1.6.2.jar"))
                 .findFirst();
         Optional<ApplicationDependenciesDto.DependencyDto> hibernateEhcache = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("hibernate-ehcache-3.6.9.Final.jar"))
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("hibernate-ehcache-3.6.9.Final.jar"))
                 .findFirst();
 
         Optional<ApplicationDependenciesDto.DependencyDto> commonsLang = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("commons-lang-2.5.jar"))
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("commons-lang-2.5.jar"))
                 .findFirst();
 
         Assert.assertTrue(log4j.isPresent());
@@ -313,49 +313,49 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Assert.assertTrue(commonsLang.isPresent());
 
         // Verify
-        Assert.assertEquals("org.windup.example:jee-example-services:1.0.0", jeeExample.get().mavenIdentifier);
-        Assert.assertEquals("d910370c02710f4bb7f7856e18f50803f1c37e16", jeeExample.get().sha1);
-        Assert.assertEquals("1.0.0", jeeExample.get().version);
-        Assert.assertNull(jeeExample.get().organization);
+        Assert.assertEquals("org.windup.example:jee-example-services:1.0.0", jeeExample.get().getMavenIdentifier());
+        Assert.assertEquals("d910370c02710f4bb7f7856e18f50803f1c37e16", jeeExample.get().getSha1());
+        Assert.assertEquals("1.0.0", jeeExample.get().getVersion());
+        Assert.assertNull(jeeExample.get().getOrganization());
 
-        Assert.assertEquals("commons-lang:commons-lang:2.5", commonsLang.get().mavenIdentifier);
-        Assert.assertEquals("b0236b252e86419eef20c31a44579d2aee2f0a69", commonsLang.get().sha1);
-        Assert.assertEquals("2.5", commonsLang.get().version);
-        Assert.assertEquals("The Apache Software Foundation", commonsLang.get().organization);
+        Assert.assertEquals("commons-lang:commons-lang:2.5", commonsLang.get().getMavenIdentifier());
+        Assert.assertEquals("b0236b252e86419eef20c31a44579d2aee2f0a69", commonsLang.get().getSha1());
+        Assert.assertEquals("2.5", commonsLang.get().getVersion());
+        Assert.assertEquals("The Apache Software Foundation", commonsLang.get().getOrganization());
 
-        Assert.assertEquals("net.sf.ehcache:ehcache:1.6.2", ehcache.get().mavenIdentifier);
-        Assert.assertEquals("3bb35efc53328e60a0a32b95b670cf60580199a4", ehcache.get().sha1);
-        Assert.assertEquals("1.6.2", ehcache.get().version);
-        Assert.assertNull(ehcache.get().organization);
+        Assert.assertEquals("net.sf.ehcache:ehcache:1.6.2", ehcache.get().getMavenIdentifier());
+        Assert.assertEquals("3bb35efc53328e60a0a32b95b670cf60580199a4", ehcache.get().getSha1());
+        Assert.assertEquals("1.6.2", ehcache.get().getVersion());
+        Assert.assertNull(ehcache.get().getOrganization());
 
-        Assert.assertEquals("org.hibernate:hibernate-ehcache:3.6.9.Final", hibernateEhcache.get().mavenIdentifier);
-        Assert.assertEquals("8cb70b2b74df26023c608d7acc953364e3495a29", hibernateEhcache.get().sha1);
-        Assert.assertEquals("3.6.9.Final", hibernateEhcache.get().version);
-        Assert.assertEquals("Hibernate.org", hibernateEhcache.get().organization);
+        Assert.assertEquals("org.hibernate:hibernate-ehcache:3.6.9.Final", hibernateEhcache.get().getMavenIdentifier());
+        Assert.assertEquals("8cb70b2b74df26023c608d7acc953364e3495a29", hibernateEhcache.get().getSha1());
+        Assert.assertEquals("3.6.9.Final", hibernateEhcache.get().getVersion());
+        Assert.assertEquals("Hibernate.org", hibernateEhcache.get().getOrganization());
 
         // Verify found paths
         boolean jeeExampleMatchFoundPaths = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("jee-example-services.jar"))
-                .flatMap(dto -> dto.foundPaths.stream())
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("jee-example-services.jar"))
+                .flatMap(dto -> dto.getFoundPaths().stream())
                 .collect(Collectors.toList())
                 .containsAll(FOUND_PATHS_JEE_EXAMPLE_SERVICES);
         boolean commonsLangMatchFoundPaths = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("commons-lang-2.5.jar"))
-                .flatMap(dto -> dto.foundPaths.stream())
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("commons-lang-2.5.jar"))
+                .flatMap(dto -> dto.getFoundPaths().stream())
                 .collect(Collectors.toList())
                 .containsAll(FOUND_PATHS_COMMONS_LANG);
         boolean ehcacheMatchFoundPaths = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("ehcache-1.6.2.jar"))
-                .flatMap(dto -> dto.foundPaths.stream())
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("ehcache-1.6.2.jar"))
+                .flatMap(dto -> dto.getFoundPaths().stream())
                 .collect(Collectors.toList())
                 .containsAll(FOUND_PATHS_EHCACHE);
         boolean hibernateEhcacheMatchFoundPaths = Arrays.stream(appDependenciesDtoList)
-                .flatMap(dto -> dto.dependencies.stream())
-                .filter(dto -> dto.name.equals("hibernate-ehcache-3.6.9.Final.jar"))
-                .flatMap(dto -> dto.foundPaths.stream())
+                .flatMap(dto -> dto.getDependencies().stream())
+                .filter(dto -> dto.getName().equals("hibernate-ehcache-3.6.9.Final.jar"))
+                .flatMap(dto -> dto.getFoundPaths().stream())
                 .collect(Collectors.toList())
                 .containsAll(FOUND_PATHS_HIBERNATE_EHCACHE);
 
@@ -376,7 +376,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         // Application
         ApplicationDto[] appDtoList = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
         Optional<ApplicationDto> mainApp = Arrays.stream(appDtoList)
-                .filter(dto -> dto.name.equals(MAIN_APP_FILENAME))
+                .filter(dto -> dto.getName().equals(MAIN_APP_FILENAME))
                 .findFirst();
 
         Assert.assertTrue(mainApp.isPresent());
@@ -384,14 +384,14 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         // Application details
         ApplicationDetailsDto[] appDetailsDtoList = new ObjectMapper().readValue(appDetailsJson, ApplicationDetailsDto[].class);
         Optional<ApplicationDetailsDto> mainAppDetails = Arrays.stream(appDetailsDtoList)
-                .filter(dto -> dto.applicationId.equals(mainApp.get().id))
+                .filter(dto -> dto.getApplicationId().equals(mainApp.get().getId()))
                 .findFirst();
 
         Assert.assertTrue(mainAppDetails.isPresent());
 
         // Message in app details
-        boolean log4jReferenceFound = mainAppDetails.get().messages.stream().anyMatch(messageDto -> {
-            return messageDto.value.equals("log4j reference found");
+        boolean log4jReferenceFound = mainAppDetails.get().getMessages().stream().anyMatch(messageDto -> {
+            return messageDto.getValue().equals("log4j reference found");
         });
 
         Assert.assertTrue(log4jReferenceFound);

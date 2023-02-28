@@ -40,14 +40,14 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
 
                 List<RuleDto.TechnologyDto> sourceTechnology = ruleProvider.getMetadata().getSourceTechnologies().stream().map(technologyReference -> {
                     RuleDto.TechnologyDto technologyDto = new RuleDto.TechnologyDto();
-                    technologyDto.id = technologyReference.getId();
-                    technologyDto.versionRange = technologyReference.getVersionRangeAsString();
+                    technologyDto.setId(technologyReference.getId());
+                    technologyDto.setVersionRange(technologyReference.getVersionRangeAsString());
                     return technologyDto;
                 }).collect(Collectors.toList());
                 List<RuleDto.TechnologyDto> targetTechnology = ruleProvider.getMetadata().getTargetTechnologies().stream().map(technologyReference -> {
                     RuleDto.TechnologyDto technologyDto = new RuleDto.TechnologyDto();
-                    technologyDto.id = technologyReference.getId();
-                    technologyDto.versionRange = technologyReference.getVersionRangeAsString();
+                    technologyDto.setId(technologyReference.getId());
+                    technologyDto.setVersionRange(technologyReference.getVersionRangeAsString());
                     return technologyDto;
                 }).collect(Collectors.toList());
 
@@ -58,16 +58,16 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
                         .map(ruleExecutionInformation -> {
                             RuleDto ruleDto = new RuleDto();
 
-                            ruleDto.id = ruleExecutionInformation.getRule().getId();
-                            ruleDto.verticesAdded = ruleExecutionInformation.getVertexIDsAdded();
-                            ruleDto.edgesAdded = ruleExecutionInformation.getEdgeIDsAdded();
-                            ruleDto.verticesRemoved = ruleExecutionInformation.getVertexIDsRemoved();
-                            ruleDto.edgesRemoved = ruleExecutionInformation.getEdgeIDsRemoved();
-                            ruleDto.executed = ruleExecutionInformation.isExecuted();
-                            ruleDto.failed = ruleExecutionInformation.isFailed();
-                            ruleDto.failureMessage = ruleExecutionInformation.getFailureCause() != null && ruleExecutionInformation.getFailureCause().getMessage() != null ? ruleExecutionInformation.getFailureCause().getMessage() : null;
-                            ruleDto.sourceTechnology = sourceTechnology;
-                            ruleDto.targetTechnology = targetTechnology;
+                            ruleDto.setId(ruleExecutionInformation.getRule().getId());
+                            ruleDto.setVerticesAdded(ruleExecutionInformation.getVertexIDsAdded());
+                            ruleDto.setEdgesAdded(ruleExecutionInformation.getEdgeIDsAdded());
+                            ruleDto.setVerticesRemoved(ruleExecutionInformation.getVertexIDsRemoved());
+                            ruleDto.setEdgesRemoved(ruleExecutionInformation.getEdgeIDsRemoved());
+                            ruleDto.setExecuted(ruleExecutionInformation.isExecuted());
+                            ruleDto.setFailed(ruleExecutionInformation.isFailed());
+                            ruleDto.setFailureMessage(ruleExecutionInformation.getFailureCause() != null && ruleExecutionInformation.getFailureCause().getMessage() != null ? ruleExecutionInformation.getFailureCause().getMessage() : null);
+                            ruleDto.setSourceTechnology(sourceTechnology);
+                            ruleDto.setTargetTechnology(targetTechnology);
 
                             return ruleDto;
                         })
@@ -95,10 +95,10 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
                         .forEach(ruleExecutionInformation -> {
                             RuleContentDto ruleDto = new RuleContentDto();
 
-                            ruleDto.id = ruleExecutionInformation.getRule().getId();
-                            ruleDto.content = RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0);
+                            ruleDto.setId(ruleExecutionInformation.getRule().getId());
+                            ruleDto.setContent(RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0));
 
-                            result.put(ruleDto.id, ruleDto);
+                            result.put(ruleDto.getId(), ruleDto);
                         });
             }
         });
