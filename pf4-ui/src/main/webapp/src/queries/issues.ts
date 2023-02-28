@@ -2,7 +2,10 @@ import { useCallback } from "react";
 
 import axios, { AxiosError } from "axios";
 
-import { ApplicationIssuesDto } from "@app/api/application-issues";
+import {
+  ApplicationIssuesDto,
+  IssueCategoryType,
+} from "@app/api/application-issues";
 import {
   ApplicationIssuesProcessed,
   IssueProcessed,
@@ -15,32 +18,18 @@ export const useIssuesQuery = () => {
   const transformCallback = useCallback(
     (data: ApplicationIssuesDto[]) =>
       data.map((e) => {
-        const mandatory: IssueProcessed[] =
-          e.issues.mandatory?.map((e) => ({
-            ...e,
-            category: "mandatory",
-          })) || [];
-        const optional: IssueProcessed[] =
-          e.issues.optional?.map((e) => ({
-            ...e,
-            category: "optional",
-          })) || [];
-        const potential: IssueProcessed[] =
-          e.issues.potential?.map((e) => ({
-            ...e,
-            category: "potential",
-          })) || [];
-        const information: IssueProcessed[] =
-          e.issues.information?.map((e) => ({
-            ...e,
-            category: "information",
-          })) || [];
+        const issuesProccesed: IssueProcessed[] = Object.keys(e.issues).flatMap(
+          (category) => {
+            return e.issues[category as IssueCategoryType].flatMap((issue) => ({
+              ...issue,
+              category: category as IssueCategoryType,
+            }));
+          }
+        );
 
         const result: ApplicationIssuesProcessed = {
           applicationId: e.applicationId,
-          issues: mandatory
-            .concat(optional, potential, information)
-            .sort((a, b) => a.name.localeCompare(b.name)),
+          issues: issuesProccesed.sort((a, b) => a.name.localeCompare(b.name)),
         };
         return result;
       }),

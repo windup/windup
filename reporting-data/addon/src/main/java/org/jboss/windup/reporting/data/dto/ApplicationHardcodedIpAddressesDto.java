@@ -8,9 +8,8 @@ public class ApplicationHardcodedIpAddressesDto {
 
     public static class FileDto {
         public String fileId;
-        public String lineNumber;
-        public String columnNumber;
+        public int lineNumber;
+        public int columnNumber;
         public String ipAddress;
     }
-
 }

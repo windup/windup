@@ -90,7 +90,9 @@ public class ApplicationsRuleProvider extends AbstractApiRuleProvider {
 
                     Map<String, Integer> incidents = new HashMap<>();
                     for (Map.Entry<IssueCategoryModel, Integer> entry : allIncidents.entrySet()) {
-                        String key = entry.getKey().getName().trim().toLowerCase().replaceAll("migration ", "");
+                        String key = entry.getKey().getName().trim().toLowerCase()
+                                .replaceAll("migration ", "")
+                                .replaceAll(" ", "-");
                         incidents.put(key, entry.getValue());
                     }
 

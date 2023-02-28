@@ -7,10 +7,18 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.data.dto.ApplicationCompatibleFilesDto;
 import org.jboss.windup.reporting.data.dto.ApplicationDetailsDto;
+import org.jboss.windup.reporting.data.dto.ApplicationDto;
+import org.jboss.windup.reporting.data.dto.ApplicationHardcodedIpAddressesDto;
+import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.data.dto.FileDto;
+import org.jboss.windup.reporting.data.rules.ApplicationCompatibleFilesRuleProvider;
 import org.jboss.windup.reporting.data.rules.ApplicationDetailsRuleProvider;
+import org.jboss.windup.reporting.data.rules.ApplicationHardcodedIpAddressesRuleProvider;
+import org.jboss.windup.reporting.data.rules.ApplicationsRuleProvider;
 import org.jboss.windup.reporting.data.rules.FilesRuleProvider;
+import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
@@ -21,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,9 +62,9 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
     protected void validateReports(GraphContext context) throws IOException {
         validateApplicationDetailsReport(context);
         validateStaticIPReport(context);
-//        validateCompatibleReport(context);
-//        validateReportIndex(context);
-//        validateTagsInSourceReport(context);
+        validateCompatibleReport(context);
+        validateReportIndex(context);
+        validateTagsInSourceReport(context);
     }
 
     private void validateApplicationDetailsReport(GraphContext context) throws IOException {
@@ -124,85 +133,141 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         Assert.assertEquals(childFileExpectedStoryPoints, fileDto.get().storyPoints);
     }
 
-    private void validateStaticIPReport(GraphContext context) {
-//        ReportService reportService = new ReportService(context);
-//        ReportModel reportModel = reportService.getUniqueByProperty(
-//                ReportModel.TEMPLATE_PATH,
-//                CreateHardcodedIPAddressReportRuleProvider.TEMPLATE_REPORT);
-//        TestHardcodedPReportUtil util = new TestHardcodedPReportUtil();
-//        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
-//        util.loadPage(reportPath);
-//        Assert.assertTrue(util
-//                .checkHardcodedIPInReport(
-//                        "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (65, 32)",
-//                        "Line: 65, Position: 32", "127.0.0.1"));
-//        Assert.assertTrue(util
-//                .checkHardcodedIPInReport(
-//                        "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (721, 14)",
-//                        "Line: 721, Position: 14", "127.0.0.1"));
-//        Assert.assertTrue(util
-//                .checkHardcodedIPInReport(
-//                        "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (725, 14)",
-//                        "Line: 725, Position: 14", "127.0.0.1"));
+    private void validateStaticIPReport(GraphContext context) throws IOException {
+        File hardcodedFilesJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationHardcodedIpAddressesRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
+        // Hardcoded files
+        ApplicationHardcodedIpAddressesDto[] appHardcodedIpAddressList = new ObjectMapper().readValue(hardcodedFilesJson, ApplicationHardcodedIpAddressesDto[].class);
+        Assert.assertEquals(1, appHardcodedIpAddressList.length);
+
+        // Files
+        FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);
+        Assert.assertTrue(filesDtoList.length > 1);
+
+        // Assert ip addresses
+        Assert.assertEquals(3, appHardcodedIpAddressList[0].files.size());
+        Assert.assertEquals(1, appHardcodedIpAddressList[0].files.stream()
+                .map(fileDto -> fileDto.fileId)
+                .collect(Collectors.toSet())
+                .size()
+        );
+
+        Set<String> ipAddresses = appHardcodedIpAddressList[0].files.stream()
+                .map(fileDto -> fileDto.ipAddress)
+                .collect(Collectors.toSet());
+        Assert.assertEquals(1, ipAddresses.size());
+        Assert.assertTrue(ipAddresses.contains("127.0.0.1"));
+
+        boolean lineAndColumnNumbersMatch = appHardcodedIpAddressList[0].files.stream()
+                .allMatch(dto -> (dto.lineNumber == 65 && dto.columnNumber == 32) ||
+                        (dto.lineNumber == 721 && dto.columnNumber == 14) ||
+                        (dto.lineNumber == 725 && dto.columnNumber == 14)
+                );
+        Assert.assertTrue(lineAndColumnNumbersMatch);
+
+        // Assert file associated to ip address
+        Optional<FileDto> sourceFile = Stream.of(filesDtoList)
+                .filter(fileDto -> fileDto.id.equals(appHardcodedIpAddressList[0].files.get(0).fileId))
+                .findFirst();
+
+        Assert.assertTrue(sourceFile.isPresent());
+        Assert.assertEquals("org.apache.wicket.protocol.http.mock.MockHttpServletRequest", sourceFile.get().prettyFileName);
     }
 
-//    private void validateCompatibleReport(GraphContext context) {
-//        ReportService reportService = new ReportService(context);
-//        ReportModel reportModel = reportService.getUniqueByProperty(
-//                ReportModel.TEMPLATE_PATH,
-//                CreateCompatibleFileReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
-//        TestCompatibleReportUtil util = new TestCompatibleReportUtil();
-//
-//
-//        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
-//        util.loadPage(reportPath);
-//        Assert.assertTrue(util
-//                .checkFileInReport("org/jboss/devconf/openshift/HomePage.class", ""));
-//        Assert.assertTrue(util
-//                .checkFileInReport("org/joda/time/DateMidnight.class", ""));
-//        Assert.assertTrue(util
-//                .checkFileInReport(
-//                        "org/joda/time/Chronology.class", ""));
-//        Assert.assertTrue("An application has duplicate entries for a single file.", util.checkTableWithoutDuplicates());
-//
-//    }
-//
-//    private void validateReportIndex(GraphContext context) {
-//        ReportService reportService = new ReportService(context);
-//        ReportModel reportModel = reportService.getUniqueByProperty(
-//                ReportModel.TEMPLATE_PATH,
-//                CreateReportIndexRuleProvider.TEMPLATE);
-//        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
-//        TestReportIndexReportUtil util = new TestReportIndexReportUtil();
-//        util.loadPage(appReportPath);
-//
-//        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 291, 2306));
-//        Assert.assertTrue(util.checkIncidentByCategoryRow("mandatory", 0, 0));
-//        Assert.assertTrue(util.checkIncidentByCategoryRow("information", 10, 0));
-//        Assert.assertTrue(util.checkIncidentByCategoryRow("cloud-mandatory", 3, 3));
-//        Assert.assertTrue(util.checkIncidentByCategoryRow("potential", 0, 0));
-//    }
-//
-//    private void validateTagsInSourceReport(GraphContext context) throws IOException {
-//        FileService fileService = new FileService(context);
-//        boolean reportFound = false;
-//        for (FileModel fileModel : fileService.findByFilenameRegex("AbstractClassResolver.java")) {
-//            if (fileModel.getPrettyPath().contains("wicket-core-1.5.10.jar/org/apache/wicket/application/AbstractClassResolver.java")) {
-//                Assert.assertTrue(fileModel instanceof SourceFileModel);
-//                ReportService reportService = new ReportService(context);
-//                SourceReportService sourceReportService = new SourceReportService(context);
-//                SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(fileModel);
-//                Path sourceReportPath = reportService.getReportDirectory().resolve(sourceReportModel.getReportFilename());
-//
-//                String sourceReportContents = FileUtils.readFileToString(sourceReportPath.toFile());
-//                Assert.assertTrue(sourceReportContents.contains("<span class=\"label label-info\" title=\"GroovyTestHintTag\">GroovyTestHintTag</span>"));
-//                reportFound = true;
-//            }
-//        }
-//
-//        Assert.assertTrue(reportFound);
-//    }
+    private void validateCompatibleReport(GraphContext context) throws IOException {
+        File compatibleFilesJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json").toFile();
+
+        ApplicationCompatibleFilesDto[] applicationCompatibleFilesDtos = new ObjectMapper().readValue(compatibleFilesJson, ApplicationCompatibleFilesDto[].class);
+        Assert.assertEquals(1, applicationCompatibleFilesDtos.length);
+
+        // Assert
+        Optional<ApplicationCompatibleFilesDto.FileDto> file1 = applicationCompatibleFilesDtos[0].artifacts.stream()
+                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war"))
+                .flatMap(artifactDto -> artifactDto.files.stream())
+                .filter(fileDto -> fileDto.fileName.equals("org/jboss/devconf/openshift/HomePage.class"))
+                .findFirst();
+        Optional<ApplicationCompatibleFilesDto.FileDto> file2 = applicationCompatibleFilesDtos[0].artifacts.stream()
+                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
+                .flatMap(artifactDto -> artifactDto.files.stream())
+                .filter(fileDto -> fileDto.fileName.equals("org/joda/time/DateMidnight.class"))
+                .findFirst();
+        Optional<ApplicationCompatibleFilesDto.FileDto> file3 = applicationCompatibleFilesDtos[0].artifacts.stream()
+                .filter(artifactDto -> artifactDto.name.equals("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar"))
+                .flatMap(artifactDto -> artifactDto.files.stream())
+                .filter(fileDto -> fileDto.fileName.equals("org/joda/time/Chronology.class"))
+                .findFirst();
+
+        Assert.assertTrue(file1.isPresent());
+        Assert.assertTrue(file2.isPresent());
+        Assert.assertTrue(file3.isPresent());
+    }
+
+    private void validateReportIndex(GraphContext context) throws IOException {
+        File applicationsJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationsRuleProvider.PATH + ".json").toFile();
+        File issuesJson = new ReportService(context).getApiDataDirectory().resolve(IssuesRuleProvider.PATH + ".json").toFile();
+
+        // Assert incidents
+        ApplicationDto[] applicationDtos = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
+        Assert.assertEquals(1, applicationDtos.length);
+
+        Assert.assertFalse(applicationDtos[0].incidents.containsKey("mandatory"));
+        Assert.assertFalse(applicationDtos[0].incidents.containsKey("potential"));
+        Assert.assertEquals(291, applicationDtos[0].incidents.get("optional").intValue());
+        Assert.assertEquals(10, applicationDtos[0].incidents.get("information").intValue());
+        Assert.assertEquals(3, applicationDtos[0].incidents.get("cloud-mandatory").intValue());
+
+        // Assert story points and incidents from issues
+        ApplicationIssuesDto[] issuesDtos = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
+        Assert.assertEquals(1, applicationDtos.length);
+
+        Assert.assertFalse(issuesDtos[0].issues.containsKey("mandatory"));
+        Assert.assertFalse(issuesDtos[0].issues.containsKey("potential"));
+
+        int optionalStoryPoints = issuesDtos[0].issues.get("optional").stream()
+                .map(issueDto -> issueDto.totalStoryPoints)
+                .reduce(0, Integer::sum);
+        int optionalTotalIncidents = issuesDtos[0].issues.get("optional").stream()
+                .map(issueDto -> issueDto.totalIncidents)
+                .reduce(0, Integer::sum);
+
+        int informationStoryPoints = issuesDtos[0].issues.get("information").stream()
+                .map(issueDto -> issueDto.totalStoryPoints)
+                .reduce(0, Integer::sum);
+        int informationTotalIncidents = issuesDtos[0].issues.get("information").stream()
+                .map(issueDto -> issueDto.totalIncidents)
+                .reduce(0, Integer::sum);
+
+        int cloudMandatoryStoryPoints = issuesDtos[0].issues.get("cloud-mandatory").stream()
+                .map(issueDto -> issueDto.totalStoryPoints)
+                .reduce(0, Integer::sum);
+        int cloudMandatoryTotalIncidents = issuesDtos[0].issues.get("cloud-mandatory").stream()
+                .map(issueDto -> issueDto.totalIncidents)
+                .reduce(0, Integer::sum);
+
+        Assert.assertEquals(2306, optionalStoryPoints);
+        Assert.assertEquals(291, optionalTotalIncidents);
+
+        Assert.assertEquals(0, informationStoryPoints);
+        Assert.assertEquals(10, informationTotalIncidents);
+
+        Assert.assertEquals(3, cloudMandatoryStoryPoints);
+        Assert.assertEquals(3, cloudMandatoryTotalIncidents);
+    }
+
+    private void validateTagsInSourceReport(GraphContext context) throws IOException {
+        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+
+        // Files
+        FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);
+        Assert.assertTrue(filesDtoList.length > 1);
+
+        Optional<FileDto> fileDto = Stream.of(filesDtoList)
+                .filter(f -> f.fullPath.contains("wicket-core-1.5.10.jar/org/apache/wicket/application/AbstractClassResolver.java"))
+                .findFirst();
+        Assert.assertTrue(fileDto.isPresent());
+        Assert.assertTrue(fileDto.get().classificationsAndHintsTags.contains("GroovyTestHintTag"));
+    }
 
     protected void validateManifestEntries(GraphContext context) throws Exception {
         JarManifestService jarManifestService = new JarManifestService(context);
