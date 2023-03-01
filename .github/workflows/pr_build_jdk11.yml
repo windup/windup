@@ -60,5 +60,9 @@ jobs:
     - name: Set up chromedriver variable
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4.5
+      with:
+        maven-version: 3.8.7
     - name: Build on JDK 11
       run: mvn clean install -DskipTests -B -U && mvn -B clean install -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver -f tests
