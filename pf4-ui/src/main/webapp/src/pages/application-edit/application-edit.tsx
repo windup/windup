@@ -106,6 +106,10 @@ export const ApplicationEdit: React.FC = () => {
       title: "Compatible files",
       path: `/applications/${application?.id}/compatible-files`,
     },
+    {
+      title: "JBPM Processes",
+      path: `/applications/${application?.id}/jbpm`,
+    },
   ];
 
   if (applicationTransactions && applicationTransactions.length > 0) {

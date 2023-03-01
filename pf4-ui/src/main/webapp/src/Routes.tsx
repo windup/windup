@@ -59,6 +59,9 @@ const ApplicationHardcodedIPAddresses = lazy(
 const ApplicationCompatibleFiles = lazy(
   () => import("./pages/application-edit/pages/application-compatible-files")
 );
+const ApplicationJBPM = lazy(
+  () => import("./pages/application-edit/pages/application-jbpm")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -197,6 +200,10 @@ export const AppRoutes = () => {
         {
           Component: ApplicationCompatibleFiles,
           path: "compatible-files",
+        },
+        {
+          Component: ApplicationJBPM,
+          path: "jbpm",
         },
       ],
     },
