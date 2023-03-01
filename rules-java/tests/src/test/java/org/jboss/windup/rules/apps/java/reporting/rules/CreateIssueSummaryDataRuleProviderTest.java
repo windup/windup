@@ -117,7 +117,8 @@ public class CreateIssueSummaryDataRuleProviderTest {
 
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app1\"")));
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"incidentsByCategory\":{\"optional\":{\"totalStoryPoints\":80,\"incidents\":2}")));
-                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"mandatory\":{\"totalStoryPoints\":100,\"incidents\":1}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"mandatory\":{\"totalStoryPoints\":3,\"incidents\":1}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"mandatoryIncidentsByType\":{\"Complex\":{\"totalStoryPoints\":3,\"incidents\":1}}")));
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"technologyTags\":[{\"name\":\"Servlet\",\"category\":\"HTTP\"}]")));
 
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app2\"")));
@@ -207,7 +208,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
                                     b1b.setRuleID("rule1");
                                     b1b.setLineNumber(0);
                                     b1b.setTitle("hint1b-text");
-                                    b1b.setEffort(100);
+                                    b1b.setEffort(3);
                                     b1b.setIssueCategory(mandatoryCategory);
 
                                     final ClassificationModel c1 = classificationService.create();
