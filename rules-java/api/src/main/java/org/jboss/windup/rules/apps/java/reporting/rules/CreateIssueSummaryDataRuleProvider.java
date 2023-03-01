@@ -80,9 +80,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
                 issueSummaryWriter.write("var WINDUP_TECHNOLOGIES = [];" + NEWLINE);
-
                 List<Object> analysisSummaryList = new ArrayList<>();
-
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication, new OnlyOnceTraversalStrategy());
