@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureDependencyTest extends WindupArchitectureTest {
 
     private static final String[] FOUND_PATH_LIB = {
             "application-with-dependencies.ear/lib/example-0-1.0.0.jar"

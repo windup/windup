@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectureTest {
     private static final String MAIN_APP_FILENAME = "duplicate-ear-test-1.ear";
     private static final String SECOND_APP_FILENAME = "duplicate-ear-test-2.ear";
     private static final String THIRD_APP_FILENAME = "duplicate-ear-test-3.ear";

@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureCatchallTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureCatchallTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

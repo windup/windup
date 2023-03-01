@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSeamBookingSourceTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureSeamBookingSourceTest extends WindupArchitectureTest {
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),

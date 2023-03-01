@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureStopTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureStopTest extends WindupArchitectureTest {
     private static final String EXAMPLE_USERSCRIPT_INPUT = "/exampleuserscript.xml";
     private static final String EXAMPLE_USERSCRIPT_OUTPUT = "exampleuserscript_output.windup.xml";
     private static final String XSLT_OUTPUT_NAME = "exampleconversion_userdir.xslt";

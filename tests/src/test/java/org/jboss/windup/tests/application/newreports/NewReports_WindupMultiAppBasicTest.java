@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(Arquillian.class)
-public class WindupMultiAppBasicTest extends WindupArchitectureTest {
+public class NewReports_WindupMultiAppBasicTest extends WindupArchitectureTest {
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),

@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

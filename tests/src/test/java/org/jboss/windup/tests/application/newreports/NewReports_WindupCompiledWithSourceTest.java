@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @RunWith(Arquillian.class)
-public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
+public class NewReports_WindupCompiledWithSourceTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

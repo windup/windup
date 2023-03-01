@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest {
+public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
@@ -52,7 +52,7 @@ public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchi
         return ShrinkWrap.create(AddonArchive.class)
                 .addBeansXML()
                 .addClass(WindupArchitectureTest.class)
-                .addClass(WindupArchitectureMediumBinaryModeTest.class)
+                .addClass(NewReports_WindupArchitectureMediumBinaryModeTest.class)
                 .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 

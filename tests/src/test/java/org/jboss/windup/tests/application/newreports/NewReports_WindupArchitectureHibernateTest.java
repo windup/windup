@@ -36,7 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureHibernateTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureHibernateTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

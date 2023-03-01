@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 
 @RunWith(Arquillian.class)
-public class IgnoreJavaClassTest extends WindupArchitectureTest {
+public class NewReports_IgnoreJavaClassTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class UnparsablesReportTest extends WindupArchitectureTest {
+public class NewReports_UnparsablesReportTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

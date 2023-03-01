@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

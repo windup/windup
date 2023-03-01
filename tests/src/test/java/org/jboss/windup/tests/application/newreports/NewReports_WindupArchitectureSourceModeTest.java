@@ -64,7 +64,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitectureTest {
     private static final String EXAMPLE_USERSCRIPT_INPUT = "/exampleuserscript.xml";
     private static final String EXAMPLE_USERSCRIPT_OUTPUT = "exampleuserscript_output.windup.xml";
     private static final String XSLT_OUTPUT_NAME = "exampleconversion_userdir.xslt";

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureMediumBinaryModeFernflowerTest extends WindupArchitectureMediumBinaryModeTest {
+public class NewReports_WindupArchitectureMediumBinaryModeFernflowerTest extends NewReports_WindupArchitectureMediumBinaryModeTest {
     @Test
     public void testRunWindupMediumWithFernflower() throws Exception {
         final String path = "../test-files/Windup1x-javaee-example.war";

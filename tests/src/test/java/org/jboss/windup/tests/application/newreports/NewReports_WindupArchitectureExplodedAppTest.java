@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
 
     final TemporaryFolder tmp = new TemporaryFolder();
     private static final String EXPLODED_APP_DIR = "exploded-app-directory";

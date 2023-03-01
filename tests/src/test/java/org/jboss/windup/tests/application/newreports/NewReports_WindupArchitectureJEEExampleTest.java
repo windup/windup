@@ -44,7 +44,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

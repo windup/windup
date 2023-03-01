@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({

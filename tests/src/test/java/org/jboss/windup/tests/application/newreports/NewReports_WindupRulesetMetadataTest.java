@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 @RunWith(Arquillian.class)
-public class WindupRulesetMetadataTest {
+public class NewReports_WindupRulesetMetadataTest {
 
     @Deployment
     @AddonDependencies({

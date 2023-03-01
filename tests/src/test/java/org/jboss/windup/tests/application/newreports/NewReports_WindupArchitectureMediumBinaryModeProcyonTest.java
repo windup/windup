@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import java.util.Properties;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest {
+public class NewReports_WindupArchitectureMediumBinaryModeProcyonTest extends NewReports_WindupArchitectureMediumBinaryModeTest {
     @Test
     @Ignore
     public void testRunWindupMediumWithProcyon() throws Exception {

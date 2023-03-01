@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @RunWith(Arquillian.class)
-public class WindupArchitectureJspTest extends WindupArchitectureTest {
+public class NewReports_WindupArchitectureJspTest extends WindupArchitectureTest {
 
     @Deployment
     @AddonDependencies({
