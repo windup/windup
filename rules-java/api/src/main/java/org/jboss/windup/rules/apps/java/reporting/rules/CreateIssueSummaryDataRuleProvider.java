@@ -204,13 +204,10 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
         ObjectMapper mapper = new ObjectMapper();
         String json;
 
-        SimpleDateFormat format = new SimpleDateFormat("YYYYMMDDHHmm");
-        String analysisTime = format.format(new Date());
-
         FileWriter writer = null;
         try {
             json = mapper.writeValueAsString(analysisSummary);
-            String filename = "analysisSummary_" + analysisTime + ".json";
+            String filename = "analysisSummary.json";
             writer = new FileWriter(outputFolderPath + filename);
             writer.write(json);
         } catch (JsonProcessingException e) {

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,9 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.TagSetModel;
@@ -105,14 +109,15 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
                     .setOptionValue(ExportSummaryOption.NAME, exportFile);
             processor.execute(configuration);
-            final File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary_"));
+            final File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary"));
             if (exportFile) {
                 Assert.assertEquals(1, candidates.length);
                 try {
                     Set<String> jsonOutput = loadFile(candidates[0].getPath());
 
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app1\"")));
-                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"incidentsByCategory\":{\"optional\":{\"totalStoryPoints\":180,\"incidents\":3}}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"incidentsByCategory\":{\"optional\":{\"totalStoryPoints\":80,\"incidents\":2}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"mandatory\":{\"totalStoryPoints\":100,\"incidents\":1}")));
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"technologyTags\":[{\"name\":\"Servlet\",\"category\":\"HTTP\"}]")));
 
                     Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app2\"")));
@@ -184,6 +189,11 @@ public class CreateIssueSummaryDataRuleProviderTest {
                                 final ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                                 final LinkService linkService = new LinkService(event.getGraphContext());
 
+                                GraphService<IssueCategoryModel> issueCategoryModelService = new GraphService<>(event.getGraphContext(), IssueCategoryModel.class);
+
+                                IssueCategoryModel mandatoryCategory = issueCategoryModelService.findAll()
+                                        .stream().filter(ic -> ic.getCategoryID().equals(IssueCategoryRegistry.MANDATORY)).findAny().get();
+
                                 if ("app1".equals(payload.getName())) {
                                     final InlineHintModel b1 = inlineHintService.create();
                                     b1.setRuleID("rule1");
@@ -198,6 +208,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
                                     b1b.setLineNumber(0);
                                     b1b.setTitle("hint1b-text");
                                     b1b.setEffort(100);
+                                    b1b.setIssueCategory(mandatoryCategory);
 
                                     final ClassificationModel c1 = classificationService.create();
                                     c1.setRuleID("classification1");
