@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationDependenciesDto } from "@app/api/application-dependency";
+import { ApplicationDependenciesDto } from "@app/api/dependencies";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_DEPENDENCIES } from "./mocks/dependencies.mock";

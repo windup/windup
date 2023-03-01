@@ -1,4 +1,4 @@
-import { ApplicationCompatibleFilesDto } from "@app/api/application-compatible-files";
+import { ApplicationCompatibleFilesDto } from "@app/api/compatible-files";
 
 export let MOCK_COMPATIBLE_FILES: ApplicationCompatibleFilesDto[];
 

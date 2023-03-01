@@ -1,4 +1,4 @@
-import { ApplicationTransactionsDto } from "@app/api/application-transactions";
+import { ApplicationTransactionsDto } from "@app/api/transactions";
 
 export let MOCK_TRANSACTIONS: ApplicationTransactionsDto[];
 

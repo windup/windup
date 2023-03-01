@@ -1,4 +1,4 @@
-import { ApplicationPackageIncidentsDto } from "@app/api/application-package-incidents";
+import { ApplicationPackageIncidentsDto } from "@app/api/package-incidents";
 
 export let MOCK_PACKAGES: ApplicationPackageIncidentsDto[];
 

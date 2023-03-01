@@ -1,4 +1,4 @@
-import { ApplicationUnparsableFilesDto } from "@app/api/application-unparsable-files";
+import { ApplicationUnparsableFilesDto } from "@app/api/unparsable-files";
 
 export let MOCK_UNPARSABLE_FILES: ApplicationUnparsableFilesDto[];
 

@@ -1,4 +1,4 @@
-import { ApplicationSpringBeansDto } from "@app/api/application-spring-beans";
+import { ApplicationSpringBeansDto } from "@app/api/spring-beans";
 
 export let MOCK_SPRING_BEANS: ApplicationSpringBeansDto[];
 

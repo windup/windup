@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationSpringBeansDto } from "@app/api/application-spring-beans";
+import { ApplicationSpringBeansDto } from "@app/api/spring-beans";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_SPRING_BEANS } from "./mocks/spring-beans.mock";

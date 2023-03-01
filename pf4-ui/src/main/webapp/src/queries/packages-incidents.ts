@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationPackageIncidentsDto } from "@app/api/application-package-incidents";
+import { ApplicationPackageIncidentsDto } from "@app/api/package-incidents";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_PACKAGES } from "./mocks/packages-incidents.mock";

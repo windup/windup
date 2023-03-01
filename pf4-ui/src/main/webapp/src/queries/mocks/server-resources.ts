@@ -1,4 +1,4 @@
-import { ApplicationServerResourcesDto } from "@app/api/application-server-resources";
+import { ApplicationServerResourcesDto } from "@app/api/server-resources";
 
 export let MOCK_SERVER_RESOURCES: ApplicationServerResourcesDto[];
 

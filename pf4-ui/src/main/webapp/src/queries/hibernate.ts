@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationHibernateDto } from "@app/api/application-hibernate";
+import { ApplicationHibernateDto } from "@app/api/hibernate";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_HIBERNATE } from "./mocks/hibernate.mock";

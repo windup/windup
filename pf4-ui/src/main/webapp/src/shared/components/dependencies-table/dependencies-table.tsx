@@ -32,7 +32,7 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
-import { DependencyDto } from "@app/api/application-dependency";
+import { DependencyDto } from "@app/api/dependencies";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useDependenciesQuery } from "@app/queries/dependencies";
 

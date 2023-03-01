@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationTransactionsDto } from "@app/api/application-transactions";
+import { ApplicationTransactionsDto } from "@app/api/transactions";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_TRANSACTIONS } from "./mocks/transactions.mock";

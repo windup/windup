@@ -1,4 +1,4 @@
-import { ApplicationHibernateDto } from "@app/api/application-hibernate";
+import { ApplicationHibernateDto } from "@app/api/hibernate";
 
 export let MOCK_HIBERNATE: ApplicationHibernateDto[];
 

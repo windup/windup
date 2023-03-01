@@ -20,7 +20,7 @@ import {
   Tr,
 } from "@patternfly/react-table";
 
-import { IssueDto } from "@app/api/application-issues";
+import { IssueDto } from "@app/api/issues";
 import { useFilesQuery } from "@app/queries/files";
 import { SimpleMarkdown } from "@app/shared/components";
 import { getMarkdown } from "@app/utils/rule-utils";

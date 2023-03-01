@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationIgnoredFilesDto } from "@app/api/application-ignored-files";
+import { ApplicationIgnoredFilesDto } from "@app/api/ignored-files";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_IGNORED_FILES } from "./mocks/ignored-files.mock";

@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationEJBsDto } from "@app/api/application-ejb";
+import { ApplicationEJBsDto } from "@app/api/ejb";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_EJB } from "./mocks/ejb.mock";

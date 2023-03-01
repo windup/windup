@@ -1,4 +1,4 @@
-import { ApplicationJPAsDto } from "@app/api/application-jpa";
+import { ApplicationJPAsDto } from "@app/api/jpa";
 
 export let MOCK_JPA: ApplicationJPAsDto[];
 

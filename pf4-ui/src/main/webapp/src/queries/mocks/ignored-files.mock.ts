@@ -1,4 +1,4 @@
-import { ApplicationIgnoredFilesDto } from "@app/api/application-ignored-files";
+import { ApplicationIgnoredFilesDto } from "@app/api/ignored-files";
 
 export let MOCK_IGNORED_FILES: ApplicationIgnoredFilesDto[];
 

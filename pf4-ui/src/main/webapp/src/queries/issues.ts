@@ -5,7 +5,7 @@ import axios, { AxiosError } from "axios";
 import {
   ApplicationIssuesDto,
   IssueCategoryType,
-} from "@app/api/application-issues";
+} from "@app/api/issues";
 import {
   ApplicationIssuesProcessed,
   IssueProcessed,

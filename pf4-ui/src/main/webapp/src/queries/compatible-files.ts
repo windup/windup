@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationCompatibleFilesDto } from "@app/api/application-compatible-files";
+import { ApplicationCompatibleFilesDto } from "@app/api/compatible-files";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_COMPATIBLE_FILES } from "./mocks/compatible-files.mock";

@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationUnparsableFilesDto } from "@app/api/application-unparsable-files";
+import { ApplicationUnparsableFilesDto } from "@app/api/unparsable-files";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_UNPARSABLE_FILES } from "./mocks/unparsable-files.mock";

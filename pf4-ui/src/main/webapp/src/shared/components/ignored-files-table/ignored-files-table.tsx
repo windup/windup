@@ -23,7 +23,7 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
-import { IgnoredFileDto } from "@app/api/application-ignored-files";
+import { IgnoredFileDto } from "@app/api/ignored-files";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useIgnoredFilesQuery } from "@app/queries/ignored-files";
 

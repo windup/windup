@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationJBPMsDto } from "@app/api/application-jbpm";
+import { ApplicationJBPMsDto } from "@app/api/jbpm";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_JBPM } from "./mocks/jbpm.mock";

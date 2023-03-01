@@ -9,59 +9,52 @@ const IssuesList = lazy(() => import("./pages/issues-list"));
 const TechnologiesList = lazy(() => import("./pages/technologies-list"));
 const DependenciesList = lazy(() => import("./pages/dependencies-list"));
 const RulesList = lazy(() => import("./pages/rules-list"));
-const ApplicationEdit = lazy(() => import("./pages/application-edit"));
-const ApplicationEditDashboard = lazy(
-  () => import("./pages/application-edit/pages/application-dashboard")
+const AppEdit = lazy(() => import("./pages/application-edit"));
+const AppEditDashboard = lazy(
+  () => import("./pages/application-edit/pages/dashboard")
 );
-const ApplicationEditIssues = lazy(
-  () => import("./pages/application-edit/pages/application-issues")
+const AppEditIssues = lazy(
+  () => import("./pages/application-edit/pages/issues")
 );
-const ApplicationEditDetails = lazy(
-  () => import("./pages/application-edit/pages/application-details")
+const AppEditDetails = lazy(
+  () => import("./pages/application-edit/pages/details")
 );
-const ApplicationEditTechnologies = lazy(
-  () => import("./pages/application-edit/pages/application-technologies")
+const AppEditTechnologies = lazy(
+  () => import("./pages/application-edit/pages/technologies")
 );
-const ApplicationEditDependencies = lazy(
-  () => import("./pages/application-edit/pages/application-dependencies")
+const AppEditDependencies = lazy(
+  () => import("./pages/application-edit/pages/dependencies")
 );
-const ApplicationEditIgnoredFiles = lazy(
-  () => import("./pages/application-edit/pages/application-ignored-files")
+const AppEditIgnoredFiles = lazy(
+  () => import("./pages/application-edit/pages/ignored-files")
 );
-const ApplicationEJB = lazy(
-  () => import("./pages/application-edit/pages/application-ejb")
+const AppEJB = lazy(() => import("./pages/application-edit/pages/ejb"));
+const AppJPA = lazy(() => import("./pages/application-edit/pages/jpa"));
+const AppHibernate = lazy(
+  () => import("./pages/application-edit/pages/hibernate")
 );
-const ApplicationJPA = lazy(
-  () => import("./pages/application-edit/pages/application-jpa")
+const AppSpringBeans = lazy(
+  () => import("./pages/application-edit/pages/spring-beans")
 );
-const ApplicationHibernate = lazy(
-  () => import("./pages/application-edit/pages/application-hibernate")
+const AppRemoteServices = lazy(
+  () => import("./pages/application-edit/pages/remote-services")
 );
-const ApplicationSpringBeans = lazy(
-  () => import("./pages/application-edit/pages/application-spring-beans")
+const AppServerResources = lazy(
+  () => import("./pages/application-edit/pages/server-resources")
 );
-const ApplicationRemoteServices = lazy(
-  () => import("./pages/application-edit/pages/application-remote-services")
+const AppUnparsableFiles = lazy(
+  () => import("./pages/application-edit/pages/unparsable-files")
 );
-const ApplicationServerResources = lazy(
-  () => import("./pages/application-edit/pages/application-server-resources")
+const AppTransactions = lazy(
+  () => import("./pages/application-edit/pages/transactions")
 );
-const ApplicationUnparsableFiles = lazy(
-  () => import("./pages/application-edit/pages/application-unparsable-files")
+const AppHardcodedIPAddresses = lazy(
+  () => import("./pages/application-edit/pages/hardcoded-ip-addresses")
 );
-const ApplicationTransactions = lazy(
-  () => import("./pages/application-edit/pages/application-transactions")
+const AppCompatibleFiles = lazy(
+  () => import("./pages/application-edit/pages/compatible-files")
 );
-const ApplicationHardcodedIPAddresses = lazy(
-  () =>
-    import("./pages/application-edit/pages/application-hardcoded-ip-addresses")
-);
-const ApplicationCompatibleFiles = lazy(
-  () => import("./pages/application-edit/pages/application-compatible-files")
-);
-const ApplicationJBPM = lazy(
-  () => import("./pages/application-edit/pages/application-jbpm")
-);
+const AppJBPM = lazy(() => import("./pages/application-edit/pages/jbpm"));
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -130,7 +123,7 @@ export const AppRoutes = () => {
     },
     // Edit application
     {
-      Component: ApplicationEdit,
+      Component: AppEdit,
       path: "/applications/:projectId",
       children: [
         {
@@ -138,71 +131,71 @@ export const AppRoutes = () => {
           path: "",
         },
         {
-          Component: ApplicationEditDashboard,
+          Component: AppEditDashboard,
           path: "dashboard",
         },
         {
-          Component: ApplicationEditIssues,
+          Component: AppEditIssues,
           path: "issues",
         },
         {
-          Component: ApplicationEditDetails,
+          Component: AppEditDetails,
           path: "details",
         },
         {
-          Component: ApplicationEditTechnologies,
+          Component: AppEditTechnologies,
           path: "technologies",
         },
         {
-          Component: ApplicationEditDependencies,
+          Component: AppEditDependencies,
           path: "dependencies",
         },
         {
-          Component: ApplicationEditIgnoredFiles,
+          Component: AppEditIgnoredFiles,
           path: "ignored-files",
         },
         {
-          Component: ApplicationEJB,
+          Component: AppEJB,
           path: "ejb",
         },
         {
-          Component: ApplicationJPA,
+          Component: AppJPA,
           path: "jpa",
         },
         {
-          Component: ApplicationHibernate,
+          Component: AppHibernate,
           path: "hibernate",
         },
         {
-          Component: ApplicationSpringBeans,
+          Component: AppSpringBeans,
           path: "spring-beans",
         },
         {
-          Component: ApplicationRemoteServices,
+          Component: AppRemoteServices,
           path: "remote-services",
         },
         {
-          Component: ApplicationServerResources,
+          Component: AppServerResources,
           path: "server-resources",
         },
         {
-          Component: ApplicationUnparsableFiles,
+          Component: AppUnparsableFiles,
           path: "unparsable-files",
         },
         {
-          Component: ApplicationTransactions,
+          Component: AppTransactions,
           path: "transactions",
         },
         {
-          Component: ApplicationHardcodedIPAddresses,
+          Component: AppHardcodedIPAddresses,
           path: "hardcoded-ip-addresses",
         },
         {
-          Component: ApplicationCompatibleFiles,
+          Component: AppCompatibleFiles,
           path: "compatible-files",
         },
         {
-          Component: ApplicationJBPM,
+          Component: AppJBPM,
           path: "jbpm",
         },
       ],

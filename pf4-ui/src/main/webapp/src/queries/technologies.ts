@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import axios, { AxiosError } from "axios";
 
-import { ApplicationTechnologiesDto } from "@app/api/application-technologies";
+import { ApplicationTechnologiesDto } from "@app/api/technologies";
 import {
   ApplicationTechnologiesProcessed,
   TechnologyGroupsProcessed,

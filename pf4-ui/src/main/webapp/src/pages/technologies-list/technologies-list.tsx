@@ -43,7 +43,7 @@ import {
 } from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
-import { TechnologyGroup } from "@app/api/application-technologies";
+import { TechnologyGroup } from "@app/api/technologies";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { Context, SimpleContextSelector } from "@app/context/simple-context";
 import {

@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationJPAsDto } from "@app/api/application-jpa";
+import { ApplicationJPAsDto } from "@app/api/jpa";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_JPA } from "./mocks/jpa.mock";

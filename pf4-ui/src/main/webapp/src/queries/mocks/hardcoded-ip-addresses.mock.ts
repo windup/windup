@@ -1,4 +1,4 @@
-import { ApplicationHardcodedIpAddressesDto } from "@app/api/application-hardcoded-ip-addresses";
+import { ApplicationHardcodedIpAddressesDto } from "@app/api/hardcoded-ip-addresses";
 
 export let MOCK_HARDCODED_IP_ADDRESSES: ApplicationHardcodedIpAddressesDto[];
 

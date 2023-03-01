@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationServerResourcesDto } from "@app/api/application-server-resources";
+import { ApplicationServerResourcesDto } from "@app/api/server-resources";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_SERVER_RESOURCES } from "./mocks/server-resources";

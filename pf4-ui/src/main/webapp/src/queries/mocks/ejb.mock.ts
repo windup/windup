@@ -1,4 +1,4 @@
-import { ApplicationEJBsDto } from "@app/api/application-ejb";
+import { ApplicationEJBsDto } from "@app/api/ejb";
 
 export let MOCK_EJB: ApplicationEJBsDto[];
 

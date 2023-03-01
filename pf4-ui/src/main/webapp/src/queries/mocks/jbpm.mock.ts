@@ -1,4 +1,4 @@
-import { ApplicationJBPMsDto } from "@app/api/application-jbpm";
+import { ApplicationJBPMsDto } from "@app/api/jbpm";
 
 export let MOCK_JBPM: ApplicationJBPMsDto[];
 

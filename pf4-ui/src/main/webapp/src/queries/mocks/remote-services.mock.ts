@@ -1,4 +1,4 @@
-import { ApplicationRemoteServicesDto } from "@app/api/application-remote-services";
+import { ApplicationRemoteServicesDto } from "@app/api/remote-services";
 
 export let MOCK_REMOTE_SERVICES: ApplicationRemoteServicesDto[];
 

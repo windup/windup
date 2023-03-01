@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationHardcodedIpAddressesDto } from "@app/api/application-hardcoded-ip-addresses";
+import { ApplicationHardcodedIpAddressesDto } from "@app/api/hardcoded-ip-addresses";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_HARDCODED_IP_ADDRESSES } from "./mocks/hardcoded-ip-addresses.mock";

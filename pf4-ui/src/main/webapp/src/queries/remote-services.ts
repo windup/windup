@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
-import { ApplicationRemoteServicesDto } from "@app/api/application-remote-services";
+import { ApplicationRemoteServicesDto } from "@app/api/remote-services";
 
 import { useMockableQuery } from "./helpers";
 import { MOCK_REMOTE_SERVICES } from "./mocks/remote-services.mock";
