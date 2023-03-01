@@ -5,16 +5,16 @@ import { PageSection } from "@patternfly/react-core";
 
 import { ApplicationDto } from "@app/api/application";
 
-import { SpringBeansTable } from "./spring-beans-table";
+import { HardcodedIpAddressesTable } from "./hard-coded-ip-addresses-table";
 
-export const ApplicationSpringBeans: React.FC = () => {
+export const ApplicationHardcodedIpAddresses: React.FC = () => {
   const application = useOutletContext<ApplicationDto | null>();
 
   return (
     <>
       <PageSection>
         {application?.id && (
-          <SpringBeansTable applicationId={application?.id} />
+          <HardcodedIpAddressesTable applicationId={application?.id} />
         )}
       </PageSection>
     </>

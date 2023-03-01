@@ -98,6 +98,14 @@ export const ApplicationEdit: React.FC = () => {
       title: "Unparsable files",
       path: `/applications/${application?.id}/unparsable-files`,
     },
+    {
+      title: "Hard-coded IP addresses",
+      path: `/applications/${application?.id}/hardcoded-ip-addresses`,
+    },
+    {
+      title: "Compatible files",
+      path: `/applications/${application?.id}/compatible-files`,
+    },
   ];
 
   if (applicationTransactions && applicationTransactions.length > 0) {
@@ -122,10 +130,13 @@ export const ApplicationEdit: React.FC = () => {
           <Text component="h1">{application?.name}</Text>
         </TextContent>
       </PageSection>
-      <PageSection type="nav" variant="light">
+      <PageSection type="tabs" variant="light">
         <Tabs
+          role="region"
           activeKey={tabItems.find((e) => e.path === location.pathname)?.path}
           onSelect={(_, tabKey) => navigate(`${tabKey}`)}
+          isOverflowHorizontal={{ showTabCount: true }}
+          // isFilled={true}
         >
           {tabItems.map((e, index) => (
             <Tab

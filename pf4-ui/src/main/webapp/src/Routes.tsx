@@ -52,6 +52,13 @@ const ApplicationUnparsableFiles = lazy(
 const ApplicationTransactions = lazy(
   () => import("./pages/application-edit/pages/application-transactions")
 );
+const ApplicationHardcodedIPAddresses = lazy(
+  () =>
+    import("./pages/application-edit/pages/application-hardcoded-ip-addresses")
+);
+const ApplicationCompatibleFiles = lazy(
+  () => import("./pages/application-edit/pages/application-compatible-files")
+);
 
 export type ApplicationRoute = {
   applicationId: string;
@@ -182,6 +189,14 @@ export const AppRoutes = () => {
         {
           Component: ApplicationTransactions,
           path: "transactions",
+        },
+        {
+          Component: ApplicationHardcodedIPAddresses,
+          path: "hardcoded-ip-addresses",
+        },
+        {
+          Component: ApplicationCompatibleFiles,
+          path: "compatible-files",
         },
       ],
     },
