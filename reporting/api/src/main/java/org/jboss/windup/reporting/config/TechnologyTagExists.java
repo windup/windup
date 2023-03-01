@@ -18,6 +18,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class TechnologyTagExists extends GraphCondition {
     private String namePattern;
+    private String versionPattern;
     private String filename;
 
     private TechnologyTagExists(String namePattern) {
@@ -29,6 +30,14 @@ public class TechnologyTagExists extends GraphCondition {
      */
     public static TechnologyTagExists withName(String namePattern) {
         return new TechnologyTagExists(namePattern);
+    }
+
+    /**
+     * Specifies the regular expression for the version to use when searching {@link TechnologyTagModel} entries.
+     */
+    public TechnologyTagExists withVersion(String versionPattern) {
+        this.versionPattern = "[\\s\\S]*" + versionPattern + "[\\s\\S]*";
+        return this;
     }
 
     /**
@@ -57,6 +66,7 @@ public class TechnologyTagExists extends GraphCondition {
             });
         }
         q.withProperty(TechnologyTagModel.NAME, QueryPropertyComparisonType.REGEX, namePattern);
+        if (versionPattern != null) q.withProperty(TechnologyTagModel.VERSION, QueryPropertyComparisonType.REGEX, versionPattern);
         return q.evaluate(event, context);
     }
 

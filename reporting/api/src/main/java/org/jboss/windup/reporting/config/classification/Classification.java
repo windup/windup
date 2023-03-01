@@ -10,17 +10,22 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.TechnologiesIntersector;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -32,9 +37,12 @@ import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
+
+import static org.jboss.windup.reporting.config.TechnologiesIntersector.*;
 
 /**
  * Classifies a {@link FileModel} {@link Iteration} payload.
@@ -226,6 +234,16 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
 
                 for (Quickfix quickfix : quickfixes) {
                     classification.addQuickfix(quickfix.createQuickfix(graphContext));
+                }
+
+                Rule rule = (Rule) context.get(Rule.class);
+                Context ruleContext = rule instanceof Context ? (Context) rule : null;
+                if (ruleContext != null) {
+                    AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
+
+                    WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                    classification.setTargetTechnologies(extractTargetTechnologies(configuration, ruleProvider.getMetadata()));
+                    classification.setSourceTechnologies(extractSourceTechnologies(configuration, ruleProvider.getMetadata()));
                 }
             }
 

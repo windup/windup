@@ -1,5 +1,18 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -9,7 +22,13 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -18,26 +37,22 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
-import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.TagSetModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
-import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
 public class CreateIssueSummaryDataRuleProviderTest {
@@ -54,9 +69,6 @@ public class CreateIssueSummaryDataRuleProviderTest {
     public static AddonArchive getDeployment() {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
-
-    private static final String FILE1_NAME = "exp1";
-    private static final String FILE2_NAME = "exp2";
 
     @Inject
     private GraphContextFactory factory;
@@ -79,107 +91,145 @@ public class CreateIssueSummaryDataRuleProviderTest {
 
         outputPath.toFile().mkdirs();
         try (GraphContext context = factory.create(true)) {
-            fillData(context);
-            String inputPath = "src/test/resources";
-            Predicate<RuleProvider> predicate = new RuleProviderWithDependenciesPredicate(CreateIssueSummaryDataRuleProvider.class);
+            String inputPath = "src/test/resources/issueSummary";
+            Predicate<RuleProvider> predicate = new RuleProviderWithDependenciesPredicate(
+                    CreateIssueSummaryDataRuleProvider.class,
+                    TechTagTestRuleProvider.class,
+                    IssuesTestRuleProvider.class);
             WindupConfiguration configuration = new WindupConfiguration()
                     .setGraphContext(context)
                     .setRuleProviderFilter(predicate)
-                    .addInputPath(Paths.get(inputPath))
+                    .addInputPath(Paths.get(inputPath, "app1"))
+                    .addInputPath(Paths.get(inputPath, "app2"))
                     .setOutputDirectory(outputPath)
                     .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                    .setOptionValue(ExportSummaryOption.NAME, Boolean.valueOf(exportFile));
+                    .setOptionValue(ExportSummaryOption.NAME, exportFile);
             processor.execute(configuration);
+            final File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary_"));
             if (exportFile) {
-                File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary_"));
-                Assert.assertTrue(candidates.length > 0);
-
-                Path resource = Paths.get("src/test/resources/test-exports/analysisSummary_XX.json");
+                Assert.assertEquals(1, candidates.length);
                 try {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), Arrays.stream(candidates).findFirst().get().getPath()));
+                    Set<String> jsonOutput = loadFile(candidates[0].getPath());
+
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app1\"")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"incidentsByCategory\":{\"optional\":{\"totalStoryPoints\":180,\"incidents\":3}}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"technologyTags\":[{\"name\":\"Servlet\",\"category\":\"HTTP\"}]")));
+
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"application\":\"app2\"")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"incidentsByCategory\":{\"optional\":{\"totalStoryPoints\":303,\"incidents\":2}}")));
+                    Assert.assertTrue(jsonOutput.stream().anyMatch(s -> s.contains("\"technologyTags\":[{\"name\":\"Bouncy Castle\",\"category\":\"Security\"},{\"name\":\"Hibernate\",\"category\":\"Object Mapping\"}]")));
                 } catch (IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported file looks like expected. Exception: " + ex);
                 }
+            } else {
+                Assert.assertEquals(0, candidates.length);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private ProjectModel fillData(GraphContext context) {
-        ProjectModel projectModel = new ProjectService(context).create();
-        projectModel.setName("app1");
-        ProjectModel projectModel2 = new ProjectService(context).create();
-        projectModel2.setName("app2");
-        InlineHintService inlineHintService = new InlineHintService(context);
-        ClassificationService classificationService = new ClassificationService(context);
-        LinkService linkService = new LinkService(context);
+    @RuleMetadata (before = CreateIssueSummaryDataRuleProvider.class)
+    public static class TechTagTestRuleProvider extends AbstractRuleProvider {
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(Query.fromType(ProjectModel.class))
+                    .perform(new AbstractIterationOperation<ProjectModel>() {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
+                                final TagSetService tagSetService = new TagSetService(event.getGraphContext());
+                                final GraphService<TechnologyUsageStatisticsModel> service = new GraphService<>(event.getGraphContext(), TechnologyUsageStatisticsModel.class);
 
-        FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
-        f1.setFilePath("/" + FILE1_NAME);
-        projectModel.addFileModel(f1);
-        projectModel.setRootFileModel(f1);
+                                if ("app1".equals(payload.getName())) {
+                                    final TagSetModel tagSetModel1 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Java EE", "Connect", "HTTP")));
+                                    final TechnologyUsageStatisticsModel techTag1 = service.create();
+                                    techTag1.setName("Servlet");
+                                    techTag1.setTagModel(tagSetModel1);
+                                    techTag1.setOccurrenceCount(1);
+                                    techTag1.setProjectModel(payload);
+                                } else {
+                                    final TagSetModel tagSetModel2 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Store", "Object Mapping")));
+                                    final TechnologyUsageStatisticsModel techTag2 = service.create();
+                                    techTag2.setName("Hibernate");
+                                    techTag2.setTagModel(tagSetModel2);
+                                    techTag2.setProjectModel(payload);
+                                    techTag2.setOccurrenceCount(2);
 
-        FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
-        f2.setFilePath("/" + FILE2_NAME);
-        projectModel2.addFileModel(f2);
-        projectModel2.setRootFileModel(f2);
-
-        InlineHintModel b1 = inlineHintService.create();
-        ClassificationModel c1 = classificationService.create();
-        InlineHintModel b1b = inlineHintService.create();
-
-        b1.setRuleID("rule1");
-        b1.setSourceSnippit("source1");
-        b1.setLineNumber(0);
-        b1.setTitle("hint1-text");
-        b1.setEffort(50);
-        b1.addLink(linkService.getOrCreate("description", "link"));
-
-        b1b.setRuleID("rule1");
-        b1b.setLineNumber(0);
-        b1b.setTitle("hint1b-text");
-        b1b.setEffort(100);
-
-        c1.setRuleID("classification1");
-        c1.addLink(linkService.getOrCreate("description", "link"));
-        c1.setDescription("description-classification");
-        c1.setClassification("classification1-text");
-        c1.setEffort(30);
-
-        ClassificationModel c2 = classificationService.create();
-        InlineHintModel b2 = inlineHintService.create();
-
-        b2.setEffort(3);
-        b2.setRuleID("rule2");
-        b2.setTitle("hint2;\"\"\"\"-te\"xt");
-        b2.setLineNumber(0);
-
-        c2.setRuleID("classification2");
-        c2.setClassification("classification2-text");
-        c2.setEffort(300);
-
-        b1.setFile(f1);
-        b1b.setFile(f1);
-        c1.addFileModel(f1);
-
-        b2.setFile(f2);
-        c1.addFileModel(f2);
-        c2.addFileModel(f2);
-
-        return projectModel;
+                                    final TagSetModel tagSetModel3 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Sustain", "Security")));
+                                    final TechnologyUsageStatisticsModel techTag3 = service.create();
+                                    techTag3.setName("Bouncy Castle");
+                                    techTag3.setTagModel(tagSetModel3);
+                                    techTag3.setProjectModel(payload);
+                                    techTag3.setOccurrenceCount(3);
+                                }
+                            }
+                        }
+                    );
+        }
     }
 
-    private boolean checkFileAreSame(String filePath1, String filePath2) throws IOException {
-        Set<String> linesFile1 = loadFile(filePath1);
-        Set<String> linesFile2 = loadFile(filePath2);
-        if (linesFile1.size() != linesFile2.size())
-            return false;
+    @RuleMetadata (before = CreateIssueSummaryDataRuleProvider.class)
+    public static class IssuesTestRuleProvider extends AbstractRuleProvider {
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(Query.fromType(ProjectModel.class))
+                    .perform(new AbstractIterationOperation<ProjectModel>() {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
+                                final InlineHintService inlineHintService = new InlineHintService(event.getGraphContext());
+                                final ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                                final LinkService linkService = new LinkService(event.getGraphContext());
 
-        for (String line1 : linesFile1) {
-            if (!linesFile2.contains(line1))
-                return false;
+                                if ("app1".equals(payload.getName())) {
+                                    final InlineHintModel b1 = inlineHintService.create();
+                                    b1.setRuleID("rule1");
+                                    b1.setSourceSnippit("source1");
+                                    b1.setLineNumber(0);
+                                    b1.setTitle("hint1-text");
+                                    b1.setEffort(50);
+                                    b1.addLink(linkService.getOrCreate("description", "link"));
+
+                                    final InlineHintModel b1b = inlineHintService.create();
+                                    b1b.setRuleID("rule1");
+                                    b1b.setLineNumber(0);
+                                    b1b.setTitle("hint1b-text");
+                                    b1b.setEffort(100);
+
+                                    final ClassificationModel c1 = classificationService.create();
+                                    c1.setRuleID("classification1");
+                                    c1.addLink(linkService.getOrCreate("description", "link"));
+                                    c1.setDescription("description-classification");
+                                    c1.setClassification("classification1-text");
+                                    c1.setEffort(30);
+                                    
+                                    final FileModel helloWorld = payload.getFileModels().get(0);
+                                    b1.setFile(helloWorld);
+                                    b1b.setFile(helloWorld);
+                                    c1.addFileModel(helloWorld);
+                                } else {
+                                    final InlineHintModel b2 = inlineHintService.create();
+                                    b2.setEffort(3);
+                                    b2.setRuleID("rule2");
+                                    b2.setTitle("hint2;\"\"\"\"-te\"xt");
+                                    b2.setLineNumber(0);
+
+                                    final ClassificationModel c2 = classificationService.create();
+                                    c2.setRuleID("classification2");
+                                    c2.setClassification("classification2-text");
+                                    c2.setEffort(300);
+
+                                    final FileModel helloWorld = payload.getFileModels().get(0);
+                                    b2.setFile(helloWorld);
+                                    c2.addFileModel(helloWorld);
+                                }
+                            }
+                        }
+                    );
         }
-
-        return true;
     }
 
     private Set<String> loadFile(String filePath) throws IOException {

@@ -81,7 +81,8 @@ public class TechnologyTagServiceTest {
             child3.setName("child3");
             child3.setParentProject(parent);
             FileModel fm5 = fileService.create();
-            TechnologyTagModel child3Tag = techTagService.addTagToFileModel(fm5, "Child3Tag", TechnologyTagLevel.INFORMATIONAL);
+            TechnologyTagModel child3TagVersion1 = techTagService.addTagToFileModel(fm5, "Child3Tag", TechnologyTagLevel.INFORMATIONAL, "1.0");
+            TechnologyTagModel child3TagVersion2 = techTagService.addTagToFileModel(fm5, "Child3Tag", TechnologyTagLevel.INFORMATIONAL, "2.0");
             child3.addFileModel(fm5);
 
             Set<TechnologyTagModel> foundTags = new HashSet<>();
@@ -94,7 +95,8 @@ public class TechnologyTagServiceTest {
             Assert.assertTrue(foundTags.contains(child1Tag));
             Assert.assertTrue(foundTags.contains(child2Tag));
             Assert.assertTrue(foundTags.contains(grandchild1Tag));
-            Assert.assertTrue(foundTags.contains(child3Tag));
+            Assert.assertTrue(foundTags.contains(child3TagVersion1));
+            Assert.assertTrue(foundTags.contains(child3TagVersion2));
         }
     }
 }

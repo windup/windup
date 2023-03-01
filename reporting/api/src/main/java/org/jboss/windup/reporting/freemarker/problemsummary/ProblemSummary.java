@@ -23,16 +23,21 @@ public class ProblemSummary {
     private final Map<String, Map<FileModel, ProblemFileSummary>> descriptionToFiles = new LinkedHashMap<>();
     private final List<Link> links = new ArrayList<>();
 
+    private final List<String> sourceTechnologies;
+    private final List<String> targetTechnologies;
+
     /**
      * Creates a new instance with the given information.
      */
-    public ProblemSummary(Object id, IssueCategoryModel issueCategoryModel, String ruleID, String issueName, int numberFound, int effortPerIncident) {
+    public ProblemSummary(Object id, IssueCategoryModel issueCategoryModel, String ruleID, String issueName, int numberFound, int effortPerIncident, List<String> sourceTechnologies, List<String> targetTechnologies) {
         this.id = id;
         this.issueCategoryModel = issueCategoryModel;
         this.ruleID = ruleID;
         this.issueName = issueName;
         this.numberFound = numberFound;
         this.effortPerIncident = effortPerIncident;
+        this.sourceTechnologies = sourceTechnologies != null ? sourceTechnologies : List.of();
+        this.targetTechnologies = targetTechnologies != null ? targetTechnologies : List.of();
     }
 
     /**
@@ -120,6 +125,13 @@ public class ProblemSummary {
         return links;
     }
 
+    public List<String> getSourceTechnologies() {
+        return sourceTechnologies;
+    }
+
+    public List<String> getTargetTechnologies() {
+        return targetTechnologies;
+    }
 
     /**
      * Adds a file with the provided description.
