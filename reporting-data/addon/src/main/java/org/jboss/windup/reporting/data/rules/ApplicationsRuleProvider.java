@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.service.ProjectService;
@@ -26,7 +26,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationsRuleProvider extends AbstractApiRuleProvider {

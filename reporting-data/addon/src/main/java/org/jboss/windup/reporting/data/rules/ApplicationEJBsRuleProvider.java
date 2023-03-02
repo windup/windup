@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.data.rules;
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {

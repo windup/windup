@@ -1,8 +1,8 @@
 package org.jboss.windup.config.phase;
 
-public class ReportPf4RenderingPhase extends RulePhase {
-    public ReportPf4RenderingPhase() {
-        super(ReportPf4RenderingPhase.class);
+public class ReportPfRenderingPhase extends RulePhase {
+    public ReportPfRenderingPhase() {
+        super(ReportPfRenderingPhase.class);
     }
 
     @Override

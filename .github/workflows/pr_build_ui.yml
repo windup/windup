@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 16
       - name: Build
-        working-directory: pf4-ui/src/main/webapp
+        working-directory: pf-ui/src/main/webapp
         run: |
           npm install
           npm run build

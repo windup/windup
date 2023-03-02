@@ -9,7 +9,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.phase.PostReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.PostReportPfRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ZipUtil;
@@ -26,14 +26,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RuleMetadata(
-        phase = PostReportPf4RenderingPhase.class,
+        phase = PostReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class UIRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logger.getLogger(UIRuleProvider.class);
 
-    private final static String UI_ZIP_FILENAME = "pf4-windup-ui.zip";
+    private final static String UI_ZIP_FILENAME = "pf-windup-ui.zip";
 
     @Inject
     private Furnace furnace;
@@ -84,7 +84,7 @@ public class UIRuleProvider extends AbstractRuleProvider {
             // Set data
             Path sourceWindupJS = apiDataDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
 
-            Path targetWindupJS = uiDirectory.resolve("api").resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT); // "The 'api' folder represents 'pf4-ui/src/main/webapp/public/api'"
+            Path targetWindupJS = uiDirectory.resolve("api").resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT); // "The 'api' folder represents 'pf-ui/src/main/webapp/public/api'"
             Files.delete(targetWindupJS);
 
             Files.copy(sourceWindupJS, targetWindupJS);

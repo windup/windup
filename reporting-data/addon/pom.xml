@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>pf4-windup-ui</artifactId>
+            <artifactId>pf-windup-ui</artifactId>
         </dependency>
 
         <dependency>

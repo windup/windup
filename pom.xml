@@ -126,7 +126,7 @@
         <module>reporting-data</module>
         <module>rules-java-project</module>
         <module>ui</module>
-        <module>pf4-ui</module>
+        <module>pf-ui</module>
 
         <module>utils</module>
         <module>test-files</module>

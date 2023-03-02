@@ -26,11 +26,11 @@ import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
-import org.jboss.windup.config.phase.PostReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.PostReportPfRenderingPhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
@@ -297,7 +297,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         if (skipReports) {
             skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
                     PreReportGenerationPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class,
-                    ReportPf4RenderingPhase.class, PostReportPf4RenderingPhase.class
+                    ReportPfRenderingPhase.class, PostReportPfRenderingPhase.class
             ));
         } else {
             Boolean legacyReports = false;
@@ -307,8 +307,8 @@ public class WindupProcessorImpl implements WindupProcessor {
 
             if (legacyReports) {
                 skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
-                        ReportPf4RenderingPhase.class,
-                        PostReportPf4RenderingPhase.class
+                        ReportPfRenderingPhase.class,
+                        PostReportPfRenderingPhase.class
                 ));
             } else {
                 skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(

@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.data.rules;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.toList;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class TechnologiesRuleProvider extends AbstractApiRuleProvider {

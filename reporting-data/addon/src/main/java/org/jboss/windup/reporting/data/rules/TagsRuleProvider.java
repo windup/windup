@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.data.rules;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.config.tags.TagService;
 import org.jboss.windup.config.tags.TagServiceHolder;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class TagsRuleProvider extends AbstractApiRuleProvider {

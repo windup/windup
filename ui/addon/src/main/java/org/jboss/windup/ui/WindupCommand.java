@@ -234,7 +234,7 @@ public class WindupCommand implements UICommand {
             if (legacyReports) {
                 indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
             } else {
-                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("pf4-reports").resolve("index.html").normalize().toAbsolutePath();
+                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("pf-reports").resolve("index.html").normalize().toAbsolutePath();
             }
             return Results.success("Report created: " + indexHtmlPath + System.getProperty("line.separator")
                     + "              Access it at this URL: " + indexHtmlPath.toUri());

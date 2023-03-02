@@ -25,8 +25,8 @@ public class ReportService extends GraphService<ReportModel> {
     private static final String REPORTS_DIR = "reports";
     private static final String DATA = "data";
 
-    public static final String WINDUP_UI = "pf4-reports";
-    public static final String WINDUP_UI_DATA = "pf4-reports-data";
+    public static final String WINDUP_UI = "pf-reports";
+    public static final String WINDUP_UI_DATA = "pf-reports-data";
 
     private static final Set<String> usedFilenames = new HashSet<>();
 

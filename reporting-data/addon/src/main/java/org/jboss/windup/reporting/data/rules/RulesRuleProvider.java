@@ -5,7 +5,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.reporting.data.dto.RuleContentDto;
 import org.jboss.windup.reporting.data.dto.RuleDto;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class RulesRuleProvider extends AbstractApiRuleProvider {

@@ -7,7 +7,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.Label;
 import org.jboss.windup.config.metadata.LabelProviderRegistry;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPf4RenderingPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.LabelDto;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportPf4RenderingPhase.class,
+        phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class LabelsRuleProvider extends AbstractApiRuleProvider {
