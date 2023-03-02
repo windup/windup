@@ -194,6 +194,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         configurationModel.setOutputPath(getFileModel(graphContext, configuration.getOutputDirectory()));
         configurationModel.setOnlineMode(configuration.isOnline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
+        configurationModel.setExportingSummary(configuration.isExportingSummary());
         configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
 
         addUserRulesDirsToConfig(configuration, graphContext, configurationModel);
