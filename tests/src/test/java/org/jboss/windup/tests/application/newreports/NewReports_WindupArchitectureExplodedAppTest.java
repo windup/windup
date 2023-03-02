@@ -73,7 +73,7 @@ public class NewReports_WindupArchitectureExplodedAppTest extends WindupArchitec
     }
 
     private void validateJarDependencyGraphReport(GraphContext context) throws IOException {
-        File dependenciesJson = new ReportService(context).getApiDataDirectory()
+        File dependenciesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(DependenciesRuleProvider.PATH + ".json")
                 .toFile();
 

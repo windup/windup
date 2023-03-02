@@ -116,7 +116,7 @@ public class NewReports_WindupArchitectureSpringSmallTest extends WindupArchitec
     }
 
     private void validateSpringBeanReport(GraphContext context) throws IOException {
-        File springJson = new ReportService(context).getApiDataDirectory()
+        File springJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationSpringBeansRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -132,10 +132,10 @@ public class NewReports_WindupArchitectureSpringSmallTest extends WindupArchitec
     }
 
     private void validateAppDetails(GraphContext context) throws IOException {
-        File appDetailsJson = new ReportService(context).getApiDataDirectory()
+        File appDetailsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
-        File filesJson = new ReportService(context).getApiDataDirectory()
+        File filesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(FilesRuleProvider.PATH + ".json")
                 .toFile();
 

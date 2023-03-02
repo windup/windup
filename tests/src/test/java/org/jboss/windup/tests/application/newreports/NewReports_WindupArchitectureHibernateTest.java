@@ -132,10 +132,10 @@ public class NewReports_WindupArchitectureHibernateTest extends WindupArchitectu
     }
 
     private void validateReports(GraphContext context) throws IOException {
-        File applicationDetailsJson = new ReportService(context).getApiDataDirectory()
+        File applicationDetailsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
-        File filesJson = new ReportService(context).getApiDataDirectory()
+        File filesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(FilesRuleProvider.PATH + ".json").toFile();
 
 
@@ -188,7 +188,7 @@ public class NewReports_WindupArchitectureHibernateTest extends WindupArchitectu
     }
 
     private void validateHibernateReport(GraphContext context) throws IOException {
-        File hibernateJson = new ReportService(context).getApiDataDirectory()
+        File hibernateJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationHibernateRuleProvider.PATH + ".json")
                 .toFile();
         ApplicationHibernateDto[] appHibernatesDtoList = new ObjectMapper().readValue(hibernateJson, ApplicationHibernateDto[].class);

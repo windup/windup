@@ -49,7 +49,7 @@ public class NewReports_IgnoreJavaClassTest extends WindupArchitectureTest {
             super.runTest(context, false, "../test-files/jee-example-app-1.0.0.ear", false);
             validateFilesWereIgnored(context, true);
 
-            File jsonFile = new ReportService(context).getApiDataDirectory()
+            File jsonFile = new ReportService(context).getWindupUIApiDirectory()
                     .resolve(IgnoredFilesRuleProvider.PATH + ".json")
                     .toFile();
 

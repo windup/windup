@@ -51,7 +51,7 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
         GraphContext context = event.getGraphContext();
 
         ReportService reportService = new ReportService(context);
-        Path outputBaseDir = reportService.getApiDataDirectory();
+        Path outputBaseDir = reportService.getWindupUIApiDirectory();
 
         // Create getAll Json file
         File getAllJsonFile = outputBaseDir.resolve(getBasePath() + ".json").toFile();

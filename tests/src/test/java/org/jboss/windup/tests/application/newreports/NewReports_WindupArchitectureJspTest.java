@@ -128,7 +128,7 @@ public class NewReports_WindupArchitectureJspTest extends WindupArchitectureTest
         validateClassModels(context);
 
         // Validate issues
-        File issuesJson = new ReportService(context).getApiDataDirectory()
+        File issuesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(IssuesRuleProvider.PATH + ".json")
                 .toFile();
 

@@ -54,7 +54,7 @@ public class NewReports_UnparsablesReportTest extends WindupArchitectureTest {
     }
 
     private void validateUnparsablesReport(GraphContext context) throws IOException {
-        File jsonFile = new ReportService(context).getApiDataDirectory()
+        File jsonFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationUnparsableFilesRuleProvider.PATH + ".json")
                 .toFile();
 

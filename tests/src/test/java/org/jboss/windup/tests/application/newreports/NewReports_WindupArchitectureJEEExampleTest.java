@@ -144,10 +144,10 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
     }
 
     private void validateReports(GraphContext context) throws IOException {
-        File files = new ReportService(context).getApiDataDirectory()
+        File files = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(FilesRuleProvider.PATH + ".json")
                 .toFile();
-        File appDetailsFile = new ReportService(context).getApiDataDirectory()
+        File appDetailsFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -182,7 +182,7 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
     }
 
     private void validateEJBBeanReport(GraphContext context) throws IOException {
-        File ejbFile = new ReportService(context).getApiDataDirectory()
+        File ejbFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationEJBsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -220,7 +220,7 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
     }
 
     private void validateTechReportJEEExample(GraphContext context) throws IOException {
-        File technologiesFile = new ReportService(context).getApiDataDirectory()
+        File technologiesFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(TechnologiesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -264,7 +264,7 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
     }
 
     private void validateApplicationTargetRuntimeLabels(GraphContext context) throws IOException {
-        File labelsFile = new ReportService(context).getApiDataDirectory()
+        File labelsFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(LabelsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -280,7 +280,7 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
     }
 
     private void validateApplicationTargetLabels(GraphContext context) throws IOException {
-        File applicationsFile = new ReportService(context).getApiDataDirectory()
+        File applicationsFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -301,7 +301,7 @@ public class NewReports_WindupArchitectureJEEExampleTest extends WindupArchitect
 
 
     private void validateTechReportFrameworksWar(GraphContext context) throws IOException {
-        File technologiesFile = new ReportService(context).getApiDataDirectory()
+        File technologiesFile = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(TechnologiesRuleProvider.PATH + ".json")
                 .toFile();
 

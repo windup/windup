@@ -54,14 +54,14 @@ public class NewReports_WindupArchitectureSmallBinaryModeTest extends WindupArch
             super.runTest(context, false, "../test-files/jee-example-app-1.0.0.ear", false, Arrays.asList("com.acme"));
 
             // Verify compatible files exists
-            File appCompatibleFilesJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json").toFile();
+            File appCompatibleFilesJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json").toFile();
 
             ApplicationCompatibleFilesDto[] appCompatibleFilesDtoList = new ObjectMapper().readValue(appCompatibleFilesJson, ApplicationCompatibleFilesDto[].class);
             Assert.assertEquals(1, appCompatibleFilesDtoList.length);
             Assert.assertTrue(appCompatibleFilesDtoList[0].getArtifacts().size() > 0);
 
             // Verify file has been identified
-            File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+            File filesJson = new ReportService(context).getWindupUIApiDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
             FileDto[] fileDtos = new ObjectMapper().readValue(filesJson, FileDto[].class);
             Assert.assertTrue(fileDtos.length > 1);
@@ -72,7 +72,7 @@ public class NewReports_WindupArchitectureSmallBinaryModeTest extends WindupArch
             Assert.assertTrue(fileDto.isPresent());
 
             // Assert app details
-            File appDetailsJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationDetailsRuleProvider.PATH + ".json").toFile();
+            File appDetailsJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationDetailsRuleProvider.PATH + ".json").toFile();
 
             ApplicationDetailsDto[] applicationDetailsDtos = new ObjectMapper().readValue(appDetailsJson, ApplicationDetailsDto[].class);
             Assert.assertEquals(1, applicationDetailsDtos.length);

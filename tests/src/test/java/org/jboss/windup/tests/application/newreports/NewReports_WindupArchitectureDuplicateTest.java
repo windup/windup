@@ -87,7 +87,7 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
     }
 
     private void validateApplicationList(GraphContext graphContext) throws IOException {
-        File applicationsJson = new ReportService(graphContext).getApiDataDirectory()
+        File applicationsJson = new ReportService(graphContext).getWindupUIApiDirectory()
                 .resolve(ApplicationsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -127,10 +127,10 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
     }
 
     private void validateApplicationDashboard(GraphContext context) throws IOException {
-        File applicationsJson = new ReportService(context).getApiDataDirectory()
+        File applicationsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationsRuleProvider.PATH + ".json")
                 .toFile();
-        File appIssuesJson = new ReportService(context).getApiDataDirectory()
+        File appIssuesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(IssuesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -203,10 +203,10 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
     }
 
     private void validateMigrationIssues(GraphContext graphContext) throws IOException {
-        File applicationsJson = new ReportService(graphContext).getApiDataDirectory()
+        File applicationsJson = new ReportService(graphContext).getWindupUIApiDirectory()
                 .resolve(ApplicationsRuleProvider.PATH + ".json")
                 .toFile();
-        File issuesJson = new ReportService(graphContext).getApiDataDirectory()
+        File issuesJson = new ReportService(graphContext).getWindupUIApiDirectory()
                 .resolve(IssuesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -277,7 +277,7 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
     }
 
     private void validateDependencies(GraphContext graphContext) throws IOException {
-        File dependenciesJson = new ReportService(graphContext).getApiDataDirectory()
+        File dependenciesJson = new ReportService(graphContext).getWindupUIApiDirectory()
                 .resolve(DependenciesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -366,10 +366,10 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
     }
 
     private void validateApplicationDetails(GraphContext context) throws IOException {
-        File applicationsJson = new ReportService(context).getApiDataDirectory()
+        File applicationsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationsRuleProvider.PATH + ".json")
                 .toFile();
-        File appDetailsJson = new ReportService(context).getApiDataDirectory()
+        File appDetailsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
 

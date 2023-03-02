@@ -104,7 +104,7 @@ public class NewReports_WindupArchitectureScanPackagesTest extends WindupArchite
                     Collections.emptyList(), Collections.emptyList(), Map.of("analyzeKnownLibraries", false));
 
             //
-            File issuesJson = new ReportService(context).getApiDataDirectory().resolve(IssuesRuleProvider.PATH + ".json").toFile();
+            File issuesJson = new ReportService(context).getWindupUIApiDirectory().resolve(IssuesRuleProvider.PATH + ".json").toFile();
 
             // Files
             ApplicationIssuesDto[] applicationIssuesDtos = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);

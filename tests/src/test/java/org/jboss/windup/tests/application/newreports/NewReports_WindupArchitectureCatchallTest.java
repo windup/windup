@@ -72,8 +72,8 @@ public class NewReports_WindupArchitectureCatchallTest extends WindupArchitectur
     }
 
     private void validateReports(GraphContext context) throws IOException {
-        File applicationDetailsJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationDetailsRuleProvider.PATH + ".json").toFile();
-        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+        File applicationDetailsJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationDetailsRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getWindupUIApiDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
         ApplicationDetailsDto[] appDetailsDtoList = new ObjectMapper().readValue(applicationDetailsJson, ApplicationDetailsDto[].class);
         Assert.assertEquals(1, appDetailsDtoList.length);

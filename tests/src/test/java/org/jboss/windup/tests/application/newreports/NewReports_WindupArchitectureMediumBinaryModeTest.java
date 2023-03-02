@@ -68,7 +68,7 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
     }
 
     private void validateApplicationDetailsReport(GraphContext context) throws IOException {
-        File appDetailsJson = new ReportService(context).getApiDataDirectory()
+        File appDetailsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -93,7 +93,7 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
             List<String> childFileExpectedTags,
             int childFileExpectedStoryPoints
     ) throws IOException {
-        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getWindupUIApiDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
         // Files
         FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);
@@ -134,8 +134,8 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
     }
 
     private void validateStaticIPReport(GraphContext context) throws IOException {
-        File hardcodedFilesJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationHardcodedIpAddressesRuleProvider.PATH + ".json").toFile();
-        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+        File hardcodedFilesJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationHardcodedIpAddressesRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getWindupUIApiDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
         // Hardcoded files
         ApplicationHardcodedIpAddressesDto[] appHardcodedIpAddressList = new ObjectMapper().readValue(hardcodedFilesJson, ApplicationHardcodedIpAddressesDto[].class);
@@ -176,7 +176,7 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
     }
 
     private void validateCompatibleReport(GraphContext context) throws IOException {
-        File compatibleFilesJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json").toFile();
+        File compatibleFilesJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json").toFile();
 
         ApplicationCompatibleFilesDto[] applicationCompatibleFilesDtos = new ObjectMapper().readValue(compatibleFilesJson, ApplicationCompatibleFilesDto[].class);
         Assert.assertEquals(1, applicationCompatibleFilesDtos.length);
@@ -204,8 +204,8 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
     }
 
     private void validateReportIndex(GraphContext context) throws IOException {
-        File applicationsJson = new ReportService(context).getApiDataDirectory().resolve(ApplicationsRuleProvider.PATH + ".json").toFile();
-        File issuesJson = new ReportService(context).getApiDataDirectory().resolve(IssuesRuleProvider.PATH + ".json").toFile();
+        File applicationsJson = new ReportService(context).getWindupUIApiDirectory().resolve(ApplicationsRuleProvider.PATH + ".json").toFile();
+        File issuesJson = new ReportService(context).getWindupUIApiDirectory().resolve(IssuesRuleProvider.PATH + ".json").toFile();
 
         // Assert incidents
         ApplicationDto[] applicationDtos = new ObjectMapper().readValue(applicationsJson, ApplicationDto[].class);
@@ -256,7 +256,7 @@ public abstract class NewReports_WindupArchitectureMediumBinaryModeTest extends 
     }
 
     private void validateTagsInSourceReport(GraphContext context) throws IOException {
-        File filesJson = new ReportService(context).getApiDataDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
+        File filesJson = new ReportService(context).getWindupUIApiDirectory().resolve(FilesRuleProvider.PATH + ".json").toFile();
 
         // Files
         FileDto[] filesDtoList = new ObjectMapper().readValue(filesJson, FileDto[].class);

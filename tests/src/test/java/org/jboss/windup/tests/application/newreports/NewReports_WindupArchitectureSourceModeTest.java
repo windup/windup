@@ -199,7 +199,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     private void validateSpringBeanReport(GraphContext context) throws IOException {
-        File appSpringJson = new ReportService(context).getApiDataDirectory()
+        File appSpringJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationSpringBeansRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -216,7 +216,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     private void validateEJBReport(GraphContext context) throws IOException {
-        File appEJBsJson = new ReportService(context).getApiDataDirectory()
+        File appEJBsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationEJBsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -261,7 +261,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     private void validateCompatibleReport(GraphContext context) throws IOException {
-        File appCompatibleFilesJson = new ReportService(context).getApiDataDirectory()
+        File appCompatibleFilesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationCompatibleFilesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -283,7 +283,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     private void validateJPAReport(GraphContext context) throws IOException {
-        File appJPAJson = new ReportService(context).getApiDataDirectory()
+        File appJPAJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationJPAsRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -308,7 +308,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     private void validateMigrationIssuesReport(GraphContext context) throws IOException {
-        File appIssuesJson = new ReportService(context).getApiDataDirectory()
+        File appIssuesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(IssuesRuleProvider.PATH + ".json")
                 .toFile();
 
@@ -338,10 +338,10 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
     }
 
     public void validateApplicationDetails(GraphContext context) throws IOException {
-        File filesJson = new ReportService(context).getApiDataDirectory()
+        File filesJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(FilesRuleProvider.PATH + ".json")
                 .toFile();
-        File appDetailsJson = new ReportService(context).getApiDataDirectory()
+        File appDetailsJson = new ReportService(context).getWindupUIApiDirectory()
                 .resolve(ApplicationDetailsRuleProvider.PATH + ".json")
                 .toFile();
 

@@ -56,12 +56,11 @@ public class UIRuleProvider extends AbstractRuleProvider {
         GraphContext context = event.getGraphContext();
         ReportService reportService = new ReportService(context);
 
-        Path apiDataDirectory = reportService.getApiDataDirectory();
         Path uiDirectory = reportService.getWindupUIDirectory();
-        File uiDirectoryFile = uiDirectory.toFile();
+        Path uiApiDirectory = reportService.getWindupUIApiDirectory();
 
         try {
-            FileUtils.forceMkdir(uiDirectoryFile);
+            FileUtils.forceMkdir(uiDirectory.toFile());
 
             // Copy UI ZIP
             InputStream uiZipInputStream = null;
@@ -79,18 +78,18 @@ public class UIRuleProvider extends AbstractRuleProvider {
 
             // Unzip UI
             File uiZipFile = uiDirectory.resolve(UI_ZIP_FILENAME).toFile();
-            ZipUtil.unzipToFolder(uiZipFile, uiDirectoryFile);
+            ZipUtil.unzipToFolder(uiZipFile, uiDirectory.toFile());
 
-            // Set data
-            Path sourceWindupJS = apiDataDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
+            // Copy windup.js
+            Path sourceWindupJS = uiApiDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT);
 
-            Path targetWindupJS = uiDirectory.resolve("api").resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT); // "The 'api' folder represents 'pf-ui/src/main/webapp/public/api'"
+            Path targetWindupJS = uiDirectory.resolve(AbstractApiRuleProvider.JAVASCRIPT_OUTPUT); // "The 'api' folder represents 'pf-ui/src/main/webapp/public'"
             Files.delete(targetWindupJS);
 
             Files.copy(sourceWindupJS, targetWindupJS);
+            Files.delete(sourceWindupJS);
 
             // Clean
-            Files.delete(sourceWindupJS);
             Files.delete(uiDirectory.resolve(UI_ZIP_FILENAME));
         } catch (IOException e) {
             throw new RuntimeException(e);
