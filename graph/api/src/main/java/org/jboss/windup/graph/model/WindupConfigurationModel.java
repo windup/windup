@@ -24,6 +24,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
     String CSV_MODE = "csv";
+    String SUMMARY_MODE = "exportSummary";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
     String SKIP_REPORTS_RENDERING = "skipReports";
     String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
@@ -173,4 +174,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
 
     @Property(ANALYZE_KNOWN_LIBRARIES)
     void setAnalyzeKnownLibraries(Boolean analyzeKnownLibraries);
+
+    /**
+     * Indicates whether or not to export summary data
+     */
+    @Property(SUMMARY_MODE)
+    boolean isExportingSummary();
+
+    /**
+     * Indicates whether or not to export summary data
+     */
+    @Property(SUMMARY_MODE)
+    void setExportingSummary(boolean summary);
 }
