@@ -19,6 +19,8 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.config.phase.DependentPhase;
+import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -31,6 +33,7 @@ import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
+import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.category.IssueCategory;
@@ -51,7 +54,12 @@ import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = ReportRenderingPhase.class)
+@RuleMetadata(
+        phase = DependentPhase.class,
+        after = PostReportGenerationPhase.class,
+        before = AttachApplicationReportsToIndexRuleProvider.class,
+        haltOnException = true
+)
 public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
     private static final Set<String> DISCARDED_TAGS = new HashSet<>(Arrays.asList("Java EE", "Embedded", "View", "Connect", "Store", "Sustain", "Execute"));
