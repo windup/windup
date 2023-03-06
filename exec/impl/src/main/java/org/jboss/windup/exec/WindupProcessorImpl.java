@@ -268,9 +268,9 @@ public class WindupProcessorImpl implements WindupProcessor {
             final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
 
             // Translate technology aliases if available (ie. "eap7" to "eap:7")
-            Function<String, String> translateTechAliasFn = translateTechnologyAliasFn(ruleLoaderContext);
-            sources = Optional.ofNullable(sources).map(ss -> ss.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
-            targets = Optional.ofNullable(targets).map(ts -> ts.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
+            Function<String, Set<String>> translateTechAliasFn = translateTechnologyAliasFn(ruleLoaderContext);
+            sources = Optional.ofNullable(sources).map(ss -> ss.stream().map(translateTechAliasFn).flatMap(Collection::stream).collect(toSet())).orElse(null);
+            targets = Optional.ofNullable(targets).map(ts -> ts.stream().map(translateTechAliasFn).flatMap(Collection::stream).collect(toSet())).orElse(null);
 
             config.setOptionValue(SourceOption.NAME, sources);
             config.setOptionValue(TargetOption.NAME, targets);
@@ -307,7 +307,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
-    private static Function<String, String> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
+    private static Function<String, Set<String>> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
         List<TechnologyReferenceAliasTranslator> translators = getAliasTranslators(ruleLoaderContext);
 
         /*
@@ -333,16 +333,20 @@ public class WindupProcessorImpl implements WindupProcessor {
                 );
 
         // Use the tech translators to translate the IDs
-        Function<String, String> translateTechFunc = (sourceTechIdAndVersion) -> {
+        return (sourceTechIdAndVersion) -> {
+            final Set<String> result = new HashSet<>();
+            // if the value has a translator, then manage it properly
             if (translatorMap.containsKey(sourceTechIdAndVersion)) {
-                String id = TechnologyReference.parseFromIDAndVersion(sourceTechIdAndVersion).getId();
+                final String id = TechnologyReference.parseFromIDAndVersion(sourceTechIdAndVersion).getId();
                 for (TechnologyReferenceAliasTranslator translator : translatorMap.get(id))
-                    sourceTechIdAndVersion = translator.translate(sourceTechIdAndVersion).toString();
+                    result.add(translator.translate(sourceTechIdAndVersion).toString());
             }
-            return sourceTechIdAndVersion;
+            // otherwise it means it's a "plain" source/target that requires no translation
+            else {
+                result.add(sourceTechIdAndVersion);
+            }
+            return result;
         };
-
-        return translateTechFunc;
     }
 
     private FileModel getFileModel(GraphContext context, Path file) {
