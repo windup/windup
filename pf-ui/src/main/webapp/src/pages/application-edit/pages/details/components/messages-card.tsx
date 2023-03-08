@@ -3,8 +3,6 @@ import React, { useMemo } from "react";
 import {
   Button,
   ButtonVariant,
-  Card,
-  CardBody,
   Modal,
 } from "@patternfly/react-core";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
@@ -30,27 +28,23 @@ export const MessagesCard: React.FC<IMessagesCardProps> = ({ application }) => {
 
   return (
     <>
-      <Card isFullHeight>
-        <CardBody>
-          <TableComposable>
-            <Tbody>
-              {applicationDetails?.messages.map((message, index) => (
-                <Tr key={index}>
-                  <Td>
-                    {message.value}{" "}
-                    <Button
-                      variant={ButtonVariant.link}
-                      onClick={() => ruleModal.open("showRule", message.ruleId)}
-                    >
-                      View rule
-                    </Button>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </TableComposable>
-        </CardBody>
-      </Card>
+      <TableComposable>
+        <Tbody>
+          {applicationDetails?.messages.map((message, index) => (
+            <Tr key={index}>
+              <Td>
+                {message.value}{" "}
+                <Button
+                  variant={ButtonVariant.link}
+                  onClick={() => ruleModal.open("showRule", message.ruleId)}
+                >
+                  View rule
+                </Button>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </TableComposable>
 
       <Modal
         title={`Rule: ${ruleModal?.data}`}

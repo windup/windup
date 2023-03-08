@@ -43,7 +43,12 @@ export const Details: React.FC = () => {
             </Card>
           </GridItem>
           <GridItem>
-            {application && <MessagesCard application={application} />}
+            <Card isFullHeight>
+              <CardTitle>Messages</CardTitle>
+              <CardBody>
+                {application && <MessagesCard application={application} />}
+              </CardBody>
+            </Card>
           </GridItem>
         </Grid>
       </PageSection>
