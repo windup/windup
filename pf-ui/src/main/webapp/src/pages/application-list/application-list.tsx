@@ -57,6 +57,7 @@ import { useCellSelectionState } from "@app/shared/hooks";
 import { RuntimeAssessment, evaluateRuntime } from "@app/utils/label-utils";
 
 import "./application-list.css";
+import { capitalizeFirstLetter } from "@app/utils/util";
 
 const DataKey = "DataKey";
 
@@ -326,30 +327,16 @@ export const ApplicationList: React.FC = () => {
             title: (
               <div className="pf-u-m-lg">
                 <DescriptionList isHorizontal isCompact>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Mandatory</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {item.incidents.mandatory}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Optional</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {item.incidents.optional}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Potential</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {item.incidents.potential}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Information</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {item.incidents.information}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
+                  {Object.keys(item.incidents).map((incident) => (
+                    <DescriptionListGroup key={incident}>
+                      <DescriptionListTerm>
+                        {capitalizeFirstLetter(incident)}
+                      </DescriptionListTerm>
+                      <DescriptionListDescription>
+                        {item.incidents[incident]}
+                      </DescriptionListDescription>
+                    </DescriptionListGroup>
+                  ))}
                 </DescriptionList>
               </div>
             ),
