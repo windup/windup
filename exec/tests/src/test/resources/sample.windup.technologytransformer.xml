@@ -1,0 +1,14 @@
+<technology-reference-transfomers xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+    <transform>
+        <sourceTechnology id="sampleinput1" />
+        <targetTechnology id="sampleoutput2" versionRange="[2]"/>
+    </transform>
+    <transform>
+        <sourceTechnology id="sampleinput3" versionRange="[3]"/>
+        <targetTechnology id="sampleoutput4" versionRange="[4]"/>
+    </transform>
+    <transform>
+        <sourceTechnology id="sampleinput1" />
+        <targetTechnology id="sampleoutput5" />
+    </transform>
+</technology-reference-transfomers>
