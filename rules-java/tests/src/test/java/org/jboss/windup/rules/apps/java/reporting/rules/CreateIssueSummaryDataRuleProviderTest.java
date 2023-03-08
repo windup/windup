@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -26,6 +25,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -40,7 +40,6 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
-import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -51,7 +50,9 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -60,6 +61,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
 public class CreateIssueSummaryDataRuleProviderTest {
+    public CreateIssueSummaryDataRuleProviderTest() throws InstantiationException, IllegalAccessException {
+    }
+
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -84,31 +88,37 @@ public class CreateIssueSummaryDataRuleProviderTest {
      * CSV export should be generated only if specified by input in the configuration
      */
     @Test
-    public void testExportSummaryGeneration() throws Exception {
-        exportTest(true);
-        exportTest(false);
+    public void testExportSummaryGeneration() {
+        exportTest(true, false);
+    }
+    @Test
+    public void testSkipExportSummaryGeneration() {
+        exportTest(false, false);
     }
 
-    private void exportTest(boolean exportFile) throws Exception {
+    @Test
+    public void testSkipExportSummaryGenerationAndSkipReports() {
+        exportTest(true, true);
+    }
+
+    private void exportTest(boolean exportFile, boolean skipReports) {
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                 "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
         outputPath.toFile().mkdirs();
         try (GraphContext context = factory.create(true)) {
-            String inputPath = "src/test/resources/issueSummary";
-            Predicate<RuleProvider> predicate = new RuleProviderWithDependenciesPredicate(
-                    CreateIssueSummaryDataRuleProvider.class,
-                    TechTagTestRuleProvider.class,
-                    IssuesTestRuleProvider.class);
-            WindupConfiguration configuration = new WindupConfiguration()
+            final String inputPath = "src/test/resources/issueSummary";
+            final WindupConfiguration configuration = new WindupConfiguration()
                     .setGraphContext(context)
-                    .setRuleProviderFilter(predicate)
                     .addInputPath(Paths.get(inputPath, "app1"))
                     .addInputPath(Paths.get(inputPath, "app2"))
                     .setOutputDirectory(outputPath)
-                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                    .setOptionValue(ExportSummaryOption.NAME, exportFile);
+                    .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            if (exportFile) configuration.setOptionValue(ExportSummaryOption.NAME, true);
+            if (skipReports) configuration.setOptionValue(SkipReportsRenderingOption.NAME, true);
+
             processor.execute(configuration);
+
             final File[] candidates = outputPath.toFile().listFiles(pathname -> pathname.getName().startsWith("analysisSummary"));
             if (exportFile) {
                 Assert.assertEquals(1, candidates.length);
@@ -131,7 +141,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
                 Assert.assertEquals(0, candidates.length);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new WindupException(e.getMessage(), e);
         }
     }
 
