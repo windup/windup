@@ -2,12 +2,9 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import java.io.FileWriter;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -52,7 +49,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 @RuleMetadata(phase = ReportRenderingPhase.class)
 public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
-    private static final Set<String> DISCARDED_TAGS = new HashSet<>(Arrays.asList("Java EE", "Embedded", "View", "Connect", "Store", "Sustain", "Execute"));
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {

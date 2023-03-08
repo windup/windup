@@ -20,17 +20,14 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExportSummaryOption;
@@ -52,7 +49,6 @@ import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -91,6 +87,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
     public void testExportSummaryGeneration() {
         exportTest(true, false);
     }
+
     @Test
     public void testSkipExportSummaryGeneration() {
         exportTest(false, false);
@@ -145,7 +142,7 @@ public class CreateIssueSummaryDataRuleProviderTest {
         }
     }
 
-    @RuleMetadata (before = CreateIssueSummaryDataRuleProvider.class)
+    @RuleMetadata(before = CreateIssueSummaryDataRuleProvider.class)
     public static class TechTagTestRuleProvider extends AbstractRuleProvider {
         @Override
         public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
@@ -153,40 +150,40 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .addRule()
                     .when(Query.fromType(ProjectModel.class))
                     .perform(new AbstractIterationOperation<ProjectModel>() {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
-                                final TagSetService tagSetService = new TagSetService(event.getGraphContext());
-                                final GraphService<TechnologyUsageStatisticsModel> service = new GraphService<>(event.getGraphContext(), TechnologyUsageStatisticsModel.class);
+                                 @Override
+                                 public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
+                                     final TagSetService tagSetService = new TagSetService(event.getGraphContext());
+                                     final GraphService<TechnologyUsageStatisticsModel> service = new GraphService<>(event.getGraphContext(), TechnologyUsageStatisticsModel.class);
 
-                                if ("app1".equals(payload.getName())) {
-                                    final TagSetModel tagSetModel1 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Java EE", "Connect", "HTTP")));
-                                    final TechnologyUsageStatisticsModel techTag1 = service.create();
-                                    techTag1.setName("Servlet");
-                                    techTag1.setTagModel(tagSetModel1);
-                                    techTag1.setOccurrenceCount(1);
-                                    techTag1.setProjectModel(payload);
-                                } else {
-                                    final TagSetModel tagSetModel2 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Store", "Object Mapping")));
-                                    final TechnologyUsageStatisticsModel techTag2 = service.create();
-                                    techTag2.setName("Hibernate");
-                                    techTag2.setTagModel(tagSetModel2);
-                                    techTag2.setProjectModel(payload);
-                                    techTag2.setOccurrenceCount(2);
+                                     if ("app1".equals(payload.getName())) {
+                                         final TagSetModel tagSetModel1 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Java EE", "Connect", "HTTP")));
+                                         final TechnologyUsageStatisticsModel techTag1 = service.create();
+                                         techTag1.setName("Servlet");
+                                         techTag1.setTagModel(tagSetModel1);
+                                         techTag1.setOccurrenceCount(1);
+                                         techTag1.setProjectModel(payload);
+                                     } else {
+                                         final TagSetModel tagSetModel2 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Store", "Object Mapping")));
+                                         final TechnologyUsageStatisticsModel techTag2 = service.create();
+                                         techTag2.setName("Hibernate");
+                                         techTag2.setTagModel(tagSetModel2);
+                                         techTag2.setProjectModel(payload);
+                                         techTag2.setOccurrenceCount(2);
 
-                                    final TagSetModel tagSetModel3 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Sustain", "Security")));
-                                    final TechnologyUsageStatisticsModel techTag3 = service.create();
-                                    techTag3.setName("Bouncy Castle");
-                                    techTag3.setTagModel(tagSetModel3);
-                                    techTag3.setProjectModel(payload);
-                                    techTag3.setOccurrenceCount(3);
-                                }
-                            }
-                        }
+                                         final TagSetModel tagSetModel3 = tagSetService.getOrCreate(event, new HashSet<>(Arrays.asList("Embedded", "Sustain", "Security")));
+                                         final TechnologyUsageStatisticsModel techTag3 = service.create();
+                                         techTag3.setName("Bouncy Castle");
+                                         techTag3.setTagModel(tagSetModel3);
+                                         techTag3.setProjectModel(payload);
+                                         techTag3.setOccurrenceCount(3);
+                                     }
+                                 }
+                             }
                     );
         }
     }
 
-    @RuleMetadata (before = CreateIssueSummaryDataRuleProvider.class)
+    @RuleMetadata(before = CreateIssueSummaryDataRuleProvider.class)
     public static class IssuesTestRuleProvider extends AbstractRuleProvider {
         @Override
         public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
@@ -194,62 +191,62 @@ public class CreateIssueSummaryDataRuleProviderTest {
                     .addRule()
                     .when(Query.fromType(ProjectModel.class))
                     .perform(new AbstractIterationOperation<ProjectModel>() {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
-                                final InlineHintService inlineHintService = new InlineHintService(event.getGraphContext());
-                                final ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                                final LinkService linkService = new LinkService(event.getGraphContext());
+                                 @Override
+                                 public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload) {
+                                     final InlineHintService inlineHintService = new InlineHintService(event.getGraphContext());
+                                     final ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                                     final LinkService linkService = new LinkService(event.getGraphContext());
 
-                                GraphService<IssueCategoryModel> issueCategoryModelService = new GraphService<>(event.getGraphContext(), IssueCategoryModel.class);
+                                     GraphService<IssueCategoryModel> issueCategoryModelService = new GraphService<>(event.getGraphContext(), IssueCategoryModel.class);
 
-                                IssueCategoryModel mandatoryCategory = issueCategoryModelService.findAll()
-                                        .stream().filter(ic -> ic.getCategoryID().equals(IssueCategoryRegistry.MANDATORY)).findAny().get();
+                                     IssueCategoryModel mandatoryCategory = issueCategoryModelService.findAll()
+                                             .stream().filter(ic -> ic.getCategoryID().equals(IssueCategoryRegistry.MANDATORY)).findAny().get();
 
-                                if ("app1".equals(payload.getName())) {
-                                    final InlineHintModel b1 = inlineHintService.create();
-                                    b1.setRuleID("rule1");
-                                    b1.setSourceSnippit("source1");
-                                    b1.setLineNumber(0);
-                                    b1.setTitle("hint1-text");
-                                    b1.setEffort(50);
-                                    b1.addLink(linkService.getOrCreate("description", "link"));
+                                     if ("app1".equals(payload.getName())) {
+                                         final InlineHintModel b1 = inlineHintService.create();
+                                         b1.setRuleID("rule1");
+                                         b1.setSourceSnippit("source1");
+                                         b1.setLineNumber(0);
+                                         b1.setTitle("hint1-text");
+                                         b1.setEffort(50);
+                                         b1.addLink(linkService.getOrCreate("description", "link"));
 
-                                    final InlineHintModel b1b = inlineHintService.create();
-                                    b1b.setRuleID("rule1");
-                                    b1b.setLineNumber(0);
-                                    b1b.setTitle("hint1b-text");
-                                    b1b.setEffort(3);
-                                    b1b.setIssueCategory(mandatoryCategory);
+                                         final InlineHintModel b1b = inlineHintService.create();
+                                         b1b.setRuleID("rule1");
+                                         b1b.setLineNumber(0);
+                                         b1b.setTitle("hint1b-text");
+                                         b1b.setEffort(3);
+                                         b1b.setIssueCategory(mandatoryCategory);
 
-                                    final ClassificationModel c1 = classificationService.create();
-                                    c1.setRuleID("classification1");
-                                    c1.addLink(linkService.getOrCreate("description", "link"));
-                                    c1.setDescription("description-classification");
-                                    c1.setClassification("classification1-text");
-                                    c1.setEffort(30);
-                                    
-                                    final FileModel helloWorld = payload.getFileModels().get(0);
-                                    b1.setFile(helloWorld);
-                                    b1b.setFile(helloWorld);
-                                    c1.addFileModel(helloWorld);
-                                } else {
-                                    final InlineHintModel b2 = inlineHintService.create();
-                                    b2.setEffort(3);
-                                    b2.setRuleID("rule2");
-                                    b2.setTitle("hint2;\"\"\"\"-te\"xt");
-                                    b2.setLineNumber(0);
+                                         final ClassificationModel c1 = classificationService.create();
+                                         c1.setRuleID("classification1");
+                                         c1.addLink(linkService.getOrCreate("description", "link"));
+                                         c1.setDescription("description-classification");
+                                         c1.setClassification("classification1-text");
+                                         c1.setEffort(30);
 
-                                    final ClassificationModel c2 = classificationService.create();
-                                    c2.setRuleID("classification2");
-                                    c2.setClassification("classification2-text");
-                                    c2.setEffort(300);
+                                         final FileModel helloWorld = payload.getFileModels().get(0);
+                                         b1.setFile(helloWorld);
+                                         b1b.setFile(helloWorld);
+                                         c1.addFileModel(helloWorld);
+                                     } else {
+                                         final InlineHintModel b2 = inlineHintService.create();
+                                         b2.setEffort(3);
+                                         b2.setRuleID("rule2");
+                                         b2.setTitle("hint2;\"\"\"\"-te\"xt");
+                                         b2.setLineNumber(0);
 
-                                    final FileModel helloWorld = payload.getFileModels().get(0);
-                                    b2.setFile(helloWorld);
-                                    c2.addFileModel(helloWorld);
-                                }
-                            }
-                        }
+                                         final ClassificationModel c2 = classificationService.create();
+                                         c2.setRuleID("classification2");
+                                         c2.setClassification("classification2-text");
+                                         c2.setEffort(300);
+
+                                         final FileModel helloWorld = payload.getFileModels().get(0);
+                                         b2.setFile(helloWorld);
+                                         c2.addFileModel(helloWorld);
+                                     }
+                                 }
+                             }
                     );
         }
     }
