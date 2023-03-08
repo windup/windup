@@ -242,8 +242,8 @@ export const JBPMTable: React.FC<IJBPMTableProps> = ({ applicationId }) => {
 
   // Reset pagination when application change
   useEffect(() => {
-    onPageChange({ page: 1 });
-  }, [applicationId, onPageChange]);
+    onPageChange({ page: 1, perPage: currentPage.perPage });
+  }, [applicationId, onPageChange, currentPage.perPage]);
 
   return (
     <>

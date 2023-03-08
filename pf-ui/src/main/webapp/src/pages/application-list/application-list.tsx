@@ -353,8 +353,8 @@ export const ApplicationList: React.FC = () => {
 
   // Reset pagination when application change
   useEffect(() => {
-    onPageChange({ page: 1 });
-  }, [filters, onPageChange]);
+    onPageChange({ page: 1, perPage: currentPage.perPage });
+  }, [filters, onPageChange, currentPage.perPage]);
 
   return (
     <>
