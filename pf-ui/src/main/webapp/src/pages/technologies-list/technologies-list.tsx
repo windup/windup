@@ -303,7 +303,7 @@ export const TechnologiesList: React.FC = () => {
       <Divider />
       <PageSection variant={PageSectionVariants.light}>
         <TextContent>
-          <Text component="h1">Dependencies</Text>
+          <Text component="h1">Technologies</Text>
           <Text component="small">
             This report is a statistic of technologies occurrences in the input
             applications. It shows how the technologies are distributed and is
