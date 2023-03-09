@@ -215,6 +215,20 @@ export const ApplicationFilesTable: React.FC<IApplicationFilesTableProps> = ({
                                 {item.maven.description}
                               </DescriptionListDescription>
                             </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>
+                                Duplicates
+                              </DescriptionListTerm>
+                              <DescriptionListDescription>
+                                <List>
+                                  {item.maven.duplicatePaths?.map(
+                                    (f, index) => (
+                                      <ListItem key={index}>{f}</ListItem>
+                                    )
+                                  )}
+                                </List>
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
                           </DescriptionList>
                         </GridItem>
                         <GridItem>
