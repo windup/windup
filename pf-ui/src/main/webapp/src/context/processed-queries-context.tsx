@@ -1,24 +1,17 @@
 import { createContext, useContext, useMemo } from "react";
 
-import { TechnologyDto } from "@app/api/rule";
 import { IssueProcessed, RuleProcessed } from "@app/models/api-enriched";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
 import { useRulesQuery } from "@app/queries/rules";
-import { technologiesToArray } from "@app/utils/rule-utils";
 
 interface IProcessedQueriesContext {
   rulesByIssueId: Map<string, RuleProcessed>;
-  technologies: {
-    source: string[];
-    target: string[];
-  };
   issuesByFileId: Map<string, IssueProcessed[]>;
 }
 
 const ProcessedQueriesContext = createContext<IProcessedQueriesContext>({
   rulesByIssueId: new Map(),
-  technologies: { source: [], target: [] },
   issuesByFileId: new Map(),
 });
 
@@ -26,24 +19,6 @@ export const ProcessedQueriesContextProvider: React.FC = ({ children }) => {
   const allIssues = useIssuesQuery();
   const allRules = useRulesQuery();
   const allFiles = useFilesQuery();
-
-  const technologies = useMemo(() => {
-    const source = technologiesToArray(
-      (allRules.data || [])
-        .flatMap((e) => e.sourceTechnology)
-        .reduce((prev, current) => {
-          return current ? [...prev, current] : prev;
-        }, [] as TechnologyDto[])
-    );
-    const target = technologiesToArray(
-      (allRules.data || [])
-        .flatMap((e) => e.targetTechnology)
-        .reduce((prev, current) => {
-          return current ? [...prev, current] : prev;
-        }, [] as TechnologyDto[])
-    );
-    return { source, target };
-  }, [allRules.data]);
 
   const rulesByIssueId = useMemo(() => {
     const result = new Map<string, RuleProcessed>();
@@ -94,7 +69,7 @@ export const ProcessedQueriesContextProvider: React.FC = ({ children }) => {
 
   return (
     <ProcessedQueriesContext.Provider
-      value={{ technologies, rulesByIssueId, issuesByFileId }}
+      value={{ rulesByIssueId, issuesByFileId }}
     >
       {children}
     </ProcessedQueriesContext.Provider>

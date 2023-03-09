@@ -32,9 +32,9 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
-import { useJBPMsQuery } from "@app/queries/jbpm";
 import { JBPMDto } from "@app/api/jbpm";
 import { useFilesQuery } from "@app/queries/files";
+import { useJBPMsQuery } from "@app/queries/jbpm";
 import { FileEditor } from "@app/shared/components";
 
 const DataKey = "DataKey";

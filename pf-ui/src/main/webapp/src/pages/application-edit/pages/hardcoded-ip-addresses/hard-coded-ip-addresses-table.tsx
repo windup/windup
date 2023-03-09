@@ -11,8 +11,8 @@ import {
 
 import { FileDto } from "@app/api/hardcoded-ip-addresses";
 import { useFilesQuery } from "@app/queries/files";
-import { FileEditor } from "@app/shared/components";
 import { useHardcodedIpAddressesQuery } from "@app/queries/hardcoded-ip-addresses";
+import { FileEditor } from "@app/shared/components";
 
 const DataKey = "DataKey";
 

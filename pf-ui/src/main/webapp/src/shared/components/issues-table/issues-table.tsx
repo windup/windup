@@ -40,13 +40,15 @@ import {
 } from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
+import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
-import { IssueProcessed } from "@app/models/api-enriched";
+import { IssueProcessed, RuleProcessed } from "@app/models/api-enriched";
 import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
+import { useRulesQuery } from "@app/queries/rules";
 import { FileEditor, RuleEditor } from "@app/shared/components";
 import { technologiesToArray } from "@app/utils/rule-utils";
 
@@ -190,11 +192,12 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   >();
 
   // Queries
+  const allRules = useRulesQuery();
   const allApplicationsQuery = useApplicationsQuery();
   const allIssuesQuery = useIssuesQuery();
   const allFilesQuery = useFilesQuery();
 
-  const { technologies, rulesByIssueId } = useProcessedQueriesContext();
+  const { rulesByIssueId } = useProcessedQueriesContext();
 
   // Modal
   const issueModal = useModal<"showRule", TableData>();
@@ -235,6 +238,34 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       });
     });
   }, [allApplicationsQuery.data, allIssuesQuery.data, applicationId]);
+
+  // Technologies
+  const technologies = useMemo(() => {
+    const rulesFromIssues = issues.reduce((prev, current) => {
+      const rule = allRules.data?.find((rule) => rule.id === current.ruleId);
+      if (rule) {
+        return [...prev, rule];
+      } else {
+        return prev;
+      }
+    }, [] as RuleProcessed[]);
+
+    const source = technologiesToArray(
+      rulesFromIssues
+        .flatMap((e) => e.sourceTechnology)
+        .reduce((prev, current) => {
+          return current ? [...prev, current] : prev;
+        }, [] as TechnologyDto[])
+    ).sort();
+    const target = technologiesToArray(
+      rulesFromIssues
+        .flatMap((e) => e.targetTechnology)
+        .reduce((prev, current) => {
+          return current ? [...prev, current] : prev;
+        }, [] as TechnologyDto[])
+    ).sort();
+    return { source, target };
+  }, [issues, allRules.data]);
 
   //
   const categories = useMemo(() => {

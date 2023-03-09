@@ -9,9 +9,9 @@ import {
   useTableControls,
 } from "@project-openubl/lib-ui";
 
+import { useCompatibleFilesQuery } from "@app/queries/compatible-files";
 import { useFilesQuery } from "@app/queries/files";
 import { FileEditor } from "@app/shared/components";
-import { useCompatibleFilesQuery } from "@app/queries/compatible-files";
 
 export interface TableData {
   artifactName: string;
