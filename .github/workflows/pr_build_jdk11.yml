@@ -29,7 +29,7 @@ jobs:
         key: maven-windup-build-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-maven-
-          setup-java-${{ platform }}-${{ packageManager }}
+          setup-java-
     - name: Build on JDK 11
       run: mvn clean install -DskipTests -B -U
 
