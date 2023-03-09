@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationJBPMsDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -70,10 +71,7 @@ public class ApplicationJBPMRuleProvider extends AbstractApiRuleProvider {
                         ApplicationJBPMsDto.JBPMDto jbpmDto = new ApplicationJBPMsDto.JBPMDto();
 
                         jbpmDto.setFileName(jbpm3ProcessModel.getFileName());
-                        jbpmDto.setFileId(sourceReportService.getSourceReportForFileModel(jbpm3ProcessModel)
-                                .getSourceFileModel().getId()
-                                .toString()
-                        );
+                        jbpmDto.setFileId(DataUtils.getSourceFileId(sourceReportService, jbpm3ProcessModel));
                         jbpmDto.setProcessName(jbpm3ProcessModel.getProcessName());
                         jbpmDto.setProcessNoteCount(jbpm3ProcessModel.getNodeCount());
                         jbpmDto.setProcessDecisionCount(jbpm3ProcessModel.getDecisionCount());
@@ -86,12 +84,7 @@ public class ApplicationJBPMRuleProvider extends AbstractApiRuleProvider {
                                     ApplicationJBPMsDto.ActionHandlerDto actionHandlerDto = new ApplicationJBPMsDto.ActionHandlerDto();
 
                                     actionHandlerDto.setFileName(javaClassModel.getQualifiedName());
-                                    actionHandlerDto.setFileId(StreamSupport.stream(javaClassService.getJavaSource(javaClassModel.getQualifiedName()).spliterator(), false)
-                                            .map(sourceReportService::getSourceReportForFileModel)
-                                            .filter(Objects::nonNull)
-                                            .map(f -> f.getSourceFileModel().getId().toString())
-                                            .findFirst()
-                                            .orElse(null));
+                                    actionHandlerDto.setFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, javaClassModel.getQualifiedName()));
 
                                     return actionHandlerDto;
                                 })
@@ -102,12 +95,7 @@ public class ApplicationJBPMRuleProvider extends AbstractApiRuleProvider {
                                     ApplicationJBPMsDto.DecisionHandlerDto actionHandlerDto = new ApplicationJBPMsDto.DecisionHandlerDto();
 
                                     actionHandlerDto.setFileName(javaClassModel.getQualifiedName());
-                                    actionHandlerDto.setFileId(StreamSupport.stream(javaClassService.getJavaSource(javaClassModel.getQualifiedName()).spliterator(), false)
-                                            .map(sourceReportService::getSourceReportForFileModel)
-                                            .filter(Objects::nonNull)
-                                            .map(f -> f.getSourceFileModel().getId().toString())
-                                            .findFirst()
-                                            .orElse(null));
+                                    actionHandlerDto.setFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, javaClassModel.getQualifiedName()));
 
                                     return actionHandlerDto;
                                 })

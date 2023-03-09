@@ -5,13 +5,13 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ReportPfRenderingPhase;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationHardcodedIpAddressesDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.ip.HardcodedIPLocationModel;
@@ -69,10 +69,7 @@ public class ApplicationHardcodedIpAddressesRuleProvider extends AbstractApiRule
                         fileDto.setLineNumber(locationModel.getLineNumber());
                         fileDto.setColumnNumber(locationModel.getColumnNumber());
                         fileDto.setIpAddress(locationModel.getSourceSnippit());
-                        fileDto.setFileId(sourceReportService.getSourceReportForFileModel(((FileLocationModel) locationModel).getFile())
-                                .getSourceFileModel().getId()
-                                .toString()
-                        );
+                        fileDto.setFileId(locationModel.getFile() == null ? null : DataUtils.getSourceFileId(sourceReportService, locationModel.getFile()));
                         return fileDto;
                     })
                     .collect(Collectors.toList())

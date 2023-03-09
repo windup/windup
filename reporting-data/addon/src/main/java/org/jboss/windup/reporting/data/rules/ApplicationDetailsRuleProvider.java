@@ -16,6 +16,7 @@ import org.jboss.windup.graph.traversal.ArchiveSHA1ToFilePathMapper;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.data.dto.ApplicationDetailsDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -137,9 +138,8 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
         // Issues
         SourceReportService sourceReportService = new SourceReportService(context);
         List<String> childrenFiles = canonicalProject.getFileModelsNoDirectories().stream()
-                .map(sourceReportService::getSourceReportForFileModel)
+                .map(fileModel -> DataUtils.getSourceFileId(sourceReportService, fileModel))
                 .filter(Objects::nonNull)
-                .map(sourceReportModel -> sourceReportModel.getSourceFileModel().getId().toString())
                 .collect(Collectors.toList());
 
         // Map values

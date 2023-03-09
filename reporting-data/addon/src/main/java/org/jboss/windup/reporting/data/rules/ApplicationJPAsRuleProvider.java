@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationJPAsDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -127,13 +128,7 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
                         JavaClassModel clz = jpaEntityModel.getJavaClass();
                         if (clz != null) {
                             jpaEntityDto.setClassName(clz.getQualifiedName());
-                            jpaEntityDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            jpaEntityDto.setClassFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, clz.getQualifiedName()));
                         }
                     });
 

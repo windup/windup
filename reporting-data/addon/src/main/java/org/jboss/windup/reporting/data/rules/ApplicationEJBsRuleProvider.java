@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationEJBsDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -27,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @RuleMetadata(
         phase = ReportPfRenderingPhase.class,
@@ -72,13 +72,7 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
                     JavaClassModel clz = beanBaseModel.getEjbClass();
                     if (clz != null) {
                         beanDto.setClassName(beanBaseModel.getEjbClass().getQualifiedName());
-                        beanDto.setClassFileId(StreamSupport.stream(javaClassService.getJavaSource(clz.getQualifiedName()).spliterator(), false)
-                                .map(sourceReportService::getSourceReportForFileModel)
-                                .filter(Objects::nonNull)
-                                .map(f -> f.getSourceFileModel().getId().toString())
-                                .findFirst()
-                                .orElse(null)
-                        );
+                        beanDto.setClassFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, clz.getQualifiedName()));
                     }
                 };
 
@@ -111,31 +105,13 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
                     beanDto.setType("stateful".equalsIgnoreCase(beanBaseModel.getSessionType()) ? ApplicationEJBsDto.SessionBeanType.STATEFUL : ApplicationEJBsDto.SessionBeanType.STATELESS);
 
                     if (sessionBean.getEjbHome() != null) {
-                        beanDto.setHomeEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbHome().getQualifiedName()).spliterator(), false)
-                                .map(sourceReportService::getSourceReportForFileModel)
-                                .filter(Objects::nonNull)
-                                .map(f -> f.getSourceFileModel().getId().toString())
-                                .findFirst()
-                                .orElse(null)
-                        );
+                        beanDto.setHomeEJBFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, sessionBean.getEjbHome().getQualifiedName()));
                     }
                     if (sessionBean.getEjbLocal() != null) {
-                        beanDto.setLocalEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbLocal().getQualifiedName()).spliterator(), false)
-                                .map(sourceReportService::getSourceReportForFileModel)
-                                .filter(Objects::nonNull)
-                                .map(f -> f.getSourceFileModel().getId().toString())
-                                .findFirst()
-                                .orElse(null)
-                        );
+                        beanDto.setLocalEJBFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, sessionBean.getEjbLocal().getQualifiedName()));
                     }
                     if (sessionBean.getEjbRemote() != null) {
-                        beanDto.setRemoteEJBFileId(StreamSupport.stream(javaClassService.getJavaSource(sessionBean.getEjbRemote().getQualifiedName()).spliterator(), false)
-                                .map(sourceReportService::getSourceReportForFileModel)
-                                .filter(Objects::nonNull)
-                                .map(f -> f.getSourceFileModel().getId().toString())
-                                .findFirst()
-                                .orElse(null)
-                        );
+                        beanDto.setRemoteEJBFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, sessionBean.getEjbRemote().getQualifiedName()));
                     }
 
                     beanDto.setJndiLocation(Stream
@@ -164,10 +140,7 @@ public class ApplicationEJBsRuleProvider extends AbstractApiRuleProvider {
 
     private String getDescriptorFileId(SourceReportService sourceReportService, EjbDeploymentDescriptorModel ejbDeploymentDescriptor) {
         if (ejbDeploymentDescriptor != null) {
-            return sourceReportService.getSourceReportForFileModel(ejbDeploymentDescriptor)
-                    .getSourceFileModel()
-                    .getId()
-                    .toString();
+            return DataUtils.getSourceFileId(sourceReportService, ejbDeploymentDescriptor);
         }
         return null;
     }

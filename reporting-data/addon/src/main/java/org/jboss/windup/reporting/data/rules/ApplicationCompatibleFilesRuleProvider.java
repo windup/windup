@@ -15,7 +15,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.AllTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.data.dto.ApplicationCompatibleFilesDto;
-import org.jboss.windup.reporting.model.source.SourceReportModel;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -86,14 +86,7 @@ public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvi
                 .map(fileModel -> {
                     ApplicationCompatibleFilesDto.FileDto fileDto = new ApplicationCompatibleFilesDto.FileDto();
                     fileDto.setFileName(getFilename(fileModel));
-
-                    SourceReportModel sourceReportForFileModel = sourceReportService.getSourceReportForFileModel(fileModel);
-                    if (sourceReportForFileModel != null) {
-                        fileDto.setFileId(sourceReportForFileModel.getSourceFileModel()
-                                .getId()
-                                .toString()
-                        );
-                    }
+                    fileDto.setFileId(DataUtils.getSourceFileId(sourceReportService, fileModel));
 
                     return fileDto;
                 })

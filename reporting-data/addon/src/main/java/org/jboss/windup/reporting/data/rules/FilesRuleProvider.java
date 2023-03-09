@@ -34,8 +34,11 @@ import org.jboss.windup.reporting.service.TechnologyTagService;
 import javax.inject.Inject;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -101,8 +104,10 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
 
         for (FileModel fileModel : projectModelTraversal.getCanonicalProject().getFileModels()) {
             if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport()) {
-                AbstractMap.SimpleEntry<FileDto, String> filesDto = getSourceFileData(event, fileModel);
-                result.put(filesDto.getKey(), filesDto.getValue());
+                AbstractMap.SimpleEntry<FileDto, Optional<String>> filesDto = getSourceFileData(event, fileModel);
+                filesDto.getValue().ifPresent(fileContent -> {
+                    result.put(filesDto.getKey(), fileContent);
+                });
             }
         }
 
@@ -114,9 +119,9 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
         return result;
     }
 
-    private AbstractMap.SimpleEntry<FileDto, String> getSourceFileData(GraphRewrite event, FileModel sourceFile) {
+    private AbstractMap.SimpleEntry<FileDto, Optional<String>> getSourceFileData(GraphRewrite event, FileModel sourceFile) {
         SourceReportService sourceReportService = new SourceReportService(event.getGraphContext());
-        SourceReportModel reportModel = sourceReportService.getSourceReportForFileModel(sourceFile);
+        Optional<SourceReportModel> reportModel = Optional.ofNullable(sourceReportService.getSourceReportForFileModel(sourceFile));
 
         Iterable<TechnologyTagModel> technologyTagsForFile = new TechnologyTagService(event.getGraphContext())
                 .findTechnologyTagsForFile(sourceFile);
@@ -141,37 +146,47 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
         FileDto fileDto = new FileDto();
 
         fileDto.setId(sourceFile.getId().toString());
-        fileDto.setFullPath(reportModel.getProjectEdges().stream()
-                .map(SourceReportToProjectEdgeModel::getFullPath)
-                .collect(Collectors.joining(" | "))
+        fileDto.setFullPath(reportModel
+                .map(sourceReportModel -> sourceReportModel.getProjectEdges().stream()
+                        .map(SourceReportToProjectEdgeModel::getFullPath)
+                        .collect(Collectors.joining(" | "))
+                )
+                .orElse(null)
         );
         fileDto.setPrettyPath(sourceFile.getPrettyPath());
         fileDto.setPrettyFileName(IssuesRuleProvider.getPrettyPathForFile(sourceFile));
         fileDto.setSourceType(resolveSourceType(sourceFile));
         fileDto.setStoryPoints(storyPoints);
-        fileDto.setHints(reportModel.getSourceFileModel().getInlineHints().stream()
-                .map(inlineHintModel -> {
-                    FileDto.HintDto hintDto = new FileDto.HintDto();
 
-                    hintDto.setRuleId(inlineHintModel.getRuleID());
-                    hintDto.setLine(inlineHintModel.getLineNumber());
-                    ;
-                    hintDto.setTitle(inlineHintModel.getTitle());
-                    hintDto.setContent(inlineHintModel.getHint());
-                    hintDto.setLinks(inlineHintModel.getLinks().stream()
-                            .map(linkModel -> {
-                                ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
-                                linkDto.setTitle(linkModel.getDescription());
-                                linkDto.setHref(linkModel.getLink());
-                                return linkDto;
-                            })
-                            .collect(Collectors.toList())
-                    );
+        // Hints
+        List<FileDto.HintDto> hintDtoList = reportModel
+                .map(sourceReportModel -> sourceReportModel.getSourceFileModel().getInlineHints().stream()
+                        .map(inlineHintModel -> {
+                            FileDto.HintDto hintDto = new FileDto.HintDto();
 
-                    return hintDto;
-                })
-                .collect(Collectors.toList())
-        );
+                            hintDto.setRuleId(inlineHintModel.getRuleID());
+                            hintDto.setLine(inlineHintModel.getLineNumber());
+
+                            hintDto.setTitle(inlineHintModel.getTitle());
+                            hintDto.setContent(inlineHintModel.getHint());
+                            hintDto.setLinks(inlineHintModel.getLinks().stream()
+                                    .map(linkModel -> {
+                                        ApplicationIssuesDto.LinkDto linkDto = new ApplicationIssuesDto.LinkDto();
+                                        linkDto.setTitle(linkModel.getDescription());
+                                        linkDto.setHref(linkModel.getLink());
+                                        return linkDto;
+                                    })
+                                    .collect(Collectors.toList())
+                            );
+
+                            return hintDto;
+                        })
+                        .collect(Collectors.toList())
+                )
+                .orElse(Collections.emptyList());
+        fileDto.setHints(hintDtoList);
+
+        //
         fileDto.setTags(StreamSupport.stream(technologyTagsForFile.spliterator(), false)
                 .map(technologyTagModel -> {
                     FileDto.TagDto tagDto = new FileDto.TagDto();
@@ -192,7 +207,7 @@ public class FilesRuleProvider extends AbstractApiRuleProvider {
                 .collect(Collectors.toSet())
         );
 
-        return new AbstractMap.SimpleEntry<>(fileDto, reportModel.getSourceBody());
+        return new AbstractMap.SimpleEntry<>(fileDto, reportModel.map(SourceReportModel::getSourceBody));
     }
 
     private String resolveSourceType(FileModel f) {

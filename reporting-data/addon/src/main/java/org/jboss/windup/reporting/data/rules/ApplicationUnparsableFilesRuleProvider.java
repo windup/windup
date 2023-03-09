@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.data.dto.ApplicationUnparsableFilesDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 
@@ -61,10 +62,7 @@ public class ApplicationUnparsableFilesRuleProvider extends AbstractApiRuleProvi
                                     unparsableFileDto.setParseError(fileModel.getParseError());
 
                                     if (sourceReportModel != null && sourceReportModel.getReportFilename() != null) {
-                                        unparsableFileDto.setFileId(sourceReportModel.getSourceFileModel()
-                                                .getId()
-                                                .toString()
-                                        );
+                                        unparsableFileDto.setFileId(DataUtils.getSourceFileId(sourceReportService, fileModel));
                                     }
 
                                     return unparsableFileDto;

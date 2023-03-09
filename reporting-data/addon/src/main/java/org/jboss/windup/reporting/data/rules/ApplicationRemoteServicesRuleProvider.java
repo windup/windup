@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.data.dto.ApplicationRemoteServicesDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -78,13 +79,7 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
 
                             jaxRsServiceDto.setPath(jaxRSWebServiceModel.getPath());
                             jaxRsServiceDto.setInterfaceName(jaxRSWebServiceModel.getImplementationClass().getQualifiedName());
-                            jaxRsServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxRSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            jaxRsServiceDto.setInterfaceFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, jaxRSWebServiceModel.getImplementationClass().getQualifiedName()));
                         } else if (remoteServiceModel instanceof JaxWSWebServiceModel) {
                             JaxWSWebServiceModel jaxWSWebServiceModel = (JaxWSWebServiceModel) remoteServiceModel;
 
@@ -92,22 +87,10 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
                             applicationRemoteServicesDto.getJaxWsServices().add(jaxWsServiceDto);
 
                             jaxWsServiceDto.setInterfaceName(jaxWSWebServiceModel.getInterface().getQualifiedName());
-                            jaxWsServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getInterface().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            jaxWsServiceDto.setInterfaceFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, jaxWSWebServiceModel.getInterface().getQualifiedName()));
 
                             jaxWsServiceDto.setImplementationName(jaxWSWebServiceModel.getImplementationClass().getQualifiedName());
-                            jaxWsServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(jaxWSWebServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            jaxWsServiceDto.setImplementationFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, jaxWSWebServiceModel.getImplementationClass().getQualifiedName()));
                         } else if (remoteServiceModel instanceof EjbRemoteServiceModel) {
                             EjbRemoteServiceModel ejbRemoteServiceModel = (EjbRemoteServiceModel) remoteServiceModel;
 
@@ -115,22 +98,10 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
                             applicationRemoteServicesDto.getEjbRemoteServices().add(ejbRemoteServiceDto);
 
                             ejbRemoteServiceDto.setInterfaceName(ejbRemoteServiceModel.getInterface().getQualifiedName());
-                            ejbRemoteServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getInterface().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            ejbRemoteServiceDto.setInterfaceFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, ejbRemoteServiceModel.getInterface().getQualifiedName()));
 
                             ejbRemoteServiceDto.setImplementationName(ejbRemoteServiceModel.getImplementationClass().getQualifiedName());
-                            ejbRemoteServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(ejbRemoteServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            ejbRemoteServiceDto.setImplementationFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, ejbRemoteServiceModel.getImplementationClass().getQualifiedName()));
                         } else if (remoteServiceModel instanceof RMIServiceModel) {
                             RMIServiceModel rmiServiceModel = (RMIServiceModel) remoteServiceModel;
 
@@ -138,22 +109,10 @@ public class ApplicationRemoteServicesRuleProvider extends AbstractApiRuleProvid
                             applicationRemoteServicesDto.getRmiServices().add(rmiServiceDto);
 
                             rmiServiceDto.setInterfaceName(rmiServiceModel.getInterface().getQualifiedName());
-                            rmiServiceDto.setInterfaceFileId(StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getInterface().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            rmiServiceDto.setInterfaceFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, rmiServiceModel.getInterface().getQualifiedName()));
 
                             rmiServiceDto.setImplementationName(rmiServiceModel.getImplementationClass().getQualifiedName());
-                            rmiServiceDto.setImplementationFileId(StreamSupport.stream(javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()).spliterator(), false)
-                                    .map(sourceReportService::getSourceReportForFileModel)
-                                    .filter(Objects::nonNull)
-                                    .map(f -> f.getSourceFileModel().getId().toString())
-                                    .findFirst()
-                                    .orElse(null)
-                            );
+                            rmiServiceDto.setImplementationFileId(DataUtils.getSourceFileId(javaClassService, sourceReportService, rmiServiceModel.getImplementationClass().getQualifiedName()));
                         }
                     });
 
