@@ -11,7 +11,7 @@ public class LegacyReportsRenderingOption extends AbstractConfigurationOption {
 
     @Override
     public String getDescription() {
-        return "If set, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " generate legacy reports.";
+        return "If set, " + ThemeProvider.getInstance().getTheme().getBrandNameAcronym() + " generates legacy reports.";
     }
 
     @Override
