@@ -206,7 +206,7 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
                     <DescriptionListGroup>
                       <DescriptionListTerm>Found at path</DescriptionListTerm>
                       <DescriptionListDescription>
-                        <List isPlain>
+                        <List>
                           {item.foundPaths.map((path, index) => (
                             <ListItem key={index}>{path}</ListItem>
                           ))}

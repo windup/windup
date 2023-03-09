@@ -42,16 +42,37 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         GraphContext context = event.getGraphContext();
 
         List<ApplicationDependenciesDto> result = new ArrayList<>();
+
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel projectModel = inputPath.getProjectModel();
 
-            List<ApplicationDependenciesDto.DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>());
+            List<ApplicationDependenciesDto.DependencyDto> dependencies = addAll(context, new ProjectModelTraversal(projectModel), new HashMap<>())
+                    .stream()
+                    .map(groupModel -> {
+                        ProjectModel dependencyProject = groupModel.getCanonicalProject();
+
+                        ApplicationDependenciesDto.DependencyDto dependencyDto = new ApplicationDependenciesDto.DependencyDto();
+                        dependencyDto.setName(groupModel.getCanonicalProject().getRootFileModel().getFileName());
+                        dependencyDto.setMavenIdentifier(groupModel.getCanonicalProject().getProperty("mavenIdentifier"));
+                        dependencyDto.setSha1(groupModel.getSHA1());
+                        dependencyDto.setVersion(dependencyProject.getVersion());
+                        dependencyDto.setOrganization(dependencyProject.getOrganization());
+                        dependencyDto.setFoundPaths(groupModel.getArchives().stream()
+                                .map(DependencyReportToArchiveEdgeModel::getFullPath)
+                                .collect(Collectors.toList())
+                        );
+
+                        return dependencyDto;
+                    })
+                    .collect(Collectors.toList());
 
             ApplicationDependenciesDto applicationDependenciesDto = new ApplicationDependenciesDto();
             applicationDependenciesDto.setApplicationId(projectModel.getId().toString());
             applicationDependenciesDto.setDependencies(dependencies);
+
             result.add(applicationDependenciesDto);
         }
+
         return result;
     }
 
@@ -60,18 +81,17 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
         return Collections.emptyMap();
     }
 
-    private List<ApplicationDependenciesDto.DependencyDto> addAll(
+    private List<DependencyReportDependencyGroupModel> addAll(
             GraphContext context,
-            ProjectModelTraversal projectModelTraversal,
+            ProjectModelTraversal traversal,
             Map<String, DependencyReportDependencyGroupModel> groupsBySHA1
     ) {
-        List<ApplicationDependenciesDto.DependencyDto> result = new ArrayList<>();
+        List<DependencyReportDependencyGroupModel> result = new ArrayList<>();
 
-        FileModel rootFileModel = projectModelTraversal.getCurrent().getRootFileModel();
+        FileModel rootFileModel = traversal.getCurrent().getRootFileModel();
 
         // Don't create a dependency entry for the entire application (root project)
-        boolean isRootProject = projectModelTraversal.getCurrent().getParentProject() == null;
-        DependencyReportDependencyGroupModel groupModel;
+        boolean isRootProject = traversal.getCurrent().getParentProject() == null;
         if (!isRootProject && rootFileModel instanceof ArchiveModel) {
             ArchiveModel archiveModel = (ArchiveModel) rootFileModel;
             ArchiveModel canonicalArchive;
@@ -85,19 +105,18 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
             String sha1 = archiveModel.getSHA1Hash();
 
             // 2. Get the group model for this sha1
-            boolean shouldDtoBeGenerated = false;
-            groupModel = groupsBySHA1.get(sha1);
+            DependencyReportDependencyGroupModel groupModel = groupsBySHA1.get(sha1);
             if (groupModel == null) {
-                shouldDtoBeGenerated = true;
-
                 groupModel = context.service(DependencyReportDependencyGroupModel.class).create();
                 groupModel.setSHA1(sha1);
                 groupModel.setCanonicalProject(canonicalArchive.getProjectModel());
+                result.add(groupModel);
+
                 groupsBySHA1.put(sha1, groupModel);
             }
 
             // 3. If the group already has this archive, don't do anything
-            String path = projectModelTraversal.getFilePath(rootFileModel);
+            String path = traversal.getFilePath(rootFileModel);
             boolean archiveAlreadyLinked = false;
             for (DependencyReportToArchiveEdgeModel groupEdge : groupModel.getArchives()) {
                 if (StringUtils.equals(groupEdge.getFullPath(), path)) {
@@ -111,25 +130,10 @@ public class DependenciesRuleProvider extends AbstractApiRuleProvider {
                 DependencyReportToArchiveEdgeModel edge = groupModel.addArchiveModel(archiveModel);
                 edge.setFullPath(path);
             }
-
-            // Generate DTO
-            if (shouldDtoBeGenerated) {
-                ApplicationDependenciesDto.DependencyDto dependencyDto = new ApplicationDependenciesDto.DependencyDto();
-                dependencyDto.setName(groupModel.getCanonicalProject().getRootFileModel().getFileName());
-                dependencyDto.setMavenIdentifier(groupModel.getCanonicalProject().getProperty("mavenIdentifier"));
-                dependencyDto.setSha1(archiveModel.getSHA1Hash());
-                dependencyDto.setVersion(canonicalArchive.getProjectModel().getVersion());
-                dependencyDto.setOrganization(canonicalArchive.getProjectModel().getOrganization());
-                dependencyDto.setFoundPaths(groupModel.getArchives().stream()
-                        .map(DependencyReportToArchiveEdgeModel::getFullPath)
-                        .collect(Collectors.toList())
-                );
-                result.add(dependencyDto);
-            }
         }
 
-        for (ProjectModelTraversal child : projectModelTraversal.getChildren()) {
-            List<ApplicationDependenciesDto.DependencyDto> childDependencies = addAll(context, child, groupsBySHA1);
+        for (ProjectModelTraversal child : traversal.getChildren()) {
+            List<DependencyReportDependencyGroupModel> childDependencies = addAll(context, child, groupsBySHA1);
             result.addAll(childDependencies);
         }
 
