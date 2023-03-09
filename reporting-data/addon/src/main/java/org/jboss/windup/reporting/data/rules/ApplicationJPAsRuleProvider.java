@@ -97,7 +97,7 @@ public class ApplicationJPAsRuleProvider extends AbstractApiRuleProvider {
                                                 ApplicationJPAsDto.DatasourceDto datasourceDto = new ApplicationJPAsDto.DatasourceDto();
                                                 datasourceDto.setJndiLocation(dataSourceModel.getJndiLocation());
                                                 datasourceDto.setDatabaseTypeName(dataSourceModel.getDatabaseTypeName());
-                                                datasourceDto.setXA(Objects.equals(dataSourceModel.getXa(), true));
+                                                datasourceDto.setIsXA(Objects.equals(dataSourceModel.getXa(), true));
                                                 return datasourceDto;
                                             })
                                             .collect(Collectors.toList())

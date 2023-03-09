@@ -8,7 +8,7 @@ import java.util.List;
 public class TagDto {
     private String name;
     private String title;
-    private boolean isRoot;
-    private boolean isPseudo;
+    private Boolean isRoot;
+    private Boolean isPseudo;
     private List<String> parentsTagNames;
 }

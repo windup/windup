@@ -36,8 +36,8 @@ public class TagsRuleProvider extends AbstractApiRuleProvider {
                     TagDto tagDto = new TagDto();
                     tagDto.setName(tag.getName());
                     tagDto.setTitle(tag.getTitle());
-                    tagDto.setRoot(tag.isPrime());
-                    tagDto.setPseudo(tag.isPseudo());
+                    tagDto.setIsRoot(tag.isPrime());
+                    tagDto.setIsPseudo(tag.isPseudo());
                     tagDto.setParentsTagNames(tag.getParentTags().stream()
                             .map(Tag::getName)
                             .collect(Collectors.toList())

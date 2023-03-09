@@ -9,7 +9,7 @@ import java.util.Set;
 public class ApplicationDto {
     private String id;
     private String name;
-    private boolean isVirtual;
+    private Boolean isVirtual;
     private Set<String> tags;
     private int storyPoints;
     private int storyPointsInSharedArchives;

@@ -44,7 +44,7 @@ public class ApplicationJPAsDto {
     public static class DatasourceDto {
         private String jndiLocation;
         private String databaseTypeName;
-        private boolean isXA;
+        private Boolean isXA;
     }
 
 }
