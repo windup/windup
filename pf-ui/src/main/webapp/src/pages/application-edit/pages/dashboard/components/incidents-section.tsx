@@ -27,6 +27,7 @@ import {
 import { ApplicationDto } from "@app/api/application";
 import {
   ALL_SUPPORTED_ISSUE_CATEGORY,
+  compareByCategoryFn,
   IssueCategoryType,
 } from "@app/api/issues";
 import { useIssuesQuery } from "@app/queries/issues";
@@ -63,31 +64,6 @@ const INCIDENTS_CHART: IncidentsChart = {
     },
     getTooltip: ({ datum }: any) => `${datum.y} SP`,
   },
-};
-
-const sortIncidentsData = (data: IncidentsData[]) => {
-  const getCategoryPriority = (category: IssueCategoryType) => {
-    switch (category) {
-      case "mandatory":
-        return 1;
-      case "optional":
-        return 2;
-      case "potential":
-        return 3;
-      case "cloud-mandatory":
-        return 4;
-      case "cloud-optional":
-        return 5;
-      case "information":
-        return 6;
-      default:
-        return 0;
-    }
-  };
-
-  return data.sort(
-    (a, b) => getCategoryPriority(a.category) - getCategoryPriority(b.category)
-  );
 };
 
 export interface IIncidentsSectionProps {
@@ -132,7 +108,7 @@ export const IncidentsSection: React.FC<IIncidentsSectionProps> = ({
         ];
       }
 
-      return sortIncidentsData(result);
+      return result.sort(compareByCategoryFn((elem) => elem.category));
     }, DEFAULT_INCIDENTS_DATA);
   }, [applicationIssues]);
 

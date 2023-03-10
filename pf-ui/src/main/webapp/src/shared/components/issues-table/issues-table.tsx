@@ -154,11 +154,11 @@ const columns: ICell[] = [
   },
   {
     title: "Total incidents",
-    transforms: [cellWidth(10)],
+    transforms: [cellWidth(10), sortable],
   },
   {
     title: "Total storypoints",
-    transforms: [cellWidth(10)],
+    transforms: [cellWidth(10), sortable],
   },
 ];
 
@@ -170,6 +170,10 @@ export const compareByColumnIndex = (
   switch (columnIndex) {
     case 1: // name
       return a.name.localeCompare(b.name);
+    case 6: // Total incidents
+      return a.totalIncidents - b.totalIncidents;
+    case 7: // Total storypoints
+      return a.totalStoryPoints - b.totalStoryPoints;
     default:
       return 0;
   }

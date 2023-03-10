@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import {
   ApplicationIssuesDto,
   IssueCategoryType,
+  compareByCategoryAndNameFn,
 } from "@app/api/issues";
 import {
   ApplicationIssuesProcessed,
@@ -29,7 +30,12 @@ export const useIssuesQuery = () => {
 
         const result: ApplicationIssuesProcessed = {
           applicationId: e.applicationId,
-          issues: issuesProccesed.sort((a, b) => a.name.localeCompare(b.name)),
+          issues: issuesProccesed.sort(
+            compareByCategoryAndNameFn(
+              (elem) => elem.category,
+              (elem) => elem.name
+            )
+          ),
         };
         return result;
       }),
