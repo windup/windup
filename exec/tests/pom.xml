@@ -32,6 +32,12 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-xml</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Furnace Container -->
         <dependency>
