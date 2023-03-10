@@ -27,6 +27,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     String SUMMARY_MODE = "exportSummary";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
     String SKIP_REPORTS_RENDERING = "skipReports";
+    String SKIP_SOURCE_CODE_REPORTS_RENDERING = "skipSourceCodeReports";
     String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
 
     /**
@@ -168,6 +169,20 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
      */
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
+
+    /**
+     * Indicate whether skip all source code reports rendering
+     *
+     * @return
+     */
+    @Property(SKIP_SOURCE_CODE_REPORTS_RENDERING)
+    Boolean isSkipSourceCodeReportsRendering();
+
+    /**
+     * Indicate whether skip all source code reports rendering
+     */
+    @Property(SKIP_SOURCE_CODE_REPORTS_RENDERING)
+    void setSkipSourceCodeReportsRendering(Boolean skip);
 
     @Property(ANALYZE_KNOWN_LIBRARIES)
     Boolean isAnalyzeKnownLibraries();
