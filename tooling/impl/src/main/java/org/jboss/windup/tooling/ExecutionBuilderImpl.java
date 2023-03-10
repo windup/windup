@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.config.SkipReportsRenderingOption;
+import org.jboss.windup.config.SkipSourceCodeReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
@@ -158,6 +159,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder {
     @Override
     public void skipReportGeneration() throws RemoteException {
         options.put(SkipReportsRenderingOption.NAME, true);
+    }
+
+    @Override
+    public void skipSourceCodeReportGeneration() throws RemoteException {
+        options.put(SkipSourceCodeReportsRenderingOption.NAME, true);
     }
 
     @Override
