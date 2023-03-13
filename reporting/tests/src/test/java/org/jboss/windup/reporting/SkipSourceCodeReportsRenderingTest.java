@@ -69,6 +69,7 @@ public class SkipSourceCodeReportsRenderingTest {
         try (final GraphContext context = contextFactory.create(true)) {
             final WindupConfiguration configuration = getWindupConfiguration(context, "WindupReportWithoutSourceCode");
             processor.execute(configuration.setOptionValue(SkipSourceCodeReportsRenderingOption.NAME, true));
+            processor.execute(configuration.setOptionValue(LegacyReportsRenderingOption.NAME, true));
             // no SourceReportModel instances in the graph
             final SourceReportService sourceReportService = new SourceReportService(context);
             Assert.assertTrue("SourceReportModel must not be created", sourceReportService.findAll().isEmpty());
