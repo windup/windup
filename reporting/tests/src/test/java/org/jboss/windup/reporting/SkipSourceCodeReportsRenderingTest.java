@@ -15,6 +15,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.SkipSourceCodeReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -82,6 +83,7 @@ public class SkipSourceCodeReportsRenderingTest {
     public void testSourceCodeReportsStillGenerated() {
         try (final GraphContext context = contextFactory.create(true)) {
             final WindupConfiguration configuration = getWindupConfiguration(context, "WindupReportWithSourceCode");
+            processor.execute(configuration.setOptionValue(LegacyReportsRenderingOption.NAME, true));
             processor.execute(configuration);
             // no SourceReportModel instances in the graph
             final SourceReportService sourceReportService = new SourceReportService(context);
