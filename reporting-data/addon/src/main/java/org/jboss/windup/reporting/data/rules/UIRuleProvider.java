@@ -34,6 +34,7 @@ public class UIRuleProvider extends AbstractRuleProvider {
     private static final Logger LOG = Logger.getLogger(UIRuleProvider.class);
 
     private final static String UI_ZIP_FILENAME = "pf-windup-ui.zip";
+    private final static String THEME_JS_FILENAME = "theme.js";
 
     @Inject
     private Furnace furnace;
@@ -91,9 +92,30 @@ public class UIRuleProvider extends AbstractRuleProvider {
 
             // Clean
             Files.delete(uiDirectory.resolve(UI_ZIP_FILENAME));
+
+            // Add theming config
+            try (InputStream themeJSInputStream = UIRuleProvider.class.getClassLoader().getResourceAsStream(THEME_JS_FILENAME)) {
+                if (themeJSInputStream == null) {
+                    try (InputStream anotherThemeJSInputStream = furnace.getRuntimeClassLoader().getResourceAsStream(THEME_JS_FILENAME)) {
+                        if (anotherThemeJSInputStream != null) {
+                            setupTheme(uiDirectory, anotherThemeJSInputStream);
+                        } else {
+                            throw new IllegalStateException("Could not find theme.js config file");
+                        }
+                    }
+                } else {
+                    setupTheme(uiDirectory, themeJSInputStream);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private void setupTheme(Path uiDirectory, InputStream themeJSInputStream) throws IOException {
+        Files.delete(uiDirectory.resolve(THEME_JS_FILENAME));
+        Files.copy(themeJSInputStream, uiDirectory.resolve(THEME_JS_FILENAME));
     }
 }
