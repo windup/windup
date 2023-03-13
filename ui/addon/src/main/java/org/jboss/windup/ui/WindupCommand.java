@@ -41,7 +41,6 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.windup.config.ConfigurationOption;
-import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -228,14 +227,7 @@ public class WindupCommand implements UICommand {
 
             uiProgressMonitor.done();
 
-            Boolean legacyReports = (Boolean) windupConfiguration.getOptionMap().get(LegacyReportsRenderingOption.NAME);
-
-            Path indexHtmlPath;
-            if (legacyReports) {
-                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-            } else {
-                indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("pf-reports").resolve("index.html").normalize().toAbsolutePath();
-            }
+            Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
             return Results.success("Report created: " + indexHtmlPath + System.getProperty("line.separator")
                     + "              Access it at this URL: " + indexHtmlPath.toUri());
         }
