@@ -34,6 +34,7 @@ import {
 
 import { DependencyDto } from "@app/api/dependencies";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
+import { useApplicationsQuery } from "@app/queries/applications";
 import { useDependenciesQuery } from "@app/queries/dependencies";
 
 const areDependenciesEquals = (a: DependencyDto, b: DependencyDto) => {
@@ -78,11 +79,18 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
   const [filterText, setFilterText] = useState("");
 
   // Queries
-  const allDependencies = useDependenciesQuery();
+  const allApplicationsQuery = useApplicationsQuery();
+  const allDependenciesQuery = useDependenciesQuery();
 
   const dependencies = useMemo(() => {
     if (applicationId === ALL_APPLICATIONS_ID) {
-      return [...(allDependencies.data || [])]
+      return [...(allDependenciesQuery.data || [])]
+        .filter((e) => {
+          const application = allApplicationsQuery.data?.find(
+            (app) => app.id === e.applicationId
+          );
+          return !application?.isVirtual;
+        })
         .flatMap((e) => e.dependencies)
         .reduce((prev, current) => {
           const duplicateDependency = prev.find((f) => {
@@ -106,11 +114,12 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
         }, [] as DependencyDto[]);
     } else {
       return (
-        allDependencies.data?.find((f) => f.applicationId === applicationId)
-          ?.dependencies || []
+        allDependenciesQuery.data?.find(
+          (f) => f.applicationId === applicationId
+        )?.dependencies || []
       );
     }
-  }, [allDependencies.data, applicationId]);
+  }, [allDependenciesQuery.data, allApplicationsQuery.data, applicationId]);
 
   // Rows
   const {
@@ -270,9 +279,9 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
           cells={columns}
           actions={actions}
           // Fech data
-          isLoading={allDependencies.isFetching}
+          isLoading={allDependenciesQuery.isFetching}
           loadingVariant="skeleton"
-          fetchError={allDependencies.isError}
+          fetchError={allDependenciesQuery.isError}
           // Toolbar filters
           filtersApplied={filterText.trim().length > 0}
           toolbarToggle={

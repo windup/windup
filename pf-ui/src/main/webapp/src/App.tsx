@@ -33,10 +33,12 @@ const App: React.FC = () => {
               label: "All applications",
             },
           ].concat(
-            (applications.data || []).map((e) => ({
-              key: e.id,
-              label: e.name,
-            }))
+            (applications.data || [])
+              .filter((e) => !e.isVirtual)
+              .map((e) => ({
+                key: e.id,
+                label: e.name,
+              }))
           )}
         >
           <DefaultLayout>

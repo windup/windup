@@ -48,7 +48,10 @@ export const useTechnologiesData = ({
     };
 
     if (applicationId === ALL_APPLICATIONS_ID) {
-      return toRowData(allApplications.data || []);
+      const applications = (allApplications.data || []).filter(
+        (e) => !e.isVirtual
+      );
+      return toRowData(applications);
     } else {
       const selectedApplication = allApplications.data?.find(
         (f) => f.id === applicationId

@@ -224,7 +224,12 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     if (applicationId === ALL_APPLICATIONS_ID) {
       const allAppIssues: ApplicationIssuesProcessed[] = [
         ...(allIssuesQuery.data || []),
-      ];
+      ].filter((e) => {
+        const application = allApplicationsQuery.data?.find(
+          (app) => app.id === e.applicationId
+        );
+        return !application?.isVirtual;
+      });
       applicationIssues = [...allAppIssues];
     } else {
       const singleAppIssues = allIssuesQuery.data?.find(
