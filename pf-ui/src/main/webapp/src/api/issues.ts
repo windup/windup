@@ -18,6 +18,8 @@ export const ALL_LEVEL_OF_EFFORTS = [
 ] as const;
 export type LevelOfEffortType = typeof ALL_LEVEL_OF_EFFORTS[number];
 
+//
+
 const getCategoryPriority = (category: IssueCategoryType) => {
   switch (category) {
     case "mandatory":
@@ -56,6 +58,38 @@ export function compareByCategoryAndNameFn<T>(
     return (
       getCategoryPriority(categoryFn(a)) - getCategoryPriority(categoryFn(b)) ||
       nameFn(a).localeCompare(nameFn(b))
+    );
+  };
+}
+
+//
+
+const getEffortPriority = (effort: LevelOfEffortType) => {
+  switch (effort) {
+    case "Info":
+      return 1;
+    case "Trivial":
+      return 2;
+    case "Complex":
+      return 3;
+    case "Redesign":
+      return 4;
+    case "Architectural":
+      return 5;
+    case "Unknown":
+      return 6;
+    default:
+      return 0;
+  }
+};
+
+export function compareByEffortFn<T>(
+  effortExtractor: (elem: T) => LevelOfEffortType
+) {
+  return (a: T, b: T) => {
+    return (
+      getEffortPriority(effortExtractor(a)) -
+      getEffortPriority(effortExtractor(b))
     );
   };
 }

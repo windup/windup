@@ -40,6 +40,7 @@ import {
 } from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
+import { compareByEffortFn } from "@app/api/issues";
 import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
@@ -284,9 +285,9 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   const levelOfEfforts = useMemo(() => {
     const allLevelOfEfforts = (allIssuesQuery.data || [])
       .flatMap((f) => f.issues)
-      .map((e) => e.effort.description);
-    return Array.from(new Set(allLevelOfEfforts)).sort((a, b) =>
-      a.localeCompare(b)
+      .map((e) => e.effort.type);
+    return Array.from(new Set(allLevelOfEfforts)).sort(
+      compareByEffortFn((e) => e)
     );
   }, [allIssuesQuery.data]);
 
@@ -329,7 +330,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       const selectedLevelOfEfforts = filters.get("levelOfEffort") || [];
       if (selectedLevelOfEfforts.length > 0) {
         isLevelOfEffortCompliant = selectedLevelOfEfforts.some(
-          (f) => item.effort.description === f.key
+          (f) => item.effort.type === f.key
         );
       }
 

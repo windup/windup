@@ -104,12 +104,12 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
             return [...prev, current];
           }
         }, [] as DependencyDto[]);
+    } else {
+      return (
+        allDependencies.data?.find((f) => f.applicationId === applicationId)
+          ?.dependencies || []
+      );
     }
-
-    return (
-      allDependencies.data?.find((f) => f.applicationId === applicationId)
-        ?.dependencies || []
-    );
   }, [allDependencies.data, applicationId]);
 
   // Rows
