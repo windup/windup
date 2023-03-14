@@ -40,7 +40,11 @@ import {
 } from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
-import { compareByEffortFn } from "@app/api/issues";
+import {
+  compareByEffortFn,
+  IssueAffectedFilesDto,
+  IssueFileDto,
+} from "@app/api/issues";
 import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
@@ -55,6 +59,10 @@ import { technologiesToArray } from "@app/utils/rule-utils";
 
 import { IssueOverview } from "./components/issue-overview";
 import { Technologies } from "./components/technologies";
+
+const areRowsEquals = (a: TableData, b: TableData) => {
+  return a.name === b.name;
+};
 
 const csvHeaders = [
   { label: "Rule Id", key: "ruleId" },
@@ -125,7 +133,7 @@ const toToolbarChip = (option: OptionWithValue): ToolbarChip => {
 //
 
 export interface TableData extends IssueProcessed {
-  application: ApplicationDto;
+  applications: ApplicationDto[];
 }
 
 const DataKey = "DataKey";
@@ -197,7 +205,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   >();
 
   // Queries
-  const allRules = useRulesQuery();
+  const allRulesQuery = useRulesQuery();
   const allApplicationsQuery = useApplicationsQuery();
   const allIssuesQuery = useIssuesQuery();
   const allFilesQuery = useFilesQuery();
@@ -238,21 +246,78 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       applicationIssues = singleAppIssues ? [singleAppIssues] : [];
     }
 
-    return applicationIssues.flatMap((elem) => {
+    const result = applicationIssues.flatMap((elem) => {
       return elem.issues.map((issue) => {
         const application = allApplicationsQuery.data?.find(
           (app) => app.id === elem.applicationId
         );
-        const result: TableData = { ...issue, application: application! };
+        const result: TableData = {
+          ...issue,
+          applications: [application!],
+        };
         return result;
       });
     });
+
+    // If "all applications" then remove dupplicates
+    if (applicationId === ALL_APPLICATIONS_ID) {
+      return result.reduce((prev, current) => {
+        const duplicateIssue: TableData | undefined = prev.find((f) => {
+          return areRowsEquals(f, current);
+        });
+
+        if (duplicateIssue) {
+          const filesMap: Map<string | undefined, IssueFileDto[]> = new Map();
+
+          //
+          duplicateIssue.affectedFiles.forEach((elem) => {
+            filesMap.set(elem.description, elem.files);
+          });
+
+          current.affectedFiles.forEach((elem) => {
+            const prevMapValue = filesMap.get(elem.description);
+            filesMap.set(
+              elem.description,
+              prevMapValue ? [...prevMapValue, ...elem.files] : elem.files
+            );
+          });
+
+          //
+          const newAffectedFiles: IssueAffectedFilesDto[] = Array.from(
+            filesMap,
+            (entry) => ({ description: entry[0], files: entry[1] })
+          );
+
+          //
+          const newIssue: TableData = {
+            ...current,
+            totalIncidents:
+              duplicateIssue.totalIncidents + current.totalIncidents,
+            totalStoryPoints:
+              duplicateIssue.totalStoryPoints + current.totalStoryPoints,
+            affectedFiles: newAffectedFiles,
+            applications: [
+              ...duplicateIssue.applications,
+              ...current.applications,
+            ],
+          };
+
+          return [...prev.filter((f) => !areRowsEquals(f, current)), newIssue];
+        } else {
+          return [...prev, current];
+        }
+      }, [] as TableData[]);
+    } else {
+      return result;
+    }
   }, [allApplicationsQuery.data, allIssuesQuery.data, applicationId]);
 
   // Technologies
   const technologies = useMemo(() => {
     const rulesFromIssues = issues.reduce((prev, current) => {
-      const rule = allRules.data?.find((rule) => rule.id === current.ruleId);
+      const rule = allRulesQuery.data?.find(
+        (rule) => rule.id === current.ruleId
+      );
       if (rule) {
         return [...prev, rule];
       } else {
@@ -275,7 +340,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
         }, [] as TechnologyDto[])
     ).sort();
     return { source, target };
-  }, [issues, allRules.data]);
+  }, [issues, allRulesQuery.data]);
 
   //
   const categories = useMemo(() => {
@@ -301,7 +366,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     toggleItemSelected: toggleRowExpanded,
   } = useSelectionState<TableData>({
     items: issues,
-    isEqual: (a, b) => a.id === b.id,
+    isEqual: areRowsEquals,
   });
 
   const {
@@ -488,7 +553,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
               issueTitle: issue.name,
               issueDescription: issueDescription,
               links: links,
-              application: issue.application.name,
+              application: issue.applications.map((a) => a.name).join(" | "),
               fileName: file.fileName,
               filePath: fileDto?.fullPath!,
               line: hint.line,
