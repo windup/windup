@@ -67,7 +67,7 @@
                                     <dt class="trait">Maven coordinates:</dt>
                                     <dd id="${archiveName}-maven">
                                         <#if sha1?has_content>
-                                            <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
+                                            <#assign sha1URL = 'http://search.maven.org/?eh#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
                                             <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
                                         <#else>
                                             ${gav}
@@ -77,7 +77,7 @@
                                     <dt class="trait">Maven URL:</dt>
                                     <dd id="${archiveName}-maven">
                                         <#if sha1?has_content>
-                                            <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
+                                            <#assign sha1URL = 'http://search.maven.org/?eh#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
                                             <a id="${archiveName}-link" href="${sha1URL?html}" target="_blank">Maven Central Link</a>
                                         <#else>
                                             Link Unavailable
