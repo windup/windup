@@ -267,7 +267,12 @@ export const FileEditor: React.FC<IFileEditorProps> = ({
                 </CardHeader>
                 <CardBody>
                   {drawerHint && (
-                    <SimpleMarkdown children={drawerHint.content} />
+                    <SimpleMarkdown
+                      children={getMarkdown(
+                        drawerHint.content,
+                        drawerHint.links
+                      )}
+                    />
                   )}
                 </CardBody>
               </Card>
