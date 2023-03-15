@@ -198,7 +198,7 @@ export const ApplicationFilesTable: React.FC<IApplicationFilesTableProps> = ({
                                       <a
                                         target="_blank"
                                         rel="noreferrer"
-                                        href={`http://search.maven.org/#search|ga|1|1:"${item.maven.sha1}"`}
+                                        href={`http://search.maven.org/?eh#search|ga|1|1:"${item.maven.sha1}"`}
                                       >
                                         Maven Central
                                       </a>

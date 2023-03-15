@@ -184,7 +184,7 @@ export const DependenciesTable: React.FC<IDependenciesTableProps> = ({
                         <a
                           target="_blank"
                           rel="noreferrer"
-                          href={`http://search.maven.org/#search|ga|1|1:"${item.sha1}"`}
+                          href={`http://search.maven.org/?eh#search|ga|1|1:"${item.sha1}"`}
                         >
                           Maven Central Link
                         </a>
