@@ -20,6 +20,7 @@ import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
+import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import java.io.File;
@@ -45,11 +46,15 @@ public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvi
 
     @Override
     public Object getAll(GraphRewrite event) {
+        Boolean generateReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
+        if (generateReport == null || !generateReport) {
+            return Collections.emptyList();
+        }
+
         GraphContext context = event.getGraphContext();
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
         List<ApplicationCompatibleFilesDto> result = new ArrayList<>();
-
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel application = inputPath.getProjectModel();
 
@@ -62,7 +67,6 @@ public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvi
 
             result.add(applicationCompatibleFilesDto);
         }
-
         return result;
     }
 
