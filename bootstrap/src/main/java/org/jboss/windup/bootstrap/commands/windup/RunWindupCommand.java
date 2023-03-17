@@ -14,10 +14,10 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
-import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
+import org.jboss.windup.exec.Util;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -302,7 +302,7 @@ public class RunWindupCommand implements Command, FurnaceDependent {
             e.printStackTrace();
         }
 
-        deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
+        Util.deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
 
 
@@ -399,20 +399,6 @@ public class RunWindupCommand implements Command, FurnaceDependent {
         else
             return null;
     }
-
-    private void deleteGraphDataUnlessInhibited(WindupConfiguration windupConfiguration, Path graphPath) {
-        Boolean keep = (Boolean) windupConfiguration.getOptionMap().get(KeepWorkDirsOption.NAME);
-        if (keep == null || !keep) {
-            log.info("Deleting graph directory (see --" + KeepWorkDirsOption.NAME + "): " + graphPath.toFile().getPath());
-            try {
-                FileUtils.deleteDirectory(graphPath.toFile());
-            } catch (IOException ex) {
-                log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
-                        + System.lineSeparator() + "\tDue to: " + ex.getMessage(), ex);
-            }
-        }
-    }
-
 
     /**
      * Expands the directories from the given list and returns a list of subfiles.
