@@ -13,6 +13,7 @@ import {
   DescriptionListTerm,
   Grid,
   GridItem,
+  Label,
   List,
   ListItem,
   Stack,
@@ -20,6 +21,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
+import InfoCircleIcon from "@patternfly/react-icons/dist/esm/icons/info-circle-icon";
 import {
   IAction,
   ICell,
@@ -115,7 +117,16 @@ export const ApplicationFilesTable: React.FC<IApplicationFilesTableProps> = ({
         isOpen: isExpanded,
         cells: [
           {
-            title: item.maven.duplicatePaths ? item.fileName : item.rootPath,
+            title: (
+              <>
+                {item.maven.duplicatePaths ? item.fileName : item.rootPath}{" "}
+                {item.maven.duplicatePaths?.length && (
+                  <Label isCompact color="blue" icon={<InfoCircleIcon />}>
+                    Included multiple times
+                  </Label>
+                )}
+              </>
+            ),
           },
           {
             title: item.storyPoints,
