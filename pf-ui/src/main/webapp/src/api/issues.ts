@@ -8,6 +8,25 @@ export const ALL_SUPPORTED_ISSUE_CATEGORY = [
 ] as const;
 export type IssueCategoryType = typeof ALL_SUPPORTED_ISSUE_CATEGORY[number];
 
+export const issueCategoryTypeBeautifier = (val: IssueCategoryType) => {
+  switch (val) {
+    case "mandatory":
+      return "Migration mandatory";
+    case "optional":
+      return "Migration optional";
+    case "potential":
+      return "Migration potential";
+    case "information":
+      return "Information";
+    case "cloud-mandatory":
+      return "Cloud mandatory";
+    case "cloud-optional":
+      return "Cloud optional";
+    default:
+      return val;
+  }
+};
+
 export const ALL_LEVEL_OF_EFFORTS = [
   "Info",
   "Trivial",

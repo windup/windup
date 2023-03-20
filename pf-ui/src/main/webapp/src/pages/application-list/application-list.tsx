@@ -51,13 +51,17 @@ import {
 } from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
+import {
+  compareByCategoryFn,
+  IssueCategoryType,
+  issueCategoryTypeBeautifier,
+} from "@app/api/issues";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useLabelsQuery } from "@app/queries/labels";
 import { useCellSelectionState } from "@app/shared/hooks";
 import { RuntimeAssessment, evaluateRuntime } from "@app/utils/label-utils";
 
 import "./application-list.css";
-import { capitalizeFirstLetter } from "@app/utils/util";
 
 const DataKey = "DataKey";
 
@@ -326,17 +330,28 @@ export const ApplicationList: React.FC = () => {
           {
             title: (
               <div className="pf-u-m-lg">
-                <DescriptionList isHorizontal isCompact>
-                  {Object.keys(item.incidents).map((incident) => (
-                    <DescriptionListGroup key={incident}>
-                      <DescriptionListTerm>
-                        {capitalizeFirstLetter(incident)}
-                      </DescriptionListTerm>
-                      <DescriptionListDescription>
-                        {item.incidents[incident]}
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                  ))}
+                <DescriptionList
+                  isHorizontal
+                  isCompact
+                  horizontalTermWidthModifier={{
+                    default: "12ch",
+                    md: "20ch",
+                  }}
+                >
+                  {Object.keys(item.incidents)
+                    .sort(compareByCategoryFn((e) => e as IssueCategoryType))
+                    .map((incident) => (
+                      <DescriptionListGroup key={incident}>
+                        <DescriptionListTerm>
+                          {issueCategoryTypeBeautifier(
+                            incident as IssueCategoryType
+                          )}
+                        </DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {item.incidents[incident]}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    ))}
                 </DescriptionList>
               </div>
             ),
