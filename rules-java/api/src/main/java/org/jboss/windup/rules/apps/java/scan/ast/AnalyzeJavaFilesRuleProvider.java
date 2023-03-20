@@ -335,12 +335,18 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider {
                 shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
                 shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
 
-                // Check if it is an annotation, and if so, check if any children should be kept
-                if (!shouldKeep && reference instanceof AnnotationClassReference)
-                    shouldKeep = processAnnotation(((AnnotationClassReference) reference).getAnnotationValues().values(), classNotFoundAnalysisEnabled);
+                // Check if it is an annotation, and if so, check if any children and/or its annotated elements should be kept
+                if (!shouldKeep && reference instanceof AnnotationClassReference) {
+                    AnnotationClassReference annotationClassRef = (AnnotationClassReference) reference;
+                    shouldKeep = processAnnotation(annotationClassRef.getAnnotationValues().values(), classNotFoundAnalysisEnabled);
+
+                    ClassReference originalReference = annotationClassRef.getOriginalReference();
+                    shouldKeep |= TypeInterestFactory.matchesAny(originalReference.getQualifiedName(), originalReference.getLocation());
+                }
 
 
                 // we are always interested in types + anything that the TypeInterestFactory has registered
+                // also interested in the annotated elements
                 if (shouldKeep) {
                     results.add(reference);
                 }
@@ -348,6 +354,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider {
             return results;
         }
 
+        /**
+         * Takes a look inside of each annotation to check if any of its attributes references a class worth analysing
+         * ie, @Annotation(class = ClassToAnalyze.class) vs @Annotation(value = "JohnDoe")
+         */
         private boolean processAnnotation(Collection<AnnotationValue> references, boolean classNotFoundAnalysisEnabled) {
             if (references == null || references.isEmpty())
                 return false;
@@ -410,6 +420,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider {
                                     originalReference.getLine());
                             added.put(originalReference, originalReferenceModel);
                         }
+                        // only place where annotated types are set
                         annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);
                     }
                 }
