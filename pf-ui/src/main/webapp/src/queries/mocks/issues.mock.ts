@@ -31,7 +31,13 @@ if (
           affectedFiles: [
             {
               description: "Hint text",
-              files: [{ fileId: "file-1", fileName: "file1", occurrences: 1 }],
+              files: [
+                {
+                  fileId: "file-1",
+                  fileName: "file1",
+                  occurrences: 1,
+                },
+              ],
             },
           ],
         },
@@ -63,7 +69,13 @@ if (
           affectedFiles: [
             {
               description: "Hint text",
-              files: [{ fileId: "file-2", fileName: "file2", occurrences: 1 }],
+              files: [
+                {
+                  fileId: "file-2",
+                  fileName: "file2",
+                  occurrences: 1,
+                },
+              ],
             },
           ],
         },

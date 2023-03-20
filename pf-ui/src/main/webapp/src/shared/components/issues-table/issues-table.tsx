@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { CSVLink } from "react-csv";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useSelectionState } from "@migtools/lib-ui";
 import {
@@ -46,18 +39,11 @@ import {
 } from "@project-openubl/lib-ui";
 import { useDebounce } from "usehooks-ts";
 
-import { ApplicationDto } from "@app/api/application";
-import { FileDto } from "@app/api/file";
-import {
-  compareByCategoryFn,
-  compareByEffortFn,
-  IssueAffectedFilesDto,
-  IssueFileDto,
-} from "@app/api/issues";
+import { compareByCategoryFn, compareByEffortFn } from "@app/api/issues";
 import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { IssueProcessed, RuleProcessed } from "@app/models/api-enriched";
-import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
+import { useAnalysisConfigurationQuery } from "@app/queries/analysis-configuration";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
@@ -70,70 +56,6 @@ import { Technologies } from "./components/technologies";
 
 const areRowsEquals = (a: TableData, b: TableData) => {
   return a.name === b.name;
-};
-
-const csvHeaders = [
-  { label: "Rule Id", key: "ruleId" },
-  { label: "Issue Category", key: "issueCategory" },
-  { label: "Title", key: "issueTitle" },
-  { label: "Description", key: "issueDescription" },
-  { label: "Links", key: "links" },
-  { label: "Application", key: "application" },
-  { label: "File Name", key: "fileName" },
-  { label: "File path", key: "filePath" },
-  { label: "Line", key: "line" },
-  { label: "Story points", key: "storyPoinst" },
-];
-
-interface CSVData {
-  ruleId: string;
-  issueCategory: string;
-  issueTitle: string;
-  issueDescription?: string;
-  links: string;
-  application: string;
-  fileName: string;
-  filePath: string;
-  line: number;
-  storyPoinst: number;
-}
-
-const generateCsvData = (filteredItems: TableData[], allFiles: FileDto[]) => {
-  const data = filteredItems.flatMap((issue) => {
-    return issue.affectedFiles.flatMap((issueFiles) => {
-      return issueFiles.files.flatMap((file) => {
-        const fileDto = allFiles?.find((f) => f.id === file.fileId);
-        const hintsDto = fileDto?.hints.filter(
-          (hint) => hint.ruleId === issue.ruleId
-        );
-        const issueDescription = issueFiles.description?.replaceAll('"', "'");
-        const links =
-          issue.links && issue.links.length > 0
-            ? "[" +
-              issue.links.map((f) => `${f.href},${f.title}`).join("][") +
-              "]"
-            : "";
-        const storyPoints = issue.totalStoryPoints / issue.totalIncidents;
-        return (hintsDto || []).map((hint) => {
-          const data = {
-            ruleId: issue.ruleId,
-            issueCategory: issue.category,
-            issueTitle: issue.name,
-            issueDescription: issueDescription,
-            links: links,
-            application: issue.applications.map((a) => a.name).join(" | "),
-            fileName: file.fileName,
-            filePath: fileDto?.fullPath!,
-            line: hint.line,
-            storyPoinst: storyPoints,
-          };
-          return data;
-        });
-      });
-    });
-  });
-
-  return data;
 };
 
 //
@@ -180,9 +102,7 @@ const toToolbarChip = (option: OptionWithValue): ToolbarChip => {
 
 //
 
-export interface TableData extends IssueProcessed {
-  applications: ApplicationDto[];
-}
+export interface TableData extends IssueProcessed {}
 
 const DataKey = "DataKey";
 
@@ -261,6 +181,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   >(filters, 100);
 
   // Queries
+  const analysisConfigurationQuery = useAnalysisConfigurationQuery();
   const allRulesQuery = useRulesQuery();
   const allApplicationsQuery = useApplicationsQuery();
   const allIssuesQuery = useIssuesQuery();
@@ -298,6 +219,10 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     }
   }, [allFilesQuery.data, fileModalData]);
 
+  const application = useMemo(() => {
+    return allApplicationsQuery.data?.find((f) => f.id === applicationId);
+  }, [allApplicationsQuery.data, applicationId]);
+
   const issues: TableData[] = useMemo(() => {
     if (
       !allApplicationsQuery.data ||
@@ -307,88 +232,10 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       return [];
     }
 
-    let applicationIssues: ApplicationIssuesProcessed[] = [];
-    if (applicationId === ALL_APPLICATIONS_ID) {
-      const allAppIssues: ApplicationIssuesProcessed[] = [
-        ...(allIssuesQuery.data || []),
-      ].filter((e) => {
-        const application = allApplicationsQuery.data?.find(
-          (app) => app.id === e.applicationId
-        );
-        return !application?.isVirtual;
-      });
-      applicationIssues = [...allAppIssues];
-    } else {
-      const singleAppIssues = allIssuesQuery.data?.find(
-        (f) => f.applicationId === applicationId
-      );
-      applicationIssues = singleAppIssues ? [singleAppIssues] : [];
-    }
-
-    const result = applicationIssues.flatMap((elem) => {
-      return elem.issues.map((issue) => {
-        const application = allApplicationsQuery.data?.find(
-          (app) => app.id === elem.applicationId
-        );
-        const result: TableData = {
-          ...issue,
-          applications: [application!],
-        };
-        return result;
-      });
-    });
-
-    // If "all applications" then remove dupplicates
-    if (applicationId === ALL_APPLICATIONS_ID) {
-      return result.reduce((prev, current) => {
-        const duplicateIssue: TableData | undefined = prev.find((f) => {
-          return areRowsEquals(f, current);
-        });
-
-        if (duplicateIssue) {
-          const filesMap: Map<string | undefined, IssueFileDto[]> = new Map();
-
-          //
-          duplicateIssue.affectedFiles.forEach((elem) => {
-            filesMap.set(elem.description, elem.files);
-          });
-
-          current.affectedFiles.forEach((elem) => {
-            const prevMapValue = filesMap.get(elem.description);
-            filesMap.set(
-              elem.description,
-              prevMapValue ? [...prevMapValue, ...elem.files] : elem.files
-            );
-          });
-
-          //
-          const newAffectedFiles: IssueAffectedFilesDto[] = Array.from(
-            filesMap,
-            (entry) => ({ description: entry[0], files: entry[1] })
-          );
-
-          //
-          const newIssue: TableData = {
-            ...current,
-            totalIncidents:
-              duplicateIssue.totalIncidents + current.totalIncidents,
-            totalStoryPoints:
-              duplicateIssue.totalStoryPoints + current.totalStoryPoints,
-            affectedFiles: newAffectedFiles,
-            applications: [
-              ...duplicateIssue.applications,
-              ...current.applications,
-            ],
-          };
-
-          return [...prev.filter((f) => !areRowsEquals(f, current)), newIssue];
-        } else {
-          return [...prev, current];
-        }
-      }, [] as TableData[]);
-    } else {
-      return result;
-    }
+    return (
+      allIssuesQuery.data?.find((f) => f.applicationId === applicationId)
+        ?.issues || []
+    );
   }, [allApplicationsQuery.data, allIssuesQuery.data, applicationId]);
 
   // Technologies
@@ -616,21 +463,6 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     onPageChange,
     currentPage.perPage,
   ]);
-
-  // CSV
-  const csvButtonRef = useRef<any>();
-  const [csvData, setCsvData] = useState<CSVData[]>([]);
-  const [csvLoading, setCsvLoading] = useState(false);
-
-  const generateCsv = useCallback(() => {
-    setCsvLoading(true);
-    setTimeout(() => {
-      const data = generateCsvData(filteredItems, allFilesQuery.data || []);
-      setCsvData(data);
-      setCsvLoading(false);
-      csvButtonRef.current.link.click();
-    }, 500);
-  }, [allFilesQuery.data, filteredItems]);
 
   return (
     <>
@@ -876,24 +708,24 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                   </ToolbarFilter>
                 </ToolbarGroup>
                 <ToolbarItem variant="separator" />
-                <ToolbarItem>
-                  <Button
-                    isLoading={csvLoading}
-                    isDisabled={csvLoading}
-                    onClick={generateCsv}
-                  >
-                    Export CSV
-                  </Button>
-                  <CSVLink
-                    headers={csvHeaders}
-                    data={csvData}
-                    separator=","
-                    enclosingCharacter={'"'}
-                    filename="issues.csv"
-                    style={{ textDecoration: "none", color: "#fff" }}
-                    ref={csvButtonRef}
-                  ></CSVLink>
-                </ToolbarItem>
+                {analysisConfigurationQuery.data?.exportCSV && (
+                  <ToolbarItem>
+                    <a
+                      className="pf-c-button pf-m-primary "
+                      href={
+                        ALL_APPLICATIONS_ID === applicationId
+                          ? "./AllIssues.csv"
+                          : `${application?.name
+                              .replaceAll(".", "_")
+                              .replaceAll("-", "_")}.csv`
+                      }
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Export CSV
+                    </a>
+                  </ToolbarItem>
+                )}
               </>
             }
           />

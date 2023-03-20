@@ -13,6 +13,7 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.data.Constants;
 import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -50,7 +52,12 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
         Set<String> includeTags = Collections.emptySet();
         Set<String> excludeTags = Collections.emptySet();
 
-        return new ProjectService(context).getRootProjectModels().stream().map(projectModel -> {
+        Set<ProjectModel> allProjects = new ProjectService(context).getRootProjectModels();
+
+        // Adding null element to generate the "ALL ISSUES report"
+        allProjects.add(null);
+
+        return allProjects.stream().map(projectModel -> {
             Set<ProjectModel> projectModels = getProjects(projectModel);
 
             Map<IssueCategoryModel, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService
@@ -68,8 +75,12 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
             }
 
             // Fill Data
+            String applicationId = Optional.ofNullable(projectModel)
+                    .map(val -> val.getId().toString())
+                    .orElse(Constants.ALL_APPLICATIONS_ID);
+
             ApplicationIssuesDto applicationIssuesDto = new ApplicationIssuesDto();
-            applicationIssuesDto.setApplicationId(projectModel.getId().toString());
+            applicationIssuesDto.setApplicationId(applicationId);
             applicationIssuesDto.setIssues(new HashMap<>());
 
             for (Map.Entry<String, List<ProblemSummary>> entry : primarySummariesByString.entrySet()) {
