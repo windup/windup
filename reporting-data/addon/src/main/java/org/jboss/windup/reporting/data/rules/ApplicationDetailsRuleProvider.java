@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.OrganizationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.comparator.ProjectTraversalRootFileComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -18,13 +19,13 @@ import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.data.dto.ApplicationDetailsDto;
 import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
+import org.jboss.windup.reporting.model.TaggableModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -52,23 +53,30 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
         GraphContext context = event.getGraphContext();
 
+        ClassificationService classificationService = new ClassificationService(context);
+        InlineHintService inlineHintService = new InlineHintService(context);
+        SourceReportService sourceReportService = new SourceReportService(context);
+
         List<ApplicationDetailsDto> result = new ArrayList<>();
         for (FileModel inputPath : configurationModel.getInputPaths()) {
             ProjectModel projectModel = inputPath.getProjectModel();
+
+            // Collect children traversals
+            List<ProjectModelTraversal> projectModelTraversals = collectTraversalChildren(new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy()), new ArrayList<>());
+            projectModelTraversals.sort(new ProjectTraversalRootFileComparator());
 
             ArchiveSHA1ToFilePathMapper sha1ToPathsMapper = new ArchiveSHA1ToFilePathMapper(
                     new ProjectModelTraversal(projectModel, new AllTraversalStrategy())
             );
 
-            //
+            // DTO definition
             ApplicationDetailsDto applicationDetailsDto = new ApplicationDetailsDto();
             applicationDetailsDto.setApplicationId(projectModel.getId().toString());
             applicationDetailsDto.setMessages(getMessages(context, projectModel));
-            applicationDetailsDto.setApplicationFiles(toFileDto(
-                    context,
-                    new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy()),
-                    sha1ToPathsMapper
-            ));
+            applicationDetailsDto.setApplicationFiles(projectModelTraversals.parallelStream()
+                    .map(traversal -> traversalToDto(sourceReportService, classificationService, inlineHintService, traversal, sha1ToPathsMapper))
+                    .collect(Collectors.toList())
+            );
 
             result.add(applicationDetailsDto);
         }
@@ -112,70 +120,82 @@ public class ApplicationDetailsRuleProvider extends AbstractApiRuleProvider {
         return result;
     }
 
-    private List<ApplicationDetailsDto.ApplicationFileDto> toFileDto(
-            GraphContext context,
+    private List<ProjectModelTraversal> collectTraversalChildren(
             ProjectModelTraversal traversal,
-            ArchiveSHA1ToFilePathMapper sha1ToPathsMapper) {
-        List<ApplicationDetailsDto.ApplicationFileDto> result = new ArrayList<>();
+            List<ProjectModelTraversal> accumulator
+    ) {
+        accumulator.add(traversal);
 
+        StreamSupport.stream(traversal.getChildren().spliterator(), false)
+                .forEach(childTraversal -> collectTraversalChildren(childTraversal, accumulator));
+
+        return accumulator;
+    }
+
+    public ApplicationDetailsDto.ApplicationFileDto traversalToDto(
+            SourceReportService sourceReportService,
+            ClassificationService classificationService,
+            InlineHintService inlineHintService,
+            ProjectModelTraversal traversal,
+            ArchiveSHA1ToFilePathMapper sha1ToPathsMapper
+    ) {
         ProjectModel projectModel = traversal.getCurrent();
         ProjectModel canonicalProject = traversal.getCanonicalProject();
-
+        String rootFilePath = traversal.getFilePath(projectModel.getRootFileModel());
         List<String> duplicatePaths = sha1ToPathsMapper.getPathsBySHA1(projectModel.getRootFileModel().getSHA1Hash());
+
         String fileName = projectModel.getRootFileModel().getFileName();
-        String rootPath = traversal.getFilePath(projectModel.getRootFileModel());
 
-        // Story points
-        ClassificationService classificationService = new ClassificationService(context);
-        InlineHintService inlineHintService = new InlineHintService(context);
-        ProjectModelTraversal storyPointsTraversal = new ProjectModelTraversal(projectModel, new AllTraversalStrategy());
-
-        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(storyPointsTraversal, Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), false, false);
-        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(storyPointsTraversal, Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), false, false);
-        Map<Integer, Integer> results = ApplicationsRuleProvider.sumMaps(classificationEffortDetails, hintEffortDetails);
-        int storyPoints = ApplicationsRuleProvider.sumPoints(results);
-
-        // Issues
-        SourceReportService sourceReportService = new SourceReportService(context);
+        // Children files
         List<String> childrenFiles = canonicalProject.getFileModelsNoDirectories().stream()
                 .map(fileModel -> DataUtils.getSourceFileId(sourceReportService, fileModel))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Map values
-        ApplicationDetailsDto.ApplicationFileDto fileDto = new ApplicationDetailsDto.ApplicationFileDto();
-        fileDto.setFileId(projectModel.getRootFileModel().getId().toString());
-        fileDto.setFileName(fileName);
-        fileDto.setRootPath(rootPath);
-        fileDto.setStoryPoints(storyPoints);
-        fileDto.setChildrenFileIds(childrenFiles);
+        // Story points
+        int storyPoints = getMigrationEffortPointsForProject(classificationService, inlineHintService, traversal);
 
-        fileDto.setMaven(new ApplicationDetailsDto.MavenDto());
-        fileDto.getMaven().setMavenIdentifier(canonicalProject.getProperty("mavenIdentifier"));
-        fileDto.getMaven().setProjectSite(canonicalProject.getURL());
-        fileDto.getMaven().setName(canonicalProject.getName());
-        fileDto.getMaven().setVersion(canonicalProject.getVersion());
-        fileDto.getMaven().setDescription(canonicalProject.getDescription());
-        fileDto.getMaven().setDuplicatePaths(duplicatePaths.size() > 1 ? duplicatePaths : null);
+        // DTO
+        ApplicationDetailsDto.ApplicationFileDto result = new ApplicationDetailsDto.ApplicationFileDto();
+        result.setFileId(projectModel.getRootFileModel().getId().toString());
+        result.setFileName(fileName);
+        result.setRootPath(rootFilePath);
+        result.setStoryPoints(storyPoints);
+        result.setChildrenFileIds(childrenFiles);
+
+        result.setMaven(new ApplicationDetailsDto.MavenDto());
+        result.getMaven().setMavenIdentifier(canonicalProject.getProperty("mavenIdentifier"));
+        result.getMaven().setProjectSite(canonicalProject.getURL());
+        result.getMaven().setName(canonicalProject.getName());
+        result.getMaven().setVersion(canonicalProject.getVersion());
+        result.getMaven().setDescription(canonicalProject.getDescription());
+        result.getMaven().setDuplicatePaths(duplicatePaths.size() > 1 ? duplicatePaths : null);
         if (canonicalProject.getRootFileModel() instanceof ArchiveModel) {
-            fileDto.getMaven().setOrganizations(((ArchiveModel) canonicalProject.getRootFileModel()).getOrganizationModels()
+            result.getMaven().setOrganizations(((ArchiveModel) canonicalProject.getRootFileModel()).getOrganizationModels()
                     .stream().map(OrganizationModel::getName)
                     .collect(Collectors.toList())
             );
         }
         if (canonicalProject.getRootFileModel() instanceof IdentifiedArchiveModel) {
-            fileDto.getMaven().setSha1(canonicalProject.getRootFileModel().getSHA1Hash());
+            result.getMaven().setSha1(canonicalProject.getRootFileModel().getSHA1Hash());
         }
 
-        result.add(fileDto);
-
-        // Children
-        List<ApplicationDetailsDto.ApplicationFileDto> childrenFileDtos = StreamSupport.stream(traversal.getChildren().spliterator(), false)
-                .map(p -> toFileDto(context, p, sha1ToPathsMapper))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        result.addAll(childrenFileDtos);
-
         return result;
+    }
+
+    public int getMigrationEffortPointsForProject(
+            ClassificationService classificationService,
+            InlineHintService inlineHintService,
+            ProjectModelTraversal traversal
+    ) {
+        Set<String> includedTags = Collections.emptySet();
+        Set<String> excludedTags = Collections.singleton(TaggableModel.CATCHALL_TAG);
+        Set<String> issueCategories = Collections.emptySet();
+
+        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(traversal, includedTags, excludedTags, issueCategories, false, false);
+        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(traversal, includedTags, excludedTags, issueCategories, false, false);
+        Map<Integer, Integer> results = ApplicationsRuleProvider.sumMaps(classificationEffortDetails, hintEffortDetails);
+
+        return ApplicationsRuleProvider.sumPoints(results);
     }
 }

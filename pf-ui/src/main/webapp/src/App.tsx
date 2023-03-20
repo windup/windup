@@ -2,7 +2,6 @@ import "./App.css";
 import React, { useEffect } from "react";
 import { HashRouter } from "react-router-dom";
 
-import { ProcessedQueriesContextProvider } from "@app/context/processed-queries-context";
 import { SimpleContextProvider } from "@app/context/simple-context";
 import { Theme } from "@app/layout/theme-constants";
 import { useApplicationsQuery } from "@app/queries/applications";
@@ -25,27 +24,25 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
-      <ProcessedQueriesContextProvider>
-        <SimpleContextProvider
-          allContexts={[
-            {
-              key: ALL_APPLICATIONS_ID,
-              label: "All applications",
-            },
-          ].concat(
-            (applications.data || [])
-              .filter((e) => !e.isVirtual)
-              .map((e) => ({
-                key: e.id,
-                label: e.name,
-              }))
-          )}
-        >
-          <DefaultLayout>
-            <AppRoutes />
-          </DefaultLayout>
-        </SimpleContextProvider>
-      </ProcessedQueriesContextProvider>
+      <SimpleContextProvider
+        allContexts={[
+          {
+            key: ALL_APPLICATIONS_ID,
+            label: "All applications",
+          },
+        ].concat(
+          (applications.data || [])
+            .filter((e) => !e.isVirtual)
+            .map((e) => ({
+              key: e.id,
+              label: e.name,
+            }))
+        )}
+      >
+        <DefaultLayout>
+          <AppRoutes />
+        </DefaultLayout>
+      </SimpleContextProvider>
     </HashRouter>
   );
 };

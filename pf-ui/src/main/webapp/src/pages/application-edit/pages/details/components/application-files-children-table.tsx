@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   Badge,
@@ -23,8 +23,8 @@ import {
 
 import { ApplicationFileDto } from "@app/api/application-details";
 import { FileDto } from "@app/api/file";
-import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
 import { useFilesQuery } from "@app/queries/files";
+import { useIssuesQuery } from "@app/queries/issues";
 import { FileEditor } from "@app/shared/components";
 
 const DataKey = "DataKey";
@@ -65,7 +65,7 @@ export const ApplicationFilesChildrenTable: React.FC<
   const [filterText] = useState("");
 
   //
-  const { issuesByFileId } = useProcessedQueriesContext();
+  const allIssuesQuery = useIssuesQuery();
   const allFilesQuery = useFilesQuery();
   const applicationFiles: FileDto[] = useMemo(() => {
     return applicationFile.childrenFileIds.map((childFileId) => {
@@ -87,6 +87,19 @@ export const ApplicationFilesChildrenTable: React.FC<
     });
   }, [allFilesQuery.data, applicationFile]);
 
+  const findIssuesByFileId = useCallback(
+    (fileId: string) => {
+      return (allIssuesQuery.data || [])
+        .flatMap((f) => f.issues)
+        .filter((issue) => {
+          return issue.affectedFiles
+            .flatMap((f) => f.files)
+            .find((affectedFile) => affectedFile.fileId === fileId);
+        });
+    },
+    [allIssuesQuery.data]
+  );
+
   //
   const {
     page: currentPage,
@@ -106,7 +119,7 @@ export const ApplicationFilesChildrenTable: React.FC<
   const itemsToRow = (items: FileDto[]) => {
     const rows: IRow[] = [];
     items.forEach((item) => {
-      const issues = issuesByFileId.get(item.id) || [];
+      const issues = findIssuesByFileId(item.id) || [];
 
       rows.push({
         [DataKey]: item,

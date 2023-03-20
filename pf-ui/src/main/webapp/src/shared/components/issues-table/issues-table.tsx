@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CSVLink } from "react-csv";
 
 import { useSelectionState } from "@migtools/lib-ui";
@@ -38,16 +44,18 @@ import {
   useTableControls,
   useToolbar,
 } from "@project-openubl/lib-ui";
+import { useDebounce } from "usehooks-ts";
 
 import { ApplicationDto } from "@app/api/application";
+import { FileDto } from "@app/api/file";
 import {
+  compareByCategoryFn,
   compareByEffortFn,
   IssueAffectedFilesDto,
   IssueFileDto,
 } from "@app/api/issues";
 import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
-import { useProcessedQueriesContext } from "@app/context/processed-queries-context";
 import { IssueProcessed, RuleProcessed } from "@app/models/api-enriched";
 import { ApplicationIssuesProcessed } from "@app/models/api-enriched";
 import { useApplicationsQuery } from "@app/queries/applications";
@@ -89,6 +97,46 @@ interface CSVData {
   line: number;
   storyPoinst: number;
 }
+
+const generateCsvData = (filteredItems: TableData[], allFiles: FileDto[]) => {
+  const data = filteredItems.flatMap((issue) => {
+    return issue.affectedFiles.flatMap((issueFiles) => {
+      return issueFiles.files.flatMap((file) => {
+        const fileDto = allFiles?.find((f) => f.id === file.fileId);
+        const hintsDto = fileDto?.hints.filter(
+          (hint) => hint.ruleId === issue.ruleId
+        );
+        const issueDescription = issueFiles.description?.replaceAll('"', "'");
+        const links =
+          issue.links && issue.links.length > 0
+            ? "[" +
+              issue.links.map((f) => `${f.href},${f.title}`).join("][") +
+              "]"
+            : "";
+        const storyPoints = issue.totalStoryPoints / issue.totalIncidents;
+        return (hintsDto || []).map((hint) => {
+          const data = {
+            ruleId: issue.ruleId,
+            issueCategory: issue.category,
+            issueTitle: issue.name,
+            issueDescription: issueDescription,
+            links: links,
+            application: issue.applications.map((a) => a.name).join(" | "),
+            fileName: file.fileName,
+            filePath: fileDto?.fullPath!,
+            line: hint.line,
+            storyPoinst: storyPoints,
+          };
+          return data;
+        });
+      });
+    });
+  });
+
+  return data;
+};
+
+//
 
 interface SelectedFile {
   fileId: string;
@@ -204,30 +252,61 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     ToolbarChip
   >();
 
+  const debouncedFilterText = useDebounce<string>(filterText, 250);
+  const debouncedFilters = useDebounce<
+    Map<
+      "category" | "levelOfEffort" | "sourceTechnology" | "targetTechnology",
+      ToolbarChip[]
+    >
+  >(filters, 100);
+
   // Queries
   const allRulesQuery = useRulesQuery();
   const allApplicationsQuery = useApplicationsQuery();
   const allIssuesQuery = useIssuesQuery();
   const allFilesQuery = useFilesQuery();
 
-  const { rulesByIssueId } = useProcessedQueriesContext();
+  const findRuleByIssueId = useCallback(
+    (issueId: string) => {
+      return allRulesQuery.data?.find((elem) => elem.id === issueId);
+    },
+    [allRulesQuery.data]
+  );
 
   // Modal
   const issueModal = useModal<"showRule", TableData>();
   const issueModalMappedRule = useMemo(() => {
     return issueModal.data != null
-      ? rulesByIssueId.get(issueModal.data.id)
+      ? findRuleByIssueId(issueModal.data.ruleId)
       : undefined;
-  }, [rulesByIssueId, issueModal.data]);
+  }, [findRuleByIssueId, issueModal.data]);
 
-  const fileModal = useModal<"showFile", SelectedFile>();
+  const {
+    data: fileModalData,
+    isOpen: isFileModalOpen,
+    action: fileModalAction,
+    open: openFileModal,
+    close: closeFileModal,
+  } = useModal<"showFile", SelectedFile>();
   const fileModalMappedFile = useMemo(() => {
-    return allFilesQuery.data?.find(
-      (file) => file.id === fileModal.data?.fileId
-    );
-  }, [allFilesQuery.data, fileModal.data]);
+    if (allFilesQuery.data !== undefined && fileModalData !== undefined) {
+      return allFilesQuery.data.find(
+        (file) => file.id === fileModalData?.fileId
+      );
+    } else {
+      return undefined;
+    }
+  }, [allFilesQuery.data, fileModalData]);
 
-  const issues = useMemo(() => {
+  const issues: TableData[] = useMemo(() => {
+    if (
+      !allApplicationsQuery.data ||
+      !allIssuesQuery.data ||
+      applicationId === undefined
+    ) {
+      return [];
+    }
+
     let applicationIssues: ApplicationIssuesProcessed[] = [];
     if (applicationId === ALL_APPLICATIONS_ID) {
       const allAppIssues: ApplicationIssuesProcessed[] = [
@@ -347,8 +426,8 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     const allCategories = (allIssuesQuery.data || [])
       .flatMap((f) => f.issues)
       .map((e) => e.category);
-    return Array.from(new Set(allCategories)).sort((a, b) =>
-      a.localeCompare(b)
+    return Array.from(new Set(allCategories)).sort(
+      compareByCategoryFn((e) => e)
     );
   }, [allIssuesQuery.data]);
 
@@ -376,20 +455,17 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     changeSortBy: onChangeSortBy,
   } = useTableControls();
 
-  const { pageItems, filteredItems } = useTable<TableData>({
-    items: issues,
-    currentPage: currentPage,
-    currentSortBy: currentSortBy,
-    compareToByColumn: compareByColumnIndex,
-    filterItem: (item) => {
+  const filterItem = useCallback(
+    (item: TableData) => {
       let isFilterTextFilterCompliant = true;
-      if (filterText && filterText.trim().length > 0) {
+      if (debouncedFilterText && debouncedFilterText.trim().length > 0) {
         isFilterTextFilterCompliant =
-          item.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1;
+          item.name.toLowerCase().indexOf(debouncedFilterText.toLowerCase()) !==
+          -1;
       }
 
       let isCategoryFilterCompliant = true;
-      const selectedCategories = filters.get("category") || [];
+      const selectedCategories = debouncedFilters.get("category") || [];
       if (selectedCategories.length > 0) {
         isCategoryFilterCompliant = selectedCategories.some(
           (f) => item.category === f.key
@@ -397,7 +473,8 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       }
 
       let isLevelOfEffortCompliant = true;
-      const selectedLevelOfEfforts = filters.get("levelOfEffort") || [];
+      const selectedLevelOfEfforts =
+        debouncedFilters.get("levelOfEffort") || [];
       if (selectedLevelOfEfforts.length > 0) {
         isLevelOfEffortCompliant = selectedLevelOfEfforts.some(
           (f) => item.effort.type === f.key
@@ -405,10 +482,10 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       }
 
       let isSourceCompliant = true;
-      const selectedSources = filters.get("sourceTechnology") || [];
+      const selectedSources = debouncedFilters.get("sourceTechnology") || [];
       if (selectedSources.length > 0) {
         isSourceCompliant = selectedSources.some((f) => {
-          const rule = rulesByIssueId.get(item.id);
+          const rule = findRuleByIssueId(item.ruleId);
           if (rule) {
             return technologiesToArray(rule.sourceTechnology || []).includes(
               f.key
@@ -420,10 +497,10 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       }
 
       let isTargetCompliant = true;
-      const selectedTargets = filters.get("targetTechnology") || [];
+      const selectedTargets = debouncedFilters.get("targetTechnology") || [];
       if (selectedTargets.length > 0) {
         isTargetCompliant = selectedTargets.some((f) => {
-          const rule = rulesByIssueId.get(item.id);
+          const rule = findRuleByIssueId(item.ruleId);
           if (rule) {
             return technologiesToArray(rule.targetTechnology || []).includes(
               f.key
@@ -442,13 +519,21 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
         isTargetCompliant
       );
     },
+    [debouncedFilterText, debouncedFilters, findRuleByIssueId]
+  );
+
+  const { pageItems, filteredItems } = useTable<TableData>({
+    items: issues,
+    currentPage: currentPage,
+    currentSortBy: currentSortBy,
+    compareToByColumn: compareByColumnIndex,
+    filterItem: filterItem,
   });
 
-  const itemsToRow = (items: TableData[]) => {
+  const rows: IRow[] = useMemo(() => {
     const rows: IRow[] = [];
-    items.forEach((item) => {
+    pageItems.forEach((item) => {
       const isExpanded = isRowExpanded(item);
-
       rows.push({
         [DataKey]: item,
         isOpen: isExpanded,
@@ -480,6 +565,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       // Expanded area
       if (isExpanded) {
         rows.push({
+          [DataKey]: item,
           parent: rows.length - 1,
           fullWidth: true,
           cells: [
@@ -489,7 +575,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                   <IssueOverview
                     issue={item}
                     onShowFile={(file) =>
-                      fileModal.open("showFile", {
+                      openFileModal("showFile", {
                         fileId: file,
                         ruleId: item.ruleId,
                       })
@@ -504,9 +590,8 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
     });
 
     return rows;
-  };
+  }, [pageItems, isRowExpanded, openFileModal]);
 
-  const rows: IRow[] = itemsToRow(pageItems);
   const actions: IAction[] = [
     {
       title: "View rule",
@@ -525,47 +610,27 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
   // Reset pagination when application change
   useEffect(() => {
     onPageChange({ page: 1, perPage: currentPage.perPage });
-  }, [filters, onPageChange, currentPage.perPage]);
+  }, [
+    debouncedFilterText,
+    debouncedFilters,
+    onPageChange,
+    currentPage.perPage,
+  ]);
 
   // CSV
-  const csvData = useMemo(() => {
-    return filteredItems.flatMap((issue) => {
-      return issue.affectedFiles.flatMap((issueFiles) => {
-        return issueFiles.files.flatMap((file) => {
-          const fileDto = allFilesQuery.data?.find((f) => f.id === file.fileId);
-          const hintsDto = fileDto?.hints.filter(
-            (hint) => hint.ruleId === issue.ruleId
-          );
+  const csvButtonRef = useRef<any>();
+  const [csvData, setCsvData] = useState<CSVData[]>([]);
+  const [csvLoading, setCsvLoading] = useState(false);
 
-          const issueDescription = issueFiles.description?.replaceAll('"', "'");
-          const links =
-            issue.links && issue.links.length > 0
-              ? "[" +
-                issue.links.map((f) => `${f.href},${f.title}`).join("][") +
-                "]"
-              : "";
-          const storyPoints = issue.totalStoryPoints / issue.totalIncidents;
-
-          return (hintsDto || []).map((hint) => {
-            const data: CSVData = {
-              ruleId: issue.ruleId,
-              issueCategory: issue.category,
-              issueTitle: issue.name,
-              issueDescription: issueDescription,
-              links: links,
-              application: issue.applications.map((a) => a.name).join(" | "),
-              fileName: file.fileName,
-              filePath: fileDto?.fullPath!,
-              line: hint.line,
-              storyPoinst: storyPoints,
-            };
-
-            return data;
-          });
-        });
-      });
-    });
-  }, [filteredItems, allFilesQuery.data]);
+  const generateCsv = useCallback(() => {
+    setCsvLoading(true);
+    setTimeout(() => {
+      const data = generateCsvData(filteredItems, allFilesQuery.data || []);
+      setCsvData(data);
+      setCsvLoading(false);
+      csvButtonRef.current.link.click();
+    }, 500);
+  }, [allFilesQuery.data, filteredItems]);
 
   return (
     <>
@@ -584,6 +649,15 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
           </Bullseye>
         ) : (
           <SimpleTableWithToolbar
+            rowWrapper={(props) => {
+              const row = getRow(props.row as IRowData);
+              const isNotExpandedRow = !props.row?.isExpanded;
+              return (
+                <tr key={`${row.name}${isNotExpandedRow ? "" : "-expanded"}`}>
+                  {props.children}
+                </tr>
+              );
+            }}
             hasTopPagination
             hasBottomPagination
             totalCount={filteredItems.length}
@@ -803,16 +877,22 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                 </ToolbarGroup>
                 <ToolbarItem variant="separator" />
                 <ToolbarItem>
+                  <Button
+                    isLoading={csvLoading}
+                    isDisabled={csvLoading}
+                    onClick={generateCsv}
+                  >
+                    Export CSV
+                  </Button>
                   <CSVLink
                     headers={csvHeaders}
                     data={csvData}
                     separator=","
                     enclosingCharacter={'"'}
                     filename="issues.csv"
-                    className="pf-c-button pf-m-primary"
-                  >
-                    Export CSV
-                  </CSVLink>
+                    style={{ textDecoration: "none", color: "#fff" }}
+                    ref={csvButtonRef}
+                  ></CSVLink>
                 </ToolbarItem>
               </>
             }
@@ -832,13 +912,13 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       </Modal>
       <Modal
         title={`File ${fileModalMappedFile?.prettyPath}`}
-        isOpen={fileModal.isOpen && fileModal.action === "showFile"}
-        onClose={fileModal.close}
+        isOpen={isFileModalOpen && fileModalAction === "showFile"}
+        onClose={closeFileModal}
         variant="default"
         position="top"
         disableFocusTrap
         actions={[
-          <Button key="close" variant="primary" onClick={fileModal.close}>
+          <Button key="close" variant="primary" onClick={closeFileModal}>
             Close
           </Button>,
         ]}
@@ -847,7 +927,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
           <FileEditor
             file={fileModalMappedFile}
             hintToFocus={fileModalMappedFile.hints.find(
-              (f) => f.ruleId === fileModal.data?.ruleId
+              (f) => f.ruleId === fileModalData?.ruleId
             )}
           />
         )}

@@ -50,8 +50,8 @@ export const IssueOverview: React.FC<IIssueOverviewProps> = ({
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {affectedFile.files.map((file) => (
-                        <Tr key={file.fileId}>
+                      {affectedFile.files.map((file, index) => (
+                        <Tr key={index}>
                           <Td dataLabel="File">
                             <FileLink
                               fileId={file.fileId}
