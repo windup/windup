@@ -5,7 +5,7 @@
     <properties>
         <version.forge>3.10.0.Final</version.forge>
         <version.furnace>2.29.1.Final</version.furnace>
-        <version.nexus.index>22.12.14.Final</version.nexus.index>
+        <version.nexus.index>23.03.15.Final</version.nexus.index>
         <version.lucene>7.1.0</version.lucene>
         <version.groovy>2.4.21</version.groovy>
         <version.freemarker>2.3.31</version.freemarker>
