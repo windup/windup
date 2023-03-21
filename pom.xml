@@ -580,6 +580,28 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>surefire-jdk17</id>
+            <activation>
+              <jdk>17</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>${testExcludeString}</exclude>
+                            </excludes>
+                            <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
+                            <argLine>${surefire-argLine} --add-modules java.se --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                            <reuseForks>false</reuseForks>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 

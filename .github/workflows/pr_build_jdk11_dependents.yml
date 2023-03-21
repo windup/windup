@@ -10,15 +10,15 @@ jobs:
   windup-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
           java-package: jdk
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-build-${{ github.sha }}
@@ -34,21 +34,22 @@ jobs:
       fail-fast: false
       matrix:
         jdk-distribution: [ temurin ]
+        java-version: [ 11, 17 ]
         ruleset-test: [ WindupRulesTest,  WindupRulesLinksTest]
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
         with:
           repository: windup/windup-rulesets
           ref: ${{ github.base_ref }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: ${{ matrix.java-version }}
           distribution: ${{ matrix.jdk-distribution }}
           java-package: jdk
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
@@ -62,20 +63,24 @@ jobs:
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
     needs: [windup-rulesets-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: [ 11, 17 ]
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
         with:
           repository: windup/windup-maven-plugin
           ref: ${{ github.base_ref }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
           java-package: jdk
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
@@ -87,20 +92,24 @@ jobs:
   windup-quickstarts-build:
     runs-on: ubuntu-latest
     needs: [windup-maven-plugin-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: [ 11, 17 ]
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
         with:
           repository: windup/windup-quickstarts
           ref: ${{ github.base_ref }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
           java-package: jdk
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
@@ -108,5 +117,8 @@ jobs:
         uses: stCarolas/setup-maven@v4.5
         with:
           maven-version: 3.8.7
-      - name: Build
-        run: mvn clean install -s settings.xml -nsu
+      - name: Test
+        run:   |
+          export MAVEN_OPTS="--add-modules=java.se  --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED"
+          mvn clean install -s settings.xml -nsu
+        shell: bash
