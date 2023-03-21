@@ -26,16 +26,14 @@ import {
   sortable,
   truncate,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { DependencyDto } from "@app/api/dependencies";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useDependenciesQuery } from "@app/queries/dependencies";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 const areDependenciesEquals = (a: DependencyDto, b: DependencyDto) => {
   return a.name === b.name && a.version === b.version && a.sha1 === b.sha1;

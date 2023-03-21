@@ -22,10 +22,11 @@ import {
 import FilterIcon from "@patternfly/react-icons/dist/esm/icons/filter-icon";
 import InfoAltIcon from "@patternfly/react-icons/dist/esm/icons/info-alt-icon";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
-import { OptionWithValue, SimpleSelect } from "@project-openubl/lib-ui";
+
 
 import { ApplicationDto } from "@app/api/application";
 import { TechnologyGroup } from "@app/api/technologies";
+import { SimpleSelect, OptionWithValue } from "@app/shared/components";
 import { useTechnologiesData } from "@app/shared/hooks";
 
 type TechnologyGroupEnricherType = {

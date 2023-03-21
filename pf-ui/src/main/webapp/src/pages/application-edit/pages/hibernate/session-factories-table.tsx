@@ -14,13 +14,11 @@ import {
   Thead,
   Tr,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
 
 import { useHibernateQuery } from "@app/queries/hibernate";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
+
 
 export interface TableData {
   path: string;

@@ -29,15 +29,13 @@ import {
   IRowData,
   cellWidth,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { ApplicationDto } from "@app/api/application";
 import { ApplicationFileDto } from "@app/api/application-details";
 import { useApplicationsDetailsQuery } from "@app/queries/applications-details";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 import { ApplicationFilesChildrenTable } from "./application-files-children-table";
 import { TagsChart } from "./tags-chart";

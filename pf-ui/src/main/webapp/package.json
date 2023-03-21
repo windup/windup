@@ -9,7 +9,6 @@
     "@patternfly/react-code-editor": "4.82.113",
     "@patternfly/react-core": "4.267.6",
     "@patternfly/react-table": "4.112.39",
-    "@project-openubl/lib-ui": "^1.9.0",
     "@tanstack/react-query": "^4.3.4",
     "@tanstack/react-query-devtools": "^4.3.5",
     "@testing-library/jest-dom": "^5.16.5",
@@ -30,6 +29,7 @@
     "react-router-dom": "6.3.0",
     "react-scripts": "5.0.1",
     "remark-gfm": "^3.0.1",
+    "typesafe-actions": "^5.1.0",
     "typescript": "^4.8.2",
     "usehooks-ts": "^2.9.1",
     "web-vitals": "^2.1.4"

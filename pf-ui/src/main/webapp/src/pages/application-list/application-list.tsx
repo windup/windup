@@ -41,14 +41,6 @@ import {
   compoundExpand,
   sortable,
 } from "@patternfly/react-table";
-import {
-  SimpleSelect,
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-  useToolbar,
-} from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
 import {
@@ -58,7 +50,14 @@ import {
 } from "@app/api/issues";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useLabelsQuery } from "@app/queries/labels";
-import { useCellSelectionState } from "@app/shared/hooks";
+import { SimpleTableWithToolbar, SimpleSelect } from "@app/shared/components";
+import {
+  useModal,
+  useTable,
+  useTableControls,
+  useToolbar,
+  useCellSelectionState,
+} from "@app/shared/hooks";
 import { RuntimeAssessment, evaluateRuntime } from "@app/utils/label-utils";
 
 import "./application-list.css";

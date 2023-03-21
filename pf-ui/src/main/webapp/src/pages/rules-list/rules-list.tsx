@@ -26,19 +26,21 @@ import {
   IRowData,
   IAction,
 } from "@patternfly/react-table";
+
+import { RuleProcessed } from "@app/models/api-enriched";
+import { useRulesQuery } from "@app/queries/rules";
 import {
+  SimpleTableWithToolbar,
   OptionWithValue,
   SimpleSelect,
-  SimpleTableWithToolbar,
+  RuleEditor,
+} from "@app/shared/components";
+import {
   useModal,
   useTable,
   useTableControls,
   useToolbar,
-} from "@project-openubl/lib-ui";
-
-import { RuleProcessed } from "@app/models/api-enriched";
-import { useRulesQuery } from "@app/queries/rules";
-import { RuleEditor } from "@app/shared/components";
+} from "@app/shared/hooks";
 
 export interface TableData {
   phase: string;

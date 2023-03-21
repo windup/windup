@@ -6,17 +6,13 @@ import {
   Modal,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { HibernateEntityDto } from "@app/api/hibernate";
 import { useFilesQuery } from "@app/queries/files";
 import { useHibernateQuery } from "@app/queries/hibernate";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

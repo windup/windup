@@ -8,17 +8,13 @@ import {
   Modal,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { SessionBeanDto } from "@app/api/ejb";
 import { useEJBsQuery } from "@app/queries/ejb";
 import { useFilesQuery } from "@app/queries/files";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

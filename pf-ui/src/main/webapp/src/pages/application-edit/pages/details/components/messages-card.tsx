@@ -1,16 +1,13 @@
 import React, { useMemo } from "react";
 
-import {
-  Button,
-  ButtonVariant,
-  Modal,
-} from "@patternfly/react-core";
+import { Button, ButtonVariant, Modal } from "@patternfly/react-core";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
-import { useModal } from "@project-openubl/lib-ui";
+
 
 import { ApplicationDto } from "@app/api/application";
 import { useApplicationsDetailsQuery } from "@app/queries/applications-details";
 import { RuleEditor } from "@app/shared/components";
+import { useModal } from "@app/shared/hooks";
 
 export interface IMessagesCardProps {
   application: ApplicationDto;

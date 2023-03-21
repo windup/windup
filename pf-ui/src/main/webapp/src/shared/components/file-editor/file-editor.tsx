@@ -21,13 +21,12 @@ import {
   Text,
   TextContent,
 } from "@patternfly/react-core";
-import { ConditionalRender } from "@project-openubl/lib-ui";
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 
 import { FileDto, HintDto } from "@app/api/file";
 import { useFileQuery } from "@app/queries/files";
 import { useRulesQuery } from "@app/queries/rules";
-import { SimpleMarkdown } from "@app/shared/components";
+import { ConditionalRender, SimpleMarkdown } from "@app/shared/components";
 import { getMarkdown } from "@app/utils/rule-utils";
 
 interface IFileEditorProps {

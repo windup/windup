@@ -28,15 +28,6 @@ import {
   sortable,
   truncate,
 } from "@patternfly/react-table";
-import {
-  OptionWithValue,
-  SimpleSelect,
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-  useToolbar,
-} from "@project-openubl/lib-ui";
 import { useDebounce } from "usehooks-ts";
 
 import { compareByCategoryFn, compareByEffortFn } from "@app/api/issues";
@@ -48,7 +39,19 @@ import { useApplicationsQuery } from "@app/queries/applications";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
 import { useRulesQuery } from "@app/queries/rules";
-import { FileEditor, RuleEditor } from "@app/shared/components";
+import {
+  SimpleTableWithToolbar,
+  SimpleSelect,
+  OptionWithValue,
+  FileEditor,
+  RuleEditor,
+} from "@app/shared/components";
+import {
+  useModal,
+  useTable,
+  useTableControls,
+  useToolbar,
+} from "@app/shared/hooks";
 import { technologiesToArray } from "@app/utils/rule-utils";
 
 import { IssueOverview } from "./components/issue-overview";

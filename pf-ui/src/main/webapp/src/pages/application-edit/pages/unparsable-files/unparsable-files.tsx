@@ -9,17 +9,12 @@ import {
   PageSection,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow, IRowData } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
 import { useFilesQuery } from "@app/queries/files";
 import { useUnparsableFilesQuery } from "@app/queries/unparsable-files";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

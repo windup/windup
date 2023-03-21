@@ -19,18 +19,13 @@ import {
   Tr,
   Td,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
 import { TransactionDto } from "@app/api/transactions";
 import { useFilesQuery } from "@app/queries/files";
 import { useTransactionsQuery } from "@app/queries/transactions";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 interface SelectedFile {
   fileId: string;

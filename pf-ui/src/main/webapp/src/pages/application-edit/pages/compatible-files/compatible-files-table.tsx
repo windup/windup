@@ -2,16 +2,11 @@ import React, { useMemo, useState } from "react";
 
 import { Button, ButtonVariant, Modal } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
 
 import { useCompatibleFilesQuery } from "@app/queries/compatible-files";
 import { useFilesQuery } from "@app/queries/files";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 export interface TableData {
   artifactName: string;

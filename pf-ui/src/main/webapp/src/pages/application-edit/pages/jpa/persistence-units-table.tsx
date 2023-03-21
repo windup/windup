@@ -15,14 +15,12 @@ import {
   Thead,
   Tr,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { DatasourceDto } from "@app/api/jpa";
 import { useJPAsQuery } from "@app/queries/jpa";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 export interface TableData {
   path: string;

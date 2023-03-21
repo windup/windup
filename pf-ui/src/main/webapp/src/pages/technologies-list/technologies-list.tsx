@@ -34,13 +34,6 @@ import {
   compoundExpand,
   sortable,
 } from "@patternfly/react-table";
-import {
-  OptionWithValue,
-  SimpleSelect,
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
 
 import { ApplicationDto } from "@app/api/application";
 import { TechnologyGroup } from "@app/api/technologies";
@@ -50,7 +43,17 @@ import {
   TechnologyGroupValueProcessed,
   TechnologyGroupsProcessed,
 } from "@app/models/api-enriched";
-import { useCellSelectionState, useTechnologiesData } from "@app/shared/hooks";
+import {
+  SimpleTableWithToolbar,
+  OptionWithValue,
+  SimpleSelect,
+} from "@app/shared/components";
+import {
+  useTable,
+  useTableControls,
+  useCellSelectionState,
+  useTechnologiesData,
+} from "@app/shared/hooks";
 
 interface RowData {
   application: ApplicationDto;

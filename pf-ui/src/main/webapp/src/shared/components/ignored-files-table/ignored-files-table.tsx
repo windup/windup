@@ -17,15 +17,13 @@ import {
   breakWord,
   sortable,
 } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { IgnoredFileDto } from "@app/api/ignored-files";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useIgnoredFilesQuery } from "@app/queries/ignored-files";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

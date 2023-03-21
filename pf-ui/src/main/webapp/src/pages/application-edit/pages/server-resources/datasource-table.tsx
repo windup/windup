@@ -2,14 +2,12 @@ import React, { useMemo, useState } from "react";
 
 import { List, ListItem } from "@patternfly/react-core";
 import { IAction, ICell, IRow } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { DatasourceDto } from "@app/api/server-resources";
 import { useServerResourcesQuery } from "@app/queries/server-resources";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

@@ -1,14 +1,12 @@
 import React, { useMemo, useState } from "react";
 
 import { IAction, ICell, IRow } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { JPANamedQueryDto } from "@app/api/jpa";
 import { useJPAsQuery } from "@app/queries/jpa";
+import { SimpleTableWithToolbar } from "@app/shared/components";
+import { useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 

@@ -5,10 +5,10 @@ import {
   CodeEditorProps,
   Language,
 } from "@patternfly/react-code-editor";
-import { ConditionalRender } from "@project-openubl/lib-ui";
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 
 import { useRuleQuery } from "@app/queries/rules";
+import { ConditionalRender } from "@app/shared/components";
 
 interface IRuleEditorProps {
   ruleId: string;

@@ -14,18 +14,14 @@ import {
   Truncate,
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow, cellWidth } from "@patternfly/react-table";
-import {
-  SimpleTableWithToolbar,
-  useModal,
-  useTable,
-  useTableControls,
-} from "@project-openubl/lib-ui";
+
 
 import { ApplicationFileDto } from "@app/api/application-details";
 import { FileDto } from "@app/api/file";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
-import { FileEditor } from "@app/shared/components";
+import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
+import { useModal, useTable, useTableControls } from "@app/shared/hooks";
 
 const DataKey = "DataKey";
 
