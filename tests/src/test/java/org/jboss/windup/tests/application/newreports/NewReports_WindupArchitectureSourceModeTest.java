@@ -14,6 +14,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.reporting.data.Constants;
 import org.jboss.windup.reporting.data.dto.ApplicationCompatibleFilesDto;
 import org.jboss.windup.reporting.data.dto.ApplicationDetailsDto;
 import org.jboss.windup.reporting.data.dto.ApplicationEJBsDto;
@@ -313,10 +314,15 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
                 .toFile();
 
         ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(appIssuesJson, ApplicationIssuesDto[].class);
-        Assert.assertEquals(1, appIssuesDtoList.length);
+        Assert.assertEquals(2, appIssuesDtoList.length);
+
+        Optional<ApplicationIssuesDto> applicationIssuesDto = Arrays.stream(appIssuesDtoList)
+                .filter(dto -> !Objects.equals(dto.getApplicationId(), Constants.ALL_APPLICATIONS_ID))
+                .findFirst();
+        Assert.assertTrue(applicationIssuesDto.isPresent());
 
         //
-        List<ApplicationIssuesDto.IssueDto> allIssuesDto = appIssuesDtoList[0].getIssues().values().stream()
+        List<ApplicationIssuesDto.IssueDto> allIssuesDto = applicationIssuesDto.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 

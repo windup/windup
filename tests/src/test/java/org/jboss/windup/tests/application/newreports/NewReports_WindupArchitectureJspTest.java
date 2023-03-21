@@ -15,6 +15,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.data.Constants;
 import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
@@ -36,7 +37,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 @RunWith(Arquillian.class)
@@ -133,9 +136,14 @@ public class NewReports_WindupArchitectureJspTest extends WindupArchitectureTest
                 .toFile();
 
         ApplicationIssuesDto[] appIssuesDtoList = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
-        Assert.assertEquals(1, appIssuesDtoList.length);
+        Assert.assertEquals(2, appIssuesDtoList.length);
 
-        Optional<ApplicationIssuesDto.IssueDto> issueDto = appIssuesDtoList[0].getIssues().values().stream()
+        Optional<ApplicationIssuesDto> applicationIssuesDto = Arrays.stream(appIssuesDtoList)
+                .filter(dto -> !Objects.equals(dto.getApplicationId(), Constants.ALL_APPLICATIONS_ID))
+                .findFirst();
+        Assert.assertTrue(applicationIssuesDto.isPresent());
+
+        Optional<ApplicationIssuesDto.IssueDto> issueDto = applicationIssuesDto.get().getIssues().values().stream()
                 .flatMap(Collection::stream)
                 .filter(dto -> dto.getName().equals("Other Taglib Import"))
                 .findFirst();

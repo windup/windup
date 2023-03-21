@@ -10,6 +10,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.data.Constants;
 import org.jboss.windup.reporting.data.dto.ApplicationIssuesDto;
 import org.jboss.windup.reporting.data.rules.IssuesRuleProvider;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -27,8 +28,10 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RunWith(Arquillian.class)
@@ -108,9 +111,14 @@ public class NewReports_WindupArchitectureScanPackagesTest extends WindupArchite
 
             // Files
             ApplicationIssuesDto[] applicationIssuesDtos = new ObjectMapper().readValue(issuesJson, ApplicationIssuesDto[].class);
-            Assert.assertEquals(1, applicationIssuesDtos.length);
+            Assert.assertEquals(2, applicationIssuesDtos.length);
 
-            Optional<ApplicationIssuesDto.IssueDto> issueDto = applicationIssuesDtos[0].getIssues().get("information")
+            Optional<ApplicationIssuesDto> applicationIssuesDto = Arrays.stream(applicationIssuesDtos)
+                    .filter(dto -> !Objects.equals(dto.getApplicationId(), Constants.ALL_APPLICATIONS_ID))
+                    .findFirst();
+            Assert.assertTrue(applicationIssuesDto.isPresent());
+
+            Optional<ApplicationIssuesDto.IssueDto> issueDto = applicationIssuesDto.get().getIssues().get("information")
                     .stream()
                     .filter(i -> i.getName().equals("Maven POM (pom.xml)"))
                     .findFirst();
