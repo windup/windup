@@ -707,24 +707,26 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                     />
                   </ToolbarFilter>
                 </ToolbarGroup>
-                <ToolbarItem variant="separator" />
                 {analysisConfigurationQuery.data?.exportCSV && (
-                  <ToolbarItem>
-                    <a
-                      className="pf-c-button pf-m-primary "
-                      href={
-                        ALL_APPLICATIONS_ID === applicationId
-                          ? "./AllIssues.csv"
-                          : `${application?.name
-                              .replaceAll(".", "_")
-                              .replaceAll("-", "_")}.csv`
-                      }
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      Export CSV
-                    </a>
-                  </ToolbarItem>
+                  <>
+                    <ToolbarItem variant="separator" />
+                    <ToolbarItem>
+                      <a
+                        className="pf-c-button pf-m-primary "
+                        href={
+                          ALL_APPLICATIONS_ID === applicationId
+                            ? "./AllIssues.csv"
+                            : `${application?.name
+                                .replaceAll(".", "_")
+                                .replaceAll("-", "_")}.csv`
+                        }
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Export CSV
+                      </a>
+                    </ToolbarItem>
+                  </>
                 )}
               </>
             }
