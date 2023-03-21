@@ -4,7 +4,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPfRenderingPhase;
+import org.jboss.windup.config.phase.PreReportPfRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RuleMetadata(
-        phase = ReportPfRenderingPhase.class,
+        phase = PreReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class ApplicationCompatibleFilesRuleProvider extends AbstractApiRuleProvider {

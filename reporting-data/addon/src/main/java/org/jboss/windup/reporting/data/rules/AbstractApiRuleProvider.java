@@ -10,6 +10,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -20,12 +21,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
     private static final Logger LOG = Logger.getLogger(AbstractApiRuleProvider.class);
 
     public static final String JAVASCRIPT_OUTPUT = "windup.js";
+
+    public final static ExecutorService executorService = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
 
     // @formatter:off
     @Override
@@ -35,7 +39,7 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
                 .perform(new GraphOperation() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context) {
-                        performProcess(event);
+                        executorService.submit(() -> performProcess(event));
                     }
                 });
     }

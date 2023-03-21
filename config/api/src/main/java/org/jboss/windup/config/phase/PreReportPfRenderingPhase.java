@@ -1,13 +1,13 @@
 package org.jboss.windup.config.phase;
 
-public class ReportPfRenderingPhase extends RulePhase {
-    public ReportPfRenderingPhase() {
-        super(ReportPfRenderingPhase.class);
+public class PreReportPfRenderingPhase extends RulePhase {
+    public PreReportPfRenderingPhase() {
+        super(PreReportPfRenderingPhase.class);
     }
 
     @Override
     public Class<? extends RulePhase> getExecuteAfter() {
-        return PreReportPfRenderingPhase.class;
+        return PostReportGenerationPhase.class;
     }
 
     @Override

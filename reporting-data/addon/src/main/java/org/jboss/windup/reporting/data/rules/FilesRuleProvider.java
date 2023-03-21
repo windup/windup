@@ -7,7 +7,7 @@ import org.janusgraph.core.attribute.Text;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.config.phase.ReportPfRenderingPhase;
+import org.jboss.windup.config.phase.PreReportPfRenderingPhase;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RuleMetadata(
-        phase = ReportPfRenderingPhase.class,
+        phase = PreReportPfRenderingPhase.class,
         haltOnException = true
 )
 public class FilesRuleProvider extends AbstractApiRuleProvider {

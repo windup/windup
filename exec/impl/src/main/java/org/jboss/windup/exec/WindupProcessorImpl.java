@@ -31,6 +31,7 @@ import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportPfRenderingPhase;
+import org.jboss.windup.config.phase.PreReportPfRenderingPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
@@ -299,7 +300,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         if (skipReports) {
             skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
                     PreReportGenerationPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class,
-                    ReportPfRenderingPhase.class, PostReportPfRenderingPhase.class
+                    PreReportPfRenderingPhase.class, ReportPfRenderingPhase.class, PostReportPfRenderingPhase.class
             ));
         } else {
             Boolean legacyReports = false;
@@ -309,6 +310,7 @@ public class WindupProcessorImpl implements WindupProcessor {
 
             if (legacyReports) {
                 skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                        PreReportPfRenderingPhase.class,
                         ReportPfRenderingPhase.class,
                         PostReportPfRenderingPhase.class
                 ));
