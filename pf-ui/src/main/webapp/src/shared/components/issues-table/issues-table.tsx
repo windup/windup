@@ -55,7 +55,7 @@ import { IssueOverview } from "./components/issue-overview";
 import { Technologies } from "./components/technologies";
 
 const areRowsEquals = (a: TableData, b: TableData) => {
-  return a.name === b.name;
+  return a.id === b.id;
 };
 
 //
