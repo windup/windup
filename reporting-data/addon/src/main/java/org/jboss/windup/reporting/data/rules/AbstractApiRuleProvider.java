@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
@@ -29,16 +30,21 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
 
     public static final String JAVASCRIPT_OUTPUT = "windup.js";
 
-    public final static ExecutorService executorService = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
+    public static final Map<GraphContext, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
 
     // @formatter:off
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+
         return ConfigurationBuilder.begin()
                 .addRule()
                 .perform(new GraphOperation() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context) {
+                        GraphContext graphContext = event.getGraphContext();
+
+                        executorServiceMap.putIfAbsent(graphContext, WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount()));
+                        ExecutorService executorService = executorServiceMap.get(graphContext);
                         executorService.submit(() -> performProcess(event));
                     }
                 });

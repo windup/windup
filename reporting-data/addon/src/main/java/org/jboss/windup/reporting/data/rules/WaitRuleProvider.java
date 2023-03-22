@@ -11,6 +11,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @RuleMetadata(
@@ -26,9 +27,10 @@ public class WaitRuleProvider extends AbstractRuleProvider {
                 .perform(new GraphOperation() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context) {
-                        AbstractApiRuleProvider.executorService.shutdown();
+                        ExecutorService executorService = AbstractApiRuleProvider.executorServiceMap.get(event.getGraphContext());
+                        executorService.shutdown();
                         try {
-                            AbstractApiRuleProvider.executorService.awaitTermination(2, TimeUnit.DAYS);
+                            executorService.awaitTermination(2, TimeUnit.DAYS);
                         } catch (InterruptedException e) {
                             throw new WindupException("Failed to render reports due to a timeout: " + e.getMessage(), e);
                         }
