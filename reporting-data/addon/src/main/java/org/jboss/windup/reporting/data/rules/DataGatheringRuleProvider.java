@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
         phase = ReportPfRenderingPhase.class,
         haltOnException = true
 )
-public class WaitRuleProvider extends AbstractRuleProvider {
+public class DataGatheringRuleProvider extends AbstractRuleProvider {
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext context) {
