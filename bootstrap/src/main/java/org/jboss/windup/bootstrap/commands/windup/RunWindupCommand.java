@@ -65,17 +65,19 @@ public class RunWindupCommand implements Command, FurnaceDependent {
     private Furnace furnace;
     private final List<String> arguments;
     private final AtomicBoolean batchMode;
+    private final AtomicBoolean exitCodes;
 
-    public RunWindupCommand(List<String> arguments, AtomicBoolean batchMode) {
+    public RunWindupCommand(List<String> arguments, AtomicBoolean batchMode, AtomicBoolean exitCodes) {
         this.arguments = arguments;
         this.batchMode = batchMode;
+        this.exitCodes = exitCodes;
     }
 
     @Override
     public CommandResult execute() {
         final int returnCode = runWindup(arguments);
         // https://issues.redhat.com/browse/WINDUP-3612
-        if (returnCode != 0) System.exit(returnCode);
+        if (returnCode != 0 && batchMode.get() && exitCodes.get()) System.exit(returnCode);
         return CommandResult.EXIT;
     }
 
