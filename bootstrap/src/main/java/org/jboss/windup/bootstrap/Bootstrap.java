@@ -314,6 +314,7 @@ public class Bootstrap {
         } catch (Throwable t) {
             System.err.println(theme.getBrandNameAcronym() + " execution failed due to: " + t.getMessage());
             t.printStackTrace();
+            System.exit(-1);
         }
     }
 

@@ -73,7 +73,9 @@ public class RunWindupCommand implements Command, FurnaceDependent {
 
     @Override
     public CommandResult execute() {
-        runWindup(arguments);
+        final int returnCode = runWindup(arguments);
+        // https://issues.redhat.com/browse/WINDUP-3612
+        if (returnCode != 0) System.exit(returnCode);
         return CommandResult.EXIT;
     }
 
@@ -88,7 +90,7 @@ public class RunWindupCommand implements Command, FurnaceDependent {
     }
 
     @SuppressWarnings("unchecked")
-    private void runWindup(List<String> arguments) {
+    private int runWindup(List<String> arguments) {
         Iterable<ConfigurationOption> optionIterable = WindupConfiguration.getWindupConfigurationOptions(furnace);
         Map<String, ConfigurationOption> options = new HashMap<>();
         for (ConfigurationOption option : optionIterable)
@@ -169,14 +171,12 @@ public class RunWindupCommand implements Command, FurnaceDependent {
 
         // Target - interactive
         Collection<String> targets = (Collection<String>) optionValues.get(TargetOption.NAME);
-        if (targets != null && targets.contains("eap"))
-        {
+        if (targets != null && targets.contains("eap")) {
             System.err.println("ERROR: " + "Version must be specified for target 'eap' (for example, 'eap7' or 'eap8')");
-            return;
+            return 1;
         }
 
-        if ((targets == null || targets.isEmpty()) && !batchMode.get())
-        {
+        if ((targets == null || targets.isEmpty()) && !batchMode.get()) {
             String target = Bootstrap.promptForListItem("Please select a target:", ruleProviderRegistryCache.getAvailableTargetTechnologies(), "eap7");
             targets = Collections.singleton(target);
             optionValues.put(TargetOption.NAME, targets);
@@ -184,7 +184,7 @@ public class RunWindupCommand implements Command, FurnaceDependent {
 
         boolean validationSuccess = validateOptionValues(options, optionValues);
         if (!validationSuccess)
-            return;
+            return 1;
 
         boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
         boolean disableReport = false;
@@ -231,13 +231,13 @@ public class RunWindupCommand implements Command, FurnaceDependent {
         }
 
         if (!validateInputAndOutputPath(windupConfiguration.getInputPaths(), windupConfiguration.getOutputDirectory()))
-            return;
+            return 1;
 
         try {
             windupConfiguration.useDefaultDirectories();
         } catch (IOException e) {
             System.err.println("ERROR: Failed to create default directories due to: " + e.getMessage());
-            return;
+            return 1;
         }
 
         Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);
@@ -251,12 +251,11 @@ public class RunWindupCommand implements Command, FurnaceDependent {
             if (!Bootstrap.prompt(promptMsg, false, batchMode.get())) {
                 String outputPath = windupConfiguration.getOutputDirectory().toString();
                 System.err.println("Files exist in " + outputPath + ", but --overwrite not specified. Aborting!");
-                return;
+                return 1;
             }
         }
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
-        Path graphPath = windupConfiguration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
 
         System.out.println();
         if (windupConfiguration.getInputPaths().size() == 1) {
@@ -300,9 +299,11 @@ public class RunWindupCommand implements Command, FurnaceDependent {
                 System.err.println("Execution failed due to: " + e.getMessage());
             }
             e.printStackTrace();
+            return 1;
+        } finally {
+            Util.deleteGraphDataUnlessInhibited(windupConfiguration, windupConfiguration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY));
         }
-
-        Util.deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
+        return 0;
     }
 
 
