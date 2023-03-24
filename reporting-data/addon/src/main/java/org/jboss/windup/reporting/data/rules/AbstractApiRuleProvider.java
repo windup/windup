@@ -121,10 +121,15 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
         }
 
         // Enrich Javascript file
+        enrichWindupJS(outputBaseDir, getAllJsonString, getByIdJsonString);
+    }
+
+    private synchronized void enrichWindupJS(Path outputBaseDir, String getAllJsonString, String getByIdJsonString) {
         File outputJSFile = outputBaseDir.resolve(JAVASCRIPT_OUTPUT).toFile();
         try (FileWriter writer = new FileWriter(outputJSFile, true)) {
             writer.append("window[\"" + getBasePath() + "\"]=" + getAllJsonString + ";");
             writer.append("window[\"" + getBasePath() + "_by_id\"]=" + getByIdJsonString + ";");
+            writer.flush();
             LOG.info("Exporting json data to file: " + outputJSFile.getPath());
         } catch (IOException e) {
             LOG.error("Error exporting data to: " + outputJSFile.getPath());
