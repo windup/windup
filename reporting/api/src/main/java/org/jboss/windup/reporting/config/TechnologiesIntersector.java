@@ -31,16 +31,9 @@ public class TechnologiesIntersector {
     private static List<TechnologyReferenceModel> intersectTechnologies(Collection<TechnologyReferenceModel> configuredTechnologies, Collection<TechnologyReference> ruleTechnologies) {
         return configuredTechnologies.stream()
                 .filter(confTech -> {
-                    Set<TechnologyReference> confTechsWithSameId = ruleTechnologies.stream().filter(ruleTech -> confTech.getTechnologyID().equals(ruleTech.getId())).collect(toSet());
-                    return !confTechsWithSameId.isEmpty();
-                })
-                .filter(confTech -> ruleTechnologies.stream().filter(ruleTech -> {
-                    if (ruleTech.getId().equals(confTech.getTechnologyID())) {
-                        TechnologyReference confTechRef = new TechnologyReference(confTech);
-                        return !confTechRef.versionRangesOverlap(ruleTech.getVersionRange());
-                    }
-                    return false;
-                }).collect(toSet()).isEmpty())
-                .collect(toList());
+                            final TechnologyReference confTechRef = new TechnologyReference(confTech);
+                            return ruleTechnologies.stream().anyMatch(confTechRef::matches);
+                        }
+                ).collect(toList());
     }
 }
