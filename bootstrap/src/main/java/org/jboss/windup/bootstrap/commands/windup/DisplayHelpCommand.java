@@ -48,6 +48,9 @@ public class DisplayHelpCommand implements Command {
         sb.append("-b, --batchMode").append(System.lineSeparator());
         sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(System.lineSeparator());
 
+        sb.append("-e, --exitCodes").append(System.lineSeparator());
+        sb.append("\t provide exit codes ").append(System.lineSeparator());
+
         sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
         sb.append("\t install the required addons and exit. ex: `" + theme.getCliName() + " -i core-addon-x` or `" + theme.getCliName() + " -i org.example.addon:example:1.0.0` ").append(System.lineSeparator());
 
