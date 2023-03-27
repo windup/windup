@@ -77,7 +77,7 @@ public class RunWindupCommand implements Command, FurnaceDependent {
     public CommandResult execute() {
         final int returnCode = runWindup(arguments);
         // https://issues.redhat.com/browse/WINDUP-3612
-        if (returnCode != 0 && batchMode.get() && exitCodes.get()) System.exit(returnCode);
+        if (returnCode != 0 && exitCodes.get()) System.exit(returnCode);
         return CommandResult.EXIT;
     }
 
