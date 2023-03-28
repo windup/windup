@@ -15,11 +15,20 @@ export const technologiesToArray = (technologies: TechnologyDto[]) => {
     let versions: string[] = [];
 
     if (technology.versionRange && technology.versionRange.length > 0) {
-      versions = technology.versionRange
-        //eslint-disable-next-line
-        .replace(/[(\[\])]/g, "")
-        .split(",")
-        .filter((version) => version !== "");
+      const versionsRange = technology.versionRange.split(",");
+
+      const start =
+        versionsRange[0] && !versionsRange[0].startsWith("(")
+          ? //eslint-disable-next-line
+            versionsRange[0].replace(/[(\[\])]/g, "")
+          : "";
+      const end =
+        versionsRange[1] && !versionsRange[1].endsWith(")")
+          ? //eslint-disable-next-line
+            versionsRange[0].replace(/[(\[\])]/g, "")
+          : "";
+
+      versions = [start, end].filter((version) => version !== "");
     }
 
     const newVersions = new Set(technologyVersionMap.get(technology.id));
