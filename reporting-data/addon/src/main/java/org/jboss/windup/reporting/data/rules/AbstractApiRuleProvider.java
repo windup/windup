@@ -16,6 +16,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -121,15 +122,20 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
         }
 
         // Enrich Javascript file
-        enrichWindupJS(outputBaseDir, getAllJsonString, getByIdJsonString);
+        enrichWindupJS(outputBaseDir, getBasePath(), getAllJsonString, getByIdJsonString);
     }
 
-    private synchronized void enrichWindupJS(Path outputBaseDir, String getAllJsonString, String getByIdJsonString) {
+    private static synchronized void enrichWindupJS(Path outputBaseDir, String basePath, String getAllJsonString, String getByIdJsonString) {
         File outputJSFile = outputBaseDir.resolve(JAVASCRIPT_OUTPUT).toFile();
-        try (FileWriter writer = new FileWriter(outputJSFile, true)) {
-            writer.append("window[\"" + getBasePath() + "\"]=" + getAllJsonString + ";");
-            writer.append("window[\"" + getBasePath() + "_by_id\"]=" + getByIdJsonString + ";");
-            writer.flush();
+        try (
+                FileWriter fileWriter = new FileWriter(outputJSFile, true);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        ) {
+            String all = "window[\"" + basePath + "\"]=" + getAllJsonString + ";";
+            String byId = "window[\"" + basePath + "_by_id\"]=" + getByIdJsonString + ";";
+
+            bufferedWriter.write(all + byId);
+            bufferedWriter.flush();
             LOG.info("Exporting json data to file: " + outputJSFile.getPath());
         } catch (IOException e) {
             LOG.error("Error exporting data to: " + outputJSFile.getPath());
