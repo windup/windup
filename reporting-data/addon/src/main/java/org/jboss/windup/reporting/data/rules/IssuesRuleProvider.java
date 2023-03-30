@@ -91,6 +91,9 @@ public class IssuesRuleProvider extends AbstractApiRuleProvider {
                     issueData.setId(problemSummary.getId().toString());
                     issueData.setRuleId(problemSummary.getRuleID());
 
+                    issueData.setSourceTechnologies(problemSummary.getSourceTechnologies());
+                    issueData.setTargetTechnologies(problemSummary.getTargetTechnologies());
+
                     EffortReportService.EffortLevel effortLevel = EffortReportService.EffortLevel.forPoints(problemSummary.getEffortPerIncident());
                     issueData.setEffort(new ApplicationIssuesDto.EffortDto());
                     issueData.getEffort().setType(effortLevel.getShortDescription());

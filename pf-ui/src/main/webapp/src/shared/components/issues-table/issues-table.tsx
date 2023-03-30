@@ -7,9 +7,12 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
+  Label,
   Modal,
   SearchInput,
   SelectVariant,
+  Split,
+  SplitItem,
   Title,
   ToolbarChip,
   ToolbarChipGroup,
@@ -31,9 +34,8 @@ import {
 import { useDebounce } from "usehooks-ts";
 
 import { compareByCategoryFn, compareByEffortFn } from "@app/api/issues";
-import { TechnologyDto } from "@app/api/rule";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
-import { IssueProcessed, RuleProcessed } from "@app/models/api-enriched";
+import { IssueProcessed } from "@app/models/api-enriched";
 import { useAnalysisConfigurationQuery } from "@app/queries/analysis-configuration";
 import { useApplicationsQuery } from "@app/queries/applications";
 import { useFilesQuery } from "@app/queries/files";
@@ -52,10 +54,8 @@ import {
   useTableControls,
   useToolbar,
 } from "@app/shared/hooks";
-import { technologiesToArray } from "@app/utils/rule-utils";
 
 import { IssueOverview } from "./components/issue-overview";
-import { Technologies } from "./components/technologies";
 
 const areRowsEquals = (a: TableData, b: TableData) => {
   return a.id === b.id;
@@ -120,11 +120,11 @@ const columns: ICell[] = [
     transforms: [cellWidth(10)],
   },
   {
-    title: "Source technologies",
+    title: "Source",
     transforms: [cellWidth(10)],
   },
   {
-    title: "Target technologies",
+    title: "Target",
     transforms: [cellWidth(10)],
   },
   {
@@ -243,33 +243,16 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
 
   // Technologies
   const technologies = useMemo(() => {
-    const rulesFromIssues = issues.reduce((prev, current) => {
-      const rule = allRulesQuery.data?.find(
-        (rule) => rule.id === current.ruleId
-      );
-      if (rule) {
-        return [...prev, rule];
-      } else {
-        return prev;
-      }
-    }, [] as RuleProcessed[]);
+    const sources = new Set<string>();
+    const targets = new Set<string>();
 
-    const source = technologiesToArray(
-      rulesFromIssues
-        .flatMap((e) => e.sourceTechnology)
-        .reduce((prev, current) => {
-          return current ? [...prev, current] : prev;
-        }, [] as TechnologyDto[])
-    ).sort();
-    const target = technologiesToArray(
-      rulesFromIssues
-        .flatMap((e) => e.targetTechnology)
-        .reduce((prev, current) => {
-          return current ? [...prev, current] : prev;
-        }, [] as TechnologyDto[])
-    ).sort();
-    return { source, target };
-  }, [issues, allRulesQuery.data]);
+    issues.forEach((elem) => {
+      elem.sourceTechnologies?.forEach((e) => sources.add(e));
+      elem.targetTechnologies?.forEach((e) => targets.add(e));
+    });
+
+    return { source: Array.from(sources), target: Array.from(targets) };
+  }, [issues]);
 
   //
   const categories = useMemo(() => {
@@ -335,29 +318,15 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       const selectedSources = debouncedFilters.get("sourceTechnology") || [];
       if (selectedSources.length > 0) {
         isSourceCompliant = selectedSources.some((f) => {
-          const rule = findRuleByIssueId(item.ruleId);
-          if (rule) {
-            return technologiesToArray(rule.sourceTechnology || []).includes(
-              f.key
-            );
-          }
-
-          return false;
+          return item.sourceTechnologies?.includes(f.key);
         });
       }
 
       let isTargetCompliant = true;
       const selectedTargets = debouncedFilters.get("targetTechnology") || [];
       if (selectedTargets.length > 0) {
-        isTargetCompliant = selectedTargets.some((f) => {
-          const rule = findRuleByIssueId(item.ruleId);
-          if (rule) {
-            return technologiesToArray(rule.targetTechnology || []).includes(
-              f.key
-            );
-          }
-
-          return false;
+        isSourceCompliant = selectedTargets.some((f) => {
+          return item.targetTechnologies?.includes(f.key);
         });
       }
 
@@ -369,7 +338,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
         isTargetCompliant
       );
     },
-    [debouncedFilterText, debouncedFilters, findRuleByIssueId]
+    [debouncedFilterText, debouncedFilters]
   );
 
   const { pageItems, filteredItems } = useTable<TableData>({
@@ -395,10 +364,34 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
             title: item.category,
           },
           {
-            title: <Technologies ruleId={item.ruleId} variant="source" />,
+            title: (
+              <>
+                <Split hasGutter>
+                  {item.sourceTechnologies?.map((technology) => (
+                    <SplitItem key={technology}>
+                      <Label isCompact color="blue">
+                        {technology}
+                      </Label>
+                    </SplitItem>
+                  ))}
+                </Split>
+              </>
+            ),
           },
           {
-            title: <Technologies ruleId={item.ruleId} variant="target" />,
+            title: (
+              <>
+                <Split hasGutter>
+                  {item.targetTechnologies?.map((technology) => (
+                    <SplitItem key={technology}>
+                      <Label isCompact color="blue">
+                        {technology}
+                      </Label>
+                    </SplitItem>
+                  ))}
+                </Split>
+              </>
+            ),
           },
           {
             title: item.effort.description,
@@ -621,94 +614,98 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                   </ToolbarFilter>
                 </ToolbarGroup>
                 <ToolbarGroup variant="filter-group">
-                  <ToolbarFilter
-                    chips={filters.get("sourceTechnology")}
-                    deleteChip={(
-                      category: string | ToolbarChipGroup,
-                      chip: ToolbarChip | string
-                    ) => removeFilter("sourceTechnology", chip)}
-                    deleteChipGroup={() => setFilter("sourceTechnology", [])}
-                    categoryName={{
-                      key: "sourceTechnology",
-                      name: "Source",
-                    }}
-                  >
-                    <SimpleSelect
-                      maxHeight={300}
-                      variant={SelectVariant.checkbox}
-                      aria-label="sourceTechnology"
-                      aria-labelledby="sourceTechnology"
-                      placeholderText="Source"
-                      value={filters.get("sourceTechnology")?.map(toOption)}
-                      options={technologies.source.map(toOption)}
-                      onChange={(option) => {
-                        const optionValue = option as OptionWithValue<string>;
+                  {technologies.source.length > 0 && (
+                    <ToolbarFilter
+                      chips={filters.get("sourceTechnology")}
+                      deleteChip={(
+                        category: string | ToolbarChipGroup,
+                        chip: ToolbarChip | string
+                      ) => removeFilter("sourceTechnology", chip)}
+                      deleteChipGroup={() => setFilter("sourceTechnology", [])}
+                      categoryName={{
+                        key: "sourceTechnology",
+                        name: "Source",
+                      }}
+                    >
+                      <SimpleSelect
+                        maxHeight={300}
+                        variant={SelectVariant.checkbox}
+                        aria-label="sourceTechnology"
+                        aria-labelledby="sourceTechnology"
+                        placeholderText="Source"
+                        value={filters.get("sourceTechnology")?.map(toOption)}
+                        options={technologies.source.map(toOption)}
+                        onChange={(option) => {
+                          const optionValue = option as OptionWithValue<string>;
 
-                        const elementExists = (
-                          filters.get("sourceTechnology") || []
-                        ).some((f) => f.key === optionValue.value);
-                        let newElements: ToolbarChip[];
-                        if (elementExists) {
-                          newElements = (
+                          const elementExists = (
                             filters.get("sourceTechnology") || []
-                          ).filter((f) => f.key !== optionValue.value);
-                        } else {
-                          newElements = [
-                            ...(filters.get("sourceTechnology") || []),
-                            toToolbarChip(optionValue),
-                          ];
-                        }
+                          ).some((f) => f.key === optionValue.value);
+                          let newElements: ToolbarChip[];
+                          if (elementExists) {
+                            newElements = (
+                              filters.get("sourceTechnology") || []
+                            ).filter((f) => f.key !== optionValue.value);
+                          } else {
+                            newElements = [
+                              ...(filters.get("sourceTechnology") || []),
+                              toToolbarChip(optionValue),
+                            ];
+                          }
 
-                        setFilter("sourceTechnology", newElements);
+                          setFilter("sourceTechnology", newElements);
+                        }}
+                        hasInlineFilter
+                        onClear={() => setFilter("sourceTechnology", [])}
+                      />
+                    </ToolbarFilter>
+                  )}
+                  {technologies.target.length > 0 && (
+                    <ToolbarFilter
+                      chips={filters.get("targetTechnology")}
+                      deleteChip={(
+                        category: string | ToolbarChipGroup,
+                        chip: ToolbarChip | string
+                      ) => removeFilter("targetTechnology", chip)}
+                      deleteChipGroup={() => setFilter("targetTechnology", [])}
+                      categoryName={{
+                        key: "targetTechnology",
+                        name: "Target",
                       }}
-                      hasInlineFilter
-                      onClear={() => setFilter("sourceTechnology", [])}
-                    />
-                  </ToolbarFilter>
-                  <ToolbarFilter
-                    chips={filters.get("targetTechnology")}
-                    deleteChip={(
-                      category: string | ToolbarChipGroup,
-                      chip: ToolbarChip | string
-                    ) => removeFilter("targetTechnology", chip)}
-                    deleteChipGroup={() => setFilter("targetTechnology", [])}
-                    categoryName={{
-                      key: "targetTechnology",
-                      name: "Target",
-                    }}
-                  >
-                    <SimpleSelect
-                      maxHeight={300}
-                      variant={SelectVariant.checkbox}
-                      aria-label="targetTechnology"
-                      aria-labelledby="targetTechnology"
-                      placeholderText="Target"
-                      value={filters.get("targetTechnology")?.map(toOption)}
-                      options={technologies.target.map(toOption)}
-                      onChange={(option) => {
-                        const optionValue = option as OptionWithValue<string>;
+                    >
+                      <SimpleSelect
+                        maxHeight={300}
+                        variant={SelectVariant.checkbox}
+                        aria-label="targetTechnology"
+                        aria-labelledby="targetTechnology"
+                        placeholderText="Target"
+                        value={filters.get("targetTechnology")?.map(toOption)}
+                        options={technologies.target.map(toOption)}
+                        onChange={(option) => {
+                          const optionValue = option as OptionWithValue<string>;
 
-                        const elementExists = (
-                          filters.get("targetTechnology") || []
-                        ).some((f) => f.key === optionValue.value);
-                        let newElements: ToolbarChip[];
-                        if (elementExists) {
-                          newElements = (
+                          const elementExists = (
                             filters.get("targetTechnology") || []
-                          ).filter((f) => f.key !== optionValue.value);
-                        } else {
-                          newElements = [
-                            ...(filters.get("targetTechnology") || []),
-                            toToolbarChip(optionValue),
-                          ];
-                        }
+                          ).some((f) => f.key === optionValue.value);
+                          let newElements: ToolbarChip[];
+                          if (elementExists) {
+                            newElements = (
+                              filters.get("targetTechnology") || []
+                            ).filter((f) => f.key !== optionValue.value);
+                          } else {
+                            newElements = [
+                              ...(filters.get("targetTechnology") || []),
+                              toToolbarChip(optionValue),
+                            ];
+                          }
 
-                        setFilter("targetTechnology", newElements);
-                      }}
-                      hasInlineFilter
-                      onClear={() => setFilter("targetTechnology", [])}
-                    />
-                  </ToolbarFilter>
+                          setFilter("targetTechnology", newElements);
+                        }}
+                        hasInlineFilter
+                        onClear={() => setFilter("targetTechnology", [])}
+                      />
+                    </ToolbarFilter>
+                  )}
                 </ToolbarGroup>
                 {analysisConfigurationQuery.data?.exportCSV && (
                   <>

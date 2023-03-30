@@ -20,6 +20,8 @@ public class ApplicationIssuesDto {
         private int totalStoryPoints;
         private List<LinkDto> links;
         private List<IssueAffectedFilesDto> affectedFiles;
+        private List<String> sourceTechnologies;
+        private List<String> targetTechnologies;
     }
 
     @Data

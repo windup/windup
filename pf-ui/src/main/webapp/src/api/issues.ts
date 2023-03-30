@@ -135,6 +135,8 @@ export interface IssueDto {
   totalStoryPoints: number;
   links: LinkDto[];
   affectedFiles: IssueAffectedFilesDto[];
+  sourceTechnologies?: string[];
+  targetTechnologies?: string[];
 }
 
 export interface IssueAffectedFilesDto {
