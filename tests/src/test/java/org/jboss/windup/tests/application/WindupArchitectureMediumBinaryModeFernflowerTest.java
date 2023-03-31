@@ -12,7 +12,7 @@ public class WindupArchitectureMediumBinaryModeFernflowerTest extends WindupArch
         final String path = "../test-files/Windup1x-javaee-example.war";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, false);
+            super.runTest(context, true, path, false);
             allDecompiledFilesAreLinked(context);
             validateManifestEntries(context);
             validateReports(context);

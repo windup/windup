@@ -40,7 +40,7 @@ public class WindupArchitectureSeamBookingSourceTest extends WindupArchitectureT
     public void testRunWindupSeamBookingSourceMode() throws Exception {
         try (GraphContext context = createGraphContext()) {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/seam-booking-5.2", true);
+            super.runTest(context, true, "../test-files/seam-booking-5.2", true);
 
             TechnologyTagService technologyTagService = new TechnologyTagService(context);
             List<TechnologyTagModel> technologyTagModels = technologyTagService.findAll();

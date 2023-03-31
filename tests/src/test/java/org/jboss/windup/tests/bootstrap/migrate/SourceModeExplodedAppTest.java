@@ -16,7 +16,7 @@ public class SourceModeExplodedAppTest extends AbstractBootstrapTestWithRules {
 
     @Test
     public void sourceModeExplodedApp() throws IOException {
-        bootstrap("--input", "../test-files/src_example",
+        bootstrap("--legacyReports", "--input", "../test-files/src_example",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",

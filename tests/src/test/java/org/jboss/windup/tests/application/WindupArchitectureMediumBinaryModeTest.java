@@ -1,9 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -24,10 +20,14 @@ import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileRepo
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
+import org.jboss.windup.testutil.html.TestHardcodedPReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
-import org.jboss.windup.testutil.html.TestHardcodedPReportUtil;
 import org.junit.Assert;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public abstract class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest {
 

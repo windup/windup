@@ -80,7 +80,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         try (GraphContext context = createGraphContext(outputPath)) {
             List<String> inputPaths = Arrays.asList(path1, path2, path3);
 
-            super.runTest(context, inputPaths, false);
+            super.runTest(context, true, inputPaths, false);
             validateApplicationList(context);
             validateReportIndex(context);
             validateMigrationIssues(context);

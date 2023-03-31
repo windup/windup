@@ -123,8 +123,10 @@
         <module>exec</module>
         <module>tooling</module>
         <module>reporting</module>
+        <module>reporting-data</module>
         <module>rules-java-project</module>
         <module>ui</module>
+        <module>pf-ui</module>
 
         <module>utils</module>
         <module>test-files</module>

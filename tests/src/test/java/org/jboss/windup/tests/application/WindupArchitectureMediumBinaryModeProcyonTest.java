@@ -1,12 +1,12 @@
 package org.jboss.windup.tests.application;
 
-import java.util.Properties;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.graph.GraphContext;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Properties;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchitectureMediumBinaryModeTest {
@@ -17,7 +17,7 @@ public class WindupArchitectureMediumBinaryModeProcyonTest extends WindupArchite
         try (GraphContext context = createGraphContext()) {
             Properties props = System.getProperties();
             props.setProperty("windup.decompiler", "Procyon");
-            super.runTest(context, path, false);
+            super.runTest(context, true, path, false);
             props.remove("windup.decompiler");
             allDecompiledFilesAreLinked(context);
         }

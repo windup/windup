@@ -49,7 +49,7 @@ public class UnparsablesReportTest extends WindupArchitectureTest {
     public void testRunWindup() throws Exception {
         final String path = "../test-files/jee-example-app-1.0.0.ear";
         try (GraphContext context = super.createGraphContext()) {
-            super.runTest(context, path, false);
+            super.runTest(context, true, path, false);
             validateUnparsablesReport(context);
         }
     }

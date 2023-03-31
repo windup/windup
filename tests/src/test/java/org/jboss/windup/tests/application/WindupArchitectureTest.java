@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -35,7 +36,11 @@ import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Base class for Windup end-to-end tests.
@@ -58,7 +63,7 @@ public abstract class WindupArchitectureTest {
         return factory;
     }
 
-    Path getDefaultPath() {
+    protected Path getDefaultPath() {
         return FileUtils.getTempDirectory().toPath().resolve("Windup")
                 .resolve("windupgraph_" + RandomStringUtils.randomAlphanumeric(6));
     }
@@ -67,69 +72,72 @@ public abstract class WindupArchitectureTest {
         return createGraphContext(getDefaultPath());
     }
 
-    GraphContext createGraphContext(Path path) {
+    protected GraphContext createGraphContext(Path path) {
         return factory.create(path, true);
     }
 
-    protected void runTest(String inputPath, boolean sourceMode) throws Exception {
-        runTest(Collections.singletonList(inputPath), sourceMode);
+    protected void runTest(boolean legacyReports, String inputPath, boolean sourceMode) throws Exception {
+        runTest(legacyReports, Collections.singletonList(inputPath), sourceMode);
     }
 
-    protected void runTest(Iterable<String> inputPaths, boolean sourceMode) throws Exception {
+    protected void runTest(boolean legacyReports, Iterable<String> inputPaths, boolean sourceMode) throws Exception {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(createGraphContext(), inputPaths, null, sourceMode, includeList, excludeList);
+        runTest(createGraphContext(), legacyReports, inputPaths, null, sourceMode, includeList, excludeList);
     }
 
-    protected void runTest(GraphContext graphContext, String inputPath, String userRulesDir, boolean sourceMode) throws Exception {
+    protected void runTest(GraphContext graphContext, boolean legacyReports, String inputPath, String userRulesDir, boolean sourceMode) throws Exception {
         List<String> incl = Collections.emptyList();
         List<String> excl = Collections.emptyList();
-        runTest(graphContext, Collections.singletonList(inputPath), Collections.singletonList(new File(userRulesDir)), sourceMode, incl, excl);
+        runTest(graphContext, legacyReports, Collections.singletonList(inputPath), Collections.singletonList(new File(userRulesDir)), sourceMode, incl, excl);
     }
 
-    protected void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
+    protected void runTest(GraphContext graphContext, boolean legacyReports, String inputPath, boolean sourceMode)
             throws Exception {
-        runTest(graphContext, Collections.singletonList(inputPath), sourceMode);
+        runTest(graphContext, legacyReports, Collections.singletonList(inputPath), sourceMode);
     }
 
-    void runTest(GraphContext graphContext, Iterable<String> inputPaths, boolean sourceMode)
+    protected void runTest(GraphContext graphContext, boolean legacyReports, Iterable<String> inputPaths, boolean sourceMode)
             throws Exception {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPaths, null, sourceMode, includeList, excludeList);
+        runTest(graphContext, legacyReports, inputPaths, null, sourceMode, includeList, excludeList);
     }
 
-    void runTest(GraphContext graphContext, String inputPath, boolean sourceMode,
+    protected void runTest(GraphContext graphContext, boolean legacyReports, String inputPath, boolean sourceMode,
                  List<String> includePackages) throws Exception {
-        runTest(graphContext, Collections.singletonList(inputPath), sourceMode, includePackages);
+        runTest(graphContext, legacyReports, Collections.singletonList(inputPath), sourceMode, includePackages);
     }
 
-    void runTest(GraphContext graphContext, Iterable<String> inputPaths, boolean sourceMode,
+    protected void runTest(GraphContext graphContext, boolean legacyReports, Iterable<String> inputPaths, boolean sourceMode,
                  List<String> includePackages) throws Exception {
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPaths, null, sourceMode, includePackages, excludeList);
+        runTest(graphContext, legacyReports, inputPaths, null, sourceMode, includePackages, excludeList);
     }
 
-    void runTest(final GraphContext graphContext,
+    protected void runTest(final GraphContext graphContext,
+                 final boolean legacyReports,
                  final String inputPath,
                  final Iterable<File> userRulesDirs,
                  final boolean sourceMode,
                  final List<String> includePackages,
                  final List<String> excludePackages) throws Exception {
-        runTest(graphContext, Collections.singletonList(inputPath), userRulesDirs, sourceMode, includePackages, excludePackages);
+        runTest(graphContext, legacyReports, Collections.singletonList(inputPath), userRulesDirs, sourceMode, includePackages, excludePackages);
     }
 
-    void runTest(final GraphContext graphContext,
+    protected void runTest(final GraphContext graphContext,
+                 final boolean legacyReports,
                  final Iterable<String> inputPaths,
                  final Iterable<File> userRulesDirs,
                  final boolean sourceMode,
                  final List<String> includePackages,
                  final List<String> excludePackages) throws Exception {
         Map<String, Object> otherOptions = Collections.emptyMap();
-        runTest(graphContext, inputPaths, userRulesDirs, sourceMode, includePackages, excludePackages, otherOptions);
+        runTest(graphContext, legacyReports, inputPaths, userRulesDirs, sourceMode, includePackages, excludePackages, otherOptions);
     }
 
-    void runTest(final GraphContext graphContext,
+    protected void runTest(final GraphContext graphContext,
+                 final boolean legacyReports,
                  final Iterable<String> inputPaths,
                  final Iterable<File> userRulesDirs,
                  final boolean sourceMode,
@@ -151,6 +159,8 @@ public abstract class WindupArchitectureTest {
                 windupConfiguration.addDefaultUserLabelsDirectory(uRulesDir.toPath());
             }
         }
+
+        windupConfiguration.setOptionValue(LegacyReportsRenderingOption.NAME, legacyReports);
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);

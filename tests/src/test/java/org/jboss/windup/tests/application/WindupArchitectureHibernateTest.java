@@ -54,7 +54,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest {
         List<String> includeList = Collections.singletonList("nocodescanning");
         List<String> excludeList = Collections.emptyList();
         try (GraphContext context = super.createGraphContext()) {
-            super.runTest(context, path, null, false, includeList, excludeList);
+            super.runTest(context, true, path, null, false, includeList, excludeList);
             validateHibernateFiles(context);
             validateReports(context);
         }

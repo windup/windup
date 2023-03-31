@@ -24,7 +24,7 @@ public class DependencyGraphEnablementTest extends AbstractBootstrapTestWithRule
         bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
-        bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",
+        bootstrap("--legacyReports", "--input", "../test-files/Windup1x-javaee-example-tiny.war",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",
@@ -35,7 +35,7 @@ public class DependencyGraphEnablementTest extends AbstractBootstrapTestWithRule
 
     @Test
     public void dependencyGraphDisabledByDefaultWithSourceMode() {
-        bootstrap("--input", "../test-files/src_example",
+        bootstrap("--legacyReports", "--input", "../test-files/src_example",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",

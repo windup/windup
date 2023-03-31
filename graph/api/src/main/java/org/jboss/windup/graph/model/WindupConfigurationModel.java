@@ -29,6 +29,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     String SKIP_REPORTS_RENDERING = "skipReports";
     String SKIP_SOURCE_CODE_REPORTS_RENDERING = "skipSourceCodeReports";
     String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
+    String LEGACY_REPORTS = "legacyReports";
 
     /**
      * The input path to scan

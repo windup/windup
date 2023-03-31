@@ -1,20 +1,8 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.jboss.windup.graph.GraphContext;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -22,10 +10,20 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Test for stopping Windup. Stops before ArchiveExtractionPhase.
@@ -81,7 +79,7 @@ public class WindupArchitectureStopTest extends WindupArchitectureTest {
                 // The test-files folder in the project root dir.
                 List<String> includeList = Collections.emptyList();
                 List<String> excludeList = Collections.emptyList();
-                super.runTest(context, "../test-files/src_example", Collections.singletonList(userPath.toFile()), true, includeList, excludeList);
+                super.runTest(context, true, "../test-files/src_example", Collections.singletonList(userPath.toFile()), true, includeList, excludeList);
 
             }
         } finally {
