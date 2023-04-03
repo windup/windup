@@ -11,6 +11,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.ExportZipOutputOption;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
@@ -473,6 +474,15 @@ public class WindupConfiguration {
     public boolean isExportingSummary() {
         Boolean export = getOptionValue(ExportSummaryOption.NAME);
         return export == null ? false : export;
+    }
+
+    public WindupConfiguration setExportingZipReport(boolean export) {
+        setOptionValue(ExportZipOutputOption.NAME, export);
+        return this;
+    }
+    public boolean isExportingZipReport() {
+        Boolean export = getOptionValue(ExportZipOutputOption.NAME);
+        return export != null && export;
     }
 
 }
