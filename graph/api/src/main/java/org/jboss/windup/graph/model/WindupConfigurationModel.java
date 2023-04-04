@@ -30,6 +30,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     String SKIP_SOURCE_CODE_REPORTS_RENDERING = "skipSourceCodeReports";
     String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
     String LEGACY_REPORTS = "legacyReports";
+    String EXPORT_ZIP_REPORT = "exportZipReport";
 
     /**
      * The input path to scan
@@ -202,4 +203,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
      */
     @Property(SUMMARY_MODE)
     void setExportingSummary(boolean summary);
+
+    /**
+     * Indicates whether or not to export ZIP file
+     */
+    @Property(EXPORT_ZIP_REPORT)
+    boolean isExportingZipReport();
+
+    /**
+     * Indicates whether or not to export ZIP file
+     */
+    @Property(EXPORT_ZIP_REPORT)
+    void setExportingZipReport(boolean summary);
 }

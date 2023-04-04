@@ -12,6 +12,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
+import org.jboss.windup.config.ExportZipOutputOption;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.LegacyReportsRenderingOption;
@@ -197,6 +198,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         configurationModel.setExportingCSV(configuration.isExportingCSV());
         configurationModel.setExportingSummary(configuration.isExportingSummary());
         configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
+        configurationModel.setExportingZipReport(configuration.isExportingZipReport());
 
         addUserRulesDirsToConfig(configuration, graphContext, configurationModel);
         addUserLabelsDirsToConfig(configuration, graphContext, configurationModel);
