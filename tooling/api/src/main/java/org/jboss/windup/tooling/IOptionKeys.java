@@ -30,4 +30,5 @@ public interface IOptionKeys {
     public static final String KEEP_WORK_DIRS = "keepWorkDirs";
     public static final String MAVENIZE = "mavenize";
     public static final String INPUT_APPLICATION_NAME = "inputApplicationName";
+    public static final String LEGACY_REPORTS = "legacyReports";
 }
