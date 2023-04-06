@@ -118,6 +118,7 @@ public class ToolingModeCommand implements Command {
         System.out.println("source: " + source);
         System.out.println("target: " + target);
         System.out.println("userRulesDirectory: " + rulesDir);
+        System.out.println("legacyReports: " + this.legacyReports());
         furnace.getAddonRegistry().getServices(ToolingModeRunner.class).get().run(input, output, sourceMode,
                 ignoreReport, ignorePatterns, windupHome, source, target, rulesDir, packages, excludePackage, options);
     }
@@ -197,6 +198,9 @@ public class ToolingModeCommand implements Command {
         if (inputApplicationName != null) {
             options.put(IOptionKeys.INPUT_APPLICATION_NAME, inputApplicationName);
         }
+
+        // legacyReports
+        options.put(IOptionKeys.LEGACY_REPORTS, this.legacyReports());
 
         return options;
     }
@@ -365,6 +369,10 @@ public class ToolingModeCommand implements Command {
         int index = arguments.indexOf(toArg(IOptionKeys.INPUT_APPLICATION_NAME)) + 1;
         List<String> values = this.getValues(index);
         return values.size() == 1 ? values.get(0) : null;
+    }
+
+    private boolean legacyReports() {
+        return this.arguments.contains(toArg(IOptionKeys.LEGACY_REPORTS));
     }
 
     private static String toArg(String name) {
