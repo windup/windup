@@ -45,7 +45,7 @@ public class ExportZipReportRuleProvider extends AbstractRuleProvider {
                                 final WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                                 try {
                                     final FileModel outputFolderToZip = windupConfiguration.getOutputPath();
-                                    ZipUtil.zipFolder(outputFolderToZip.asFile().toPath(), outputFolderToZip.getFilePath(), ZIP_REPORTS_NAME, List.of(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY));
+                                    ZipUtil.zipFolder(outputFolderToZip.asFile().toPath(), outputFolderToZip.getFilePath(), ZIP_REPORTS_NAME, List.of(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY, "logs"));
                                 } catch (IOException e) {
                                     throw new WindupException(e);
                                 }
