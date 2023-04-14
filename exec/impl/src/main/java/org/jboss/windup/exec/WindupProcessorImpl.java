@@ -12,7 +12,6 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
-import org.jboss.windup.config.ExportZipOutputOption;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.LegacyReportsRenderingOption;
