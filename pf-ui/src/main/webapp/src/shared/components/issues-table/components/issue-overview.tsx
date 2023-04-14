@@ -52,7 +52,7 @@ export const IssueOverview: React.FC<IIssueOverviewProps> = ({
                     <Tbody>
                       {affectedFile.files.map((file, index) => (
                         <Tr key={index}>
-                          <Td dataLabel="File">
+                          <Td dataLabel="File" modifier="breakWord">
                             <FileLink
                               fileId={file.fileId}
                               defaultText={file.fileName}
