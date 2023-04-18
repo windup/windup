@@ -294,7 +294,7 @@ export const ApplicationFilesTable: React.FC<IApplicationFilesTableProps> = ({
             rows={rows}
             cells={columns}
             actions={actions}
-            // Fech data
+            // Fetch data
             isLoading={applicationsDetailsQuery.isFetching}
             loadingVariant="skeleton"
             fetchError={applicationsDetailsQuery.isError}
@@ -308,7 +308,7 @@ export const ApplicationFilesTable: React.FC<IApplicationFilesTableProps> = ({
                       variant={ButtonVariant.link}
                       onClick={() => setExpandedRows([])}
                     >
-                      Collapes all
+                      Collapse all
                     </Button>
                   </ToolbarItem>
                   <ToolbarItem>
