@@ -128,12 +128,7 @@ public class RunWindupCommand implements Command, FurnaceDependent {
                         i--;
                         break;
                     }
-
-                    String valueString = arguments.get(i);
-                    // Lists are space delimited. split them here.
-                    for (String value : StringUtils.split(valueString, ' '))
-                        values.add(convertType(option.getType(), value));
-
+                    values.add(convertType(option.getType(), arguments.get(i)));
                     i++;
                 }
 
