@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.3.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.reporting</groupId>
@@ -31,8 +31,8 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v16.14.0</nodeVersion>
-                            <npmVersion>8.5.4</npmVersion>
+                            <nodeVersion>v16.20.0</nodeVersion>
+                            <npmVersion>8.19.4</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -92,7 +92,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${build.outputDirectory}</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.build.directory}/distributions/</directory>
