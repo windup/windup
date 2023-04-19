@@ -66,7 +66,7 @@ public class DependencyGraphItem {
             boolean isSkipped = projectModel.getRootFileModel() instanceof IdentifiedArchiveModel;
             switch (projectType.toLowerCase()) {
                 case "jar":
-            		return isChildren ? (isSkipped ? EXTERNAL_JAR : JAR) : JAR_APP;
+                    return isChildren ? (isSkipped ? EXTERNAL_JAR : JAR) : JAR_APP;
                 case "war":
                     return isChildren ? WAR : WAR_APP;
                 case "ear":
