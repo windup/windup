@@ -21,7 +21,7 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-bom</artifactId>
-    <version>6.1.9.Final</version>
+    <version>6.1.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup BOM</name>
