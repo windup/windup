@@ -128,7 +128,8 @@ public class RunWindupCommand implements Command, FurnaceDependent {
                         i--;
                         break;
                     }
-                    values.add(convertType(option.getType(), arguments.get(i)));
+                    final String valueString = arguments.get(i);
+                    if (!StringUtils.isBlank(valueString)) values.add(convertType(option.getType(), StringUtils.trim(valueString)));
                     i++;
                 }
 
