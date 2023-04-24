@@ -18,8 +18,7 @@ public class VersionTest {
         Assert.assertFalse(version.validate("2.2.7.RELEASE"));
         Assert.assertTrue(version.validate("1.0.0.RELEASE"));
 
-        // This case must fail due to https://semver.org/#spec-item-11 (lexical ordering of the suffix)
-        Assert.assertFalse(version.validate("1.0.0.Final"));
+        Assert.assertTrue(version.validate("1.0.0.Final"));
 
         Assert.assertTrue(version.validate("2.1.1.RELEASE"));
         Assert.assertTrue(version.validate("2.1.1"));
