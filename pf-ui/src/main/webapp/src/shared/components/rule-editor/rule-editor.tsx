@@ -40,7 +40,11 @@ export const RuleEditor: React.FC<IRuleEditorProps> = ({ ruleId, props }) => {
         isLanguageLabelVisible
         isDownloadEnabled
         code={ruleQuery.data?.content}
-        language={Language.xml}
+        language={
+          ruleQuery.data?.content.startsWith("<rule")
+            ? Language.xml
+            : Language.java
+        }
         onEditorDidMount={(editor, monaco) => {
           editor.layout();
           editor.focus();
