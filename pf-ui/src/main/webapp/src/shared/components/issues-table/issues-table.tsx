@@ -66,6 +66,7 @@ const areRowsEquals = (a: TableData, b: TableData) => {
 interface SelectedFile {
   fileId: string;
   ruleId: string;
+  issueDescription?: string;
 }
 
 //
@@ -417,10 +418,11 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
                 <div className="pf-u-m-sm">
                   <IssueOverview
                     issue={item}
-                    onShowFile={(file) =>
+                    onShowFile={(file, issueDescription) =>
                       openFileModal("showFile", {
                         fileId: file,
                         ruleId: item.ruleId,
+                        issueDescription: issueDescription,
                       })
                     }
                   />
@@ -760,9 +762,12 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
         {fileModalMappedFile && (
           <FileEditor
             file={fileModalMappedFile}
-            hintToFocus={fileModalMappedFile.hints.find(
-              (f) => f.ruleId === fileModalData?.ruleId
-            )}
+            hintToFocus={fileModalMappedFile.hints.find((hint) => {
+              return (
+                hint.ruleId === fileModalData?.ruleId &&
+                hint.content === fileModalData.issueDescription
+              );
+            })}
           />
         )}
       </Modal>
