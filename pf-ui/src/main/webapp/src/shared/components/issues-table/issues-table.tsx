@@ -325,7 +325,7 @@ export const IssuesTable: React.FC<IIssuesTableProps> = ({ applicationId }) => {
       let isTargetCompliant = true;
       const selectedTargets = debouncedFilters.get("targetTechnology") || [];
       if (selectedTargets.length > 0) {
-        isSourceCompliant = selectedTargets.some((f) => {
+        isTargetCompliant = selectedTargets.some((f) => {
           return item.targetTechnologies?.includes(f.key);
         });
       }
