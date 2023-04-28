@@ -15,9 +15,9 @@ import {
 } from "@patternfly/react-core";
 import { IAction, ICell, IRow, cellWidth } from "@patternfly/react-table";
 
-
 import { ApplicationFileDto } from "@app/api/application-details";
 import { FileDto } from "@app/api/file";
+import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { useFilesQuery } from "@app/queries/files";
 import { useIssuesQuery } from "@app/queries/issues";
 import { SimpleTableWithToolbar, FileEditor } from "@app/shared/components";
@@ -86,6 +86,7 @@ export const ApplicationFilesChildrenTable: React.FC<
   const findIssuesByFileId = useCallback(
     (fileId: string) => {
       return (allIssuesQuery.data || [])
+        .filter((f) => f.applicationId !== ALL_APPLICATIONS_ID)
         .flatMap((f) => f.issues)
         .filter((issue) => {
           return issue.affectedFiles
