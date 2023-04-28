@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class RuleDto {
     private String id;
+    private String ruleSetId;
     private Integer verticesAdded;
     private Integer verticesRemoved;
     private Integer edgesAdded;
