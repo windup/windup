@@ -110,6 +110,7 @@ const DataKey = "DataKey";
 
 const columns: ICell[] = [
   { title: "Phase", transforms: [] },
+  { title: "Ruleset", transforms: [] },
   { title: "ID", transforms: [] },
   {
     title: "Status",
@@ -133,7 +134,7 @@ export const RulesList: React.FC = () => {
   // Filters
   const [filterText, setFilterText] = useState("");
   const { filters, setFilter, removeFilter, clearAllFilters } = useToolbar<
-    "phase" | "status" | "result",
+    "phase" | "ruleset" | "status" | "result",
     ToolbarChip
   >();
 
@@ -141,6 +142,12 @@ export const RulesList: React.FC = () => {
     const phases = new Set<string>();
     allRulesQuery.data?.forEach((f) => phases.add(f.phase));
     return Array.from(phases).sort((a, b) => a.localeCompare(b));
+  }, [allRulesQuery.data]);
+
+  const ruleSets = useMemo(() => {
+    const ruleSets = new Set<string>();
+    allRulesQuery.data?.forEach((f) => ruleSets.add(f.ruleSetId));
+    return Array.from(ruleSets).sort((a, b) => a.localeCompare(b));
   }, [allRulesQuery.data]);
 
   // Modal
@@ -180,6 +187,14 @@ export const RulesList: React.FC = () => {
         isPhaseCompliant = selectedPhases.some((f) => item.phase === f.key);
       }
 
+      let isRulesetCompliant = true;
+      const selectedRulesets = filters.get("ruleset") || [];
+      if (selectedRulesets.length > 0) {
+        isRulesetCompliant = selectedRulesets.some(
+          (f) => item.ruleSetId === f.key
+        );
+      }
+
       let isStatusCompliant = true;
       const selectedStatus = filters.get("status") || [];
       if (selectedStatus.length > 0) {
@@ -199,6 +214,7 @@ export const RulesList: React.FC = () => {
       return (
         isFilterTextFilterCompliant &&
         isPhaseCompliant &&
+        isRulesetCompliant &&
         isStatusCompliant &&
         isResultCompliant
       );
@@ -217,6 +233,9 @@ export const RulesList: React.FC = () => {
         cells: [
           {
             title: item.phase,
+          },
+          {
+            title: item.ruleSetId,
           },
           {
             title: item.id,
@@ -393,6 +412,47 @@ export const RulesList: React.FC = () => {
                     }}
                     hasInlineFilter
                     onClear={() => setFilter("phase", [])}
+                  />
+                </ToolbarFilter>
+                <ToolbarFilter
+                  chips={filters.get("ruleset")}
+                  deleteChip={(
+                    category: string | ToolbarChipGroup,
+                    chip: ToolbarChip | string
+                  ) => removeFilter("ruleset", chip)}
+                  deleteChipGroup={() => setFilter("ruleset", [])}
+                  categoryName={{ key: "ruleset", name: "Ruleset" }}
+                >
+                  <SimpleSelect
+                    maxHeight={300}
+                    variant={SelectVariant.checkbox}
+                    aria-label="ruleset"
+                    aria-labelledby="ruleset"
+                    placeholderText="Ruleset"
+                    value={filters.get("ruleset")?.map(toOption)}
+                    options={ruleSets.map(toOption)}
+                    onChange={(option) => {
+                      const optionValue = option as OptionWithValue<string>;
+
+                      const elementExists = (filters.get("ruleset") || []).some(
+                        (f) => f.key === optionValue.value
+                      );
+                      let newElements: ToolbarChip[];
+                      if (elementExists) {
+                        newElements = (filters.get("ruleset") || []).filter(
+                          (f) => f.key !== optionValue.value
+                        );
+                      } else {
+                        newElements = [
+                          ...(filters.get("ruleset") || []),
+                          toToolbarChip(optionValue),
+                        ];
+                      }
+
+                      setFilter("ruleset", newElements);
+                    }}
+                    hasInlineFilter
+                    onClear={() => setFilter("ruleset", [])}
                   />
                 </ToolbarFilter>
               </ToolbarGroup>

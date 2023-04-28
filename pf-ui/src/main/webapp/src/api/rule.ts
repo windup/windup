@@ -4,6 +4,7 @@ export interface RuleGroupDto {
 
 export interface RuleDto {
   id: string;
+  ruleSetId: string;
   sourceTechnology?: TechnologyDto[];
   targetTechnology?: TechnologyDto[];
   edgesAdded?: number;
