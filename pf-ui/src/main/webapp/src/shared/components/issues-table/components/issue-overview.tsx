@@ -27,7 +27,7 @@ import { getMarkdown } from "@app/utils/rule-utils";
 
 interface IIssueOverviewProps {
   issue: IssueDto;
-  onShowFile: (fileId: string) => void;
+  onShowFile: (fileId: string, issueDescription?: string) => void;
 }
 
 export const IssueOverview: React.FC<IIssueOverviewProps> = ({
@@ -56,7 +56,12 @@ export const IssueOverview: React.FC<IIssueOverviewProps> = ({
                             <FileLink
                               fileId={file.fileId}
                               defaultText={file.fileName}
-                              onClick={() => onShowFile(file.fileId)}
+                              onClick={() =>
+                                onShowFile(
+                                  file.fileId,
+                                  affectedFile.description
+                                )
+                              }
                             />
                           </Td>
                           <Td dataLabel="Incidents found" width={10}>
