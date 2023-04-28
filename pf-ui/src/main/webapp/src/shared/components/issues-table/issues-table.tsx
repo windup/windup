@@ -33,6 +33,7 @@ import {
 } from "@patternfly/react-table";
 import { useDebounce } from "usehooks-ts";
 
+import { HintDto } from "@app/api/file";
 import { compareByCategoryFn, compareByEffortFn } from "@app/api/issues";
 import { ALL_APPLICATIONS_ID } from "@app/Constants";
 import { IssueProcessed } from "@app/models/api-enriched";
@@ -56,7 +57,6 @@ import {
 } from "@app/shared/hooks";
 
 import { IssueOverview } from "./components/issue-overview";
-import { HintDto } from "@app/api/file";
 
 const areRowsEquals = (a: TableData, b: TableData) => {
   return a.id === b.id;
