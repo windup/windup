@@ -36,6 +36,7 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
 
         RuleProviderRegistry.instance(event).getProviders().forEach(ruleProvider -> {
             if (ruleProvider instanceof AbstractRuleProvider) {
+                String ruleSetId = ruleProvider.getMetadata().getID();
                 String phase = ruleProvider.getMetadata().getPhase().getSimpleName();
 
                 List<RuleDto.TechnologyDto> sourceTechnology = ruleProvider.getMetadata().getSourceTechnologies().stream().map(technologyReference -> {
@@ -59,6 +60,7 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
                             RuleDto ruleDto = new RuleDto();
 
                             ruleDto.setId(ruleExecutionInformation.getRule().getId());
+                            ruleDto.setRuleSetId(ruleSetId);
                             ruleDto.setVerticesAdded(ruleExecutionInformation.getVertexIDsAdded());
                             ruleDto.setEdgesAdded(ruleExecutionInformation.getEdgeIDsAdded());
                             ruleDto.setVerticesRemoved(ruleExecutionInformation.getVertexIDsRemoved());
