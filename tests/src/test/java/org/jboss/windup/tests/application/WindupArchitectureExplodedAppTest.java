@@ -73,7 +73,7 @@ public class WindupArchitectureExplodedAppTest extends WindupArchitectureTest {
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
         dependencyGraphReportUtil.loadPage(dependencyReport);
-        Assert.assertEquals(21, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
+        Assert.assertEquals(22, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName(EXPLODED_APP_DIR));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("commons-logging-1.1.1.jar"));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("standard-1.1.2.jar"));

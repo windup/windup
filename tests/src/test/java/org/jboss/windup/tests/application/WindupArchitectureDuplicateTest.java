@@ -205,7 +205,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
         dependencyGraphReportUtil.loadPage(dependencyReport);
-        Assert.assertEquals(18, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
+        Assert.assertEquals(19, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("duplicate-ear-test-3.ear"));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("log4j-1.2.6.jar"));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("jee-example-services2.jar"));
