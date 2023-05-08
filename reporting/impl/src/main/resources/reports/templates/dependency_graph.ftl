@@ -80,6 +80,13 @@
                     </svg>
                 </kubernetes-topology-icon>
                 <label>WARs</label>
+                <kubernetes-topology-icon kind="JarApp">
+                    <svg class="app-topology">
+                        <use xlink:href="#vertex-JarApp" x="15" y="15"></use>
+                    </svg>
+                </kubernetes-topology-icon>
+                <label>JARs</label>
+
                 <br/>
                 <label class="legend">Embedded: </label>
                 <kubernetes-topology-icon kind="War">
@@ -115,6 +122,10 @@
                     <g class="WarApp" id="vertex-WarApp">
                         <circle r="15" fill="#fff" stroke="#aaa"></circle>
                         <text y="5" x="0.5" fill="#0B3C5D" font-family="FontAwesome" font-size="16px" text-anchor="middle">&#xf1b3;</text>
+                    </g>
+                    <g class="JarApp" id="vertex-JarApp">
+                        <circle r="15" fill="#fff" stroke="#aaa"></circle>
+                        <text y="5" x="0.5" fill="#0B3C5D" font-family="FontAwesome" font-size="16px" text-anchor="middle">&#xf1b2;</text>
                     </g>
                     <g class="War" id="vertex-War">
                         <circle r="15" fill="#fff" stroke="#aaa"></circle>

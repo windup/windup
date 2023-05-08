@@ -37,7 +37,7 @@ public class DependencyGraphItem {
 
     enum Kind {
 
-        EAR("Ear"), WAR_APP("WarApp"), WAR("War"), JAR("Jar"), EXTERNAL_JAR("ExternalJar"), UNKNOWN("unknown");
+        EAR("Ear"), WAR_APP("WarApp"), JAR_APP("JarApp"), WAR("War"), JAR("Jar"), EXTERNAL_JAR("ExternalJar"), UNKNOWN("unknown");
 
         private String value;
 
@@ -66,7 +66,7 @@ public class DependencyGraphItem {
             boolean isSkipped = projectModel.getRootFileModel() instanceof IdentifiedArchiveModel;
             switch (projectType.toLowerCase()) {
                 case "jar":
-                    return isSkipped ? EXTERNAL_JAR : JAR;
+                    return isChildren ? (isSkipped ? EXTERNAL_JAR : JAR) : JAR_APP;
                 case "war":
                     return isChildren ? WAR : WAR_APP;
                 case "ear":
