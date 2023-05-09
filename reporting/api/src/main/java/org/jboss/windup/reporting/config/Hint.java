@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -15,12 +14,9 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadataType;
-import org.jboss.windup.config.metadata.RuleProviderMetadata;
-import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
@@ -42,8 +38,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.jboss.windup.reporting.config.TechnologiesIntersector.*;
 
 /**
@@ -60,6 +54,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private Set<String> tags = Collections.emptySet();
     private List<Quickfix> quickfixes = new ArrayList<>();
     private IssueDisplayMode issueDisplayMode = IssueDisplayMode.Defaults.DEFAULT_DISPLAY_MODE;
+    private boolean hintTitleGenerationFailureAlreadyLogged = false;
+    private boolean hintBodyGenerationFailureAlreadyLogged = false;
 
     protected Hint(String variable) {
         super(variable);
@@ -150,8 +146,9 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 try {
                     hintModel.setTitle(StringUtils.trim(hintTitlePattern.getBuilder().build(event, context)));
                 } catch (Throwable t) {
-                    LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
+                    if (!hintTitleGenerationFailureAlreadyLogged) LOG.log(Level.WARNING, "Failed to generate parameterized Hint title (due to: '" + t.getMessage() + "'). Fall back to use the Hint title as plain text.");
                     hintModel.setTitle(hintTitlePattern.toString().trim());
+                    hintTitleGenerationFailureAlreadyLogged = true;
                 }
             } else {
                 // If there is no title, just use the description of the location
@@ -163,8 +160,9 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             try {
                 hintText = hintTextPattern.getBuilder().build(event, context);
             } catch (Throwable t) {
-                LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
+                if (!hintBodyGenerationFailureAlreadyLogged) LOG.log(Level.WARNING, "Failed to generate parameterized Hint body (due to: '" + t.getMessage() + "'). Fall back to use the Hint body as plain text.");
                 hintText = hintTextPattern.toString();
+                hintBodyGenerationFailureAlreadyLogged = true;
             }
             hintModel.setHint(StringUtils.trim(hintText));
 
