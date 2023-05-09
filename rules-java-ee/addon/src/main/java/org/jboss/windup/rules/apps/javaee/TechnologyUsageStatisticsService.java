@@ -28,7 +28,10 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         TechnologyUsageStatisticsModel result = null;
 
         for (TechnologyUsageStatisticsModel candidate : byName) {
-            if (candidate.getProjectModel().equals(projectModel)) {
+            // in case of JAR files embedded in the analyzed application,
+            // getProjectModel() returns the JAR itself so a technology won't be
+            // properly assigned the to analyzed application (i.e. getRootProjectModel())
+            if (candidate.getProjectModel().getRootProjectModel().equals(projectModel)) {
                 result = candidate;
                 break;
             }
