@@ -49,7 +49,10 @@ public class TechnologyUsageStatisticsModelExists extends GraphCondition {
         if (this.expectedCount != model.getOccurrenceCount())
             return false;
 
-        return model.getTags().containsAll(this.expectedTags);
+        // expectedTags could contain both "Java EE" and "Embedded"
+        // while the model could just have one of them
+        // so that's why is expectedTags that can contain model's tags
+        return this.expectedTags.containsAll(model.getTags());
     }
 
     public String getTechnologyName() {
