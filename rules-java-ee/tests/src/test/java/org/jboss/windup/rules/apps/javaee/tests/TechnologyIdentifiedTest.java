@@ -148,7 +148,7 @@ public class TechnologyIdentifiedTest {
             for (TechnologyUsageStatisticsModel model : service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, SHARED_LIBS_TECH)) {
                 LOG.info("Technology Usage Statistics Model: " + model);
                 ProjectModel project = model.getProjectModel();
-                if (project.getRootFileModel() != null && project.getRootFileModel().getFileName().equals("migration-support-1.0.0.jar"))
+                if (project.getRootFileModel() != null && project.getRootFileModel().getFileName().equals("shared-libs"))
                     foundMigrationSupportModule = true;
                 LOG.info("Project: " + project.getRootFileModel().getFileName());
                 numberFound++;

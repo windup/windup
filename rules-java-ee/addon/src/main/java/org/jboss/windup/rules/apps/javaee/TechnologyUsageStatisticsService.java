@@ -28,7 +28,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         TechnologyUsageStatisticsModel result = null;
 
         for (TechnologyUsageStatisticsModel candidate : byName) {
-            if (candidate.getProjectModel().equals(projectModel)) {
+            if (candidate.getProjectModel().equals(projectModel.getRootProjectModel())) {
                 result = candidate;
                 break;
             }
@@ -37,7 +37,10 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         if (result == null) {
             result = create();
             result.setComputed(new Date());
-            result.setProjectModel(projectModel);
+            // in case of JAR files embedded in the analyzed application,
+            // projectModel is the JAR itself so a technology won't be
+            // properly assigned to the analyzed application (i.e. getRootProjectModel())
+            result.setProjectModel(projectModel.getRootProjectModel());
             result.setName(technologyName);
             result.setOccurrenceCount(0);
         }
