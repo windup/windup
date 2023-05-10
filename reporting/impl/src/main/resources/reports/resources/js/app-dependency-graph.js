@@ -7,6 +7,7 @@ var kinds = {
   Ear: '#vertex-Ear',
   War: '#vertex-War',
   WarApp: '#vertex-WarApp',
+  JarApp: '#vertex-JarApp',
   Jar: '#vertex-Jar',
 }
 if (typeof showExternalJars !== 'undefined' && showExternalJars !== null && showExternalJars == true) {

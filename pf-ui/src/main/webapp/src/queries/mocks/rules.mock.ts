@@ -10,6 +10,7 @@ if (
 ) {
   const rule1: RuleDto = {
     id: "rule-1",
+    ruleSetId: "ruleSet1",
     sourceTechnology: [{ id: "source1" }],
     targetTechnology: [
       { id: "target1", versionRange: "[6,8)" },
@@ -19,6 +20,7 @@ if (
 
   const rule2: RuleDto = {
     id: "rule-2",
+    ruleSetId: "ruleSet1",
     targetTechnology: [{ id: "target3" }],
   };
 
