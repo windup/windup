@@ -111,7 +111,7 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
 
                 File[] childFiles = inputFile.listFiles();
                 if (childFiles == null)
-                    throw new RuntimeException("No files in input directory: " + inputFile);
+                    throw new RuntimeException("No files found in index directory: " + inputFile);
 
                 String[] args = { inputFile.getAbsolutePath(), outputDir.getAbsolutePath() };
                 try {
