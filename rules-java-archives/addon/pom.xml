@@ -43,6 +43,12 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies</artifactId>
             <classifier>forge-addon</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.lingala.zip4j</groupId>
+                    <artifactId>zip4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
