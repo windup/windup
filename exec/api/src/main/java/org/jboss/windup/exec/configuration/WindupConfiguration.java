@@ -11,18 +11,12 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.ExportZipOutputOption;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
-import org.jboss.windup.exec.configuration.options.ExportCSVOption;
-import org.jboss.windup.exec.configuration.options.InputApplicationName;
-import org.jboss.windup.exec.configuration.options.InputPathOption;
-import org.jboss.windup.exec.configuration.options.OnlineModeOption;
-import org.jboss.windup.exec.configuration.options.OutputPathOption;
-import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.exec.configuration.options.UserLabelsDirectoryOption;
+import org.jboss.windup.exec.configuration.options.*;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
@@ -471,6 +465,24 @@ public class WindupConfiguration {
 
     public boolean isAnalyseKnownLibrariesSet() {
         return (Boolean) Optional.ofNullable(getOptionMap().get(AnalyzeKnownLibrariesOption.NAME)).orElse(false);
+    }
+
+    public WindupConfiguration setExportingSummary(boolean export) {
+        setOptionValue(ExportSummaryOption.NAME, export);
+        return this;
+    }
+    public boolean isExportingSummary() {
+        Boolean export = getOptionValue(ExportSummaryOption.NAME);
+        return export == null ? false : export;
+    }
+
+    public WindupConfiguration setExportingZipReport(boolean export) {
+        setOptionValue(ExportZipOutputOption.NAME, export);
+        return this;
+    }
+    public boolean isExportingZipReport() {
+        Boolean export = getOptionValue(ExportZipOutputOption.NAME);
+        return export != null && export;
     }
 
 }

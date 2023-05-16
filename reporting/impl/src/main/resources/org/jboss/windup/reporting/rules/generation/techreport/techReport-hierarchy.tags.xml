@@ -29,7 +29,7 @@
 
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
-        <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
+        <tag name="techRow:java-ee" title="Java EE / Jakarta EE"  pseudo="true">
             <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
             <tag ref="techBox:web"/>
             -->
@@ -160,7 +160,7 @@
     -->
     <tag name="techReport:mappingOfPlacementTagNames">
         <tag name="techReport:placeRows">
-            <tag pseudo="true" name="place:Java EE" title="Java EE" parents="techRow:java-ee"/>
+            <tag pseudo="true" name="place:Java EE" title="Java EE / Jakarta EE" parents="techRow:java-ee"/>
             <tag pseudo="true" name="place:Embedded" title="Embedded" parents="techRow:embedded"/>
         </tag>
         <tag name="techReport:placeSectors">

@@ -84,6 +84,11 @@ public interface ExecutionBuilder extends Remote {
     void skipReportGeneration() throws RemoteException;
 
     /**
+     * Indicates that Windup should not generate source code reports at the end.
+     */
+    void skipSourceCodeReportGeneration() throws RemoteException;
+
+    /**
      * Adds a custom uer rules path.
      */
     void addUserRulesPath(String rulesPath) throws RemoteException;

@@ -237,7 +237,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         // Start executing rule
                         subContext.setState(RewriteState.PERFORMING);
                         final Object ruleProviderDesc = ((RuleBuilder) rule).get(RuleMetadataType.RULE_PROVIDER);
-                        log.info("Rule [" + ruleProviderDesc + "] matched and will be performed.");
+                        log.info("Rule [" + ruleProviderDesc + " - " + rule.getId() + "] matched and will be performed.");
 
                         // Run "before rule operations performed" listeners
                         for (RuleLifecycleListener listener : listeners) {

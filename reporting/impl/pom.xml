@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.reporting</groupId>
         <artifactId>windup-reporting-parent</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-reporting-impl</artifactId>
@@ -85,6 +85,11 @@
                     <artifactId>commons-lang3</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

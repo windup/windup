@@ -1,15 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -42,6 +32,16 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 @RunWith(Arquillian.class)
 public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     static final String LABEL_SUCCESS = "label label-success";
@@ -73,7 +73,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     public void testRunWindupJEEExampleMode() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
+            super.runTest(context, true, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
 
             validateEjbXmlReferences(context);
             validateReports(context);
@@ -86,7 +86,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
     public void testTechReportFrameworksWar() throws Exception {
         try (GraphContext context = super.createGraphContext()) {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
+            super.runTest(context, true, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
             validateTechReportFrameworksWar(context);
             validateTechReportPointsCount(context);
         }
@@ -285,7 +285,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest {
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "CXF", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "XFire", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis2", 1, 1));
-        //boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis", 2, 2));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis2-technology-tag", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis", 2, 2));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate OGM", 1, 1));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate", 2, 2));
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "EclipseLink", 1, 1));

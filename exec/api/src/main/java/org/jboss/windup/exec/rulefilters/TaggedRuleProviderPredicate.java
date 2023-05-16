@@ -8,6 +8,8 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
+import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 
 /**
  * Accepts the given provider if it has any or all of requested include tags, or has not all or any of the requested
@@ -59,6 +61,11 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider> {
     @Override
     public boolean accept(RuleProvider provider) {
         Set<String> tags = provider.getMetadata().getTags();
+
+        if (!(provider.getMetadata().getPhase().isInstance(new MigrationRulesPhase()) ||
+                provider.getMetadata().getPhase().isInstance(new PostMigrationRulesPhase()))){
+            return true;
+        }
 
         boolean result = true;
         if (!includeTags.isEmpty()) {

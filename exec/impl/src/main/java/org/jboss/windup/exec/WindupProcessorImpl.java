@@ -14,6 +14,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.config.LegacyReportsRenderingOption;
 import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleProvider;
@@ -25,9 +26,12 @@ import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceAliasTranslator;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.PostReportPfRenderingPhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportPfRenderingPhase;
+import org.jboss.windup.config.phase.PreReportPfRenderingPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
@@ -191,7 +195,9 @@ public class WindupProcessorImpl implements WindupProcessor {
         configurationModel.setOutputPath(getFileModel(graphContext, configuration.getOutputDirectory()));
         configurationModel.setOnlineMode(configuration.isOnline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
+        configurationModel.setExportingSummary(configuration.isExportingSummary());
         configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
+        configurationModel.setExportingZipReport(configuration.isExportingZipReport());
 
         addUserRulesDirsToConfig(configuration, graphContext, configurationModel);
         addUserLabelsDirsToConfig(configuration, graphContext, configurationModel);
@@ -199,6 +205,7 @@ public class WindupProcessorImpl implements WindupProcessor {
         configuration.getAllIgnoreDirectories().forEach(dir -> configurationModel.addUserIgnorePath(getFileModel(graphContext, dir)));
 
         configurationModel.setAnalyzeKnownLibraries(configuration.isAnalyseKnownLibrariesSet());
+        configurationModel.setSkipSourceCodeReportsRendering(configuration.getOptionValue(WindupConfigurationModel.SKIP_SOURCE_CODE_REPORTS_RENDERING));
 
         return configurationModel;
     }
@@ -267,9 +274,9 @@ public class WindupProcessorImpl implements WindupProcessor {
             final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
 
             // Translate technology aliases if available (ie. "eap7" to "eap:7")
-            Function<String, String> translateTechAliasFn = translateTechnologyAliasFn(ruleLoaderContext);
-            sources = Optional.ofNullable(sources).map(ss -> ss.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
-            targets = Optional.ofNullable(targets).map(ts -> ts.stream().map(translateTechAliasFn).collect(toSet())).orElse(null);
+            Function<String, Set<String>> translateTechAliasFn = translateTechnologyAliasFn(ruleLoaderContext);
+            sources = Optional.ofNullable(sources).map(ss -> ss.stream().map(translateTechAliasFn).flatMap(Collection::stream).collect(toSet())).orElse(null);
+            targets = Optional.ofNullable(targets).map(ts -> ts.stream().map(translateTechAliasFn).flatMap(Collection::stream).collect(toSet())).orElse(null);
 
             config.setOptionValue(SourceOption.NAME, sources);
             config.setOptionValue(TargetOption.NAME, targets);
@@ -284,29 +291,51 @@ public class WindupProcessorImpl implements WindupProcessor {
             config.setRuleProviderFilter(providerFilter);
         }
 
+        NotPredicate skipReportsProviderFilter;
+
         Boolean skipReports = false;
         // if skipReportsRendering option is set filter rules in related phases
         if (config.getOptionMap().containsKey(SkipReportsRenderingOption.NAME)) {
             skipReports = (Boolean) config.getOptionMap().get(SkipReportsRenderingOption.NAME);
         }
         if (skipReports) {
-            NotPredicate skipReportsProviderFilter = new NotPredicate(
-                    new RuleProviderPhasePredicate(PreReportGenerationPhase.class, ReportGenerationPhase.class,
-                            ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class));
-            Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
-            Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
-            if (configuredProvider != null) {
-                providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
+            skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                    PreReportGenerationPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class,
+                    PreReportPfRenderingPhase.class, ReportPfRenderingPhase.class, PostReportPfRenderingPhase.class
+            ));
+        } else {
+            Boolean legacyReports = false;
+            if (config.getOptionMap().containsKey(LegacyReportsRenderingOption.NAME)) {
+                legacyReports = (Boolean) config.getOptionMap().get(LegacyReportsRenderingOption.NAME);
             }
 
-            LOG.info("Adding RuleProvider filter for skipping reports: " + providerFilter);
-            config.setRuleProviderFilter(providerFilter);
+            if (legacyReports) {
+                skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                        PreReportPfRenderingPhase.class,
+                        ReportPfRenderingPhase.class,
+                        PostReportPfRenderingPhase.class
+                ));
+            } else {
+                skipReportsProviderFilter = new NotPredicate(new RuleProviderPhasePredicate(
+                        ReportRenderingPhase.class,
+                        PostReportRenderingPhase.class
+                ));
+            }
         }
+
+        Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
+        Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
+        if (configuredProvider != null) {
+            providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
+        }
+
+        config.setRuleProviderFilter(providerFilter);
+        LOG.info("Adding RuleProvider filter for skipping reports: " + providerFilter);
 
         return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
-    private static Function<String, String> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
+    private static Function<String, Set<String>> translateTechnologyAliasFn(RuleLoaderContext ruleLoaderContext) {
         List<TechnologyReferenceAliasTranslator> translators = getAliasTranslators(ruleLoaderContext);
 
         /*
@@ -332,16 +361,20 @@ public class WindupProcessorImpl implements WindupProcessor {
                 );
 
         // Use the tech translators to translate the IDs
-        Function<String, String> translateTechFunc = (sourceTechIdAndVersion) -> {
+        return (sourceTechIdAndVersion) -> {
+            final Set<String> result = new HashSet<>();
+            // if the value has a translator, then manage it properly
             if (translatorMap.containsKey(sourceTechIdAndVersion)) {
-                String id = TechnologyReference.parseFromIDAndVersion(sourceTechIdAndVersion).getId();
+                final String id = TechnologyReference.parseFromIDAndVersion(sourceTechIdAndVersion).getId();
                 for (TechnologyReferenceAliasTranslator translator : translatorMap.get(id))
-                    sourceTechIdAndVersion = translator.translate(sourceTechIdAndVersion).toString();
+                    result.add(translator.translate(sourceTechIdAndVersion).toString());
             }
-            return sourceTechIdAndVersion;
+            // otherwise it means it's a "plain" source/target that requires no translation
+            else {
+                result.add(sourceTechIdAndVersion);
+            }
+            return result;
         };
-
-        return translateTechFunc;
     }
 
     private FileModel getFileModel(GraphContext context, Path file) {

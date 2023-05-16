@@ -24,9 +24,11 @@ public interface IOptionKeys {
     public static final String INCLUDE_TAGS = "includeTags";
     public static final String ONLINE = "online";
     public static final String ENABLE_CLASS_NOT_FOUND_ANALYSIS = "enableClassNotFoundAnalysis";
+    public static final String ENABLE_TRANSACTION_ANALYSIS = "enableTransactionAnalysis";
     public static final String ENABLE_TATTLETALE = "enableTattletale";
     public static final String EXPLODED_APP = "explodedApp";
     public static final String KEEP_WORK_DIRS = "keepWorkDirs";
     public static final String MAVENIZE = "mavenize";
     public static final String INPUT_APPLICATION_NAME = "inputApplicationName";
+    public static final String LEGACY_REPORTS = "legacyReports";
 }

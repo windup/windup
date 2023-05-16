@@ -6,9 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -22,6 +24,8 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
@@ -134,6 +138,18 @@ public class EjbXmlParsingTest extends AbstractTest {
             int foundJndi = testResourceRef(context);
 
             Assert.assertEquals("Directory " + ORION_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 8, foundJndi);
+
+            TechnologyTagService technologyTagService = new TechnologyTagService(context);
+            List<TechnologyTagModel> technologyTagModels = technologyTagService.findAll();
+            Assert.assertEquals("size", 2, technologyTagModels.size());
+            AtomicBoolean foundEjbJar = new AtomicBoolean(false);
+            AtomicBoolean foundOrionEjbJar = new AtomicBoolean(false);
+            technologyTagModels.forEach(technologyTagModel -> {
+                if ("EJB XML".equals(technologyTagModel.getName()) && "2.0".equals(technologyTagModel.getVersion())) foundEjbJar.set(true);
+                if ("Orion EJB XML".equals(technologyTagModel.getName()) && technologyTagModel.getVersion() == null) foundOrionEjbJar.set(true);
+            });
+            Assert.assertTrue("Not found ejb-jar.xml", foundEjbJar.get());
+            Assert.assertTrue("Not found orion-ejb-jar.xml", foundOrionEjbJar.get());
         }
     }
 

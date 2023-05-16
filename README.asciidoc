@@ -1,36 +1,15 @@
 == Windup
 
-Windup is an automated application migration and assessment tool.
-If you want to contribute or participate in developer discussions,
-join us on the `irc.freenode.net` `#windup` channel
-or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[windup-dev mailing list].
-
-== Get involved
-
-* Windup Wiki: https://github.com/windup/windup/wiki
-  ** Windup documentation is on the wiki:
-    https://github.com/windup/windup/wiki/User-Guide[User Guide],
-    https://github.com/windup/windup/wiki/Rules-Development-Guide[Rules Development Guide],
-    https://github.com/windup/windup/wiki/Core-Development-Guide[Core Development Guide]
-* Forums: https://developer.jboss.org/en/windup
-* Issue Tracker: https://issues.jboss.org/browse/WINDUP
-* Users Mailing List: windup-users@lists.jboss.org
-* Developers Mailing List: windup-dev@lists.jboss.org
-* Commits Mailing List: windup-commits@lists.jboss.org
+Windup  is an assembly of tools that support large-scale Java application modernization and migration projects across a broad range of transformations and use cases. It accelerates application code analysis, supports effort estimation, accelerates code migration, and helps you move applications to the cloud and containers. If you want to contribute or participate in developer discussions please join the link:https://www.konveyor.io/community/[Konveyor community] and ping us on link:https://kubernetes.slack.com/archives/CR85S82A2[slack].
 
 
 === Installation and Usage
 
-You may download the link:http://windup.jboss.org/download.html[latest Windup release].
-After that, follow the link:https://github.com/windup/windup/wiki/Execute[User Guide, Execute Windup].
+Download the latest Windup release from link:https://windup.github.io/downloads/[here] and refer to the link:https://windup.github.io/blog/getting-started/[getting started blog] to run your first code analysis.
 
-Windup distribution contains a sample file to try Windup with. Try the following command in a console:
+=== Issue Tracker
 
-    bin/windup-cli --target eap7 --input samples/jee-example-app-1.0.0.ear
-
-This will create a report next to the scanned archive:
-
-    samples/jee-example-app-1.0.0.ear.report/index.html
+link:https://issues.redhat.com/projects/WINDUP/issues[https://issues.redhat.com/projects/WINDUP/issues]
 
 
 === Project Source Code Format

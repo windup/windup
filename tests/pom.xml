@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.windup</groupId>
         <artifactId>windup-parent</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.3.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.jboss.windup.tests</groupId>
@@ -105,12 +105,18 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting-data</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
 
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
+            <artifactId>windup-bootstrap-windup</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -218,6 +224,29 @@
                             </excludes>
                             <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
                             <argLine>${surefire-argLine} --add-modules java.se</argLine>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>surefire-jdk17</id>
+            <activation>
+              <jdk>17</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>${testExcludeString}</exclude>
+                            </excludes>
+                            <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
+                            <argLine>${surefire-argLine} --add-modules java.se --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED</argLine>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
                         </configuration>

@@ -1,0 +1,35 @@
+.pf-c-table.application-list-table tr > * {
+  max-width: none;
+}
+
+.pf-c-table.application-list-table tbody > tr > * {
+  vertical-align: middle;
+}
+
+.pf-c-table.application-list-table tbody > tr > td.pf-c-table__toggle {
+  padding-bottom: var(--pf-c-table--tbody--cell--PaddingBottom);
+}
+
+.pf-c-table.application-list-table tbody > tr > td.pf-c-table__toggle .pf-c-button {
+  margin-top: 0;
+}
+
+.pf-c-table.application-list-table table.expanded-content tr > th {
+  padding-left: 0;
+  font-weight: bold;
+}
+
+.pf-c-table.application-list-table table.expanded-content tr > td {
+  padding-left: var(--pf-global--spacer--xl);
+}
+
+.pf-c-table.application-list-table button.clickable-progress-bar {
+  margin: calc(0px - var(--pf-global--spacer--form-element))
+    calc(0px - var(--pf-global--spacer--md));
+  width: 100%;
+  text-align: left;
+}
+
+.application-list-table .pf-c-progress {
+  --pf-c-progress--GridGap: var(--pf-global--spacer--xs);
+}

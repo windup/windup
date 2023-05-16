@@ -16,6 +16,7 @@
             <when>
                 <graph-query discriminator="TechnologyTagModel">
                     <property name="name">Apache Axis (embedded)</property>
+                    <property name="version">1</property>
                 </graph-query>
             </when>
             <perform>
@@ -29,11 +30,30 @@
         <rule id="technology-usage-embedded-framework-01010">
             <when>
                 <graph-query discriminator="TechnologyTagModel">
-                    <property name="name">Apache Axis2 (embedded)</property>
+                    <property name="name">Apache Axis (embedded)</property>
+                    <property name="version">2</property>
                 </graph-query>
             </when>
             <perform>
                 <technology-identified name="Axis2">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="Web Service"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01011">
+            <when>
+                <technology-tag-exists technology-tag="Apache Axis \(embedded\)" version="2"/>
+            </when>
+            <perform>
+                <!--
+                this adds a placeholder technology-identified that will be checked later on
+                in org.jboss.windup.tests.application.WindupArchitectureJEEExampleTest.validateTechReportFrameworksWar
+                in order to validate the above when condition is evaluated true
+                to test the 'version' attribute works fine
+                -->
+                <technology-identified name="Axis2-technology-tag">
                     <tag name="Connect"/>
                     <tag name="Embedded"/>
                     <tag name="Web Service"/>

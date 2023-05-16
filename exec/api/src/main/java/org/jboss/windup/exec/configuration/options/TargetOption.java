@@ -40,8 +40,9 @@ public class TargetOption extends AbstractConfigurationOption {
     }
 
     @Override
-    public String getDescription() {
-        return "The target server/technology/framework to migrate to. This could include multiple items (eg, \"eap7\" and \"cloud-readiness\") separated by a space. Use --listTargetTechnologies to get known targets.";
+    public String getDescription()
+    {
+        return "The target server/technology/framework to migrate to. This could include multiple items (eg, \"eap8\" and \"cloud-readiness\") separated by a space. Use --listTargetTechnologies to get known targets.";
     }
 
     @Override

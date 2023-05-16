@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -32,6 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
@@ -65,7 +62,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         final String includedPackage = "org.apache.wicket.application";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.emptyList());
+            super.runTest(context, true, path, null, false, Collections.singletonList(includedPackage), Collections.emptyList());
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, "");
         }
@@ -79,7 +76,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         final String includedPackage = "org.apache.wicket.application";
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, path, null, false, Collections.singletonList(includedPackage), Collections.singletonList(excludedPackage));
+            super.runTest(context, true, path, null, false, Collections.singletonList(includedPackage), Collections.singletonList(excludedPackage));
 
             validateInlineHintsInAppropriatePackages(context, includedPackage, excludedPackage);
         }
@@ -101,7 +98,7 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         identifier.addIdentifier(testIdService);
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, Collections.singletonList(path), null, false,
+            super.runTest(context, true, Collections.singletonList(path), null, false,
                     Collections.emptyList(), Collections.emptyList(), Map.of("analyzeKnownLibraries", false));
 
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);

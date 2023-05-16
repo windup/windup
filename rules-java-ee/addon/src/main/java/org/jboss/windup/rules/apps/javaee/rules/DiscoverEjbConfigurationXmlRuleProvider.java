@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -22,7 +21,6 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -100,7 +98,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     }
                 })
                 .addRule()
-                .when(JavaClass.references("javax.ejb.EntityBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .when(JavaClass.references("{ee-flavor}.ejb.EntityBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -123,8 +121,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.EJBHome").at(TypeReferenceLocation.INHERITANCE))
+                .when(JavaClass.references("{ee-flavor}.ejb.EJBHome").at(TypeReferenceLocation.INHERITANCE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -147,8 +146,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.EJBObject").at(TypeReferenceLocation.INHERITANCE))
+                .when(JavaClass.references("{ee-flavor}.ejb.EJBObject").at(TypeReferenceLocation.INHERITANCE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -171,8 +171,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.SessionBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .when(JavaClass.references("{ee-flavor}.ejb.SessionBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -195,8 +196,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.EJBLocalHome").at(TypeReferenceLocation.INHERITANCE))
+                .when(JavaClass.references("{ee-flavor}.ejb.EJBLocalHome").at(TypeReferenceLocation.INHERITANCE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -219,8 +221,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.EJBLocalObject").at(TypeReferenceLocation.INHERITANCE))
+                .when(JavaClass.references("{ee-flavor}.ejb.EJBLocalObject").at(TypeReferenceLocation.INHERITANCE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -243,8 +246,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 })
+                .where("ee-flavor").matches("javax|jakarta")
                 .addRule()
-                .when(JavaClass.references("javax.ejb.MessageDrivenBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .when(JavaClass.references("{ee-flavor}.ejb.MessageDrivenBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>() {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
@@ -266,7 +270,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                             messageDrivenModel.setEjbClass(classModel);
                         });
                     }
-                });
+                })
+                .where("ee-flavor").matches("javax|jakarta");
     }
 
     @SuppressWarnings("unchecked")
@@ -287,9 +292,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc) {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
         classificationService.attachClassification(event, context, xmlModel, IssueCategoryRegistry.INFORMATION, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
+        String version;
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null) {
             // check doctype.
@@ -297,15 +302,13 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 // move to next document.
                 return;
             }
-            String version = processDoctypeVersion(xmlModel.getDoctype());
-            extractMetadata(event, context, xmlModel, doc, version);
+            version = processDoctypeVersion(xmlModel.getDoctype());
         } else {
             String namespace = $(doc).find("ejb-jar").namespaceURI();
             if (StringUtils.isBlank(namespace)) {
                 namespace = doc.getFirstChild().getNamespaceURI();
             }
-
-            String version = $(doc).attr("version");
+            version = $(doc).attr("version");
 
             // if the version attribute isn't found, then grab it from the XSD name if we can.
             if (StringUtils.isBlank(version)) {
@@ -316,12 +319,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                 }
             }
 
-            if (StringUtils.isNotBlank(version)) {
-                technologyTag.setVersion(version);
-            }
-
-            extractMetadata(event, context, xmlModel, doc, version);
         }
+        technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL, version);
+        extractMetadata(event, context, xmlModel, doc, version);
     }
 
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xml, Document doc, String versionInformation) {

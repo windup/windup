@@ -61,12 +61,14 @@ public class ToolingModeCommandTest {
         String mavenize = "--mavenize";
         String online = "--online";
         String disableTattletale = "--disableTattletale";
-        List<String> args = Lists.newArrayList(mavenize, online, disableTattletale);
+        String enableTransactionAnalysis = "--enableTransactionAnalysis";
+        List<String> args = Lists.newArrayList(mavenize, online, disableTattletale, enableTransactionAnalysis);
         ToolingModeCommand command = new ToolingModeCommand(args);
         Map<String, Object> options = command.collectOptions();
         Assert.assertTrue((Boolean) options.get("mavenize"));
         Assert.assertTrue((Boolean) options.get("online"));
         Assert.assertTrue((Boolean) options.get("disableTattletale"));
+        Assert.assertTrue((Boolean) options.get("enableTransactionAnalysis"));
         Assert.assertFalse((Boolean) options.get("exportCSV"));
     }
 }

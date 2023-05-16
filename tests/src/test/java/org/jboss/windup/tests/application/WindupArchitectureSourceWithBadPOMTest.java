@@ -1,8 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -13,6 +10,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureSourceWithBadPOMTest extends WindupArchitectureTest {
@@ -40,7 +40,7 @@ public class WindupArchitectureSourceWithBadPOMTest extends WindupArchitectureTe
             // The test-files folder in the project root dir.
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, "../test-files/src_example_bad_maven", true);
+            super.runTest(context, true, "../test-files/src_example_bad_maven", true);
         }
     }
 }

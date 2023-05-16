@@ -41,11 +41,26 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel> {
     public TechnologyTagModel addTagToFileModel(FileModel fileModel, String tagName, TechnologyTagLevel level) {
         Traversable<Vertex, Vertex> q = getGraphContext().getQuery(TechnologyTagModel.class)
                 .traverse(g -> g.has(TechnologyTagModel.NAME, tagName));
+        return getOrCreate(q, fileModel, tagName, level, null);
+    }
+    /**
+     *
+     * Adds the provided tag to the provided {@link FileModel}. If a {@link TechnologyTagModel} cannot be found with the provided name and version,
+     * then one will be created.
+     */
+    public TechnologyTagModel addTagToFileModel(FileModel fileModel, String tagName, TechnologyTagLevel level, String version) {
+        Traversable<Vertex, Vertex> q = getGraphContext().getQuery(TechnologyTagModel.class)
+                .traverse(g -> g.has(TechnologyTagModel.NAME, tagName).has(TechnologyTagModel.VERSION, version));
+        return getOrCreate(q, fileModel, tagName, level, version);
+    }
+
+    private TechnologyTagModel getOrCreate(Traversable<Vertex, Vertex> q, FileModel fileModel, String tagName, TechnologyTagLevel level, String version) {
         TechnologyTagModel technologyTag = super.getUnique(q.getRawTraversal());
         if (technologyTag == null) {
             technologyTag = create();
             technologyTag.setName(tagName);
             technologyTag.setLevel(level);
+            technologyTag.setVersion(version);
         }
         if (level == TechnologyTagLevel.IMPORTANT && fileModel instanceof SourceFileModel)
             ((SourceFileModel) fileModel).setGenerateSourceReport(true);

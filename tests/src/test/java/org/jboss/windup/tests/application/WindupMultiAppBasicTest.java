@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -24,6 +18,12 @@ import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -60,7 +60,7 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest {
         paths.add(path3);
 
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, paths, false);
+            super.runTest(context, true, paths, false);
             checkEJBDescriptors(context);
             checkWebXmls(context);
             validateApplicationList(context);

@@ -1,10 +1,6 @@
 package org.jboss.windup.tests.application;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Iterables;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -22,7 +18,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Iterables;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Test and application that contains .java and .class sources for the same file.
@@ -57,7 +56,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
 
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, path, null, false, includeList, excludeList);
+            super.runTest(context, true, path, null, false, includeList, excludeList);
             String duplicate = findDuplicateJavaFile(context);
             if (duplicate != null) {
                 Assert.fail("Windup registered twice the same java class " + duplicate);
@@ -73,7 +72,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
 
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, path, null, false, includeList, excludeList);
+            super.runTest(context, true, path, null, false, includeList, excludeList);
             String duplicate = findDuplicateJavaFile(context);
             if (duplicate != null) {
                 Assert.fail("Windup registered twice the same java class " + duplicate);
@@ -89,7 +88,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest {
 
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, path, null, false, includeList, excludeList);
+            super.runTest(context, true, path, null, false, includeList, excludeList);
 
             Iterable<ProjectModel> models = new ProjectService(context).findAll();
             Assert.assertEquals(1, Iterables.size(models));

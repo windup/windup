@@ -1,20 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -54,6 +39,21 @@ import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
@@ -104,7 +104,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
                 // The test-files folder in the project root dir.
                 List<String> includeList = Collections.emptyList();
                 List<String> excludeList = Collections.emptyList();
-                super.runTest(context, "../test-files/src_example", Collections.singletonList(userPath.toFile()), true, includeList, excludeList);
+                super.runTest(context, true, "../test-files/src_example", Collections.singletonList(userPath.toFile()), true, includeList, excludeList);
 
                 validateWebXmlReferences(context);
                 validatePropertiesModels(context);
@@ -212,6 +212,10 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
                 "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "",
                 "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessJakartaEJB", "",
+                "org.windup.examples.ejb.simplestateless.JakartaSimpleStatelessEJB"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulJakartaEJB", "",
+                "org.windup.examples.ejb.simplestateful.JakartaSimpleStatefulEJB"));
     }
 
     private void validateCompatibleReport(GraphContext context) {

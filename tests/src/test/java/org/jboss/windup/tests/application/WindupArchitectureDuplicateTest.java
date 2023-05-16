@@ -80,7 +80,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         try (GraphContext context = createGraphContext(outputPath)) {
             List<String> inputPaths = Arrays.asList(path1, path2, path3);
 
-            super.runTest(context, inputPaths, false);
+            super.runTest(context, true, inputPaths, false);
             validateApplicationList(context);
             validateReportIndex(context);
             validateMigrationIssues(context);
@@ -205,7 +205,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Assert.assertNotNull(dependencyReport);
         TestDependencyGraphReportUtil dependencyGraphReportUtil = new TestDependencyGraphReportUtil();
         dependencyGraphReportUtil.loadPage(dependencyReport);
-        Assert.assertEquals(18, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
+        Assert.assertEquals(19, dependencyGraphReportUtil.getNumberOfArchivesInTheGraph());
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("duplicate-ear-test-3.ear"));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("log4j-1.2.6.jar"));
         Assert.assertEquals(1, dependencyGraphReportUtil.getNumberOfArchivesInTheGraphByName("jee-example-services2.jar"));

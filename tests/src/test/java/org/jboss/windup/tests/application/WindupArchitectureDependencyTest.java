@@ -48,7 +48,7 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest {
     @Test
     public void testRunWindupDependencies() throws Exception {
         try (GraphContext context = createGraphContext()) {
-            super.runTest(context, "../test-files/application-with-dependencies.ear", false, Collections.emptyList());
+            super.runTest(context, true, "../test-files/application-with-dependencies.ear", false, Collections.emptyList());
             validateDependenciesReport(context);
         }
     }

@@ -7,15 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -24,22 +20,26 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.service.EffortReportService;
+import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.reporting.category.IssueCategory;
-import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jboss.windup.config.metadata.RuleMetadata;
-import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 /**
  * Generates a .js (javascript) file in the reports directory with detailed issue summary information.
@@ -73,7 +73,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
                 issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
-
+                issueSummaryWriter.write("var WINDUP_TECHNOLOGIES = [];" + NEWLINE);
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths()) {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication, new OnlyOnceTraversalStrategy());

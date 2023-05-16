@@ -91,18 +91,19 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                             throw new WindupException("Value store with no associated variables frame. This should not happen");
                         }
 
-                        Iterable<? extends WindupVertexFrame> variable = layer.get(getVarname());
+                        final String varname = getVarname();
+                        Iterable<? extends WindupVertexFrame> variable = layer.get(varname);
                         if (variable != null) {
                             for (WindupVertexFrame frame : variable) {
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
                                 if (last != null) {
                                     // FIXME: WHY DOES THIS HAPPEN? WINDUP-1549
                                     LOG.log(paramValueStoreOverwritten ? Level.FINER : Level.WARNING,
-                                            () -> String.format("resultSetStores already had a ParameterValueStore for frame:"
+                                            () -> String.format("resultSetStores already had a ParameterValueStore for frame (varname '%s'):"
                                                             + System.lineSeparator() + "    %s"
                                                             + System.lineSeparator() + "    Old: %s"
                                                             + System.lineSeparator() + "    New: %s"
-                                                            + "%s", frame.toPrettyString(), last, frame,
+                                                            + "%s", varname, frame.toPrettyString(), last, frame,
                                                     paramValueStoreOverwritten ? "" : System.lineSeparator() + "Further incidents will be logged at FINER level as it may occur millions of times."));
                                     paramValueStoreOverwritten = true;
                                 }

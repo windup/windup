@@ -89,7 +89,6 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider {
             //try{} in case something bad happens, we need to close files
             try {
                 reportableEvents.stream().sorted((o1, o2) ->
-
                         ((Comparator<EffortReportModel>) (o11, o21) -> {
                             IssueCategoryModel c1 = o11.getIssueCategory();
                             IssueCategoryModel c2 = o21.getIssueCategory();
@@ -100,62 +99,9 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider {
                             int i2 = o212.getEffort();
 
                             return Integer.compare(i1, i2);
-                        }).reversed()).compare(o1, o2)).forEachOrdered((Object reportableEvent) ->
-
-
-                        {
-                            if (reportableEvent instanceof InlineHintModel) {
-                                InlineHintModel hint = (InlineHintModel) reportableEvent;
-                                final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
-                                String links = buildLinkString(hint.getLinks());
-                                String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
-                                String title = hint.getTitle() != null ? hint.getTitle() : "";
-                                String description = hint.getDescription() != null ? hint.getDescription() : "";
-                                String projectNameString = "";
-                                String fileName = "";
-                                String filePath = "";
-                                if (hint.getFile() != null) {
-                                    if (hint.getFile().getProjectModel() != null) {
-                                        projectNameString = hint.getFile().getProjectModel().getName();
-                                    }
-                                    fileName = hint.getFile().getFileName();
-                                    filePath = hint.getFile().getFilePath();
-                                }
-                                String[] strings = new String[]{
-                                        ruleId, hint.getIssueCategory().getCategoryID(), title, description, links,
-                                        projectNameString,
-                                        fileName, filePath, String.valueOf(
-                                        hint.getLineNumber()), String.valueOf(hint.getEffort())};
-                                writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null, false);
-
-                            }
-                            if (reportableEvent instanceof ClassificationModel) {
-                                ClassificationModel classification = (ClassificationModel) reportableEvent;
-                                for (FileModel fileModel : classification.getFileModels()) {
-                                    final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
-                                    String links = buildLinkString(classification.getLinks());
-                                    String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
-                                    String classificationText = classification.getClassification() != null ? classification.getClassification() : "";
-                                    String description = classification.getDescription() != null ? classification.getDescription() : "";
-                                    String projectNameString = "";
-                                    if (fileModel.getProjectModel() != null) {
-                                        projectNameString = fileModel.getProjectModel().getName();
-                                    }
-                                    String fileName = fileModel.getFileName();
-                                    String filePath = fileModel.getFilePath();
-                                    String[] strings = new String[]{
-                                            ruleId, classification.getIssueCategory().getCategoryID(), classificationText,
-                                            description, links,
-                                            projectNameString, fileName, filePath, "N/A",
-                                            String.valueOf(
-                                                    classification.getEffort())};
-                                    writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null, false);
-
-                                }
-                            }
+                        }).reversed()).compare(o1, o2)).forEachOrdered((Object reportableEvent) -> {
+                            writeRecordForHint(reportableEvent, projectToFile, outputFolderPath, config);
                         }
-
-
                 );
 
                 produceApplicationListCSV(event, projectToFile, outputFolderPath);
@@ -173,10 +119,71 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider {
 
         }
 
-        private String buildLinkString(Iterable<LinkModel> links) {
-            StringBuilder linksString = new StringBuilder();
-            for (LinkModel linkModel : links) {
-                linksString.append("[");
+
+        private void writeRecordForHint(Object reportableEvent, Map<String, CSVWriter> projectToFile, String outputFolderPath, WindupConfigurationModel config) {
+            if (reportableEvent instanceof InlineHintModel) {
+                InlineHintModel hint = (InlineHintModel) reportableEvent;
+                if (hint.getFile().getProjectModel() == null) {
+                    // See WINDUP-3767. For some reason, when specifying a custom rule with --userRulesDirectory as a file instead of a directory,
+                    // the given file leaks somewhere and is treated as an input. This will prevent a NullPointerException here.
+                    boolean isUserRulesFile = config.getUserRulesPaths().stream().anyMatch(file -> config.getUserRulesPaths().stream().anyMatch(userRuleFile -> file.getFileName().equals(userRuleFile.getFileName())));
+                    if (isUserRulesFile) {
+                        return;
+                    }
+                }
+                String links = buildLinkString(hint.getLinks());
+                String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
+                String title = hint.getTitle() != null ? hint.getTitle() : "";
+                String description = hint.getDescription() != null ? hint.getDescription() : "";
+                String projectNameString = "";
+                String fileName = "";
+                String filePath = "";
+                if (hint.getFile() != null) {
+                    if (hint.getFile().getProjectModel() != null) {
+                        projectNameString = hint.getFile().getProjectModel().getName();
+                    }
+                    fileName = hint.getFile().getFileName();
+                    filePath = hint.getFile().getFilePath();
+                }
+                String[] strings = new String[]{
+                        ruleId, hint.getIssueCategory().getCategoryID(), title, description, links,
+                        projectNameString,
+                        fileName, filePath, String.valueOf(
+                        hint.getLineNumber()), String.valueOf(hint.getEffort())};
+                final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
+                writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null, false);
+
+            }
+            if (reportableEvent instanceof ClassificationModel) {
+                ClassificationModel classification = (ClassificationModel) reportableEvent;
+                for (FileModel fileModel : classification.getFileModels()) {
+                    String links = buildLinkString(classification.getLinks());
+                    String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
+                    String classificationText = classification.getClassification() != null ? classification.getClassification() : "";
+                    String description = classification.getDescription() != null ? classification.getDescription() : "";
+                    String projectNameString = "";
+                    if (fileModel.getProjectModel() != null) {
+                        projectNameString = fileModel.getProjectModel().getName();
+                    }
+                    String fileName = fileModel.getFileName();
+                    String filePath = fileModel.getFilePath();
+                    String[] strings = new String[]{
+                            ruleId, classification.getIssueCategory().getCategoryID(), classificationText,
+                            description, links,
+                            projectNameString, fileName, filePath, "N/A",
+                            String.valueOf(
+                                    classification.getEffort())};
+                    final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
+                    writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings, null, false);
+
+                }
+            }
+        }
+
+    private String buildLinkString(Iterable<LinkModel> links) {
+        StringBuilder linksString = new StringBuilder();
+        for (LinkModel linkModel : links) {
+            linksString.append("[");
                 linksString.append(linkModel.getLink()).append(",");
                 linksString.append(linkModel.getDescription());
                 linksString.append("]");

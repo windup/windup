@@ -11,6 +11,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.query.WindupConfigurationQuery;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -31,6 +32,7 @@ import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.config.Not;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -71,6 +73,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider {
 
         return ConfigurationBuilder.begin()
                 .addRule()
+                .when(Not.any(WindupConfigurationQuery.hasOption(WindupConfigurationModel.SKIP_SOURCE_CODE_REPORTS_RENDERING, true)))
                 .perform(addSourceReports);
     }
     // @formatter:on

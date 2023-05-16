@@ -50,7 +50,7 @@ public class RuleLoaderImpl implements RuleLoader {
     }
 
     private RuleProviderRegistry buildRegistry(RuleLoaderContext ruleLoaderContext) {
-        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see TODO: careful with this
+        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see
 
         List<RuleProvider> providers = loadProviders(ruleLoaderContext);
         RuleProviderRegistry registry = new RuleProviderRegistry();

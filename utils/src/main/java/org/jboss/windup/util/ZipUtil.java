@@ -5,12 +5,24 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.CopyOption;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -31,6 +43,12 @@ public class ZipUtil {
     private static final Logger log = Logger.getLogger(ZipUtil.class.getName());
 
     private static Set<String> supportedExtensions;
+
+    private static final CopyOption[] COPY_OPTIONS = {
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.COPY_ATTRIBUTES,
+            LinkOption.NOFOLLOW_LINKS
+    };
 
     /**
      * Unzip a classpath resource using the given {@link Class} as the resource root path.
@@ -138,7 +156,7 @@ public class ZipUtil {
             ZipInputStream zis = new ZipInputStream(is);
             ZipEntry entry;
             List<String> results = new ArrayList<>();
-            while ((entry = zis.getNextEntry()) != null) {
+            while ((entry = getNextEntry(zis)) != null) {
                 String fullPath = parentPath + "/" + entry.getName();
                 results.add(relativeOnly ? entry.getName() : fullPath);
                 if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName())) {
@@ -152,4 +170,54 @@ public class ZipUtil {
         }
     }
 
+    /**
+     * Return the next Entry of a ZipInputStream. If the nextEntry can not be read then skip it and continue with the next one
+     * @param zis The ZIP stream to be used
+     * @return next zip entry
+     * @throws IOException
+     */
+    private static ZipEntry getNextEntry(ZipInputStream zis) throws IOException {
+        try {
+            return zis.getNextEntry();
+        } catch (IllegalArgumentException e) {
+            return getNextEntry(zis);
+        }
+    }
+
+    public static void zipFolder(Path source, String zipOutputPath, String zipOutputName, List<String> pathPrefixesToExclude) throws IOException {
+
+        final URI uri = URI.create("jar:file:" + zipOutputPath + File.separator + zipOutputName);
+
+        Files.walkFileTree(source, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                final Path targetFile = source.relativize(file);
+                if (attributes.isSymbolicLink() || file.endsWith(zipOutputName) || pathPrefixesToExclude.stream().anyMatch(targetFile::startsWith)) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                final Map<String, String> env = new HashMap<>();
+                env.put("create", "true");
+
+                try (final FileSystem zip = FileSystems.newFileSystem(uri, env)) {
+                    final Path pathInZipfile = zip.getPath(targetFile.toString());
+                    if (pathInZipfile.getParent() != null) {
+                        Files.createDirectories(pathInZipfile.getParent());
+                    }
+                    Files.copy(file, pathInZipfile, COPY_OPTIONS);
+                } catch (IOException e) {
+                    throw new WindupException(e);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                final String message = String.format("Unable to zip : %s%n%s%n", file, exc);
+                log.warning(message);
+                System.err.println(message);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
 }

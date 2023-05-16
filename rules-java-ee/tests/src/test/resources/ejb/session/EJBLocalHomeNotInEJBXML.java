@@ -1,4 +1,4 @@
-import javax.ejb.CreateException;EpiMessageDrivenBean
+import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 
 public interface EJBLocalHomeNotInEJBXML extends javax.ejb.EJBLocalHome {

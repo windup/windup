@@ -15,6 +15,7 @@ import org.w3c.dom.Element;
 public class TechnologyTagHandler implements ElementHandler<Object> {
     public static final String TECHNOLOGY_TAG = "technology-tag";
     private static final String LEVEL = "level";
+    private static final String VERSION = "version";
 
     @Override
     public TechnologyTag processElement(ParserContext handlerManager, Element element) throws ConfigurationException {
@@ -29,6 +30,9 @@ public class TechnologyTagHandler implements ElementHandler<Object> {
         if (StringUtils.isNotBlank(category)) {
             issueCategory = TechnologyTagLevel.valueOf(category);
         }
-        return TechnologyTag.withName(tag).withTechnologyTagLevel(issueCategory);
+        final TechnologyTag technologyTag = TechnologyTag.withName(tag).withTechnologyTagLevel(issueCategory);
+        final String version = element.getAttribute(TechnologyTagHandler.VERSION);
+        if (!StringUtils.isBlank(version)) technologyTag.withVersion(version);
+        return technologyTag;
     }
 }

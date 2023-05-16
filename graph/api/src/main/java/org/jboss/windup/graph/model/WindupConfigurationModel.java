@@ -24,9 +24,13 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
     String CSV_MODE = "csv";
+    String SUMMARY_MODE = "exportSummary";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
     String SKIP_REPORTS_RENDERING = "skipReports";
+    String SKIP_SOURCE_CODE_REPORTS_RENDERING = "skipSourceCodeReports";
     String ANALYZE_KNOWN_LIBRARIES = "analyzeKnownLibraries";
+    String LEGACY_REPORTS = "legacyReports";
+    String EXPORT_ZIP_REPORT = "exportZipReport";
 
     /**
      * The input path to scan
@@ -168,9 +172,47 @@ public interface WindupConfigurationModel extends WindupVertexFrame {
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
 
+    /**
+     * Indicate whether skip all source code reports rendering
+     *
+     * @return
+     */
+    @Property(SKIP_SOURCE_CODE_REPORTS_RENDERING)
+    Boolean isSkipSourceCodeReportsRendering();
+
+    /**
+     * Indicate whether skip all source code reports rendering
+     */
+    @Property(SKIP_SOURCE_CODE_REPORTS_RENDERING)
+    void setSkipSourceCodeReportsRendering(Boolean skip);
+
     @Property(ANALYZE_KNOWN_LIBRARIES)
     Boolean isAnalyzeKnownLibraries();
 
     @Property(ANALYZE_KNOWN_LIBRARIES)
     void setAnalyzeKnownLibraries(Boolean analyzeKnownLibraries);
+
+    /**
+     * Indicates whether or not to export summary data
+     */
+    @Property(SUMMARY_MODE)
+    boolean isExportingSummary();
+
+    /**
+     * Indicates whether or not to export summary data
+     */
+    @Property(SUMMARY_MODE)
+    void setExportingSummary(boolean summary);
+
+    /**
+     * Indicates whether or not to export ZIP file
+     */
+    @Property(EXPORT_ZIP_REPORT)
+    boolean isExportingZipReport();
+
+    /**
+     * Indicates whether or not to export ZIP file
+     */
+    @Property(EXPORT_ZIP_REPORT)
+    void setExportingZipReport(boolean summary);
 }

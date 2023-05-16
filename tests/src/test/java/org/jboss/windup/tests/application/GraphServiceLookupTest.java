@@ -1,7 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -18,6 +16,8 @@ import org.jboss.windup.tests.application.model.TestSampleModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class GraphServiceLookupTest {

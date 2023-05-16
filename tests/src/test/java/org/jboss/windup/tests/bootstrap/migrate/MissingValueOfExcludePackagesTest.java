@@ -16,7 +16,7 @@ public class MissingValueOfExcludePackagesTest extends AbstractBootstrapTestWith
 
     @Test
     public void missingValueOfExcludePackages() throws IOException {
-        bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",
+        bootstrap("--legacyReports", "--input", "../test-files/Windup1x-javaee-example-tiny.war",
                 "--output", tmp.getRoot().getAbsolutePath(),
                 "--source", "eap6",
                 "--target", "eap7",

@@ -1,0 +1,18 @@
+@import "~@patternfly/react-core/dist/styles/base.css";
+@import "~@patternfly/react-core/dist/styles/base-no-reset.css";
+@import "~@patternfly/patternfly/patternfly-addons.css";
+
+/* 
+* Override select's border due to PostCSS changing it during 'yarn build'
+* https://github.com/patternfly/patternfly-react/issues/5650#issuecomment-818259040
+*/
+.pf-c-select__toggle:before {
+    border-top: var(--pf-c-select__toggle--before--BorderTopWidth) solid
+      var(--pf-c-select__toggle--before--BorderTopColor);
+    border-right: var(--pf-c-select__toggle--before--BorderRightWidth) solid
+      var(--pf-c-select__toggle--before--BorderRightColor);
+    border-bottom: var(--pf-c-select__toggle--before--BorderBottomWidth) solid
+      var(--pf-c-select__toggle--before--BorderBottomColor);
+    border-left: var(--pf-c-select__toggle--before--BorderLeftWidth) solid
+      var(--pf-c-select__toggle--before--BorderLeftColor);
+}

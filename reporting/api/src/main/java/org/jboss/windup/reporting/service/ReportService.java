@@ -44,6 +44,29 @@ public class ReportService extends GraphService<ReportModel> {
     }
 
     /**
+     *
+     * @return the Path where the Patternfly UI will be stored
+     */
+    public Path getWindupUIDirectory()
+    {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
+        Path path = cfg.getOutputPath().asFile().toPath();
+        createDirectoryIfNeeded(path);
+        return path.toAbsolutePath();
+    }
+
+    /**
+     *
+     * @return the Path where all JSON files are stored within the PF reports
+     */
+    public Path getWindupUIApiDirectory()
+    {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
+        Path path = cfg.getOutputPath().asFile().toPath().resolve("api");
+        return path.toAbsolutePath();
+    }
+
+    /**
      * Returns the output directory for reporting.
      */
     public Path getReportDirectory() {

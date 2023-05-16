@@ -1,11 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -25,6 +19,12 @@ import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
@@ -54,7 +54,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest {
 
             List<String> includeList = Collections.singletonList("nocodescanning");
             List<String> excludeList = Collections.emptyList();
-            super.runTest(context, path, null, false, includeList, excludeList);
+            super.runTest(context, true, path, null, false, includeList, excludeList);
 
             validateSpringBeans(context);
             validateReports(context);
