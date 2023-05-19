@@ -12,6 +12,12 @@ Download the latest Windup release from link:https://windup.github.io/downloads/
 link:https://issues.redhat.com/projects/WINDUP/issues[https://issues.redhat.com/projects/WINDUP/issues]
 
 
+=== Building from source
+
+Ensure you use the provided Maven Wrapper utility to build the project, as Windup requires Maven 3.8.8:
+
+        ./mvnw verify
+
 === Project Source Code Format
 
 This project has an agreed upon source format style documented via an
