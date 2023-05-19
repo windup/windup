@@ -25,7 +25,7 @@ jobs:
           restore-keys:
             ${{ runner.os }}-maven-windup-build
       - name: Build on JDK 11
-        run: mvn -B clean install -DskipTests
+        run: ./mvnw -B clean install -DskipTests
 
   windup-rulesets-build:
     runs-on: ubuntu-latest
@@ -56,9 +56,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Test
-        run: mvn clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
+        run: ./mvnw clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
       - name: Build for the windup-maven-plugin-build
-        run: mvn clean install -nsu -DskipTests
+        run: ./mvnw clean install -nsu -DskipTests
 
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
       - name: Build
-        run: mvn clean install -nsu
+        run: ./mvnw clean install -nsu
 
   windup-quickstarts-build:
     runs-on: ubuntu-latest
@@ -113,12 +113,8 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.8.7
       - name: Test
         run:   |
           export MAVEN_OPTS="--add-modules=java.se  --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED"
-          mvn clean install -s settings.xml -nsu
+          ./mvnw clean install -s settings.xml -nsu
         shell: bash
