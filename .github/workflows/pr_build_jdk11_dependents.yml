@@ -56,9 +56,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Test
-        run: ./mvnw clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
+        run: mvn clean test -nsu -f rules -Dtest=${{ matrix.ruleset-test }}
       - name: Build for the windup-maven-plugin-build
-        run: ./mvnw clean install -nsu -DskipTests
+        run: mvn clean install -nsu -DskipTests
 
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
       - name: Build
-        run: ./mvnw clean install -nsu
+        run: mvn clean install -nsu
 
   windup-quickstarts-build:
     runs-on: ubuntu-latest
@@ -116,5 +116,5 @@ jobs:
       - name: Test
         run:   |
           export MAVEN_OPTS="--add-modules=java.se  --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED"
-          ./mvnw clean install -s settings.xml -nsu
+          mvn clean install -s settings.xml -nsu
         shell: bash
