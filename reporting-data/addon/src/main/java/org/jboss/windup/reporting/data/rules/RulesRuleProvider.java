@@ -8,6 +8,7 @@ import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.phase.PreReportPfRenderingPhase;
 import org.jboss.windup.reporting.data.dto.RuleContentDto;
 import org.jboss.windup.reporting.data.dto.RuleDto;
+import org.jboss.windup.reporting.data.rules.utils.DataUtils;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
                         .map(ruleExecutionInformation -> {
                             RuleDto ruleDto = new RuleDto();
 
-                            ruleDto.setId(ruleExecutionInformation.getRule().getId());
+                            ruleDto.setId(DataUtils.sanitizeFilename(ruleExecutionInformation.getRule().getId()));
                             ruleDto.setRuleSetId(ruleSetId);
                             ruleDto.setVerticesAdded(ruleExecutionInformation.getVertexIDsAdded());
                             ruleDto.setEdgesAdded(ruleExecutionInformation.getEdgeIDsAdded());
@@ -97,7 +98,7 @@ public class RulesRuleProvider extends AbstractApiRuleProvider {
                         .forEach(ruleExecutionInformation -> {
                             RuleContentDto ruleDto = new RuleContentDto();
 
-                            ruleDto.setId(ruleExecutionInformation.getRule().getId());
+                            ruleDto.setId(DataUtils.sanitizeFilename(ruleExecutionInformation.getRule().getId()));
                             ruleDto.setContent(RuleUtils.ruleToRuleContentsString(ruleExecutionInformation.getRule(), 0));
 
                             result.put(ruleDto.getId(), ruleDto);
