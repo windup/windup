@@ -38,7 +38,8 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
 #    needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -57,14 +58,15 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
+      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver"
 
   windup-build-with-unit-tests-2:
     strategy:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -94,7 +96,8 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -113,4 +116,4 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B test -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver -f tests
+      run: ./mvnw -B test -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -f tests
