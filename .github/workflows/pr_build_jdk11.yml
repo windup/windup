@@ -31,7 +31,7 @@ jobs:
           ${{ runner.os }}-maven-
           setup-java-
     - name: Build on JDK 11
-      run: ./mvnw clean install -DskipTests -B -U -Dmaven.repo.local=.m2
+      run: ./mvnw clean install -DskipTests -B -U -Dmaven.repo.local=${{ github.workspace }}/.m2
 
   windup-build-with-unit-tests-1:
     strategy:
@@ -59,7 +59,7 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -D"maven.repo.local=.m2"
+      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -D"maven.repo.local=${{ github.workspace }}/.m2"
 
   windup-build-with-unit-tests-2:
     strategy:
@@ -87,11 +87,11 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test config
-      run: ./mvnw -B clean install -f config -D"maven.repo.local=.m2"
+      run: ./mvnw -B clean install -f config -D"maven.repo.local=${{ github.workspace }}/.m2"
     - name: Test rules-java
-      run: ./mvnw -B clean install -f rules-java -D"maven.repo.local=.m2"
+      run: ./mvnw -B clean install -f rules-java -D"maven.repo.local=${{ github.workspace }}/.m2"
     - name: Test rules-xml
-      run: ./mvnw -B clean install -f rules-xml -D"maven.repo.local=.m2"
+      run: ./mvnw -B clean install -f rules-xml -D"maven.repo.local=${{ github.workspace }}/.m2"
 
   windup-tests:
     strategy:
@@ -119,4 +119,4 @@ jobs:
       run: |
         echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B test -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -f tests -D"maven.repo.local=.m2"
+      run: ./mvnw -B test -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
