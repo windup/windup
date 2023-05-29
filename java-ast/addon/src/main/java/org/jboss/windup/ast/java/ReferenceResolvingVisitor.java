@@ -167,15 +167,10 @@ public class ReferenceResolvingVisitor extends ASTVisitor {
     }
 
     private String extractDefinitionLine(String typeDeclaration) {
-        String typeLine = "";
-        String[] lines = typeDeclaration.split(System.lineSeparator());
-        for (String line : lines) {
-            typeLine = line;
-            if (line.contains("{")) {
-                break;
-            }
-        }
-        return typeLine;
+        return typeDeclaration.lines()
+                .filter(line -> line.contains("{"))
+                .findFirst()
+                .orElse("");
     }
 
     public List<ClassReference> getJavaClassReferences() {
