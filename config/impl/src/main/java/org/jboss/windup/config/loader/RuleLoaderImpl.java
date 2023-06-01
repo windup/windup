@@ -170,7 +170,7 @@ public class RuleLoaderImpl implements RuleLoader {
         Map<RuleKey, Rule> overrideRules = new HashMap<>();
         providers.stream()
                 .filter(provider -> provider.getMetadata().isOverrideProvider())
-                .filter(provider -> ruleLoaderContext.getRuleProviderFilter().accept(provider))
+                .filter(provider -> ruleLoaderContext.getRuleProviderFilter() == null || ruleLoaderContext.getRuleProviderFilter().accept(provider))
                 .forEach(provider -> {
                     provider.getConfiguration(null).getRules().forEach(rule -> {
                         RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
