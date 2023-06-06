@@ -35,7 +35,42 @@ jobs:
       matrix:
         jdk-distribution: [ temurin ]
         java-version: [ 11, 17 ]
-        ruleset-test: [ WindupRulesTest,  WindupRulesLinksTest]
+        ruleset-test: [ WindupRulesTest ]
+        tests-pattern: [ 'rules-reviewed/[a-d]',
+                         'rules-reviewed/e',
+                         'rules-reviewed/[f-z]',
+                         'rules-generated/' ]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          repository: windup/windup-rulesets
+          ref: ${{ github.base_ref }}
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.jdk-distribution }}
+          java-package: jdk
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-maven-windup-build-${{ github.sha }}
+      - name: Test
+        run: mvn clean test -nsu -f rules -DrunTestsMatching=${{ matrix.tests-pattern }} -Dtest=${{ matrix.ruleset-test }}
+
+  windup-rulesets-links-build:
+    runs-on: ubuntu-latest
+    needs: [windup-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk-distribution: [ temurin ]
+        java-version: [ 11, 17 ]
+        ruleset-test: [ WindupRulesLinksTest ]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -62,7 +97,7 @@ jobs:
 
   windup-maven-plugin-build:
     runs-on: ubuntu-latest
-    needs: [windup-rulesets-build]
+    needs: [windup-rulesets-links-build]
     strategy:
       fail-fast: false
       matrix:
