@@ -55,11 +55,11 @@ jobs:
         path: .m2
         key: maven-windup-build-${{ github.sha }}
         enableCrossOsArchive: true
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -D"maven.repo.local=${{ github.workspace }}/.m2"
+      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver" -D"maven.repo.local=${{ github.workspace }}/.m2"
 
   windup-build-with-unit-tests-2:
     strategy:
@@ -83,9 +83,9 @@ jobs:
         path: .m2
         key: maven-windup-build-${{ github.sha }}
         enableCrossOsArchive: true
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test config
       run: ./mvnw -B clean install -f config -D"maven.repo.local=${{ github.workspace }}/.m2"
     - name: Test rules-java
@@ -115,8 +115,8 @@ jobs:
         path: .m2
         key: maven-windup-build-${{ github.sha }}
         enableCrossOsArchive: true
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B test -D"webdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
+      run: ./mvnw -B test -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
