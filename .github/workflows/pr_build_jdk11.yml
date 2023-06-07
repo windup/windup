@@ -59,7 +59,8 @@ jobs:
 #      run: |
 #        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver" -D"maven.repo.local=${{ github.workspace }}/.m2"
+      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${env:CHROMEWEBDRIVER}/chromedriver" -D"maven.repo.local=${{ github.workspace }}/.m2"
+      shell: pwsh
 
   windup-build-with-unit-tests-2:
     strategy:
@@ -119,4 +120,5 @@ jobs:
 #      run: |
 #        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B test -D"webdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
+      run: ./mvnw -B test -D"webdriver.chrome.driver=${env:CHROMEWEBDRIVER}/chromedriver" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
+      shell: pwsh
