@@ -33,11 +33,7 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules {
     }
 
     private void deleteTestDirs() {
-        try {
-            FileUtils.deleteQuietly(TEST_FILE_OUTPUT_DIR);
-        } catch (IOException ignored) {
-
-        }
+        FileUtils.deleteQuietly(TEST_FILE_OUTPUT_DIR);
     }
 
     /**
