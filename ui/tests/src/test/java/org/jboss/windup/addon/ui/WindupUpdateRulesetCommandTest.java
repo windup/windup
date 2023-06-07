@@ -75,7 +75,7 @@ public class WindupUpdateRulesetCommandTest {
             rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
             Assert.assertFalse(rulesetNeedUpdate);
         } finally {
-            FileUtils.deleteDirectory(tempDir);
+            FileUtils.deleteQuietly(tempDir);
             System.getProperties().remove("windup.home");
         }
     }

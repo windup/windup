@@ -190,7 +190,7 @@ public class LoadGroovyRulesTest {
             Assert.assertTrue("Script path should have been set in MTA Rule Metatada", foundMtaScriptPath);
             Assert.assertTrue(allProviders.size() > 0);
         } finally {
-            FileUtils.deleteDirectory(userRulesPath.toFile());
+            FileUtils.deleteQuietly(userRulesPath.toFile());
         }
     }
 }

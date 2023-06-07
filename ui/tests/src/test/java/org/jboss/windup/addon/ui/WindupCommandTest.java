@@ -127,7 +127,7 @@ public class WindupCommandTest {
                 Assert.assertTrue(controller.canExecute());
                 controller.setValueFor(OverwriteOption.NAME, true);
             } finally {
-                FileUtils.deleteDirectory(tempDir);
+                FileUtils.deleteQuietly(tempDir);
             }
         }
     }
@@ -164,7 +164,7 @@ public class WindupCommandTest {
                 Assert.assertTrue(result.getMessage().contains("overwrite not specified"));
             } finally {
                 inputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }
@@ -192,7 +192,7 @@ public class WindupCommandTest {
                 Assert.assertFalse(msg, result instanceof Failed);
             } finally {
                 inputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }
@@ -294,7 +294,7 @@ public class WindupCommandTest {
                 Assert.assertEquals(3, totalFound);
             } finally {
                 outputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }
@@ -353,7 +353,7 @@ public class WindupCommandTest {
                 Assert.assertEquals(2, totalFound);
             } finally {
                 outputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }
@@ -433,7 +433,7 @@ public class WindupCommandTest {
                 Assert.assertTrue("There should be some file models present in the graph", notEmpty);
             } finally {
                 outputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }
