@@ -172,6 +172,14 @@ export const EffortsSection: React.FC<IEffortsSectionProps> = ({
           <CardBody>
             <Chart
               themeColor={ChartThemeColor.multiOrdered}
+              // Define a static domain only if no bar is expected to be rendered
+              domain={
+                incidents.every((e) => {
+                  return e.totalIncidents === 0 && e.totalStoryPoints === 0;
+                })
+                  ? { y: [0, 9] }
+                  : undefined
+              }
               domainPadding={{ x: 35 }}
               padding={{
                 bottom: 40,
