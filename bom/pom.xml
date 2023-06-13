@@ -409,7 +409,7 @@
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.resources</artifactId>
-                <version>[3.14.0,4.0.0)</version>
+                <version>[3.14.0,3.19.0)</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
