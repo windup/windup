@@ -71,6 +71,11 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener {
         return results;
     }
 
+    public static void clear() {
+        moduleToApplicationCache.clear();
+        applicationToProjectCache.clear();
+    }
+
     private static Set<ProjectModel> getFromCache(ProjectModel project) {
         if (project == null)
             return null;
