@@ -52,7 +52,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-rulesets-links-${{ matrix.java-version }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-maven-windup-build-${{ github.sha }}
       - name: Test
@@ -85,7 +85,7 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-maven-windup-rulesets-build-${{ github.sha }}
+            ${{ runner.os }}-maven-windup-rulesets-links-${{ matrix.java-version }}-build-${{ github.sha }}
       - name: Build
         run: mvn clean install -nsu
 

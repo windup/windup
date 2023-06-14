@@ -87,14 +87,14 @@ public class WindupArchitectureScanPackagesTest extends WindupArchitectureTest {
         final String path = "../test-files/Windup1x-javaee-example.war";
 
         InMemoryArchiveIdentificationService testIdService = new InMemoryArchiveIdentificationService();
-        testIdService.addMapping("6f3b8a24bf970f17289b234284c94f43eb42f0e4", "org.slf4j:slf4j-api");
-        testIdService.addMapping("43472749d5856b6c568eb52690b8a85c738988b1", "org.apache.wicket:wicket-extensions");
-        testIdService.addMapping("66859922767bb787a7ff4c685c74b5b28cc55909", "org.apache.wicket:wicket-datetime");
-        testIdService.addMapping("7cbbf3bb2c2442885836ff948e42ccc093c64dd6", "org.apache.wicket:wicket-util");
-        testIdService.addMapping("752c0fe8a5b2d6704c9d9d6f06d9abdcacf4045d", "joda-time:joda-time");
-        testIdService.addMapping("736e42799a54762d47f7061d7d6ca50fd4543f6d", "org.apache.wicket:wicket-core");
-        testIdService.addMapping("898c997df6d4b2d35df3d042641e2148c7fb5d33", "org.apache.wicket:wicket-devutils");
-        testIdService.addMapping("ff3e0312fb474eb84a88aa3039d1c414be51f85e", "org.apache.wicket:wicket-request");
+        testIdService.addMapping("df9f9ab084ac2b7527fba5038085db6b10f37a18", "org.slf4j:slf4j-api");
+        testIdService.addMapping("2450f1316a85bbc2ce71de72cc4dd4d934ebd034", "org.apache.wicket:wicket-extensions");
+        testIdService.addMapping("16a6b409be0c259c91aaf4cf5f935fb91926effb", "org.apache.wicket:wicket-datetime");
+        testIdService.addMapping("16afb17a9403ebde1e3f8ab606662e3479891a40", "org.apache.wicket:wicket-util");
+        testIdService.addMapping("c19885d06f26586b81dea43d27d092bb0082168a", "joda-time:joda-time");
+        testIdService.addMapping("48691652416413a4f3a66de72ccd0bedd18f2e40", "org.apache.wicket:wicket-core");
+        testIdService.addMapping("fa1d62a2dcba6fce2cc60199aad642f40ef2e3dc", "org.apache.wicket:wicket-devutils");
+        testIdService.addMapping("768f4a0acc6567f912f3d7de4418df2466b96cdc", "org.apache.wicket:wicket-request");
         identifier.addIdentifier(testIdService);
 
         try (GraphContext context = createGraphContext()) {

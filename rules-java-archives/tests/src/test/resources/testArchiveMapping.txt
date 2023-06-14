@@ -9,7 +9,7 @@
 4bf2eb673056e6f47abecb71fe978482af5bac6a org.jboss.errai:errai-client-local-class-hider:jar::3.0.0.20140325-M5
 4bf2ee23ca7d5bafd675f4eb05a2f5d88a1926e4 com.dadrox:scuttle_2.10:jar::1.0
 4bf329332aa2d567121e66f9da86acf0b5932617 com.sun.grizzly.samples:grizzly-cometd-echo:war::1.8.6
-4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7 log4j:log4j:jar::1.2.6
+6660ebb91c2259c15a2db4a8a21c0d65ac39e33c log4j:log4j:jar::1.2.6
 4bf365871fea118dd289b68a766f268411cabdd7 io.graceland:graceland-metrics-graphite:jar::0.1.0
 4bf370801de580f81b8bc42ca44dc88ef41dc059 org.codehaus.groovy:groovy-servlet:jar::2.0.5
 4bf371371e6677f9d0fdea9b7289774a9a0cf9b1 com.pojosontheweb:woko-archetype:maven-archetype::2.1-beta7
