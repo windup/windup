@@ -33,6 +33,8 @@ public class DataGatheringRuleProvider extends AbstractRuleProvider {
                             executorService.awaitTermination(2, TimeUnit.DAYS);
                         } catch (InterruptedException e) {
                             throw new WindupException("Failed to render reports due to a timeout: " + e.getMessage(), e);
+                        } finally {
+                            AbstractApiRuleProvider.executorServiceMap.remove(event.getGraphContext());
                         }
                     }
                 });
