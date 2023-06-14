@@ -314,22 +314,22 @@ public class NewReports_WindupArchitectureDuplicateTest extends WindupArchitectu
 
         // Verify
         Assert.assertEquals("org.windup.example:jee-example-services:1.0.0", jeeExample.get().getMavenIdentifier());
-        Assert.assertEquals("d910370c02710f4bb7f7856e18f50803f1c37e16", jeeExample.get().getSha1());
+        Assert.assertEquals("1c603ef950e920769c3389e6a1282e3c96f360d0", jeeExample.get().getSha1());
         Assert.assertEquals("1.0.0", jeeExample.get().getVersion());
         Assert.assertNull(jeeExample.get().getOrganization());
 
         Assert.assertEquals("commons-lang:commons-lang:2.5", commonsLang.get().getMavenIdentifier());
-        Assert.assertEquals("b0236b252e86419eef20c31a44579d2aee2f0a69", commonsLang.get().getSha1());
+        Assert.assertEquals("07df6997525697b211367cf7f359e5232ec65375", commonsLang.get().getSha1());
         Assert.assertEquals("2.5", commonsLang.get().getVersion());
         Assert.assertEquals("The Apache Software Foundation", commonsLang.get().getOrganization());
 
         Assert.assertEquals("net.sf.ehcache:ehcache:1.6.2", ehcache.get().getMavenIdentifier());
-        Assert.assertEquals("3bb35efc53328e60a0a32b95b670cf60580199a4", ehcache.get().getSha1());
+        Assert.assertEquals("a89c93852c8e1da630bfe9ac292abbc346c242dc", ehcache.get().getSha1());
         Assert.assertEquals("1.6.2", ehcache.get().getVersion());
         Assert.assertNull(ehcache.get().getOrganization());
 
         Assert.assertEquals("org.hibernate:hibernate-ehcache:3.6.9.Final", hibernateEhcache.get().getMavenIdentifier());
-        Assert.assertEquals("8cb70b2b74df26023c608d7acc953364e3495a29", hibernateEhcache.get().getSha1());
+        Assert.assertEquals("ef67aaff9ded441f83ea49c6ae1e3d245d9cacae", hibernateEhcache.get().getSha1());
         Assert.assertEquals("3.6.9.Final", hibernateEhcache.get().getVersion());
         Assert.assertEquals("Hibernate.org", hibernateEhcache.get().getOrganization());
 
