@@ -187,16 +187,16 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest {
         Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("ehcache-1.6.2.jar"));
         Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("hibernate-ehcache-3.6.9.Final.jar"));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar",
-                "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
+                "org.windup.example:jee-example-services:1.0.0", "1c603ef950e920769c3389e6a1282e3c96f360d0", "1.0.0", "",
                 Arrays.asList(FOUND_PATHS_JEE_EXAMPLE_SERVICES)));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("commons-lang-2.5.jar",
-                "commons-lang:commons-lang:2.5", "b0236b252e86419eef20c31a44579d2aee2f0a69", "2.5", "The Apache Software Foundation",
+                "commons-lang:commons-lang:2.5", "07df6997525697b211367cf7f359e5232ec65375", "2.5", "The Apache Software Foundation",
                 Arrays.asList(FOUND_PATHS_COMMONS_LANG)));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("ehcache-1.6.2.jar",
-                "net.sf.ehcache:ehcache:1.6.2", "3bb35efc53328e60a0a32b95b670cf60580199a4", "1.6.2", "",
+                "net.sf.ehcache:ehcache:1.6.2", "a89c93852c8e1da630bfe9ac292abbc346c242dc", "1.6.2", "",
                 Arrays.asList(FOUND_PATHS_EHCACHE)));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("hibernate-ehcache-3.6.9.Final.jar",
-                "org.hibernate:hibernate-ehcache:3.6.9.Final", "8cb70b2b74df26023c608d7acc953364e3495a29", "3.6.9.Final", "Hibernate.org",
+                "org.hibernate:hibernate-ehcache:3.6.9.Final", "ef67aaff9ded441f83ea49c6ae1e3d245d9cacae", "3.6.9.Final", "Hibernate.org",
                 Arrays.asList(FOUND_PATHS_HIBERNATE_EHCACHE)));
     }
 
