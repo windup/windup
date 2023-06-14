@@ -57,7 +57,7 @@ public class RuleLoaderImpl implements RuleLoader {
         registry.setProviders(providers);
 
         // Get override rules from override providers (if any)
-        Map<RuleKey, Rule> overrideRules = extractOverrideRules(providers);
+        Map<RuleKey, Rule> overrideRules = extractOverrideRules(providers, ruleLoaderContext);
 
         // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
         for (RuleProvider provider : providers) {
@@ -166,10 +166,11 @@ public class RuleLoaderImpl implements RuleLoader {
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
 
-    private Map<RuleKey, Rule> extractOverrideRules(List<RuleProvider> providers) {
+    private Map<RuleKey, Rule> extractOverrideRules(List<RuleProvider> providers, RuleLoaderContext ruleLoaderContext) {
         Map<RuleKey, Rule> overrideRules = new HashMap<>();
         providers.stream()
                 .filter(provider -> provider.getMetadata().isOverrideProvider())
+                .filter(provider -> ruleLoaderContext.getRuleProviderFilter() == null || ruleLoaderContext.getRuleProviderFilter().accept(provider))
                 .forEach(provider -> {
                     provider.getConfiguration(null).getRules().forEach(rule -> {
                         RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
