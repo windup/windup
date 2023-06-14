@@ -84,7 +84,7 @@ public class IgnoreArchivesRulesetTest {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
             InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
-            inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", LOG4J_COORDINATE);
+            inMemoryIdentifier.addMapping("6660ebb91c2259c15a2db4a8a21c0d65ac39e33c", LOG4J_COORDINATE);
 
             InMemoryArchiveIdentificationService identificationService = new InMemoryArchiveIdentificationService();
             identificationService.addMappingsFrom(new File("src/test/resources/testArchiveMapping.txt"));

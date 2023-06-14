@@ -85,8 +85,8 @@ public class MavenizeRuleProviderTest {
     @Before
     public void addMavenCoordsData() {
         InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
-        inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", "log4j:log4j:1.2.6");
-        inMemoryIdentifier.addMapping("b0236b252e86419eef20c31a44579d2aee2f0a69", "commons-lang:commons-lang:2.5");
+        inMemoryIdentifier.addMapping("6660ebb91c2259c15a2db4a8a21c0d65ac39e33c", "log4j:log4j:1.2.6");
+        inMemoryIdentifier.addMapping("07df6997525697b211367cf7f359e5232ec65375", "commons-lang:commons-lang:2.5");
         identifier.addIdentifier(inMemoryIdentifier);
     }
 
