@@ -92,7 +92,7 @@ public abstract class AbstractApiRuleProvider extends AbstractRuleProvider {
         // Create byId Json files
         Map<String, Object> getById = getById(event);
         for (Map.Entry<String, Object> entry : getById.entrySet()) {
-            File byIdJsonFile = outputBaseDir.resolve(getBasePath() + "/" + entry.getKey() + ".json").toFile();
+            File byIdJsonFile = outputBaseDir.resolve(getBasePath()).resolve(entry.getKey() + ".json").toFile();
 
             try {
                 FileUtils.forceMkdir(byIdJsonFile.getParentFile());

@@ -57,4 +57,19 @@ public class DataUtils {
         Optional<ReportFileModel> sourceFile = getSourceFile(sourceReportService, fileModel);
         return FILE_ID_MAPPER.apply(sourceFile);
     }
+
+    // Ids needs to have valid characters since they are written in the file disk
+    // Windows does not allow the following characters to be part of a filename: \/:*"<>|
+    public static String sanitizeFilename(String id) {
+        final String sanitizer = "_";
+        return id
+                .replaceAll("\\\\", sanitizer)
+                .replaceAll("/", sanitizer)
+                .replaceAll(":", sanitizer)
+                .replaceAll("\\*", sanitizer)
+                .replaceAll("\"", sanitizer)
+                .replaceAll("<", sanitizer)
+                .replaceAll(">", sanitizer)
+                .replaceAll("\\|", sanitizer);
+    }
 }
