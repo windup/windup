@@ -185,8 +185,10 @@ public class ZipUtil {
     }
 
     public static void zipFolder(Path source, String zipOutputPath, String zipOutputName, List<String> pathPrefixesToExclude) throws IOException {
+        File outputFile = new File(zipOutputPath + File.separator + zipOutputName);
+        URI outputFileURI = outputFile.toURI();
 
-        final URI uri = URI.create("jar:file:" + zipOutputPath + File.separator + zipOutputName);
+        final URI uri = URI.create("jar:" + outputFileURI);
 
         Files.walkFileTree(source, new SimpleFileVisitor<>() {
             @Override
