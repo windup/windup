@@ -51,14 +51,17 @@ public class RuleProviderOverrideTest {
         int count = 0;
         boolean foundTestOverrideProvider = false;
         boolean foundTestOriginalWithTargetProvider = false;
+        boolean foundTestBarTargetWithTargetProvider = false;
         for (Rule rule : configuration.getRules()) {
             count++;
             if (rule.toString().contains("(RuleOverride)")) foundTestOverrideProvider = true;
             if (rule.toString().contains("(RuleOverrideWithTarget)")) foundTestOriginalWithTargetProvider = true;
+            if (rule.toString().contains("(TestBarTargetWithTargetProvider)")) foundTestBarTargetWithTargetProvider = true;
         }
         Assert.assertTrue("RuleOverride", foundTestOverrideProvider);
         Assert.assertTrue("RuleOverrideWithTarget", foundTestOriginalWithTargetProvider);
-        Assert.assertEquals(2, count);
+        Assert.assertTrue("TestBarTargetWithTargetProvider", foundTestBarTargetWithTargetProvider);
+        Assert.assertEquals(3, count);
     }
 
     @Test
@@ -97,6 +100,49 @@ public class RuleProviderOverrideTest {
         Assert.assertEquals(2, count);
     }
 
+    // https://issues.redhat.com/browse/WINDUP-3928
+    @Test
+    public void testOverridingRulesetExecutedWithoutOriginalRulesetInScopeForAnalysis() {
+        final SourceAndTargetPredicate targetPredicate = new SourceAndTargetPredicate(Collections.emptyList(), List.of("bar-target"));
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), targetPredicate);
+        Configuration configuration = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
+        int count = 0;
+        boolean foundTestOverrideProvider = false;
+        boolean foundTestOverrideWithTargetProvider = false;
+        boolean foundTestBarTargetWithTargetProvider = false;
+        for (Rule rule : configuration.getRules()) {
+            count++;
+            if (rule.toString().contains("(RuleOverride)")) foundTestOverrideProvider = true;
+            if (rule.toString().contains("(OriginalRuleWithTarget)")) foundTestOverrideWithTargetProvider = true;
+            if (rule.toString().contains("(TestBarTargetWithTargetProvider)")) foundTestBarTargetWithTargetProvider = true;
+        }
+        Assert.assertTrue("RuleOverride", foundTestOverrideProvider);
+        Assert.assertTrue("OriginalRuleWithTarget", foundTestOverrideWithTargetProvider);
+        Assert.assertTrue("TestBarTargetWithTargetProvider", foundTestBarTargetWithTargetProvider);
+        Assert.assertEquals(3, count);
+    }
+
+    @Test
+    public void testOverridingRulesetExecutedWithOriginalRulesetInScopeForAnalysis() {
+        final SourceAndTargetPredicate targetPredicate = new SourceAndTargetPredicate(Collections.emptyList(), List.of("foo-target"));
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), targetPredicate);
+        Configuration configuration = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
+        int count = 0;
+        boolean foundTestOverrideProvider = false;
+        boolean foundTestOverrideWithTargetProvider = false;
+        boolean foundTestFooTargetedWithTargetProvider = false;
+        for (Rule rule : configuration.getRules()) {
+            count++;
+            if (rule.toString().contains("(RuleOverride)")) foundTestOverrideProvider = true;
+            if (rule.toString().contains("(OriginalRuleWithTarget)")) foundTestOverrideWithTargetProvider = true;
+            if (rule.toString().contains("(TestFooTargetedWithTargetProvider)")) foundTestFooTargetedWithTargetProvider = true;
+        }
+        Assert.assertTrue("RuleOverride", foundTestOverrideProvider);
+        Assert.assertTrue("OriginalRuleWithTarget", foundTestOverrideWithTargetProvider);
+        Assert.assertTrue("TestFooTargetedWithTargetProvider", foundTestFooTargetedWithTargetProvider);
+        Assert.assertEquals(3, count);
+    }
+
     @Singleton
     public static class TestOriginalProvider extends AbstractRuleProvider {
         public TestOriginalProvider() {
@@ -127,102 +173,167 @@ public class RuleProviderOverrideTest {
                         }
                     });
         }
-
-        @Singleton
-        public static class TestOverrideProvider extends AbstractRuleProvider {
-            public TestOverrideProvider() {
-                super(MetadataBuilder.forProvider(TestOverrideProvider.class, "TestRuleProvider").setOverrideProvider(true));
-            }
-
-            @Override
-            public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
-                return ConfigurationBuilder.begin()
-                        .addRule(new Rule() {
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context) {
-                            }
-
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context) {
-                                return true;
-                            }
-
-                            @Override
-                            public String getId() {
-                                return TestOriginalProvider.class.getSimpleName();
-                            }
-
-                            @Override
-                            public String toString() {
-                                return "RuleOverride";
-                            }
-                        });
-            }
+    }
+    @Singleton
+    public static class TestOverrideProvider extends AbstractRuleProvider {
+        public TestOverrideProvider() {
+            super(MetadataBuilder.forProvider(TestOverrideProvider.class, "TestRuleProvider").setOverrideProvider(true));
         }
 
-        @Singleton
-        public static class TestOriginalWithTargetProvider extends AbstractRuleProvider {
-            public TestOriginalWithTargetProvider() {
-                super(MetadataBuilder.forProvider(TestOriginalProvider.class, "TestRuleProviderWithTarget"));
-            }
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
 
-            @Override
-            public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
-                return ConfigurationBuilder.begin()
-                        .addRule(new Rule() {
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context) {
-                            }
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
 
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context) {
-                                return true;
-                            }
+                        @Override
+                        public String getId() {
+                            return TestOriginalProvider.class.getSimpleName();
+                        }
 
-                            @Override
-                            public String getId() {
-                                return TestOriginalProvider.class.getSimpleName();
-                            }
+                        @Override
+                        public String toString() {
+                            return "RuleOverride";
+                        }
+                    });
+        }
+    }
 
-                            @Override
-                            public String toString() {
-                                return "OriginalRuleWithTarget";
-                            }
-                        });
-            }
+    @Singleton
+    public static class TestOriginalWithTargetProvider extends AbstractRuleProvider {
+        public TestOriginalWithTargetProvider() {
+            super(MetadataBuilder.forProvider(TestOriginalWithTargetProvider.class, "TestRuleProviderWithTarget"));
         }
 
-        @Singleton
-        @RuleMetadata(targetTechnologies = {@Technology(id = "test-target")})
-        public static class TestOverrideWithTargetProvider extends AbstractRuleProvider {
-            public TestOverrideWithTargetProvider() {
-                super(MetadataBuilder.forProvider(TestOverrideWithTargetProvider.class, "TestRuleProviderWithTarget").setOverrideProvider(true));
-            }
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
 
-            @Override
-            public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
-                return ConfigurationBuilder.begin()
-                        .addRule(new Rule() {
-                            @Override
-                            public void perform(Rewrite event, EvaluationContext context) {
-                            }
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
 
-                            @Override
-                            public boolean evaluate(Rewrite event, EvaluationContext context) {
-                                return true;
-                            }
+                        @Override
+                        public String getId() {
+                            return TestOriginalWithTargetProvider.class.getSimpleName();
+                        }
 
-                            @Override
-                            public String getId() {
-                                return TestOriginalProvider.class.getSimpleName();
-                            }
+                        @Override
+                        public String toString() {
+                            return "OriginalRuleWithTarget";
+                        }
+                    });
+        }
+    }
 
-                            @Override
-                            public String toString() {
-                                return "RuleOverrideWithTarget";
-                            }
-                        });
-            }
+    @Singleton
+    @RuleMetadata(targetTechnologies = {@Technology(id = "test-target")})
+    public static class TestOverrideWithTargetProvider extends AbstractRuleProvider {
+        public TestOverrideWithTargetProvider() {
+            super(MetadataBuilder.forProvider(TestOverrideWithTargetProvider.class, "TestRuleProviderWithTarget").setOverrideProvider(true));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
+
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
+
+                        @Override
+                        public String getId() {
+                            return TestOriginalWithTargetProvider.class.getSimpleName();
+                        }
+
+                        @Override
+                        public String toString() {
+                            return "RuleOverrideWithTarget";
+                        }
+                    });
+        }
+    }
+
+    @Singleton
+    @RuleMetadata(targetTechnologies = {@Technology(id = "foo-target")})
+    public static class TestFooTargetedWithTargetProvider extends AbstractRuleProvider {
+        public TestFooTargetedWithTargetProvider() {
+            super(MetadataBuilder.forProvider(TestFooTargetedWithTargetProvider.class, "TestFooTargetedWithTargetProvider"));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
+
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
+
+                        @Override
+                        public String getId() {
+                            return TestFooTargetedWithTargetProvider.class.getSimpleName();
+                        }
+
+                        @Override
+                        public String toString() {
+                            return "TestFooTargetedWithTargetProvider";
+                        }
+                    });
+        }
+    }
+
+    @Singleton
+    @RuleMetadata(targetTechnologies = {@Technology(id = "bar-target")})
+    public static class TestBarTargetWithTargetProvider extends AbstractRuleProvider {
+        public TestBarTargetWithTargetProvider() {
+            super(MetadataBuilder.forProvider(TestBarTargetWithTargetProvider.class, "TestFooTargetedWithTargetProvider").setOverrideProvider(true));
+        }
+
+        @Override
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
+            return ConfigurationBuilder.begin()
+                    .addRule(new Rule() {
+                        @Override
+                        public void perform(Rewrite event, EvaluationContext context) {
+                        }
+
+                        @Override
+                        public boolean evaluate(Rewrite event, EvaluationContext context) {
+                            return true;
+                        }
+
+                        @Override
+                        public String getId() {
+                            return TestFooTargetedWithTargetProvider.class.getSimpleName();
+                        }
+
+                        @Override
+                        public String toString() {
+                            return "TestBarTargetWithTargetProvider";
+                        }
+                    });
         }
     }
 }
