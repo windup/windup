@@ -2,6 +2,7 @@ package org.jboss.windup.config.loader;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
@@ -57,7 +58,7 @@ public class RuleLoaderImpl implements RuleLoader {
         registry.setProviders(providers);
 
         // Get override rules from override providers (if any)
-        Map<RuleKey, Rule> overrideRules = extractOverrideRules(providers, ruleLoaderContext);
+        Map<RuleKey, OverrideRule> overrideRules = extractOverrideRules(providers, ruleLoaderContext);
 
         // Add provider->rules mappings to the registry and, for each rule, inject parameters if applicable
         for (RuleProvider provider : providers) {
@@ -68,29 +69,37 @@ public class RuleLoaderImpl implements RuleLoader {
                     continue;
             }
 
-            // these are not used directly... they only override others
-            if (provider.getMetadata().isOverrideProvider())
+            // https://issues.redhat.com/browse/WINDUP-3928
+            // now it's time to add the overriding ruleset which didn't override any previously found rule
+            // but that are "in scope" (i.e. ruleset's sources and targets fit the analysis one) for the
+            // current analysis and, as such, added as "regular" ruleset.
+            // The rulesets are loaded and sorted from loadProviders(ruleLoaderContext) and the override
+            // tag creates a before-after edge between the original and the overriding rulesets
+            if (provider.getMetadata().isOverrideProvider()) {
+                final List<Rule> unusedOverrideRules = provider
+                        .getConfiguration(null)
+                        .getRules()
+                        .stream()
+                        .filter(rule -> {
+                            final OverrideRule overrideRule = overrideRules
+                                    .get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
+                            if (overrideRule != null)
+                                // if the override rule hasn't been used yet,
+                                // then it must the added to the rules to be executed
+                                return !overrideRule.isUsed();
+                            return false;
+                        })
+                        .collect(Collectors.toList());
+                registry.addRulesForProvider(provider, unusedOverrideRules);
+                enhanceRules(allRules, provider, unusedOverrideRules);
                 continue;
+            }
 
             Configuration cfg = provider.getConfiguration(ruleLoaderContext);
             List<Rule> rules = overrideRules(cfg, overrideRules, provider);
             registry.addRulesForProvider(provider, rules);
 
-            for (int i = 0; i < rules.size(); i++) {
-                Rule rule = rules.get(i);
-
-                AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
-
-                if (rule instanceof RuleBuilder && isBlank(rule.getId())) {
-                    ((RuleBuilder) rule).withId(generatedRuleID(provider, i + 1));
-                }
-
-                allRules.add(rule);
-
-                if (rule instanceof ParameterizedRule) {
-                    injectParametersIntoRule(rule);
-                }
-            }
+            enhanceRules(allRules, provider, rules);
         }
 
         ConfigurationBuilder result = ConfigurationBuilder.begin();
@@ -100,6 +109,24 @@ public class RuleLoaderImpl implements RuleLoader {
 
         registry.setConfiguration(result);
         return registry;
+    }
+
+    private void enhanceRules(List<Rule> allRules, RuleProvider provider, List<Rule> rules) {
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
+
+            AbstractRuleProvider.enhanceRuleMetadata(provider, rule);
+
+            if (rule instanceof RuleBuilder && isBlank(rule.getId())) {
+                ((RuleBuilder) rule).withId(generatedRuleID(provider, i + 1));
+            }
+
+            allRules.add(rule);
+
+            if (rule instanceof ParameterizedRule) {
+                injectParametersIntoRule(rule);
+            }
+        }
     }
 
 
@@ -166,15 +193,15 @@ public class RuleLoaderImpl implements RuleLoader {
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
 
-    private Map<RuleKey, Rule> extractOverrideRules(List<RuleProvider> providers, RuleLoaderContext ruleLoaderContext) {
-        Map<RuleKey, Rule> overrideRules = new HashMap<>();
+    private Map<RuleKey, OverrideRule> extractOverrideRules(List<RuleProvider> providers, RuleLoaderContext ruleLoaderContext) {
+        Map<RuleKey, OverrideRule> overrideRules = new HashMap<>();
         providers.stream()
                 .filter(provider -> provider.getMetadata().isOverrideProvider())
                 .filter(provider -> ruleLoaderContext.getRuleProviderFilter() == null || ruleLoaderContext.getRuleProviderFilter().accept(provider))
                 .forEach(provider -> {
                     provider.getConfiguration(null).getRules().forEach(rule -> {
                         RuleKey ruleKey = new RuleKey(provider.getMetadata().getID(), rule.getId());
-                        overrideRules.put(ruleKey, rule);
+                        overrideRules.put(ruleKey, new OverrideRule(rule));
                     });
                 });
         return overrideRules;
@@ -183,16 +210,17 @@ public class RuleLoaderImpl implements RuleLoader {
     /**
      * Given a set of overriding rules, replaces the original rules with the overriding ones if applicable.
      */
-    private List<Rule> overrideRules(Configuration cfg, Map<RuleKey, Rule> overrideRules, RuleProvider provider) {
+    private List<Rule> overrideRules(Configuration cfg, Map<RuleKey, OverrideRule> overrideRules, RuleProvider provider) {
         List<Rule> rules = new ArrayList<>(cfg.getRules());
         ListIterator<Rule> ruleIterator = rules.listIterator();
         while (ruleIterator.hasNext()) {
             Rule rule = ruleIterator.next();
-            Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
+            OverrideRule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
             Optional.ofNullable(overrideRule)
                     .ifPresent(r -> {
                         LOG.info("Replacing rule " + rule.getId() + " with a user override!");
-                        ruleIterator.set(r);
+                        ruleIterator.set(r.getRule());
+                        r.setUsed(true);
                     });
         }
         return rules;
