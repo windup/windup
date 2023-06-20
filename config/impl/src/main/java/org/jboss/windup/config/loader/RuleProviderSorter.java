@@ -69,7 +69,10 @@ public class RuleProviderSorter {
         for (RuleProvider provider : providers) {
             Class<? extends RuleProvider> unproxiedClass = unwrapType(provider.getClass());
             classToProviderMap.put(unproxiedClass, provider);
-            idToProviderMap.put(provider.getMetadata().getID(), provider);
+            // https://issues.redhat.com/browse/WINDUP-3928
+            // original and overriding rulesets must have the same ID for the overriding to work
+            // but in the context of this map they must have different names.
+            idToProviderMap.put(provider.getMetadata().getID() + (provider.getMetadata().isOverrideProvider() ? "<override>" : ""), provider);
         }
     }
 
@@ -158,6 +161,18 @@ public class RuleProviderSorter {
                             + depID + " but this provider could not be found.");
                 } else
                     graph.addEdge(provider, otherProvider);
+            }
+
+            // https://issues.redhat.com/browse/WINDUP-3928
+            // Overriding ruleset must be loaded after the original one it refers to
+            if (provider.getMetadata().isOverrideProvider()) {
+                final String originalID = provider.getMetadata().getID();
+                final RuleProvider otherProvider = getByID(originalID);
+                if (otherProvider == null) {
+                    errors.add("RuleProvider " + provider.getMetadata().getID() + " is specified to override: "
+                            + originalID + " but this provider could not be found.");
+                } else
+                    graph.addEdge(otherProvider, provider);
             }
 
             if (!errors.isEmpty())
