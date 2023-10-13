@@ -546,6 +546,11 @@
                 <artifactId>commons-text</artifactId>
                 <version>1.10.0</version>
             </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.100.Final</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
