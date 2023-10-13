@@ -149,7 +149,7 @@
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <version>20160810</version>
+                <version>20230227</version>
             </dependency>
             <!-- WINDUP-1595  The version in Tattletale's POM is obsolete 3.15, let's force newer. -->
             <dependency>
