@@ -17,8 +17,8 @@ public class TestChromeDriverReportUtil extends TestReportUtil {
         // but it generated a ClassNotFoundException: java.net.http.HttpTimeoutException from JBoss Modules
         // due to https://issues.redhat.com/browse/MODULES-392 and
         // org.jboss.forge.furnace:furnace:2.29.1.Final using org.jboss.modules:jboss-modules:1.9.1.Final
-//        System.setProperty("webdriver.http.factory", "jdk-http-client");
-        System.setProperty("webdriver.http.factory", "netty");
+        System.setProperty("webdriver.http.factory", "jdk-http-client");
+//        System.setProperty("webdriver.http.factory", "netty");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless=new");
         chromeOptions.addArguments("--remote-allow-origins=*");

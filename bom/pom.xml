@@ -411,11 +411,11 @@
                 <artifactId>org.eclipse.core.resources</artifactId>
                 <version>[3.14.0,3.19.0)</version>
             </dependency>
-            <dependency>
+            <!--dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>4.1.86.Final</version>
-            </dependency>
+            </dependency-->
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
@@ -549,12 +549,17 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.1.100.Final</version>
+                <version>4.1.104.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-core</artifactId>
                 <version>4.4.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.modules</groupId>
+                <artifactId>jboss-modules</artifactId>
+                <version>1.9.2.Final</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
