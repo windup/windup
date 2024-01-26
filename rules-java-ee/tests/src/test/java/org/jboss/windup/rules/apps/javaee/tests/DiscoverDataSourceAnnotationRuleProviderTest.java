@@ -68,7 +68,7 @@ public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest {
 
             Assert.assertTrue(resultFound);
         } finally {
-            FileUtils.deleteDirectory(outputPath.toFile());
+            FileUtils.deleteQuietly(outputPath.toFile());
         }
     }
 }

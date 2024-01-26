@@ -126,7 +126,7 @@ public class DiscoverProjectStructureTest {
             Assert.assertNotNull(child2AsDuplicate.getCanonicalArchive().getProjectModel());
         } finally {
             if (graphPath != null)
-                FileUtils.deleteDirectory(graphPath.toFile());
+                FileUtils.deleteQuietly(graphPath.toFile());
         }
     }
 

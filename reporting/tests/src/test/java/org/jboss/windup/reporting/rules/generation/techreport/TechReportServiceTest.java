@@ -98,7 +98,7 @@ public class TechReportServiceTest {
 
         } finally {
             if (graphPath != null)
-                FileUtils.deleteDirectory(graphPath.toFile());
+                FileUtils.deleteQuietly(graphPath.toFile());
         }
     }
 
