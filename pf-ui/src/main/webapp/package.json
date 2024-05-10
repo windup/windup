@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@adobe/css-tools": "^4.3.3",
     "@migtools/lib-ui": "8.6.4",
     "@patternfly/patternfly": "4.224.2",
     "@patternfly/react-charts": "6.94.18",
