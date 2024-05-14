@@ -561,6 +561,11 @@
                 <artifactId>vertx-core</artifactId>
                 <version>4.5.3</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.websocket</groupId>
+                <artifactId>websocket-client</artifactId>
+                <version>9.4.53.v20231009</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
