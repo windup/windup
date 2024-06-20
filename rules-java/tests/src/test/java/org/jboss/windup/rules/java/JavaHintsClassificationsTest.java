@@ -109,7 +109,7 @@ public class JavaHintsClassificationsTest {
             Assert.assertTrue("Hint Found", hintFound);
         } finally {
             if (outputPath != null)
-                FileUtils.deleteDirectory(outputPath.toFile());
+                FileUtils.deleteQuietly(outputPath.toFile());
         }
     }
 
@@ -165,7 +165,7 @@ public class JavaHintsClassificationsTest {
                 Assert.assertEquals(2, Iterators.asList(fileModels).size());
             } finally {
                 if (outputPath != null)
-                    FileUtils.deleteDirectory(outputPath.toFile());
+                    FileUtils.deleteQuietly(outputPath.toFile());
             }
         }
 

@@ -33,7 +33,13 @@ public class ExecutionStatisticsTest {
             @Override
             public Void call() throws Exception {
                 ExecutionStatistics.get().begin(STATISTICS_KEY);
-                Thread.sleep(1000);
+                // 1 second
+                final long INTERVAL = 1000000000;
+                final long start = System.nanoTime();
+                long end;
+                do{
+                    end = System.nanoTime();
+                } while(start + INTERVAL >= end);
                 ExecutionStatistics.get().end(STATISTICS_KEY);
                 return null;
             }

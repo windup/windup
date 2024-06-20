@@ -180,7 +180,7 @@ public class WindupCommandRuleFilteringTest {
                 Assert.assertFalse(msg, result instanceof Failed);
             } finally {
                 inputFile.delete();
-                FileUtils.deleteDirectory(reportPath);
+                FileUtils.deleteQuietly(reportPath);
             }
         }
     }

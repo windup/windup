@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
+    final static boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+
     @Test
     public void testHelloWorld() {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
@@ -22,7 +24,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.helloworld.HelloWorld", "testclasses.helloworld", "HelloWorld", null, ResolutionStatus.RESOLVED,
-                        TypeReferenceLocation.TYPE, 3, 0, 174,
+                        TypeReferenceLocation.TYPE, 3, 0, ON_WINDOWS ? 182 : 174,
                         "public class HelloWorld {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.helloworld.HelloWorld.main(String[])", "testclasses.helloworld", "HelloWorld", "main",
@@ -40,11 +42,11 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
                         5, 23, 4,
                         "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
-                new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
+                new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, ON_WINDOWS ? 110 : 108,
                         "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("java.lang.String[]", "java.lang", "String[]", null, ResolutionStatus.RESOLVED,
-                        TypeReferenceLocation.METHOD_PARAMETER, 5, 4, 108,
+                        TypeReferenceLocation.METHOD_PARAMETER, 5, 4, ON_WINDOWS ? 110 : 108,
                         "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("java.lang.Exception", "java.lang", "Exception", null, ResolutionStatus.RESOLVED,
@@ -95,11 +97,11 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.simple.MyBClass", "testclasses.simple", "MyBClass", null, ResolutionStatus.RESOLVED,
-                        TypeReferenceLocation.TYPE, 4, 0, 161,
+                        TypeReferenceLocation.TYPE, 4, 0,  ON_WINDOWS ? 173 : 161,
                         "public class MyBClass extends MyAClass {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.simple.MyAClass", "testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
-                        TypeReferenceLocation.TYPE, 4, 0, 161,
+                        TypeReferenceLocation.TYPE, 4, 0,  ON_WINDOWS ? 173 : 161,
                         "public class MyBClass extends MyAClass {")));
     }
 
@@ -110,12 +112,12 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.simple.MyAClass", "testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
-                        TypeReferenceLocation.TYPE, 3, 0, 128,
+                        TypeReferenceLocation.TYPE, 3, 0, ON_WINDOWS ? 138 : 128,
                         "public class MyAClass implements SomeInterface {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.simple.SomeInterface", "testclasses.simple", "SomeInterface", null, ResolutionStatus.RESOLVED,
                         TypeReferenceLocation.IMPLEMENTS_TYPE, 3, 0,
-                        99,
+                        ON_WINDOWS ? 107 : 99,
                         "public class MyAClass implements SomeInterface {")));
     }
 
@@ -126,10 +128,10 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("testclasses.javalang.JavaLangReferences", "testclasses.javalang", "JavaLangReferences", null,
-                        ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0, 191,
+                        ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0,  ON_WINDOWS ? 201 : 191,
                         "public class JavaLangReferences {")));
         Assert.assertTrue(references.contains(
-                new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 119,
+                new ClassReference("void", null, "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, ON_WINDOWS ? 123 : 119,
                         "public void someMethod(){")));
         Assert.assertTrue(references.contains(
                 new ClassReference("java.lang.String", "java.lang", "String", null, ResolutionStatus.RESOLVED,
@@ -183,7 +185,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("java.rmi.Remote", "java.rmi", "Remote", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
-                        6, 0, 117, "public interface EventServer extends Remote {")));
+                        6, 0, ON_WINDOWS ? 121 : 117, "public interface EventServer extends Remote {")));
     }
 
     @Test
@@ -240,9 +242,9 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest {
 
         Assert.assertTrue(references.contains(
                 new ClassReference("otherpackage.NotOnLibraryPath", "otherpackage", "NotOnLibraryPath", null, ResolutionStatus.RECOVERED, TypeReferenceLocation.TYPE,
-                        5, 0, 177, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
+                        5, 0, ON_WINDOWS ? 185 : 177, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
         Assert.assertTrue(references.contains(
                 new ClassReference("otherpackage.NotOnLibraryPath", "otherpackage", "NotOnLibraryPath", null, ResolutionStatus.RECOVERED, TypeReferenceLocation.INHERITANCE,
-                        5, 0, 94, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
+                        5, 0, ON_WINDOWS ? 98 : 94, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
     }
 }

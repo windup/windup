@@ -124,7 +124,7 @@ public class NewReports_WindupArchitectureSourceModeTest extends WindupArchitect
                 validateCsvReport(context.getGraphDirectory());
             }
         } finally {
-            FileUtils.deleteDirectory(userPath.toFile());
+            FileUtils.deleteQuietly(userPath.toFile());
         }
     }
 
