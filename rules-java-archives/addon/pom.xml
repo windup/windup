@@ -88,6 +88,11 @@
         <dependency>
             <groupId>org.jboss.windup.maven</groupId>
             <artifactId>nexus-indexer-data</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
