@@ -118,7 +118,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-maven-plugin-build-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-maven-plugin-${{ matrix.java-version }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-maven-windup-rulesets-links-${{ matrix.java-version }}-build-${{ github.sha }}
       - name: Build
@@ -147,9 +147,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-windup-quickstarts-build-${{ github.sha }}
+          key: ${{ runner.os }}-maven-windup-quickstarts-${{ matrix.java-version }}-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-maven-windup-rulesets-links-${{ matrix.java-version }}-build-${{ github.sha }}
+            ${{ runner.os }}-maven-windup-maven-plugin-${{ matrix.java-version }}-build-${{ github.sha }}
       - name: Test
         run:   |
           export MAVEN_OPTS="--add-modules=java.se  --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED"
