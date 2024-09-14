@@ -80,7 +80,7 @@ public class ResolveServerResourceLinksRuleProvider extends AbstractRuleProvider
         LinkModel jmsDestinationLink = linkService
                 .getOrCreate(
                         "Destination Setup",
-                        "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration1.html");
+                        "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration1.html");
         linkable.addLink(jmsDestinationLink);
     }
 
@@ -91,7 +91,7 @@ public class ResolveServerResourceLinksRuleProvider extends AbstractRuleProvider
         LinkModel jmsDestinationLink = linkService
                 .getOrCreate(
                         "Thread Pool Setup",
-                        "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuring_EJB_Thread_Pools.html");
+                        "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuring_EJB_Thread_Pools.html");
         linkable.addLink(jmsDestinationLink);
     }
 
@@ -102,44 +102,44 @@ public class ResolveServerResourceLinksRuleProvider extends AbstractRuleProvider
             LinkModel eap6OracleLink = linkService
                     .getOrCreate(
                             "Oracle DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Oracle_Datasource");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Oracle_Datasource");
             linkable.addLink(eap6OracleLink);
         } else if (StringUtils.equals("MySQL", dataSource.getDatabaseTypeName())) {
             LinkModel lnk = linkService
                     .getOrCreate(
                             "MySQL DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_MySQL_Datasource1");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_MySQL_Datasource1");
             linkable.addLink(lnk);
         } else if (StringUtils.equals("Postgres", dataSource.getDatabaseTypeName())) {
             LinkModel lnk = linkService
                     .getOrCreate(
                             "Postgres DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_PostgreSQL_Datasource1");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_PostgreSQL_Datasource1");
             linkable.addLink(lnk);
         } else if (StringUtils.equals("SqlServer", dataSource.getDatabaseTypeName())) {
             LinkModel lnk = linkService
                     .getOrCreate(
                             "SqlServer DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Microsoft_SQLServer_Datasource1");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Microsoft_SQLServer_Datasource1");
             linkable.addLink(lnk);
         } else if (StringUtils.equals("DB2", dataSource.getDatabaseTypeName())) {
             LinkModel lnk = linkService
                     .getOrCreate(
                             "DB2 DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_IBM_DB2_Datasource");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_IBM_DB2_Datasource");
             linkable.addLink(lnk);
         } else if (StringUtils.equals("Sybase", dataSource.getDatabaseTypeName())) {
             LinkModel lnk = linkService
                     .getOrCreate(
                             "Sybase DataSource Setup",
-                            "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Sybase_Datasource");
+                            "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Sybase_Datasource");
             linkable.addLink(lnk);
         }
 
         LinkModel eap6Link = linkService
                 .getOrCreate(
                         "DataSource Documentation",
-                        "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/chap-Datasource_Management.html");
+                        "https://access.redhat.com/documentation/en-US/red_hat_JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/chap-Datasource_Management.html");
         linkable.addLink(eap6Link);
     }
 
