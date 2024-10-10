@@ -145,7 +145,7 @@ public class ProjectModelTraversalTest {
             Assert.assertTrue(pathList.contains("app.ear/xercesImpl-other.jar"));
             System.out.println("Done!");
         } finally {
-            FileUtils.deleteDirectory(tempDirectory.toFile());
+            FileUtils.deleteQuietly(tempDirectory.toFile());
         }
     }
 
