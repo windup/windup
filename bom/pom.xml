@@ -5,7 +5,7 @@
     <properties>
         <version.forge>3.10.0.Final</version.forge>
         <version.furnace>2.29.1.Final</version.furnace>
-        <version.nexus.index>23.03.23.Final</version.nexus.index>
+        <version.nexus.index>23.05.18.Final</version.nexus.index>
         <version.lucene>7.1.0</version.lucene>
         <version.groovy>2.4.21</version.groovy>
         <version.freemarker>2.3.31</version.freemarker>
@@ -305,6 +305,18 @@
                 <groupId>org.jboss.windup.maven</groupId>
                 <artifactId>nexus-indexer-data</artifactId>
                 <type>zip</type>
+                <version>${version.nexus.index}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data-text</artifactId>
+                <type>zip</type>
+                <version>${version.nexus.index}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data</artifactId>
+                <classifier>forge-addon</classifier>
                 <version>${version.nexus.index}</version>
             </dependency>
 
