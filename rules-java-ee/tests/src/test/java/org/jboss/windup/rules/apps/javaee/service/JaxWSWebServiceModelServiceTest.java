@@ -49,7 +49,7 @@ public class JaxWSWebServiceModelServiceTest extends AbstractTest {
     @After
     public void tearDown() throws Exception {
         this.context.clear();
-        FileUtils.deleteDirectory(this.graphPath.toFile());
+        FileUtils.deleteQuietly(this.graphPath.toFile());
     }
 
     @Test

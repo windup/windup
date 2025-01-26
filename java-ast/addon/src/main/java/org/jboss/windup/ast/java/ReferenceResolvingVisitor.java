@@ -168,7 +168,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor {
 
     private String extractDefinitionLine(String typeDeclaration) {
         String typeLine = "";
-        String[] lines = typeDeclaration.split(System.lineSeparator());
+        String[] lines = typeDeclaration.lines().toArray(String[]::new);
         for (String line : lines) {
             typeLine = line;
             if (line.contains("{")) {

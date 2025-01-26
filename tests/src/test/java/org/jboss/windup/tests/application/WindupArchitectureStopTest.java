@@ -83,7 +83,7 @@ public class WindupArchitectureStopTest extends WindupArchitectureTest {
 
             }
         } finally {
-            FileUtils.deleteDirectory(userPath.toFile());
+            FileUtils.deleteQuietly(userPath.toFile());
         }
     }
 

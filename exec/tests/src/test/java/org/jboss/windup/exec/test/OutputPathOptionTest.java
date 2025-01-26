@@ -54,7 +54,7 @@ public class OutputPathOptionTest {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(appPath, basePath);
             Assert.assertEquals(ValidationResult.Level.ERROR, result.getLevel());
         } finally {
-            FileUtils.deleteDirectory(basePath.toFile());
+            FileUtils.deleteQuietly(basePath.toFile());
         }
     }
 
@@ -67,7 +67,7 @@ public class OutputPathOptionTest {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(basePath, subpath);
             Assert.assertEquals(ValidationResult.Level.ERROR, result.getLevel());
         } finally {
-            FileUtils.deleteDirectory(basePath.toFile());
+            FileUtils.deleteQuietly(basePath.toFile());
         }
     }
 
@@ -82,7 +82,7 @@ public class OutputPathOptionTest {
             ValidationResult result = OutputPathOption.validateInputAndOutputPath(input, output);
             Assert.assertEquals(ValidationResult.Level.SUCCESS, result.getLevel());
         } finally {
-            FileUtils.deleteDirectory(basePath.toFile());
+            FileUtils.deleteQuietly(basePath.toFile());
         }
     }
 }

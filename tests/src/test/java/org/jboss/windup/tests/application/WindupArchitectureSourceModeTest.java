@@ -113,7 +113,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest {
                 validateCsvReport(context.getGraphDirectory());
             }
         } finally {
-            FileUtils.deleteDirectory(userPath.toFile());
+            FileUtils.deleteQuietly(userPath.toFile());
         }
     }
 

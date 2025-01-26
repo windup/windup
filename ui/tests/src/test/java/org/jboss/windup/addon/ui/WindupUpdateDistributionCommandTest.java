@@ -191,7 +191,7 @@ public class WindupUpdateDistributionCommandTest {
 
                 checkWindupDirectory(windupDir);
             } finally {
-                FileUtils.deleteDirectory(tempDir);
+                FileUtils.deleteQuietly(tempDir);
             }
         }
     }
@@ -248,7 +248,7 @@ public class WindupUpdateDistributionCommandTest {
         try {
             FileUtils.copyDirectory(currentAddonDir, olderVersionAddonDir);
             changeUiAddonVersionInInstallXml(addonsDir.getPath());
-            FileUtils.deleteDirectory(currentAddonDir);
+            FileUtils.deleteQuietly(currentAddonDir);
         } catch (IOException ex) {
             throw new RuntimeException("Failed replacing the addon: ", ex);
         }

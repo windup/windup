@@ -181,7 +181,7 @@ public class JavaIgnoreRegexesTest {
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
                 Assert.assertEquals(1, Iterators.asList(fileModels).size());
             } finally {
-                FileUtils.deleteDirectory(outputPath.toFile());
+                FileUtils.deleteQuietly(outputPath.toFile());
             }
         }
 

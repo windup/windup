@@ -157,7 +157,7 @@ public class ExecutionBuilderTest {
             toolingXMLService.generateSchema(output);
             Assert.assertTrue(Files.isRegularFile(output));
         } finally {
-            FileUtils.deleteDirectory(outputDirectory.toFile());
+            FileUtils.deleteQuietly(outputDirectory.toFile());
         }
     }
 

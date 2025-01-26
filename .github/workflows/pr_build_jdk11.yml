@@ -25,20 +25,21 @@ jobs:
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
-        path: ~/.m2/repository
+        path: .m2
         key: maven-windup-build-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-maven-
           setup-java-
     - name: Build on JDK 11
-      run: ./mvnw clean install -DskipTests -B -U
+      run: ./mvnw clean install -DskipTests -B -U -Dmaven.repo.local=${{ github.workspace }}/.m2
 
   windup-build-with-unit-tests-1:
     strategy:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
 #    needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -51,20 +52,23 @@ jobs:
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
-        path: ~/.m2/repository
+        path: .m2
         key: maven-windup-build-${{ github.sha }}
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+        enableCrossOsArchive: true
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver
+      run: ./mvnw -B clean install -pl '!tests,!rules-java/tests,!rules-xml/tests,!config/tests' -D"webdriver.chrome.driver=${env:CHROMEWEBDRIVER}/${{ runner.os == 'Windows' && 'chromedriver.exe' || 'chromedriver'  }}" -D"maven.repo.local=${{ github.workspace }}/.m2"
+      shell: pwsh
 
   windup-build-with-unit-tests-2:
     strategy:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -77,24 +81,26 @@ jobs:
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
-        path: ~/.m2/repository
+        path: .m2
         key: maven-windup-build-${{ github.sha }}
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+        enableCrossOsArchive: true
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test config
-      run: ./mvnw -B clean install -f config
+      run: ./mvnw -B clean install -f config -D"maven.repo.local=${{ github.workspace }}/.m2"
     - name: Test rules-java
-      run: ./mvnw -B clean install -f rules-java
+      run: ./mvnw -B clean install -f rules-java -D"maven.repo.local=${{ github.workspace }}/.m2"
     - name: Test rules-xml
-      run: ./mvnw -B clean install -f rules-xml
+      run: ./mvnw -B clean install -f rules-xml -D"maven.repo.local=${{ github.workspace }}/.m2"
 
   windup-tests:
     strategy:
       fail-fast: false
       matrix:
         java-version: [ 11, 17 ]
-    runs-on: ubuntu-latest
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     needs: [windup-build]
     steps:
     - uses: actions/checkout@v3
@@ -107,10 +113,12 @@ jobs:
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
-        path: ~/.m2/repository
+        path: .m2
         key: maven-windup-build-${{ github.sha }}
-    - name: Set up chromedriver variable
-      run: |
-        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
+        enableCrossOsArchive: true
+#    - name: Set up chromedriver variable
+#      run: |
+#        echo "CHROMEWEBDRIVER=${CHROMEWEBDRIVER}" >> "$GITHUB_ENV"
     - name: Test
-      run: ./mvnw -B test -Dwebdriver.chrome.driver=${{ env.CHROMEWEBDRIVER }}/chromedriver -f tests
+      run: ./mvnw -B test -D"webdriver.chrome.driver=${env:CHROMEWEBDRIVER}/${{ runner.os == 'Windows' && 'chromedriver.exe' || 'chromedriver'  }}" -f tests -D"maven.repo.local=${{ github.workspace }}/.m2"
+      shell: pwsh
